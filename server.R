@@ -1,27 +1,4 @@
-#setwd("F:/Users$/mjh438/Downloads/")
-#mzxml_pos <- list.files(".", pattern=".csv", recursive = TRUE)
-#mzxml_pos
-source("F:/Users$/mjh438/R scripts/EIC_reader_v8-functions_p9.R")
-
-
-#pl_pos <- read.table(mzxml_pos[12], header= T, sep= ',', dec=".", fill= T, skip=0)
-
-#pl_pos_backup <-pl_pos
-#pl_pos <- pl_pos[524:537,]
-#mzxml_raws <- list.files("F:/Users$/mjh438/mzxml/170117 N2 tm2382 MS2/pos/centroid", pattern=".mzXML", recursive = TRUE, full.names = T)
-
-#rawfs <- EICrawP(mzxml_raws)
-
-#test1 <- MScoll(rawfs)
-
-#test1 <- Parentsearch(rawfs)
-#test2 <- test1@MS2meta
-
-#rawselect2(test2$file[8],rawfs)@filepath
-#decodeanno("153.3655 C6H4NO CCCC/C=C/CC(C)C(O)C(OCC(C(O)=O)[NH3+])=O*154.3655 C7H4NO CCCC/C=C/CC(C)C(O)C(OCC(C(O)=O)[NH4+])=O*  CCCC/C=C/CC(C)CC(OCC(O1)C(OP(O)(O)=O)C(O)C(OC(CC(O)C/C=C\\CC)=O)C1OC(C2=CC=C(O)C=C2)C[NH3+])=O*1263.235 Ch4 CCCC/C=C/CC(C)CC(OCC(O1)C(OP(O)(O)=O)C(O)C(OC(CC(O)C/C=C\CC)=O)C1OC(C2=CC=C(O)C=C2)C[NH3+])=O")
-
-
-shinyServer(function(input, output, session) {
+function(input, output, session) {
     options(shiny.maxRequestSize=1024*1024^2)
     
     ##############LOAD TABLE MODULE#############
@@ -784,4 +761,4 @@ output$txt <- renderPrint({mztab()
         
     })
     
-})
+}
