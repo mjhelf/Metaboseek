@@ -1,8 +1,4 @@
-
-source("F:/Users$/mjh438/R scripts/EIC_reader_v8-functions_p9.R")
-
-#### user interface
-shinyUI(fluidPage(
+fluidPage(
     
     
     navbarPage("MoSAIC",
@@ -194,4 +190,3 @@ shinyUI(fluidPage(
                
     ) #end navbarPage
 )#end fluidpage
-)
