@@ -53,8 +53,7 @@ fluidPage(
                                     actionButton("confgroups","Confirm Grouping"),
                                     downloadButton("savegroups","Save Grouping"),
                                     fileInput('loadgroups', NULL,
-                                              accept= NULL,
-                                              placeholder=""),
+                                              accept= NULL),
                                     tags$hr(),
                                     actionButton("anatbl","run analysis"),
                                     checkboxInput('pv', 'Calculate Pvalues', FALSE)#,
@@ -72,8 +71,7 @@ fluidPage(
                                     actionButton("confrgroups","Confirm & Load"),
                                     downloadButton("savergroups","Save Grouping"),
                                     fileInput('loadrgroups', NULL,
-                                              accept= NULL,
-                                              placeholder="")
+                                              accept= NULL)
                                     
                                     
                                 ))#end TabPanel
