@@ -1,10 +1,22 @@
-fluidPage(
-    
-    
-    navbarPage("MoSAIC",
-               
-               
-               tabPanel("Setup",
+function(request){
+    fluidPage(
+        theme = shinytheme("united"),
+         
+      #  runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
+       #           height = NULL, includeShinyjs = FALSE),
+    #    list(tags$head(
+       # HTML('<link rel="icon", href="MyIcon.png", 
+        #                           type="image/png" />'))),
+        div(style="padding: 1px 0px; width: '100%'",
+            titlePanel(
+                title="", windowTitle="MOSAiC"
+            )
+        ),
+
+    navbarPage(title=div(img(src="/img/Mosaic_logo.png"), "MOSAiC"),#"MoSAIC",
+               #actionButton("Save",label = "Save",icon = icon("floppy-o", lib = "font-awesome")),
+             
+               tabPanel("Load Data",
                         
                         ##DETECT KEYBOARD ACTIONS
                         ##key being held down
@@ -53,25 +65,26 @@ fluidPage(
                                     actionButton("confgroups","Confirm Grouping"),
                                     downloadButton("savegroups","Save Grouping"),
                                     fileInput('loadgroups', NULL,
-                                              accept= NULL),
+                                              accept= NULL,
+                                              placeholder=""),
                                     tags$hr(),
                                     actionButton("anatbl","run analysis"),
-                                    checkboxInput('pv', 'Calculate Pvalues', FALSE)#,
-                                    # bookmarkButton()
+                                    checkboxInput('pv', 'Calculate Pvalues', FALSE)
                                 )),
                             tabPanel(
                                 "MS data files",
                                 verticalLayout(
-                                    textInput('rawpath','Enter raw file folder'),
-                                    actionButton('rfileload',"Confirm folder"),
+                                    #actionButton('uzi','Unzip'),
+                                    fileInput('rfileload',"ZIP file", accept = "application/zip"),
                                     # numericInput('nrgroups', "Number of Groups", value = 1, min = 1),
                                     # rHandsontableOutput('rgroupnames'),
-                                    
+                                    numericInput("rnamelvl", "Naming scheme", 1, step=1, min = 1),
                                     rHandsontableOutput('rawgrouping'),
                                     actionButton("confrgroups","Confirm & Load"),
                                     downloadButton("savergroups","Save Grouping"),
                                     fileInput('loadrgroups', NULL,
-                                              accept= NULL)
+                                              accept= NULL,
+                                              placeholder="")
                                     
                                     
                                 ))#end TabPanel
@@ -79,7 +92,7 @@ fluidPage(
                         )# end tabsetPanel
                         ),#End Setup
                
-               tabPanel("Filter",
+               tabPanel("Explore Data",
                         sidebarLayout(
                             
                             sidebarPanel(
@@ -109,7 +122,8 @@ fluidPage(
                                 numericInput("mzcharge", "Charge", 0, step=1),
                                 numericInput("mzppm", "ppm", 5, step=0.1),
                                 actionButton("mzButton", "Sum formulas"),
-                                rHandsontableOutput('hot1')
+                                rHandsontableOutput('hot1'),
+                                htmlOutput("rtwd")
                             ), #endsidebarpanel
                             
                             mainPanel(
@@ -151,9 +165,11 @@ fluidPage(
                                             "MS2 Explorer",
                                             titlePanel("MS2 search"),
                                             #div(DT::dataTableOutput('parenttab', height = "auto"), style = "font-size: 75%"),
+                                            h4("Annotated fragments"),
                                             rHandsontableOutput('fragtab2', height = "300px"),
                                             actionButton("sFrags", "Save Fragments"),
                                             plotOutput("molplot",height = "300px", width = "300px"),
+                                            h4("MS2 spectrum view"),
                                             verbatimTextOutput('specinfo2'),
                                             plotOutput('spec2', height = 500,
                                                        click = "spec2_click",
@@ -163,8 +179,9 @@ fluidPage(
                                                            id = "spec2_brush",
                                                            direction = "x",
                                                            resetOnNew = TRUE)),
-                                            rHandsontableOutput('parenttab', height = "300px"),
-                                            verbatimTextOutput('txt')
+                                            h4("MS2 spectra with selected parent m/z:"),
+                                            rHandsontableOutput('parenttab', height = "300px")
+                                            
                                         )#end tab
                                         
                                     ),#end tabset
@@ -172,8 +189,8 @@ fluidPage(
                                     #  tags$style(HTML("
                                     #        .dataTables_wrapper { overflow-x: scroll; }
                                     #       " ))),
-                                    actionButton("fButton", "Filter"),
-                                    actionButton("fButton2", "Reload Filter"),
+                                    h4("Feature table"),
+                                    div(style="display:inline-block",actionButton("fButton", "Filter"),actionButton("fButton2", "Reload Filter")),
                                     rHandsontableOutput('filtable2'),
                                     #rHandsontableOutput('hot1'),
                                     div(DT::dataTableOutput('hmtable', height = "auto"), style = "font-size: 75%")
@@ -186,5 +203,9 @@ fluidPage(
                )# end tabPanel
                
                
-    ) #end navbarPage
-)#end fluidpage
+               
+    ), #end navbarPage
+    bookmarkButton(label ="Bookmark this session")
+    #,verbatimTextOutput('txt')
+    )#end fluidpage
+}

@@ -1,6 +1,113 @@
 function(input, output, session) {
     options(shiny.maxRequestSize=1024*1024^2)
     
+    #runcodeServer()
+    
+    allids <- c('tab-6812-1', 'tab-7850-1', 'file1', 'file1_progress', 'header',
+      'sep', 'quote', 'ldtbl', 'preview', 'rmcols', 'rmrows', 'intcols',
+      'anagrouping',
+      'confgroups', 'savegroups', 'loadgroups', 'loadgroups_progress',
+      'anatbl', 'pv', '._bookmark_', 'tab-7850-2', 
+      #'rfileload', 'rfileload_progress',
+      'rnamelvl', 'rawgrouping', 'confrgroups', 'savergroups', 'loadrgroups', 'loadrgroups_progress',
+      'tab-6812-2', 'selgr', 'subsel1', 'subsel2', 'subsel3', 'subsel4', 'subsel5', 'fname', 'pdfButton',
+      'tbButton', 'mzquery', 'mzspace', 'mzcharge', 'mzppm', 'mzButton', 'hot1', 'rtwd', 'tab-2316-1',
+      'tab-2316-2', 'plot1', 'tab-2316-3', 'goButton', 'plot2', 'tab-2316-4', 'EICfiles', 'chromly',
+      'specinfo', 'spec', 'spec_click', 'spec_dblclick', 'spec_hover', 'TRUE', 'spec_brush', 'tab-2316-5',
+      'fragtab2', 'sFrags', 'molplot', 'specinfo2', 'spec2', 'spec2_click', 'spec2_dblclick', 'spec2_hover',
+      'TRUE', 'spec2_brush', 'parenttab', 'fButton', 'fButton2', 'filtable2', 'hmtable', 'txt')
+    
+    exids <- c("loadgroups", "file1","ldtbl"
+               ,"confgroups")
+    
+    setBookmarkExclude(allids)
+    # Save extra values in state$values when we bookmark
+    onBookmark(function(state) {
+        state$values$tablestuff$tablecut <- tablestuff$tablecut
+        state$values$tablestuff$grprops <- tablestuff$grprops
+        state$values$tablestuff$fprop <- tablestuff$fprop
+        state$values$tablestuff$gprop <- tablestuff$gprop
+        state$values$tablestuff$grpropl <- tablestuff$grpropl
+        state$values$tablestuff$fragments <- tablestuff$fragments
+        
+        state$values$colstuff$colrange <- colstuff$colrange
+        print(colstuff$anagroupraw)
+        state$values$colstuff$anagroupraw <- colstuff$anagroupraw
+        
+        ##Saving rawdata
+        state$values$rawstuff$rfilesin <- rawstuff$rfilesin
+        state$values$rawstuff$rawgroupraw <- rawstuff$rawgroupraw
+        #state$values$rawstuff$rawgroups <- rawstuff$rawgroups
+        #state$values$rawstuff$rawdata <- rawstuff$rawdata
+        state$values$rawstuff$rtw <- rawstuff$rtw
+        
+    })
+    
+    # Read values from state$values when we restore
+    onRestore(function(state) {
+        ##Restoring Tables
+        
+        tablestuff$tablecut <- state$values$tablestuff$tablecut
+        tablestuff$grprops <- state$values$tablestuff$grprops
+        tablestuff$fprop <- state$values$tablestuff$fprop
+        tablestuff$gprop <- state$values$tablestuff$gprop
+        tablestuff$grpropl <- state$values$tablestuff$grpropl
+        tablestuff$fragments <- state$values$tablestuff$fragments
+        
+       colstuff$colrange  <- state$values$colstuff$colrange
+
+       
+       ###Restoring Rawdata
+       
+       #rawstuff$rfilesin <- state$values$rawstuff$rfilesin
+       #rawstuff$rawgroupraw <- state$values$rawstuff$rawgroupraw
+      # rawstuff$rawgroups <- state$values$rawstuff$rawgroups
+       #rawstuff$rawdata <- state$values$rawstuff$rawdata
+       rawstuff$rtw <- state$values$rawstuff$rtw
+       
+    })
+    onRestored(function(state){
+        rawstuff$rawgroupraw <- state$values$rawstuff$rawgroupraw
+        
+        colstuff$anagroupraw  <- state$values$colstuff$anagroupraw
+        
+        ## Make list object of grouped column names                                        
+        colme <- list()
+        for (l in levels(colstuff$anagroupraw$Group)){
+            colme[[l]] <- as.character(colstuff$anagroupraw$Column[which(colstuff$anagroupraw$Group==l)])
+        }
+        colstuff$anagroupnames <- colme
+        ### Get column numbers from column names
+        colnu <- integer(0)
+        for (i in colstuff$anagroupraw$Column){
+            colnu<- c(colnu,which(colnames(tablestuff$tablecut) == i))
+        }
+        ## Make list object of grouped column numbers
+        colme <- list()
+        for (l in levels(colstuff$anagroupraw$Group)){
+            colme[[l]] <- as.integer(colnu[which(colstuff$anagroupraw$Group==l)])
+        }
+        colstuff$anagroupnums <- colme
+        
+        
+        if(!is.null(rawstuff$rawgroupraw)){
+        ## Make list object of grouped file names                                        
+        colme <- list()
+        for (l in unique(rawstuff$rawgroupraw$Group)){
+            colme[[l]] <- as.character(paste0(dirname(input$rfileload$datapath),rawstuff$rawgroupraw$File[which(rawstuff$rawgroupraw$Group==l)]))
+        }
+        #get groups in alphabetic order
+        rawstuff$rawgroups <- colme[order(names(colme))]
+        #make xcmsRaws (time consuming)
+        rawstuff$rawdata <- EICrawP(rawstuff$rawgroups, workers = 10)
+        }
+    })
+    
+    
+ #   observeEvent(input$bookmark2, {
+  #      session$doBookmark()
+   # })
+    
     ##############LOAD TABLE MODULE#############
     ####Tablecollection reactive Values
     
@@ -43,7 +150,14 @@ function(input, output, session) {
     
     ####Render the preview table with first 10 rows of tablestuff$tablecut
     output$preview <- renderRHandsontable({if(!is.null(tablestuff$tablecut)){
-        rhandsontable(tablestuff$tablecut[1:10,], selectCallback = T)}
+        rhandsontable(tablestuff$tablecut[1:10,], selectCallback = T)%>%
+    hot_cols(renderer = "
+    function(instance, td, row, col, prop, value, cellProperties) {
+      Handsontable.TextCell.renderer.apply(this, arguments);
+              td.style.color = 'black';
+       }")
+        #return td;
+        }
     })
     
     ####Currently selected columns in preview rhandsontable
@@ -89,12 +203,14 @@ function(input, output, session) {
                                                                               , file, sep = "\t", quote = F,
                                                                               row.names = F)},
                                          contentType = "text/tab-separated-values")
+    
+   # onRestored(function(state){
     #### Load grouping table from file
     observeEvent(input$loadgroups$datapath,{colstuff$anagroupraw <- read.table(input$loadgroups$datapath, header=T, sep='\t')})
     
     ### When the Groups are confirmed, save the current view in colstuff
     ### And also generate corresponding list objects
-    #onRestored(function(state){ 
+    
     observeEvent(input$confgroups,{colstuff$anagroupraw <- data.frame(Column = as.character(hot_to_r(input$anagrouping)$Column),
                                                                       Group = as.character(hot_to_r(input$anagrouping)$Group)
     )
@@ -116,7 +232,7 @@ function(input, output, session) {
     }
     colstuff$anagroupnums <- colme
     })
-    # })#close on restored
+   
     
     
     ######Run Analysis of Table#####
@@ -134,19 +250,42 @@ function(input, output, session) {
     ##############LOAD RAW FILES MODULE#############
     ###Load the mzXML files
     
-    observeEvent(input$rfileload,{rawstuff$rfilesin <- list.files(gsub("\\\\","/", input$rawpath), pattern=".mzXML", recursive = TRUE, full.names=T)})
+    #### Load grouping table from file
+    observeEvent(input$rfileload$datapath,{exfolder = file.path(dirname(input$rfileload$datapath), gsub("\\.[^.]*$","",input$rfileload$name))
+    print(input$rfileload$datapath)
+    print(exfolder)
+    unzip(input$rfileload$datapath, exdir = exfolder )
+        rawstuff$rfilesin <- list.files(exfolder, pattern=".mzXML", recursive = TRUE, full.names=T)
+                                           
+                                           })
+    
+    
+    #observeEvent(input$rfileload,{rawstuff$rfilesin <- list.files(gsub("\\\\","/", input$rawpath), pattern=".mzXML", recursive = TRUE, full.names=T)})
     
     ###Initialize analysis grouping parameters                      
     rawstuff <- reactiveValues(rfilesin = NULL, #List of rawfile paths (unsorted)
                                rawgroupraw = NULL, #rawfile paths and groups (dataframe)
                                rawgroups = NULL,
-                               rawdata = NULL#rawfs
+                               rawdata = NULL,
+                               rtw = 30 #rawfs
     ) 
+    
+    observeEvent(c(rawstuff$rawdata,tablestuff$tablecut),
+                 {if(!is.null(rawstuff$rawdata) & !is.null(tablestuff$tablecut))
+                     {if(is.null(tablestuff$tablecut$rt))
+                         {rtval <- mean(c(max(sapply(sapply(unlist(rawstuff$rawdata),slot,"scantime"),max)),min(sapply(sapply(unlist(rawstuff$rawdata),slot,"scantime"),min))))
+                          tablestuff$tablecut$rt <- rtval
+                          rawstuff$rtw <- rtval
+                         
+                     }}})
     
     
     ##### Make the default rgrouping table based on groupnames table and currently selected folder
-    observeEvent(rawstuff$rfilesin,{if (!is.null(rawstuff$rfilesin)) { rawstuff$rawgroupraw <- data.frame(File=rawstuff$rfilesin,
-                                                                                                          Group = character(length(rawstuff$rfilesin)) )}})
+    observeEvent(c(rawstuff$rfilesin,input$rnamelvl),{if (!is.null(rawstuff$rfilesin)) {File=gsub(dirname(input$rfileload$datapath),"",rawstuff$rfilesin, ignore.case = T)
+                                                                                        Group = if(input$rnamelvl ==1){as.character(unname(sapply(sapply(File,strsplit,split = "/"),tail,input$rnamelvl)))}else{
+                                                                                        as.character(unname(apply(sapply(sapply(File,strsplit,split = "/"),tail,input$rnamelvl),2,"[",1)))}
+                                                                                        rawstuff$rawgroupraw <- data.frame(File, Group, stringsAsFactors = F)
+                                                                                                          }})
     ##### Render the current rgrouping table
     output$rawgrouping <- renderRHandsontable({
         rhandsontable(rawstuff$rawgroupraw)
@@ -166,12 +305,13 @@ function(input, output, session) {
     #  And also generate corresponding list objects
     
     observeEvent(input$confrgroups,{rawstuff$rawgroupraw <- data.frame(File = as.character(hot_to_r(input$rawgrouping)$File),
-                                                                       Group = as.character(hot_to_r(input$rawgrouping)$Group)
+                                                                       Group = as.character(hot_to_r(input$rawgrouping)$Group),
+                                                                       stringsAsFactors = F
     )
     ## Make list object of grouped file names                                        
     colme <- list()
-    for (l in levels(rawstuff$rawgroupraw$Group)){
-        colme[[l]] <- as.character(rawstuff$rawgroupraw$File[which(rawstuff$rawgroupraw$Group==l)])
+    for (l in unique(rawstuff$rawgroupraw$Group)){
+        colme[[l]] <- as.character(paste0(dirname(input$rfileload$datapath),rawstuff$rawgroupraw$File[which(rawstuff$rawgroupraw$Group==l)]))
     }
     #get groups in alphabetic order
     rawstuff$rawgroups <- colme[order(names(colme))]
@@ -217,6 +357,19 @@ function(input, output, session) {
         output$subsel2 <- renderUI({
             selectizeInput('selsa', 'Select sample of interest',  choices = sa2())
         })
+        
+        output$rtwd <- renderUI({
+            
+            numericInput('rtw', 'EIC RT window (sec)', rawstuff$rtw, min=1, step = 1)
+        })
+        
+      #  output$rtmin <- renderUI({
+       #     selectizeInput('selsa', 'Select sample of interest',  choices = sa2())
+        #})
+        
+        #output$rtmax <- renderUI({
+         #   selectizeInput('selsa', 'Select sample of interest',  choices = sa2())
+        #})
         
         #get the stats column for selected group and split it for filtering purposes
         #  observeEvent(input$selgr,{if(is(try(tablestuff$tablecut[[paste0(input$selgr,"_stats")]]),"try-error")){
@@ -309,7 +462,7 @@ function(input, output, session) {
         
         output$pdfButton <- downloadHandler(filename= function(){paste0(input$fname,"_EICs.pdf")}, 
                                             content = function(file){EICplot(rawstuff$rawgroups,rawstuff$rawdata, binvar1 =names(rawstuff$rawgroups),
-                                                                             alli=combino(), fileNamex = file, rtw = 45, evalmode =F , grn=3, pdfout=T, deffile = T)},
+                                                                             alli=combino(), fileNamex = file, rtw = input$rtw, evalmode =F , grn=3, pdfout=T, deffile = T)},
                                             contentType = "application/pdf")
         
         
@@ -332,7 +485,8 @@ function(input, output, session) {
         )
         
         ############################################
-output$txt <- renderPrint({mztab()
+output$txt <- renderPrint({print(tablestuff)
+    print(input$loadrgroups$datapath)
                      #print(specranges())
                       #     print(specranges2())#MS2stuff$parents[input$parenttab_rows_selected,"scannum"])#MS2stuff$spectra)
             #paste0(colstuff$anagroupnames[[input$selgr]],"_foldav")
@@ -394,7 +548,7 @@ output$txt <- renderPrint({mztab()
             #  EICplot(colme,ttsumme, binvar1 =names(colme),
             #         alli=feats[1,], fileNamex = "ttest", rtw = 45, evalmode =F , grn=3, pdfout=F)
             EICplot(rawstuff$rawgroups,rawstuff$rawdata, binvar1 =names(rawstuff$rawgroups),
-                    alli=combino()[input$hmtable_rows_selected,], fileNamex = "XTEST", rtw = 45, evalmode =F , grn=3, pdfout=F, cx= 1.2)
+                    alli=combino()[input$hmtable_rows_selected,], fileNamex = "XTEST", rtw = input$rtw, evalmode =F , grn=3, pdfout=F, cx= 1.2)
         })
         
         output$plot2 <- renderPlotly({
