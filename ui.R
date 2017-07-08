@@ -65,8 +65,9 @@ function(request){
                                     actionButton("confgroups","Confirm Grouping"),
                                     downloadButton("savegroups","Save Grouping"),
                                     fileInput('loadgroups', NULL,
-                                              accept= NULL,
-                                              placeholder=""),
+                                              accept= NULL
+                                              #placeholder=""
+                                              ),
                                     tags$hr(),
                                     actionButton("anatbl","run analysis"),
                                     checkboxInput('pv', 'Calculate Pvalues', FALSE)
@@ -83,8 +84,9 @@ function(request){
                                     actionButton("confrgroups","Confirm & Load"),
                                     downloadButton("savergroups","Save Grouping"),
                                     fileInput('loadrgroups', NULL,
-                                              accept= NULL,
-                                              placeholder="")
+                                              accept= NULL
+                                              #placeholder=""
+                                              )
                                     
                                     
                                 ))#end TabPanel
