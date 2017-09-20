@@ -1,0 +1,52 @@
+function(input, output, session) {
+    options(shiny.maxRequestSize=1024*1024^2)
+    #   session$onSessionEnded(stopApp)
+    
+    #initialize feature tables
+    featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
+                                    index = c("Custom Table" = "table0"),
+                                    active = "table0"
+    )
+    
+    MSData <- reactiveValues(layouts = list(), #List of rawfile paths (unsorted)
+                             rawgrouptable = NULL,
+                             index = NULL,
+                             active = NULL,
+                             filelist = NULL,
+                             data = NULL) #rawfs
+    
+    output$activeTable <- renderUI({
+        selectizeInput('activeTable', 'Active Table', selected = featureTables$active, choices = featureTables$index, multiple = FALSE)
+    })  
+    
+    observeEvent(input$activeTable, { 
+        
+        if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
+            if(featureTables$tables[[featureTables$active]]$editable){
+                featureTables$tables[[featureTables$active]]$df[c(row.names(hot_to_r(input$maintable))),c(colnames(hot_to_r(input$maintable)))] <- hot_to_r(input$maintable)[c(row.names(hot_to_r(input$maintable))),c(colnames(hot_to_r(input$maintable)))]
+            }else{
+                featureTables$tables[[featureTables$active]]$df[c(row.names(hot_to_r(input$maintable))),"comments"] <- hot_to_r(input$maintable)[c(row.names(hot_to_r(input$maintable))),"comments"] 
+            }
+        }
+        
+        featureTables$active <- input$activeTable})
+    
+    source(file.path("modules_nonformal", "bookmarking_server.R"), local = TRUE)$value 
+    
+    
+    source(file.path("modules_nonformal", "logo_server.R"), local = TRUE)$value 
+    source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
+    source(file.path("modules_nonformal", "background_server.R"), local = TRUE)$value
+    
+    source(file.path("modules_nonformal", "start_server.R"), local = TRUE)$value 
+    
+    source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
+    source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value
+    
+    source(file.path("modules_nonformal", "processTableData_server.R"), local = TRUE)$value
+    
+    source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
+    
+    
+    
+}
