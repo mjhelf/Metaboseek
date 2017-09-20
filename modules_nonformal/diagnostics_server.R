@@ -1,6 +1,0 @@
-runcodeServer()
-
-output$diag <- renderPrint({
- 
-
-})
