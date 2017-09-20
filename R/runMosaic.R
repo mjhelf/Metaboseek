@@ -16,3 +16,21 @@ runMosaic <- function(devel = F, server = T, ...) {
   
   shiny::runApp(appDir, ...)
 }
+
+#' Run XCMS interface
+#' 
+#' Run the XCMS runner in your webbrowser. Currently only intended for use on a local computer (file system access required).
+#' the XCMS runner will also be integrated into MOSAiC eventually.
+#' 
+#' @param ... Additional arguments passed to shiny::runApp.
+#'
+#'
+#' @export
+runXcms <- function(...) {
+  appDir <- system.file("MosaicApp", "xcmsRunner", package = "Mosaic")
+  if (appDir == "") {
+    stop("Could not find example directory. Try re-installing `Mosaic`.", call. = FALSE)
+  }
+  
+  shiny::runApp(appDir, ...)
+}
