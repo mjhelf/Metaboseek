@@ -1,0 +1,16 @@
+,Value,Description
+TITLE,CAMERA analysis parameters,Set parameters for peak annotation with the CAMERA package
+polarity,positive,"positive or negative, important for adduct annotation!"
+ppm,5,ppm error for isotope and adduct searches
+mzabs,0.005,allowed variance for isotope and adduct searches
+FWHM-Grouping,_______,Group peaks of a xsAnnotate object according to there retention time into pseudospectra-groups. Uses the peak full widths at half maximum (FWHMs) as grouping borders. Returns xsAnnotate object with pseudospectra informations.
+sigma,3,"the multiplier of the standard deviation. peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped."
+perfwhm,0.5,percentage of the width of the FWHM
+groupCorr,_______,Peak grouping after correlation information into pseudospectrum groups for an xsAnnotate object. Return an xsAnnotate object with grouping information.
+cor_eic_th,0.75,Correlation threshold for EIC correlation (0…1)
+pval,0.05,p-value threshold for testing correlation of significance
+findIsotopes,_______,Annotate isotope peaks for a xsAnnotate object. Returns a xsAnnotate object with annotated isotopes.
+maxcharge,3,max. number of the isotope charge
+maxiso,4,max. number of the isotope peaks
+minfrac,0,"in case of multiple samples, percentaged value of samples, which have to contain the correct C12/C13 ratio and are not NA"
+filter,FALSE,Should C12/C13 filter be applied
