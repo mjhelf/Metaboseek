@@ -6,25 +6,28 @@ function(request){
                          #imageOutput("logo"),  
 
                          sidebarMenu(
-                           p("version r2 beta"),
+                           p("version r3 beta"),
                          source(file.path("modules_nonformal", "background_ui.R"), local = TRUE)$value,
                          menuItem("Start", tabName = "start", icon = icon("paper-plane")),   
-                         menuItem("Load Data", tabName = "loaddata", icon = icon("files-o"),
-                                  menuSubItem("Feature Tables", tabName = "loadtables"),
-                                  menuSubItem("MS Data", tabName = "rawfiles")
-                                  ),
-                         menuItem("Process Data", tabName = "processdata", icon = icon("desktop"),
-                                  menuSubItem("Feature Tables", tabName = "processTableData")),
+                        # menuItem("Load Data", tabName = "loaddata", icon = icon("files-o"),
+                         #         menuSubItem("Feature Tables", tabName = "loadtables"),
+                          #        menuSubItem("MS Data", tabName = "rawfiles")
+                           #       ),
+                         menuItem("Explore Data", tabName = "exploredata", icon = icon("area-chart")),
+                        
+                        menuItem("Workflows", tabName = "processdata", icon = icon("desktop")
+                                 # menuSubItem("Feature Tables", tabName = "processTableData")
+                                 ),
                                  # menuSubItem("MS Data", tabName = "rawfiles")),
                        #  div(title = "Run basic statistical analyses", menuItem("Process Data", tabName = "processdata", icon = icon("desktop"))),
-                         menuItem("Explore Data", tabName = "exploredata", icon = icon("area-chart")),
+                         
                          
             
             bookmarkButton(label ="Bookmark this session"),
                          htmlOutput("activeTable")
                          )
             
-            
+             
             
             ),
         dashboardBody(
@@ -97,19 +100,16 @@ function(request){
                 tabItem(tabName = "start",
                         source(file.path("modules_nonformal", "start_ui.R"), local = TRUE)$value
                 ),
-                ##curently not working:
-                tabItem(tabName = "loaddata",
-                        source(file.path("modules_nonformal", "loaddata_main_ui.R"), local = TRUE)$value
-                        ),
-                tabItem(tabName = "loadtables",
-                        source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value
-                        ),
-                tabItem(tabName = "rawfiles",
-                        source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value
-                ),
-                tabItem(tabName = "processTableData",
-                        source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
-                ),
+                
+               # tabItem(tabName = "loadtables",
+                #        source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value
+                 #       ),
+              #  tabItem(tabName = "rawfiles",
+               #         source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value
+                #),
+              #  tabItem(tabName = "processTableData",
+               #         source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
+                #),
                 tabItem(tabName = "exploredata",
                         source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
                 )

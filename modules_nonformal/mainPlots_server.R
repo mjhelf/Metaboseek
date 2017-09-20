@@ -94,7 +94,7 @@ output$mainPlotEICsPre <- renderPlot({
     
 }, bg = "white")
 
-mainPlotHeight <- reactive({if(!is.null(MSData$active)){
+mainPlotHeight <- reactive({if(!is.null(MSData$active) && MSData$active != ""){
   paste0(ceiling(length(MSData$layouts[[MSData$active]]$grouping)/MSData$layouts[[MSData$active]]$settings$cols)*400+100,"px")
 }
   else{"auto"}
