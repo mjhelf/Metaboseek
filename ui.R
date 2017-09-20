@@ -1,213 +1,125 @@
 function(request){
-    fluidPage(
-        theme = shinytheme("united"),
-         
-      #  runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
-       #           height = NULL, includeShinyjs = FALSE),
-    #    list(tags$head(
-       # HTML('<link rel="icon", href="MyIcon.png", 
-        #                           type="image/png" />'))),
-        div(style="padding: 1px 0px; width: '100%'",
-            titlePanel(
-                title="", windowTitle="MOSAiC"
-            )
-        ),
+  fluidPage(   
+    dashboardPage(skin = "black",
+        dashboardHeader(title = "MOSAiC"),
+        dashboardSidebar(#width = 250,
+                         #imageOutput("logo"),  
 
-    navbarPage(title=div(img(src="/img/Mosaic_logo.png"), "MOSAiC"),#"MoSAIC",
-               #actionButton("Save",label = "Save",icon = icon("floppy-o", lib = "font-awesome")),
-             
-               tabPanel("Load Data",
-                        
-                        ##DETECT KEYBOARD ACTIONS
-                        ##key being held down
-                        tags$script('
-                                    $(document).on("keydown", function (e) {
-                                    Shiny.onInputChange("keyd", e.which);
-                                    });
-                                    $(document).on("keyup", function (e) {
-                                    Shiny.onInputChange("keyd", "NO");
-                                    });
-                                    '),
-                        # mainPanel(
-                        #   "This is where the data structure will be set up in the future",
-                        tabsetPanel(
-                            tabPanel(
-                                "Feature table",
-                                verticalLayout(
-                                    fileInput('file1', 'Choose CSV File',
-                                              accept=c('text/csv', 
-                                                       'text/comma-separated-values,text/plain', 
-                                                       '.csv')),
+                         sidebarMenu(
+                           p("version r2 beta"),
+                         source(file.path("modules_nonformal", "background_ui.R"), local = TRUE)$value,
+                         menuItem("Start", tabName = "start", icon = icon("paper-plane")),   
+                         menuItem("Load Data", tabName = "loaddata", icon = icon("files-o"),
+                                  menuSubItem("Feature Tables", tabName = "loadtables"),
+                                  menuSubItem("MS Data", tabName = "rawfiles")
+                                  ),
+                         menuItem("Process Data", tabName = "processdata", icon = icon("desktop"),
+                                  menuSubItem("Feature Tables", tabName = "processTableData")),
+                                 # menuSubItem("MS Data", tabName = "rawfiles")),
+                       #  div(title = "Run basic statistical analyses", menuItem("Process Data", tabName = "processdata", icon = icon("desktop"))),
+                         menuItem("Explore Data", tabName = "exploredata", icon = icon("area-chart")),
+                         
+            
+            bookmarkButton(label ="Bookmark this session"),
+                         htmlOutput("activeTable")
+                         )
+            
+            
+            
+            ),
+        dashboardBody(
+          # Also add some custom CSS to make the title background area the same
+          # color as the rest of the header.
+          tags$head(tags$style(HTML('
+                                    /* logo */
+                                    .skin-black .main-header .logo {
+                                    background-color: #C41230;
+                                    color: #ffffff;
+                                    }
                                     
-                                    checkboxInput('header', 'Header', TRUE),
-                                    radioButtons('sep', 'Separator',
-                                                 c(Comma=',',
-                                                   Semicolon=';',
-                                                   Tab='\t'),
-                                                 ','),
-                                    radioButtons('quote', 'Quote',
-                                                 c(None='',
-                                                   'Double Quote'='"',
-                                                   'Single Quote'="'"),
-                                                 '"'),
-                                    actionButton("ldtbl","Load Table"),
+                                    /* logo when hovered */
+                                    .skin-black .main-header .logo:hover {
+                                    background-color: #C41230;
+                                    }
                                     
-                                    tags$hr(),
-                                    rHandsontableOutput('preview'),
-                                    numericInput('rmcols',"start column", value = 1, min = 1),
-                                    numericInput('rmrows', "start row", value = 1, min = 1),
-                                    actionButton("intcols","Select Columns"),
-                                    tags$hr(),
-                                    #numericInput('ngroups', "Number of Groups", value = 1, min = 1),
-                                    #rHandsontableOutput('groupnames'),
-                                    #tags$hr(),
-                                    rHandsontableOutput('anagrouping'),
-                                    actionButton("confgroups","Confirm Grouping"),
-                                    downloadButton("savegroups","Save Grouping"),
-                                    fileInput('loadgroups', NULL,
-                                              accept= NULL
-                                              #placeholder=""
-                                              ),
-                                    tags$hr(),
-                                    actionButton("anatbl","run analysis"),
-                                    checkboxInput('pv', 'Calculate Pvalues', FALSE)
-                                )),
-                            tabPanel(
-                                "MS data files",
-                                verticalLayout(
-                                    #actionButton('uzi','Unzip'),
-                                    fileInput('rfileload',"ZIP file", accept = "application/zip"),
-                                    # numericInput('nrgroups', "Number of Groups", value = 1, min = 1),
-                                    # rHandsontableOutput('rgroupnames'),
-                                    numericInput("rnamelvl", "Naming scheme", 1, step=1, min = 1),
-                                    rHandsontableOutput('rawgrouping'),
-                                    actionButton("confrgroups","Confirm & Load"),
-                                    downloadButton("savergroups","Save Grouping"),
-                                    fileInput('loadrgroups', NULL,
-                                              accept= NULL
-                                              #placeholder=""
-                                              )
+                                    /* navbar (rest of the header) */
+                                    .skin-black .main-header .navbar {
+                                    background-color: #C41230;
+                                    color: #ffffff;
+                                    }        
                                     
+                                    /* main sidebar */
+                                    .skin-black .main-sidebar {
+                                    background-color: #595959;
+                                    }
                                     
-                                ))#end TabPanel
-                            #)# end sidebarlayout
-                        )# end tabsetPanel
-                        ),#End Setup
-               
-               tabPanel("Explore Data",
-                        sidebarLayout(
-                            
-                            sidebarPanel(
-                                "Filter options",
-                                htmlOutput('selgr'),
-                                htmlOutput('subsel1'),
-                                #      rHandsontableOutput('filtable1'), 
-                                
-                                #  numericInput('grfold',"Min group fold change",value = 0),
-                                #   numericInput('grint',"Min group mean intensity",value = 0),
-                                #   numericInput('grintmx',"Min group max intensity",value = 0),
-                                
-                                htmlOutput('subsel2'),
-                                htmlOutput('subsel3'),
-                                #  numericInput('saint',"Min sample intensity",value = 0),
-                                #   numericInput('safoldmx',"Min sample fold over max",value = 0),
-                                #   numericInput('safoldav',"Min group fold over mean",value = 0),
-                                htmlOutput('subsel4'),
-                                htmlOutput('subsel5'),
-                                hr(),
-                                textInput("fname", label = "Filename:", value = "Enter here.."),
-                                downloadButton("pdfButton", "EICplot PDF"),
-                                # actionButton("tbButton", "Export table"),
-                                downloadButton("tbButton","Save Table"),
-                                htmlOutput('mzquery'),
-                                textInput("mzspace", label = "Select elements:", value = "C0-100H0-202N0-15O0-20"),
-                                numericInput("mzcharge", "Charge", 0, step=1),
-                                numericInput("mzppm", "ppm", 5, step=0.1),
-                                actionButton("mzButton", "Sum formulas"),
-                                rHandsontableOutput('hot1'),
-                                htmlOutput("rtwd")
-                            ), #endsidebarpanel
-                            
-                            mainPanel(
-                                verticalLayout( 
-                                    tabsetPanel(
-                                        
-                                        tabPanel(
-                                            "Table"
-                                        ),#end tab
-                                        tabPanel(
-                                            "EICplot",
-                                            plotOutput('plot1',
-                                                       height = "1000px"
-                                            )
-                                        ),#end tab
-                                        tabPanel(
-                                            "Heatmap",
-                                            actionButton("goButton", "Update heatmap"),
-                                            plotlyOutput('plot2',
-                                                         height = "1000px")
-                                        ),#end tab
-                                        tabPanel(
-                                            "Explorer",
-                                            titlePanel("Viewer GUI"),
-                                            htmlOutput('EICfiles'),
-                                            plotlyOutput('chromly'),
-                                            verbatimTextOutput('specinfo'),
-                                            plotOutput('spec', height = 500,
-                                                       click = "spec_click",
-                                                       hover = "spec_hover",
-                                                       dblclick = "spec_dblclick",
-                                                       brush = brushOpts(
-                                                           id = "spec_brush",
-                                                           direction = "x",
-                                                           resetOnNew = TRUE))
-                                            
-                                        ),
-                                        tabPanel(
-                                            "MS2 Explorer",
-                                            titlePanel("MS2 search"),
-                                            #div(DT::dataTableOutput('parenttab', height = "auto"), style = "font-size: 75%"),
-                                            h4("Annotated fragments"),
-                                            rHandsontableOutput('fragtab2', height = "300px"),
-                                            actionButton("sFrags", "Save Fragments"),
-                                            plotOutput("molplot",height = "300px", width = "300px"),
-                                            h4("MS2 spectrum view"),
-                                            verbatimTextOutput('specinfo2'),
-                                            plotOutput('spec2', height = 500,
-                                                       click = "spec2_click",
-                                                       hover = "spec2_hover",
-                                                       dblclick = "spec2_dblclick",
-                                                       brush = brushOpts(
-                                                           id = "spec2_brush",
-                                                           direction = "x",
-                                                           resetOnNew = TRUE)),
-                                            h4("MS2 spectra with selected parent m/z:"),
-                                            rHandsontableOutput('parenttab', height = "300px")
-                                            
-                                        )#end tab
-                                        
-                                    ),#end tabset
-                                    # tags$head(
-                                    #  tags$style(HTML("
-                                    #        .dataTables_wrapper { overflow-x: scroll; }
-                                    #       " ))),
-                                    h4("Feature table"),
-                                    div(style="display:inline-block",actionButton("fButton", "Filter"),actionButton("fButton2", "Reload Filter")),
-                                    rHandsontableOutput('filtable2'),
-                                    #rHandsontableOutput('hot1'),
-                                    div(DT::dataTableOutput('hmtable', height = "auto"), style = "font-size: 75%")
-                                    #                                    div(DT::dataTableOutput('hmtable2', height = "auto"), style = "font-size: 75%")
+                                    /* active selected tab in the sidebarmenu */
+                                    .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
+                                    background-color: #404040;
+                                    color: #ffffff;
+                                    }
                                     
+                                    /* other links in the sidebarmenu */
+                                    .skin-black .main-sidebar .sidebar .sidebar-menu a{
+                                    background-color: #595959;
+                                    color: #ffffff;
+                                    }
                                     
-                                )# end verticalLayout
-                            )#end tabset and mainpanel
-                        )# end sidebarlayout
-               )# end tabPanel
-               
-               
-               
-    ), #end navbarPage
-    bookmarkButton(label ="Bookmark this session")
-    #,verbatimTextOutput('txt')
-    )#end fluidpage
+                                    /* other links in the sidebarmenu when hovered */
+                                    .skin-black .main-sidebar .sidebar .sidebar-menu a:hover{
+                                    background-color: #404040;
+                                    }
+                                    /* toggle button  */                    
+                                    .skin-black .main-header .navbar .sidebar-toggle{
+                                    background-color: #C41230;
+                                    color: #ffffff;
+                                    }
+                                    /* toggle button when hovered  */                    
+                                    .skin-black .main-header .navbar .sidebar-toggle:hover{
+                                    background-color: #595959;
+                                    color: #ffffff;
+                                    }
+
+
+                                    .box .box-primary .box-header {
+                                    color:#fff;
+                                    background:#595959
+                                    }
+
+                                    .box .box-primary .box-primary{
+                                    border-bottom-color:#666666;
+                                    border-left-color:#666666;
+                                    border-right-color:#666666;
+                                    border-top-color:#666666;
+                                    }
+                                    '))),
+            tabItems(
+                tabItem(tabName = "start",
+                        source(file.path("modules_nonformal", "start_ui.R"), local = TRUE)$value
+                ),
+                ##curently not working:
+                tabItem(tabName = "loaddata",
+                        source(file.path("modules_nonformal", "loaddata_main_ui.R"), local = TRUE)$value
+                        ),
+                tabItem(tabName = "loadtables",
+                        source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value
+                        ),
+                tabItem(tabName = "rawfiles",
+                        source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value
+                ),
+                tabItem(tabName = "processTableData",
+                        source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
+                ),
+                tabItem(tabName = "exploredata",
+                        source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
+                )
+            )
+
+
+    
+        )
+        ),
+   source(file.path("modules_nonformal", "diagnostics_ui.R"), local = TRUE)$value
+  )    
+    
 }
