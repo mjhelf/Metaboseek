@@ -132,28 +132,48 @@ multiEIC <- function (rawdata= rawcoll,
 ## rawEIC (formerly xcms method)
 rawEICm <- function(object,
                                         mzrange = numeric(),
-                                        rtrange = numeric(),
-                                        scanrange = numeric())  {
-    
-    if (length(rtrange) >= 2 & max(object@scantime) >= rtrange[1]) { #the fix is after &, and will only work if x axis in plots is defined independent of EIC ranges!
-        rtrange <- range(rtrange)
+                                        rtrange =numeric(),
+                                        scanrange = numeric(),
+                    viewermode = F)  {
+    #print(paste(mzrange, rtrange))
+  
+    if (length(rtrange) >= 2 ) { #the fix is after &, and will only work if x axis in plots is defined independent of EIC ranges!
+      
+      if(max(rtrange) == 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
+            rtrange <- range(rtrange)
+
+      if(max(object@scantime) < rtrange[2] & viewermode){rtrange[2] <- max(object@scantime)}
+      
+      
         
         scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
-    }  else if (length(scanrange) < 2)
-        scanrange <- c(1, length(object@scantime))
-    else
-        scanrange <- range(scanrange)
+        
+        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)) + 1 ) # +1 is a fix to include last scan that meets condition, fixes problem if only one scan meets condition
+        
+        #this is to handle exceptional situations where through retention time correction, the rtmin and rtmax both are between
+        if(!any(scanidx) 
+           & rtrange[2] <= max(object@scantime) 
+           & rtrange[1] >= min(object@scantime)){
+          scanrange <- range(c(which.min(abs(object@scantime - rtrange[1])),
+                                         which.min(abs(object@scantime - rtrange[2]))))}
+        
+    }  else if (length(scanrange) < 2){
+        scanrange <- c(1, length(object@scantime))}
+    else{
+        scanrange <- range(scanrange)}
     
     scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    scanrange[2] <- min(length(object@scantime),scanrange[2]) #this should actually avoid the problem..
     
     if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
     if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
     if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
     
+
     .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
-}
+
+
+    }
 
 getgauss <- function (x){
     
@@ -207,11 +227,10 @@ bestgauss <- function(rawdata = rawcoll, ...){
 #'
 
 exIntensities <- function (rawfile= rawdata[[1]] ,
-                           featuretable=alli,
-                           mz = alli$mz,
-                           ppm=5,
-                           rtw= data.frame(alli$rtmin-5,alli$rtmax+5),
-                           coltag="test"){
+                           mz = tb$mz,
+                           ppm = 5,
+                           rtw= data.frame(rta[[1]]$rtmin-5,rta[[1]]$rtmax+5)
+                           ){
   
   #cat(paste0("Reference list with ",length(featuretable[,1])," features, iterating through list, feature #" ))
   
@@ -232,6 +251,4 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
   fx <- function(x) x$intensity-min(x$intensity)
   summe <- lapply(summe, fx )
   
-  featuretable[[paste0(sub("^([^.]*).*", "\\1",basename(coltag)),"__XIC")]] <- sapply(summe, mean)
-  
-  return(featuretable)}
+  return(sapply(summe, mean))}

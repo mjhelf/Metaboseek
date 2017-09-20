@@ -1,7 +1,9 @@
 tabBox(title = "EIC viewer",
-       id = "EICplots", width = 12, side = "right", selected = "Grouped EICs",
+       id = "EICplots", width = 12, side = "right", selected = "Load MS data",
        
        tabPanel("_"),
+       tabPanel("Load MS data",
+                source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value),
        tabPanel("Grouped EICs",
                 fluidPage(
   fluidRow(
