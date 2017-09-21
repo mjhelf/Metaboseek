@@ -2,14 +2,20 @@
 % Please edit documentation in R/class_msdata.R
 \name{exIntensities}
 \alias{exIntensities}
-\title{multiEIC}
+\title{exIntensities}
 \usage{
 exIntensities(rawfile = rawdata[[1]], mz = tb$mz, ppm = 5,
   rtw = data.frame(rta[[1]]$rtmin - 5, rta[[1]]$rtmax + 5))
 }
-\description{
-Get intensities from a table of mz/rt features from an EICraw- created object. Requires rtmin and rtmax
+\arguments{
+\item{rawfile}{an xcmsRaw object}
+
+\item{mz}{numeric (): m/z values (same length as nrow(rtw)).}
+
+\item{ppm}{m/z width (+/- ppm from values defined in mz)}
+
+\item{rtw}{a data.frame with minimum (column 1) and maximum (column 2) retention time values (in seconds) in each row.}
 }
-\details{
-New version with apply instead of loops 5x faster for EICs
+\description{
+Lightweight variant of multiEIC to extract average in a file, more suitable for large featuretables.
 }
