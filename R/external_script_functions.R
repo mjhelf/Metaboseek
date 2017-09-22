@@ -6,7 +6,7 @@
 #' @param message named list of columns with custom messages
 #' @param wd directory where the status.csv file should be written and updated. If NULL, no status.csv is written.
 #' 
-#' @example
+#' @examples 
 #' 
 #' status <- writeStatus(previous = NULL,
 #'             message = list(Status = "Starting analysis",

@@ -1,14 +1,24 @@
-#' reformatTable
+#' constructFeatureTable
 #' 
 #' 
-#' a function to change a data.frame into a Mosaic table object
-#' mostly contains indexing lists plus the original df plus intensity values in a matrix
+#' Constructor function for "MosaicFT" object from a feature table data.frame.
+#' uses and retains the original data frame plus names of columns containing relevant data. 
 #' 
-#' NOTES: Consider rtmin/max case, think about labeling experiments!
-#' add filtertable slot
+#' NOTE: currently, only the default values for column names are supported.
 #' 
+#' @param df feature table as data.frame, with retention time (rt), mz and (optionally) intensity values.
+#' @param mzcol column in df with mz values (columnname), defaults to "mz"
+#' @param rtcol column in df with rt values (columnname), defaults to "rt"
+#' @param commentcol column in df with comments (columnname), defaults to "comments"
+#' @param fragmentcol column in df with fragmentation information (columnname), defaults to "fragments"
+#' @param rtFormat Are retention times given in seconds ("sec") or minutes ("min")
+#' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
+#' @param tablename Name of the table as displayed by Mosaic
+#' @param editable allow editing of this table in the Mosaic app? if FALSE, only comments column can be edited. editable tables are also not paginated.
+#' 
+#' @export
 constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3)),# data frame 
-                          mzcol= "mz", #column in df with mz values (columnname)
+                          mzcol= "mz", #
                           rtcol= "rt", #column in df with mz values (columnname)
                           commentcol = "comments",
                           fragmentcol = "fragments",
@@ -81,12 +91,25 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
-    class(FT) <- "MOSAiC feature table"
+    class(FT) <- "MosaicFT"
     
     return(FT)
 
 }
 
+
+
+
+#' updateDF
+#' 
+#' Update dataframe b with data from dataframe a; must have equal number of rows
+#' Existing data in b will be overridden if columns by the same name exist in a, and retained otherwise.
+#' Additional columns in a will be transferred to b. Returns an updated data.frame b.
+#' 
+#' @param a source data.frame
+#' @param b target data.frame
+#' 
+#' @export
 updateDF <- function(a, b){
 
         for (i in colnames(a)){
@@ -96,8 +119,15 @@ updateDF <- function(a, b){
     }
     
 
-
-updateFeatureTable <- function(FT, df){ #update an existing Mosaic feature table with new data frame columns (leaving intensitiy tables and constants in effect)
+#' updateDF
+#' 
+#' update an existing MosaicFT with new data frame columns (leaving intensitiy tables and constants in effect)
+#' 
+#' @param FT MosaicFT object
+#' @param df source data.frame
+#' 
+#' @export
+updateFeatureTable <- function(FT, df){
     
     FT$df = updateDF(df,FT$df)
     if(!is.null(FT$anagrouptable)){
@@ -121,6 +151,15 @@ updateFeatureTable <- function(FT, df){ #update an existing Mosaic feature table
     return(FT)
 }
 
+
+#' updateFTgrouping
+#' 
+#' update or construct grouping information of a MosaicFT object
+#' 
+#' @param FT MosaicFT object
+#' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
+#' 
+#' @export
 updateFTgrouping <- function(FT,anagrouptable){
     
     FT$anagrouptable = anagrouptable
@@ -169,6 +208,14 @@ updateFTgrouping <- function(FT,anagrouptable){
     return(FT)
 }
 
+
+#' updateFTgrouping
+#' 
+#' update the FT index of the Mosaic App (needed because this index is a named list - extracts tablename entry from each MosaicFT object in list)
+#' 
+#' @param table list of MosaicFT objects 
+#' 
+#' @export
 updateFTIndex <- function(tables){
     out <- names(tables)
     
@@ -177,9 +224,16 @@ updateFTIndex <- function(tables){
     return(out)
 }
 
-## helper function to reformat Table analysis grouping tables
 
-tableGrouping <- function(table, anagrouptable){
+#' tableGrouping
+#' 
+#' Groups a anagrouptable into a named list. Helper function to reformat Table analysis grouping tables
+#' 
+#' @param df feature table as data.frame, with intensity values.
+#' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
+#' 
+#' @export
+tableGrouping <- function(df, anagrouptable){
     ## Make list object of grouped column names                                        
     colme <- list()
     for (l in unique(anagrouptable$Group)){
@@ -189,7 +243,7 @@ tableGrouping <- function(table, anagrouptable){
     ### Get column numbers from column names
     colnu <- integer(0)
     for (i in anagrouptable$Column){
-        colnu<- c(colnu,which(colnames(table) == i))
+        colnu<- c(colnu,which(colnames(df) == i))
     }
     ## Make list object of grouped column numbers
     colme <- list()
@@ -200,47 +254,21 @@ tableGrouping <- function(table, anagrouptable){
     return(list(anagroupnames = anagroupnames,anagroupnums = anagroupnums))
 }
 
-filterDF <- function(df,
-                     filters = list()){
-    
-        cn <- names(filters)
-        whi= row.names(df)
 
-        for (i in cn[which(cn %in% colnames(df))]){
-            whi <- row.names(df[whi,])[which( as.numeric(df[whi,i]) >= as.numeric(filters[[i]]$min)
-                                         & as.numeric(df[whi,i]) <= as.numeric(filters[[i]]$max))]
-            
-        }
-        
-        
-        return(unique(whi))
-        }
 
-####To be removed, goes by index rather than row.name
-filterDFold <- function(df = pcame_mini,
-                     filters = list(mz = list(ty = "numeric",
-                                              min = 240,
-                                              max = 300),
-                                    rt = list(ty = "numeric",
-                                              min = 200,
-                                              max = 400))){
-    
-    cn <- names(filters)
-    # print(cn)
-    # print(cn[which(cn %in% colnames(df))])
-    whi= 1:nrow(df)
-    whit <- whi
-    
-    for (i in cn[which(cn %in% colnames(df))]){
-        whi <- which( as.numeric(df[,i]) >= as.numeric(filters[[i]]$min)
-                      & as.numeric(df[,i]) <= as.numeric(filters[[i]]$max))
+###Deprecated:
+#filterDF <- function(df,
+ #                    filters = list()){
+  #  
+   #     cn <- names(filters)
+    #    whi= row.names(df)
+#
+ #       for (i in cn[which(cn %in% colnames(df))]){
+  #          whi <- row.names(df[whi,])[which( as.numeric(df[whi,i]) >= as.numeric(filters[[i]]$min)
+   #                                      & as.numeric(df[whi,i]) <= as.numeric(filters[[i]]$max))]
+    #        
+     #   }
         
         
-        # print(whi)
-        wx <- c(whit,whi)
-        whit <- as.numeric(names(table(wx)[which(table(wx)==2)]))
-        #print(whit)
-    }
-    return(unique(whit))
-    }
-
+      #  return(unique(whi))
+       # }

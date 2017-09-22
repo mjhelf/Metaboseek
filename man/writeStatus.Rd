@@ -17,3 +17,19 @@ writeStatus(previous = NULL, message = list(Status = "Starting analysis",
 \description{
 Write or update a status dataframe with custom messages, time stamp and time elapsed since last status. Useful to document time consumed analysis by steps.
 }
+\examples{
+
+status <- writeStatus(previous = NULL,
+            message = list(Status = "Starting analysis",
+                           Details = "loading files"
+                          ),
+           wd = getwd())
+           
+           
+status <- writeStatus(previous = status,
+            message = list(Status = "Running analysis",
+                           Details = "detecting features"
+                          ),
+           wd = getwd())
+
+}

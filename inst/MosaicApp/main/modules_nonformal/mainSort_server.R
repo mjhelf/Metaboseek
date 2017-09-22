@@ -83,6 +83,7 @@ F1out <-    reactive({
     if(length(selections) == 1){sele <- selections[[1]]} 
     else if(length(selections) > 1){
       sele <- selections[[1]]
+      ##combining filter results
       for(i in 2:length(actives)){
         sele <- sele[which(sele %in% selections[[i]])]
       }
