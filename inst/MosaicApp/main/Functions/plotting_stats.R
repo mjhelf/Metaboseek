@@ -4,7 +4,19 @@ library(graphics)
 library(stats)
 
 
-
+#' densplot
+#' 
+#' 
+#' generate a density plot for numeric data.
+#' 
+#' To accomodate logarithmized data,
+#' Inf values will be set to 1.1*largest value that is not Inf
+#' -Inf values will be set to 0.9*smallest value that is not -Inf
+#' 
+#' @param densin numeric vector or matrix
+#' @param perc numeric(): draw lines at these quantiles
+#' 
+#' @export
 densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtrate3$rt,#input values
                     perc = c(0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9, 0.95, 0.99),
                     ... #pass arguments to plot()
@@ -31,7 +43,3 @@ densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtra
     graphics::legend("topright", inset=c(0,0.03*max(dens$y)),legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=.5)
 }
 
-
-#boxplot.matrix(mx)
-
-#barplot(mx)

@@ -31,5 +31,5 @@ EICplot(EIClistItem = res[[1]], cx = 1, ylim = c(0,
 \item{EIClist}{item from a list of EICs from Mosaic:multiEIC}
 }
 \description{
-generate multiple EICs on one page
+generate one EIC plot for multiple files
 }

@@ -273,7 +273,7 @@ groupPlot <- function(EIClist = res,
 
 #' EICplot
 #' 
-#' generate multiple EICs on one page
+#' generate one EIC plot for multiple files
 #' 
 #' 
 #' @param EIClist item from a list of EICs from Mosaic:multiEIC
