@@ -1,5 +1,24 @@
 library(Hmisc)
-
+#' EICgeneral
+#' 
+#' wrapper function to plot multiple EICs
+#' 
+#' 
+#' @param rtmid vector of retention time values (not ranges)
+#' @param mzmid vector of mz values (not ranges)
+#' @param glist a named list of grouped file names (as supplied in $grouping of rawLayout objects)
+#' @param cols integer, number of colors generated
+#' @param colrange character(1), color range function used for line colors
+#' @param transparency numeric(1), alpha (range 0..1) for transparency of lines
+#' @param RTall if TRUE, entire RT range will be plotted
+#' @param TICall if TRUE, TIC will be plotted instead of EIC
+#' @param rtw retention time window +/- rtmid in seconds that will be plotted
+#' @param ppm mz window +/- mzmid in ppm that will be plotted
+#' @param rdata named list of xcmsRaw objects
+#' @param pdfFile character - if not NULL, plotting result will be saved in a pdf file with this name.
+#' @param leadingTIC if TRUE, a TIC plot is made before the EIC plots (e.g. as first page of pdf file)
+#' 
+#' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
                     mzmid = combino()[,"mz"],
                     glist = MSData$layouts[[MSData$active]]$grouping,
@@ -117,7 +136,16 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 
 
 
-
+#' EICtitles
+#' 
+#' helper function to generate titles for EICgeneral
+#' 
+#' 
+#' @param rts vector of retention time values (not ranges)
+#' @param mzs vector of mz values (not ranges)
+#' @param ppm mz window +/- mzmid in ppm that will be plotted
+#' 
+#' export
 EICtitles <- function(mzs, rts, ppm){
   
   numbs <- matrix(mapply(sprintf,matrix(c(mzs,
@@ -137,6 +165,32 @@ EICtitles <- function(mzs, rts, ppm){
   
 }
 
+#' groupPlot
+#' 
+#' generate multiple EICs on one page
+#' 
+#' 
+#' @param EIClist list of EICs from Mosaic:multiEIC
+#' @param grouping a named list of grouped file names (as supplied in $grouping of rawLayout objects)
+#' @param plotProps a list of settings for the individual plots
+#' @param plotProps.TIC if TRUE, TIC instead of EIC
+#' @param plotProps.cx numeric(1) font size (character expansion) factor
+#' @param plotProps.colr color range (actual vector of color values)
+#' @param plotProps.ylim data.frame or matrix of nrow = number of plotted features, with min and max visible rt value (in seconds) for each feature
+#' @param plotProps.xlim data.frame or matrix of nrow = number of plotted features, with min and max visible intensity value for each feature
+#' @param compProps layoout options for the composite plot
+#' @param compProps.mfrow integer(2) rows and columns for plotting (cf. par(), mfrow)
+#' @param compProps.oma numeric(4) outer margins (cf. par(), oma)
+#' @param compProps.xpd drawing outside of plot region, cf. par(), xpd
+#' @param compProps.bg background color, cf. par(), bg
+#' @param compProps.header First (title) line of composite plot
+#' @param compProps.header2 Subtitle line of composite plot
+#' @param compProps.pdfFile character - if not NULL, plotting result will be saved in a pdf file with this name.
+#' @param compProps.pdfHi pdf height in inches
+#' @param compProps.pdfWi pdf width in inches
+#' @param compProps.cx numeric(1) font size (character expansion) factor
+#' 
+#' @export
 groupPlot <- function(EIClist = res,
                       grouping = grouping2,
                       plotProps = list(TIC = T, #settings for single plots
@@ -180,25 +234,7 @@ groupPlot <- function(EIClist = res,
          items = grouping[[plotgroup]]
          minoritem <- if(length(items) == 1){t(as.matrix(EIClist[[majoritem]][items,]))}else{EIClist[[majoritem]][items,]}
          if(length(items) == 1){row.names(minoritem) <- items}
-         #exception handling: EIClists for only one file have to be addressed differently
-    #     if(length(items) == 1){
-     #    EICplot(EIClistItem = minoritem, cx = plotProps$cx, 
-      #           ylim = if(plotProps$TIC){c(0,max(unlist(minoritem[,'tic'])))}
-       #          else if (is.null(plotProps$ylim)){c(0,max(unlist(minoritem$intensity)))}
-        #         else{c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}, 
-         #        xlim = if (is.null(plotProps$xlim)){c(min(unlist(minoritem$rt)),
-          #                                             max(unlist(minoritem$rt)))/60}
-           #      else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60},
-            #     legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem)))),
-             #    colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
-              #   else{plotProps$colr[1:nrow(minoritem)]},
-               #  heading = names(grouping)[plotgroup],
-                # relto = NULL,
-                 #TIC = plotProps$TIC
-                 #mfrow=c(1,2)
-         #)   }
-         #else{
-           
+
         EICplot(EIClistItem = minoritem, cx = plotProps$cx, 
                             ylim = if(plotProps$TIC){c(0,max(unlist(minoritem[,'tic'])))}
                                    else if (is.null(plotProps$ylim)){c(0,max(unlist(minoritem[,'intensity'])))}
@@ -232,6 +268,25 @@ groupPlot <- function(EIClist = res,
 
     if(!is.null(compProps$pdfFile)){dev.off()}
 }
+
+
+
+#' EICplot
+#' 
+#' generate multiple EICs on one page
+#' 
+#' 
+#' @param EIClist item from a list of EICs from Mosaic:multiEIC
+#' @param ylim numeric(2) min and max visible rt value (in seconds)
+#' @param xlim numeric(2) min and max visible intensity value (in seconds)
+#' @param legendtext character() with item for each shown EIC for the plot legend
+#' @param colr color range (actual vector of color values)
+#' @param heading plot title
+#' @param relto normalize intensities to this number
+#' @param TIC if TRUE plot TIC
+#' @param single TRUE if this is not part of a composite plot
+#' 
+#' @export
 
 EICplot <- function(EIClistItem = res[[1]], cx = 1, 
                     ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
