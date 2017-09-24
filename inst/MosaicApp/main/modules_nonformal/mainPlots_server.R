@@ -72,7 +72,17 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                     contentType = "application/pdf")
 
 
-
+output$mainPlotPlaceholder <- renderImage({
+  
+  if(is.null(MSData$data)){
+    list(src = "img/PlotPlaceholder.png",
+         contentType = 'image/png',
+         #width = 250,
+         height = 500,
+         alt = "MOSAiC")
+  }
+  
+}, deleteFile = FALSE)
 
 output$mainPlotEICsPre <- renderPlot({
   if(!is.null(MSData$data)){
@@ -101,7 +111,9 @@ mainPlotHeight <- reactive({if(!is.null(MSData$active) && MSData$active != ""){
   })
 
 output$mainPlotEICs <- renderUI({
-    plotOutput("mainPlotEICsPre", height = mainPlotHeight()#,
+  if(!is.null(MSData$data)){
+    plotOutput("mainPlotEICsPre",
+               height = mainPlotHeight()#,
                #click = "spec2_click",
                #hover = "mainPlot_hover",
                #dblclick = "mainPlot_dblclick",
@@ -110,6 +122,12 @@ output$mainPlotEICs <- renderUI({
                  #  direction = "x",
                   # resetOnNew = TRUE)
                )
+  }else{
+    imageOutput("mainPlotPlaceholder",
+                height ="500px")}
+    
+    
+    
 })
 
 observe({
