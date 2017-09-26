@@ -28,6 +28,9 @@ fluidRow(
   #imageOutput("mainPlotPlaceholder"),
 htmlOutput("mainPlotEICs")
 #plotOutput("mainPlotEICsPre")
+),
+fluidRow(
+  plotOutput("adductLegend")
 )
 )
 )

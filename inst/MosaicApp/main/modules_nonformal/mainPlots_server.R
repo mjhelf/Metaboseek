@@ -1,35 +1,4 @@
-output$TICtoggle <- renderUI({
-  checkboxInput("TICtoggle","TIC", value = F)
-})
-output$RTtoggle <- renderUI({
-  checkboxInput("RTtoggle","Full RT range", value = F)
-})
-
-#output$RTwindow <- renderUI({
- # numericInput("RTwindow","RT window (sec): ", value = 30, min = 0, width =60)
-#})
-observeEvent(input$RTwindow,{  if(!is.null(MSData$active)){
-  MSData$layouts[[MSData$active]]$settings$rtw <- input$RTwindow
-}
-  })
-
-output$PPMwindow <- renderUI({
-  numericInput("PPMwindow","Mass tol (ppm): ", value = 5, min = 0)
-})
-observeEvent(input$PPMwindow,{
-  if(!is.null(MSData$active)){
-  MSData$layouts[[MSData$active]]$settings$ppm <- input$PPMwindow
-}
-  })
-
-output$plotCols <- renderUI({
-    numericInput("plotCols","Plots per row: ", value = 1, min = 1)
-})
-observeEvent(input$plotCols,{
-    if(!is.null(MSData$active)){
-        MSData$layouts[[MSData$active]]$settings$cols <- input$plotCols
-    }
-})
+source(file.path("modules_nonformal", "mainPlots_options_server.R"), local = TRUE)$value 
 
 
 output$groupingActiveSelect <- renderUI({
@@ -63,7 +32,12 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                                                rdata = MSData$data,
                                                    pdfFile = file,
                                                    leadingTIC = T,
-                                                   TICall = input$TICtoggle
+                                                   TICall = input$TICtoggle,
+                                                   lw = input$plotLw,
+                                                   adducts = if(input$plotAdducts == ""){c(0)}else{as.numeric(strsplit(input$plotAdducts, " ")[[1]])},
+                                                   cx = input$plotCx,
+                                                   midline = input$MLtoggle,
+                                                   yzoom = input$plotYzoom
                                         )
                                       },
                                     
@@ -98,7 +72,12 @@ output$mainPlotEICsPre <- renderPlot({
                  ppm = MSData$layouts[[MSData$active]]$settings$ppm,
                  rdata = MSData$data,
                  pdfFile = NULL,
-                 leadingTIC = F
+                 leadingTIC = F,
+                 lw = input$plotLw,
+                 adducts = if(input$plotAdducts == ""){c(0)}else{as.numeric(strsplit(input$plotAdducts, " ")[[1]])},
+                 cx = input$plotCx,
+                 midline = input$MLtoggle,
+                 yzoom = input$plotYzoom
       )
   }
     
@@ -129,6 +108,20 @@ output$mainPlotEICs <- renderUI({
     
     
 })
+
+output$adductLegend <- renderPlot({
+    if(input$plotAdducts != ""){
+      
+      legendplot("top",
+                 legend = strsplit(input$plotAdducts, " ")[[1]],
+                 lty=1:length(strsplit(input$plotAdducts, " ")[[1]]),
+                 lwd=input$plotLw*1.2,
+                 col="black", bty="n", 
+                 cex=input$plotCx, horiz = T)
+  }
+  
+}, bg = "white")
+
 
 observe({
   toggleState(id = "pdfButton", condition = !is.null(MSData$active))

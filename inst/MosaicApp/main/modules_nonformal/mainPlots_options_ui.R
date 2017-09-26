@@ -1,5 +1,5 @@
 tabBox(title = "Options",
-       id = "PlotOpts", width = 12, side = "right", selected = "Project options",
+       id = "PlotOpts", width = 12, side = "right", selected = "EIC options",
 
        tabPanel("_"),
        
@@ -28,7 +28,28 @@ column(3,
 column(2,
        htmlOutput("RTtoggle")
 )
-       )),
+       ),
+fluidRow(
+  column(3,
+  htmlOutput("plotYzoom")),
+  
+  column(3,
+  htmlOutput("plotLw")),
+  
+  column(1,
+         htmlOutput("MLtoggle")),
+  
+  column(2,
+  htmlOutput("plotCx")),
+  
+  column(3,
+         htmlOutput("plotAdducts"))
+  
+  
+  
+)
+
+),
 
 
 

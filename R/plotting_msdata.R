@@ -9,7 +9,7 @@ library(Hmisc)
 legendplot <- function(...){
   
   par(mfrow=c(1,1), 
-      mar = c(1,1,1,1),
+      mar = c(0.1,0.1,0.1,0.1),
       oma = c(0,0,0,0)
   )
   plot(1, type = "n", axes=FALSE, xlab="", ylab="")
