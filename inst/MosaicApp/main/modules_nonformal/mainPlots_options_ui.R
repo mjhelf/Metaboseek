@@ -13,10 +13,10 @@ tabBox(title = "Options",
 column(3,
        htmlOutput("plotCols")
        ),
-column(1,
+column(2,
        htmlOutput("TICtoggle")
 ),
-column(3,
+column(2,
        # htmlOutput("RTwindow")
        HTML('
             <div class="form-group shiny-input-container" style="display:inline-block">
@@ -36,13 +36,13 @@ fluidRow(
   column(3,
   htmlOutput("plotLw")),
   
-  column(1,
+  column(2,
          htmlOutput("MLtoggle")),
   
   column(2,
   htmlOutput("plotCx")),
   
-  column(3,
+  column(2,
          htmlOutput("colorscheme"))
   
   

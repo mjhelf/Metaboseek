@@ -26,12 +26,10 @@ fileInput('rfileload',"Upload ZIP file with mzXML files", accept = "application/
 
 fluidRow(
   #imageOutput("mainPlotPlaceholder"),
-htmlOutput("mainPlotEICs"),
+htmlOutput("mainPlotEICs")),
 #plotOutput("mainPlotEICsPre")
-#fluidRow(
-  htmlOutput("adductLegendReal")
-#)
-
+fluidRow(
+  plotOutput("adductLegend", height = "30px")
 )
 
 )

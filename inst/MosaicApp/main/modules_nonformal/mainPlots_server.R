@@ -187,7 +187,7 @@ massShiftsOut <- reactive({
 output$adductLegend <- renderPlot({
     if(length(massShiftsOut()$shifts) > 1 || massShiftsOut()$shifts != 0){
       
-      legendplot("top",
+      legendplot("center",
                  legend = massShiftsOut()$labs,
                  lty = 1:length(massShiftsOut()$labs),
                  lwd = input$plotLw*1.2,
@@ -195,11 +195,8 @@ output$adductLegend <- renderPlot({
                  cex = input$plotCx, horiz = T)
   }
   
-}, bg = "white", height = 40)
+}, height = 30)
 
-output$adductLegendReal <- renderUI({
-  plotOutput("adductLegend")
-})
 
 
 observe({
