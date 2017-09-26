@@ -15,7 +15,7 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
     MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = rawgrouptable$Group))
     MSD$settings = list(rtw = 30,
                         ppm = 5,
-                        cols = 2,
+                        cols = 1,
                         colr = 'topo.colors',
                         alpha = 0.8)
     
@@ -113,8 +113,8 @@ multiEIC <- function (rawdata= rawcoll,
   
    if(is.null(rt)){
      sts = lapply(rawdata,slot,"scantime")
-     rt <- data.frame(rtmin = unname(sapply(sts,min)),
-                     rtmax = unname(sapply(sts,max))
+     rt <- data.frame(rtmin = rep(min(unname(sapply(sts,min))),nrow(mz)),
+                     rtmax = rep(max(unname(sapply(sts,max))),nrow(mz))
           )
    }
     

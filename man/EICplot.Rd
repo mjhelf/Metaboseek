@@ -9,9 +9,12 @@ EICplot(EIClistItem = res[[1]], cx = 1, ylim = c(0,
   "rt"])), max(unlist(EIClistItem[, "rt"])))/60,
   legendtext = paste(sub("^([^.]*).*", "\\\\1",
   basename(row.names(EIClistItem)))), colr = topo.colors(nrow(EIClistItem),
-  alpha = 1), heading = "test", relto = NULL, TIC = T, single = F)
+  alpha = 1), heading = "test", relto = NULL, TIC = T, single = F,
+  midline = 100)
 }
 \arguments{
+\item{EIClistItem}{item from a list of EICs from Mosaic:multiEIC}
+
 \item{ylim}{numeric(2) min and max visible rt value (in seconds)}
 
 \item{xlim}{numeric(2) min and max visible intensity value (in seconds)}
@@ -27,8 +30,6 @@ EICplot(EIClistItem = res[[1]], cx = 1, ylim = c(0,
 \item{TIC}{if TRUE plot TIC}
 
 \item{single}{TRUE if this is not part of a composite plot}
-
-\item{EIClist}{item from a list of EICs from Mosaic:multiEIC}
 }
 \description{
 generate one EIC plot for multiple files

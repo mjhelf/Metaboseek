@@ -4,17 +4,17 @@ tabBox(title = "Feature table",
        #collapsible = T,
        width = 12,
        side = "right",
-       selected = "Load Tables",
+       selected = "View Table",
        
        tabPanel("_"),
-       tabPanel("Load Tables",
+       tabPanel("Load Table",
                 source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value),
        
        tabPanel("Analyze Table",
                 source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
                 ),
        
-       tabPanel("Table View",
+       tabPanel("View Table",
         fluidPage(
             fluidRow(
    

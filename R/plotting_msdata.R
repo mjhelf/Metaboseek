@@ -47,7 +47,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     }
     
     #generate rt boundary df
-    if(RTall | is.null(rtmid)){
+    if(any(RTall, is.null(rtmid))){ # any can handle NULL, seems more flexible than ||
         rtmid <- NULL
         rtx <- NULL
     }else{
@@ -56,7 +56,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     }  
     
     #generate mz boundary df
-    if(TICall | is.null(mzmid) ){
+    if(any(TICall, is.null(mzmid)) ){
         mzmid <- 100
         mzx <- data.frame(mzmin = 0,
                           mzmax = 1)
@@ -276,7 +276,7 @@ groupPlot <- function(EIClist = res,
 #' generate one EIC plot for multiple files
 #' 
 #' 
-#' @param EIClist item from a list of EICs from Mosaic:multiEIC
+#' @param EIClistItem item from a list of EICs from Mosaic:multiEIC
 #' @param ylim numeric(2) min and max visible rt value (in seconds)
 #' @param xlim numeric(2) min and max visible intensity value (in seconds)
 #' @param legendtext character() with item for each shown EIC for the plot legend
@@ -297,7 +297,8 @@ EICplot <- function(EIClistItem = res[[1]], cx = 1,
                     heading = "test",
                     relto = NULL,
                     TIC = T,
-                    single = F
+                    single = F,
+                    midline = 100
                     ){
     if(TIC){int <- EIClistItem[,'tic']}
     else{int <- EIClistItem[,'intensity']}
@@ -364,11 +365,21 @@ EICplot <- function(EIClistItem = res[[1]], cx = 1,
         }
     
     
-    abline(v=min(xlim), h=min(ylim))
+    
+    if(length(midline)> 0 ){
+    for(i in midline){
+      abline(v=i/60, lty = 2, lwd = 1)
+    }
+    }
+    
    #colr <- topo.colors(2, alpha=1)#rainbow(length(eiccoll[[t]]), s = 1, v = 1, start = 0, end = max(1, length(eiccoll[[t]]) - 1)/length(eiccoll[[t]]), alpha = 0.7)#topo.colors(length(eiccoll[[t]]), alpha=1)
    
-
+    ##draw the eics
     tmp <-mapply(lines, x= rts, y = int, col = as.list(colr))
+    
+    #fix axis to not have gaps at edges
+    abline(v=min(xlim), h=min(ylim))
+
     Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
     
    par(xpd=NA)
