@@ -43,7 +43,7 @@ fluidRow(
   htmlOutput("plotCx")),
   
   column(3,
-         htmlOutput("plotAdducts"))
+         htmlOutput("colorscheme"))
   
   
   
@@ -51,6 +51,20 @@ fluidRow(
 
 ),
 
+tabPanel("Mass shifts",
+         fluidRow(
+           
+           column(9,
+                  rHandsontableOutput('massShiftTab'),
+                  actionButton('updateshifts', "Update mass shifts"),
+                  downloadButton("savemassShiftTab","Save mass shifts")
+           ),
+           column(3,
+                  fileInput('loadmassShift', "Upload a mass shift table", accept= NULL)
+           )
+           
+           )
+         ),
 
 
 tabPanel("Project options",

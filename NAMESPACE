@@ -2,6 +2,7 @@
 
 export(EICgeneral)
 export(EICplot)
+export(PlotWindow)
 export(addLines)
 export(bestgauss)
 export(constructFeatureTable)

@@ -388,7 +388,6 @@ subsetEICs <- function(EIClist,
                                            columns = colnames(EIClist[[i]])))
   }
   
-  print(EIClist)
   for(n in 1:length(EIClist)){
  #   if(length(group)==1){
   #    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"][[1]]))

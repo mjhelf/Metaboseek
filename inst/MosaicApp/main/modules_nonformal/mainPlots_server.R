@@ -34,7 +34,7 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                                    leadingTIC = T,
                                                    TICall = input$TICtoggle,
                                                    lw = input$plotLw,
-                                                   adducts = if(input$plotAdducts == ""){c(0)}else{as.numeric(strsplit(input$plotAdducts, " ")[[1]])},
+                                                   adducts = massShiftsOut()$shifts,
                                                    cx = input$plotCx,
                                                    midline = input$MLtoggle,
                                                    yzoom = input$plotYzoom
@@ -74,7 +74,7 @@ output$mainPlotEICsPre <- renderPlot({
                  pdfFile = NULL,
                  leadingTIC = F,
                  lw = input$plotLw,
-                 adducts = if(input$plotAdducts == ""){c(0)}else{as.numeric(strsplit(input$plotAdducts, " ")[[1]])},
+                 adducts = massShiftsOut()$shifts,
                  cx = input$plotCx,
                  midline = input$MLtoggle,
                  yzoom = input$plotYzoom
@@ -86,31 +86,43 @@ output$mainPlotEICsPre <- renderPlot({
 
 output$mainPlotPlaceholder2 <- renderPlot({
   if(is.null(MSData$data)){
-  EICsTIC <- multiEIC(rawdata= rdata,
-                      mz = mzx[1,],
-                      rt = NULL,
-                      rnames = "1", #major item names
-                      byFile = F #if true, table will be sorted by rawfile, otherwise by feature
-  )
-  groupPlot(EIClist = EICsTIC,
-            grouping = glist,
+  #Placeholder:
+    
+    PH <- list()
+  intens <- c(rep(0,31),(33:15)*3,(15:33)*3,rep(0,31))
+  PH[[1]]<- matrix(list(c(1:100),intens,c(1:100),intens,1,100,1,100,max(intens),500,50),
+                   nrow = 1,
+                   ncol = 11,
+                   dimnames = list(rows = c("sample1"),
+                                   columns = c("scan", "intensity", "rt", "tic", "mzmin", "mzmax", "rtmin", "rtmax", "intmax", "intsum", "intmean")))
+  
+  for(n in 1:8){
+    PH[[1]] <- rbind(PH[[1]], matrix(list(c(1:100)+n,intens,c(1:100)+n,intens,1+n,100+n,1+n,100+n,max(intens),500,50),
+                                     nrow = 1,
+                                     ncol = 11,
+                                     dimnames = list(rows = c(paste0("sample",n+1)),
+                                                     columns = c("scan", "intensity", "rt", "tic", "mzmin", "mzmax", "rtmin", "rtmax", "intmax", "intsum", "intmean"))))
+  }
+  groupPlot(EIClist = PH,
+            grouping = list("No Data Loaded" = row.names(PH[[1]])),
             plotProps = list(TIC = T, #settings for single plots
-                             cx = cx,
-                             colr = colrs,
-                             lw = lw,
+                             cx = 1.2,
+                             colr = do.call('topo.colors',
+                                            list(n=nrow(PH[[1]]), alpha = 0.8)),
+                             lw = 2,
                              midline = NULL,
                              ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
                              xlim = NULL,
                              yzoom = 1),
-            compProps = list(mfrow=c(rows,cols), #par options for the composite plot
+            compProps = list(mfrow=c(1,1), #par options for the composite plot
                              oma=c(0,2,4,0),
                              xpd=NA, bg="white",
-                             header =  "TICs",
+                             header =  "Welcome to MOSAiC",
                              header2 = NULL,
                              pdfFile = NULL,
-                             pdfHi = 6*rows,
-                             pdfWi = 6*cols,
-                             cx = cx,
+                             pdfHi = 6*1,
+                             pdfWi = 6*1,
+                             cx = 1.2,
                              adductLabs = 0)
   )
   }
@@ -143,26 +155,51 @@ output$mainPlotEICs <- renderUI({
     
     
     
-    imageOutput("mainPlotPlaceholder",
-                #height ="500px"
-                width = "auto")}
+    plotOutput("mainPlotPlaceholder2",
+                height ="600px"
+                )}
     
     
     
 })
-
-output$adductLegend <- renderPlot({
-    if(input$plotAdducts != ""){
-      
-      legendplot("top",
-                 legend = strsplit(input$plotAdducts, " ")[[1]],
-                 lty=1:length(strsplit(input$plotAdducts, " ")[[1]]),
-                 lwd=input$plotLw*1.2,
-                 col="black", bty="n", 
-                 cex=input$plotCx, horiz = T)
+massShiftsOut <- reactive({
+  if(is.null(input$massShiftTab)){
+    tab <- massShifts$table
+  }
+  else{
+    tab <- hot_to_r(input$massShiftTab)
   }
   
-}, bg = "white")
+  if(!any(tab$use)){
+    labs <- ""
+      shifts <- 0
+  }else{
+    labs <- tab$Name[which(tab$use)]
+    shifts <- tab$mz_shift[which(tab$use)]
+  }
+  
+  return(list(labs =labs, shifts = shifts))
+  
+  
+})
+
+
+output$adductLegend <- renderPlot({
+    if(length(massShiftsOut()$shifts) > 1 || massShiftsOut()$shifts != 0){
+      
+      legendplot("top",
+                 legend = massShiftsOut()$labs,
+                 lty = 1:length(massShiftsOut()$labs),
+                 lwd = input$plotLw*1.2,
+                 col = "black", bty = "n", 
+                 cex = input$plotCx, horiz = T)
+  }
+  
+}, bg = "white", height = 40)
+
+output$adductLegendReal <- renderUI({
+  plotOutput("adductLegend")
+})
 
 
 observe({
