@@ -6,9 +6,10 @@
 \usage{
 groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC = T,
   cx = 1, colr = topo.colors(nrow(minoritem), alpha = 1), ylim = NULL, xlim =
-  NULL), compProps = list(mfrow = c(1, 2), oma = c(0, 2, 8, 0), xpd = NA, bg =
-  NA, header = paste0(names(res)), header2 = NULL, pdfFile = NULL, pdfHi = 6,
-  pdfWi = 12, cx = 1))
+  NULL, lw = 1, midline = 100, yzoom = 1), compProps = list(mfrow = c(1, 2),
+  oma = c(0, 2, 8, 0), xpd = NA, bg = NA, header = paste0(names(res)), header2 =
+  NULL, pdfFile = NULL, pdfHi = 6, pdfWi = 12, cx = 1, adductLabs = c("0", "1",
+  "2")))
 }
 \arguments{
 \item{EIClist}{list of EICs from Mosaic:multiEIC}
@@ -29,6 +30,12 @@ groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC = T,
 
 \item{plotProps.xlim}{data.frame or matrix of nrow = number of plotted features, with min and max visible intensity value for each feature}
 
+\item{plotProps.midline}{numeric() of y-axis positions where a dotted vertical line should be plotted}
+
+\item{plotProps.lw}{line width for plot lines}
+
+\item{plotProps.yzoom}{zoom factor into y-axis}
+
 \item{compProps.mfrow}{integer(2) rows and columns for plotting (cf. par(), mfrow)}
 
 \item{compProps.oma}{numeric(4) outer margins (cf. par(), oma)}
@@ -48,6 +55,8 @@ groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC = T,
 \item{compProps.pdfWi}{pdf width in inches}
 
 \item{compProps.cx}{numeric(1) font size (character expansion) factor}
+
+\item{compProps.adductLabs}{adduct labels (nonfunctional)}
 }
 \description{
 generate multiple EICs on one page

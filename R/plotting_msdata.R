@@ -1,4 +1,23 @@
 library(Hmisc)
+#' legendplot
+#' 
+#' Plot a legend in an otherwise empty plot
+#' 
+#' @param ... all arguments passed on to legend
+#'
+#' @export
+legendplot <- function(...){
+  
+  par(mfrow=c(1,1), 
+      mar = c(1,1,1,1),
+      oma = c(0,0,0,0)
+  )
+  plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+  legend(...)
+  
+  
+}
+
 #' EICgeneral
 #' 
 #' wrapper function to plot multiple EICs
@@ -17,82 +36,97 @@ library(Hmisc)
 #' @param rdata named list of xcmsRaw objects
 #' @param pdfFile character - if not NULL, plotting result will be saved in a pdf file with this name.
 #' @param leadingTIC if TRUE, a TIC plot is made before the EIC plots (e.g. as first page of pdf file)
+#' @param midline if TRUE, dotted vertical line should be plotted at feature rt
+#' @param lw line width for plot lines
+#' @param yzoom zoom factor into y-axis
+#' @param cx character expansion factor (font size)
+#' @param adducts numeric() of mass shifts to be added to feature masses
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
-                    mzmid = combino()[,"mz"],
-                    glist = MSData$layouts[[MSData$active]]$grouping,
-                    cols = MSData$layouts[[MSData$active]]$settings$cols,
-                    colrange = MSData$layouts[[MSData$active]]$settings$colr,
-                    transparency = MSData$layouts[[MSData$active]]$settings$alpha,
-                    RTall = input$RTtoggle,
-                    TICall = input$TICtoggle,
-                    rtw = MSData$layouts[[MSData$active]]$settings$rtw,
-                    ppm = MSData$layouts[[MSData$active]]$settings$ppm,
-                    rdata = MSData$data,
-                    pdfFile = file,
-                    leadingTIC = T
+                       mzmid = combino()[,"mz"],
+                       glist = MSData$layouts[[MSData$active]]$grouping,
+                       cols = MSData$layouts[[MSData$active]]$settings$cols,
+                       colrange = MSData$layouts[[MSData$active]]$settings$colr,
+                       transparency = MSData$layouts[[MSData$active]]$settings$alpha,
+                       RTall = input$RTtoggle,
+                       TICall = input$TICtoggle,
+                       rtw = MSData$layouts[[MSData$active]]$settings$rtw,
+                       ppm = MSData$layouts[[MSData$active]]$settings$ppm,
+                       rdata = MSData$data,
+                       pdfFile = file,
+                       leadingTIC = T,
+                       lw = 1,
+                       adducts = c(0),
+                       cx = 1,
+                       midline = T,
+                       yzoom = 1
 ){
-    #number of plot rows
-    rows <- ceiling(length(glist)/cols)
+  #number of plot rows
+  rows <- ceiling(length(glist)/cols)
+  
+  #make color scales for each group, color shades based on group with most members
+  colvec <- do.call(colrange,
+                    list(n=max(sapply(glist,length)), alpha = transparency))
+  colrs <- list()
+  for(i in 1:length(glist)){
     
-    #make color scales for each group, color shades based on group with most members
-    colvec <- do.call(colrange,
-                      list(n=max(sapply(glist,length)), alpha = transparency))
-    colrs <- list()
-    for(i in 1:length(glist)){
-        
-        colrs[[i]] <- colvec[1:length(glist[[i]])]
-        
-    }
+    colrs[[i]] <- colvec[1:length(glist[[i]])]
     
-    #generate rt boundary df
-    if(any(RTall, is.null(rtmid))){ # any can handle NULL, seems more flexible than ||
-        rtmid <- NULL
-        rtx <- NULL
-    }else{
-        rtx <- data.frame(rtmin = rtmid - rtw,
-                          rtmax = rtmid + rtw)
-    }  
-    
-    #generate mz boundary df
-    if(any(TICall, is.null(mzmid)) ){
-        mzmid <- 100
-        mzx <- data.frame(mzmin = 0,
-                          mzmax = 1)
-        titx <- "TICs"
-        tictog <- TRUE
-    }else{
-        tictog <- FALSE
-        mzx <- data.frame(mzmin = mzmid - mzmid*ppm*1e-6,
-                          mzmax = mzmid + mzmid*ppm*1e-6)
-        titx <- EICtitles(mzmid, rtmid, ppm)
-    }
-    
-
-
-    
-    
- #optionally export to pdf
-    if(!is.null(pdfFile)){
+  }
+  
+  #generate rt boundary df
+  if(any(RTall, is.null(rtmid))){ # any can handle NULL, seems more flexible than ||
+    rtmid <- NULL
+    rtx <- NULL
+  }else{
+    rtx <- data.frame(rtmin = rtmid - rtw,
+                      rtmax = rtmid + rtw)
+  }  
+  
+  #generate mz boundary df
+  if(any(TICall, is.null(mzmid)) ){
+    mzmid <- if(!is.null(rtmid)){rep(100,length(rtmid))}else{100}
+    mzx <- data.frame(mzmin = mzmid-1,
+                      mzmax = mzmid+1)
+    titx <- if(!is.null(rtmid)){rep("TICs",length(rtmid))}else{"TICs"}
+    tictog <- TRUE
+  }else{
+    tictog <- FALSE
+    mzx <- data.frame(mzmin = mzmid - mzmid*ppm*1e-6,
+                      mzmax = mzmid + mzmid*ppm*1e-6)
+    titx <- EICtitles(mzmid, rtmid, ppm)
+  }
+  
+  
+  
+  
+  
+  #optionally export to pdf
+  if(!is.null(pdfFile)){
     pdf(pdfFile,
         6*cols,
         6*ceiling(length(glist)/cols)+2
     )}
-        
-    #optionally plot TICs first (page 1 in pdf)
-      if(leadingTIC){  
+  
+  #optionally plot TICs first (page 1 in pdf)
+  if(leadingTIC){  
     EICsTIC <- multiEIC(rawdata= rdata,
                         mz = mzx[1,],
                         rt = NULL,
-                        rnames = row.names(mzmid)[1], #major item names
+                        rnames = "1", #major item names
                         byFile = F #if true, table will be sorted by rawfile, otherwise by feature
     )
     groupPlot(EIClist = EICsTIC,
               grouping = glist,
               plotProps = list(TIC = T, #settings for single plots
-                               cx = 1,
-                               colr = colrs),
+                               cx = cx,
+                               colr = colrs,
+                               lw = lw,
+                               midline = NULL,
+                               ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
+                               xlim = NULL,
+                               yzoom = 1),
               compProps = list(mfrow=c(rows,cols), #par options for the composite plot
                                oma=c(0,2,4,0),
                                xpd=NA, bg="white",
@@ -101,34 +135,40 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                                pdfFile = NULL,
                                pdfHi = 6*rows,
                                pdfWi = 6*cols,
-                               cx = 1)
+                               cx = cx,
+                               adductLabs = 0)
     )
-      }
-    
-    EICs <- multiEIC(rawdata= rdata,
-                     mz = mzx,
-                     rt = rtx,
-                     rnames = row.names(mzmid), #major item names
-                     byFile = F #if true, table will be sorted by rawfile, otherwise by feature
-    )
-    
-    groupPlot(EIClist = EICs,
-              grouping = glist,
-              plotProps = list(TIC = tictog, #settings for single plots
-                               cx = 1,
-                               colr = colrs,
-                               xlim = rtx),
-              compProps = list(mfrow=c(rows,cols), #par options for the composite plot
-                               oma=c(0,2,4,0),
-                               xpd=NA, bg="white",
-                               header =  titx,
-                               header2 = NULL,
-                               pdfFile = NULL,
-                               pdfHi = 6*rows,
-                               pdfWi = 6*cols,
-                               cx = 1)
-    )
-    if(!is.null(pdfFile)){dev.off()}
+  }
+  
+  EICs <- multiEICplus(rawdata= rdata,
+                       mz = mzx,
+                       rt = rtx,
+                       rnames = row.names(mzmid), #major item names
+                       byFile = F, #if true, table will be sorted by rawfile, otherwise by feature
+                       adducts
+  )
+  
+  groupPlot(EIClist = EICs,
+            grouping = glist,
+            plotProps = list(TIC = tictog, #settings for single plots
+                             cx = cx,
+                             colr = colrs,
+                             xlim = rtx,
+                             lw = lw,
+                             midline = if(midline){rtmid}else{NULL},
+                             yzoom = yzoom),
+            compProps = list(mfrow=c(rows,cols), #par options for the composite plot
+                             oma=c(0,2,4,0),
+                             xpd=NA, bg="white",
+                             header =  titx,
+                             header2 = NULL,
+                             pdfFile = NULL,
+                             pdfHi = 6*rows,
+                             pdfWi = 6*cols,
+                             cx = cx,
+                             adductLabs = adducts)
+  )
+  if(!is.null(pdfFile)){dev.off()}
 }
 
 
@@ -159,8 +199,8 @@ EICtitles <- function(mzs, rts, ppm){
                  " ppm (", numbs[,2]," - ", numbs[,3],")",
                  if(!is.null(rts)){
                    paste0(
-                 " @ RT: ", sprintf( "%.2f", rts/60), " min",
-                 " (", sprintf("%.1f", rts)," sec)")})
+                     " @ RT: ", sprintf( "%.2f", rts/60), " min",
+                     " (", sprintf("%.1f", rts)," sec)")})
   return(titx)
   
 }
@@ -178,6 +218,9 @@ EICtitles <- function(mzs, rts, ppm){
 #' @param plotProps.colr color range (actual vector of color values)
 #' @param plotProps.ylim data.frame or matrix of nrow = number of plotted features, with min and max visible rt value (in seconds) for each feature
 #' @param plotProps.xlim data.frame or matrix of nrow = number of plotted features, with min and max visible intensity value for each feature
+#' @param plotProps.midline numeric() of y-axis positions where a dotted vertical line should be plotted
+#' @param plotProps.lw line width for plot lines
+#' @param plotProps.yzoom zoom factor into y-axis
 #' @param compProps layoout options for the composite plot
 #' @param compProps.mfrow integer(2) rows and columns for plotting (cf. par(), mfrow)
 #' @param compProps.oma numeric(4) outer margins (cf. par(), oma)
@@ -189,6 +232,7 @@ EICtitles <- function(mzs, rts, ppm){
 #' @param compProps.pdfHi pdf height in inches
 #' @param compProps.pdfWi pdf width in inches
 #' @param compProps.cx numeric(1) font size (character expansion) factor
+#' @param compProps.adductLabs adduct labels (nonfunctional)
 #' 
 #' @export
 groupPlot <- function(EIClist = res,
@@ -197,79 +241,113 @@ groupPlot <- function(EIClist = res,
                                        cx = 1,
                                        colr = topo.colors(nrow(minoritem), alpha=1),
                                        ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
-                                       xlim = NULL),
+                                       xlim = NULL,
+                                       lw = 1,
+                                       midline = 100,
+                                       yzoom = 1),
                       compProps = list(mfrow=c(1,2), #par options for the composite plot
-                                     oma=c(0,2,8,0),
-                                     xpd=NA, bg=NA,
-                                     header =  paste0(names(res)),
-                                     header2 = NULL,
-                                     pdfFile = NULL,
-                                     pdfHi = 6,
-                                     pdfWi = 12,
-                                     cx = 1)
-                      ){
+                                       oma=c(0,2,8,0),
+                                       xpd=NA, bg=NA,
+                                       header =  paste0(names(res)),
+                                       header2 = NULL,
+                                       pdfFile = NULL,
+                                       pdfHi = 6,
+                                       pdfWi = 12,
+                                       cx = 1,
+                                       adductLabs = c("0","1","2"))
+){
+  
+  #majoritem is the EIClist top level (typically by mz, but could be)
+  
+  if(!is.null(compProps$pdfFile)){pdf(compProps$pdfFile,compProps$pdfWi,compProps$pdfHi)}
+  
+  if(!is.null(compProps$header)){
     
-    #majoritem is the EIClist top level (typically by mz, but could be)
+    autosize <- compProps$cx*1.5
+    while(max(strwidth(compProps$header, units = "figure", cex = autosize, font = 2)) > 1){
+      autosize <- autosize*0.975
+    }
+  }
+  
+  nrowcheck <- if(!is.null(nrow(EIClist))){nrow(EIClist)}else {1}
+  
+  for(majoritem in c(1:nrowcheck)){
     
-     if(!is.null(compProps$pdfFile)){pdf(compProps$pdfFile,compProps$pdfWi,compProps$pdfHi)}
+    #adductLabs legend does not work yet
+    #if(length(compProps$adductLabs)>1){compProps$mfrow[1] <- compProps$mfrow[1]+1}
     
-    if(!is.null(compProps$header)){
-        
-        autosize <- compProps$cx*1.5
-        while(max(strwidth(compProps$header, units = "figure", cex = autosize, font = 2)) > 1){
-            autosize <- autosize*0.975
-        }
+    par(mfrow=compProps$mfrow,
+        oma=compProps$oma,
+        xpd=compProps$xpd,
+        bg=compProps$bg,
+        mar = c(5.1,4.1,4.1,2.1))
+    # layout(t(as.matrix(c(1,2))))
+    
+    for(plotgroup in c(1:length(grouping))){
+      #par(mfrow=c(1,2))
+      items = grouping[[plotgroup]]
+      
+      preminoritem <- if(nrowcheck ==1){EIClist}else{EIClist[majoritem,]}
+      
+      minoritem <- subsetEICs(preminoritem,
+                              items)
+      #minoritem <- if(length(items) == 1){t(as.matrix(EIClist[[majoritem]][items,]))}else{EIClist[[majoritem]][items,]}
+      #if(length(items) == 1){row.names(minoritem) <- items}
+      
+      EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
+              ylim = if(plotProps$TIC){c(0,minoritem$maxTIC)}
+              else if (is.null(plotProps$ylim)){c(0,minoritem$maxEIC)}
+              else{c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}, 
+              xlim = if (is.null(plotProps$xlim)){c(min(unlist(minoritem$EIClist[[1]][,'rt'])),
+                                                    max(unlist(minoritem$EIClist[[1]][,'rt'])))/60}
+              else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60},
+              legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]])))),
+              colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
+              else{plotProps$colr[1:nrow(minoritem$EIClist[[1]])]},
+              heading = names(grouping)[plotgroup],
+              relto = NULL,
+              TIC = plotProps$TIC,
+              lw = plotProps$lw,
+              midline = plotProps$midline[majoritem],
+              yzoom = plotProps$yzoom
+              #mfrow=c(1,2)
+      ) 
+      # }
+      
     }
     
-    for(majoritem in c(1:length(EIClist))){
-       
-        par(mfrow=compProps$mfrow,
-            oma=compProps$oma,
-            xpd=compProps$xpd,
-            bg=compProps$bg)
-       # layout(t(as.matrix(c(1,2))))
-    
-        for(plotgroup in c(1:length(grouping))){
-            #par(mfrow=c(1,2))
-         items = grouping[[plotgroup]]
-         minoritem <- if(length(items) == 1){t(as.matrix(EIClist[[majoritem]][items,]))}else{EIClist[[majoritem]][items,]}
-         if(length(items) == 1){row.names(minoritem) <- items}
-
-        EICplot(EIClistItem = minoritem, cx = plotProps$cx, 
-                            ylim = if(plotProps$TIC){c(0,max(unlist(minoritem[,'tic'])))}
-                                   else if (is.null(plotProps$ylim)){c(0,max(unlist(minoritem[,'intensity'])))}
-                                   else{c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}, 
-                            xlim = if (is.null(plotProps$xlim)){c(min(unlist(minoritem[,'rt'])),
-                                     max(unlist(minoritem[,'rt'])))/60}
-                                    else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60},
-                            legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem)))),
-                            colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
-                                      else{plotProps$colr[1:nrow(minoritem)]},
-                            heading = names(grouping)[plotgroup],
-                            relto = NULL,
-                            TIC = plotProps$TIC
-                #mfrow=c(1,2)
-                ) 
-        # }
-    
-        }
-        
-        if(!is.null(compProps$header)){
-            
-     #       autosize <- compProps$cx*1.5
+    if(!is.null(compProps$header)){
+      
+      #       autosize <- compProps$cx*1.5
       #      while(strwidth(compProps$header[majoritem], units = "figure", cex = autosize, font = 2) > 0.98){
-       #         autosize <- autosize*0.95
-        #    }
-                
-            
-                mtext(compProps$header[majoritem], side=3, outer=T,line=2, cex=autosize, font = 2)}
-        if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0.5, cex=compProps$cx)}
+      #         autosize <- autosize*0.95
+      #    }
+      
+      
+      mtext(compProps$header[majoritem], side=3, outer=T,line=2, cex=autosize, font = 2)}
+    if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0.5, cex=compProps$cx)}
+    # par(mar=c(0,0,0,0))
+    
+    #   if(length(compProps$adductLabs)>1){
+    #    mod <- ((compProps$mfrow[1]-1)*compProps$mfrow[2])%%length(grouping)
+    #   if(mod >0){
+    #    for(n in 1:mod){
+    #     plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+    #  }
+    #  }
+    #for(n in )
+    # plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+    #legend("top",
+    # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
+    #      legend = compProps$adductLabs, lty=1:length(compProps$adductLabs), lwd=2.5, col="black", bty="n",  cex=cx*0.7, horiz = T)
+    #}
+    
+    
+  }
+  
+  
+  if(!is.null(compProps$pdfFile)){dev.off()}
 }
-
-    if(!is.null(compProps$pdfFile)){dev.off()}
-}
-
-
 
 #' EICplot
 #' 
@@ -285,112 +363,203 @@ groupPlot <- function(EIClist = res,
 #' @param relto normalize intensities to this number
 #' @param TIC if TRUE plot TIC
 #' @param single TRUE if this is not part of a composite plot
+#' @param midline numeric() of y-axis positions where a dotted vertical line should be plotted
+#' @param lw line width for plot lines
+#' @param yzoom zoom factor into y-axis
 #' 
 #' @export
 
-EICplot <- function(EIClistItem = res[[1]], cx = 1, 
+EICplot <- function(EICs = sEICs$EIClist, cx = 1, 
                     ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
                     xlim = c(min(unlist(EIClistItem[,'rt'])),
                              max(unlist(EIClistItem[,'rt'])))/60,
-                    legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(EIClistItem)))),
-                    colr = topo.colors(nrow(EIClistItem), alpha=1),
+                    legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(sEICs$EIClist[[1]])))),
+                    colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha=1),
                     heading = "test",
                     relto = NULL,
-                    TIC = T,
+                    TIC = F,
                     single = F,
-                    midline = 100
-                    ){
-    if(TIC){int <- EIClistItem[,'tic']}
-    else{int <- EIClistItem[,'intensity']}
-    
-    if(max(ylim)==0){ylim = c(0,1)}
-    
-        maxint <- format(max(unlist(int)), digits =3, scientific = T)
+                    midline = 100,
+                    lw = 1,
+                    yzoom = 1
+){
+  
+  if(max(ylim)==0){ylim = c(0,1)}
+  
+  maxint <- format(max(ylim), digits =3, scientific = T)
+  
+  if(!is.null(relto) && relto != 1 ){
+    maxint <- format(relto, digits =3, scientific = T)
+  }
+  
+  if(is.null(relto)){relto <-1}
+  
+  if(!is.null(yzoom) && yzoom != 1 ){
+    ylim[2] <- ylim[2]/yzoom
+  }
+  
+  if(!is.null(relto) && relto != 1 ){ylim[2] <- (ylim[2]/relto)*100}
+  
+  PlotWindow(cx, 
+             ylim, 
+             xlim,
+             heading,
+             single
+  )
+  
+  if(length(midline)> 0 ){
+    for(i in midline){
+      abline(v=i/60, lty = 2, lwd = 1)
+    }
+  }
+  
+  ##draw the eics
+  addLines(EIClist = EICs,
+           TIC,
+           colr,
+           relto,
+           liwi = lw
+  )    
+  #fix axis to not have gaps at edges
+  abline(v=min(xlim), h=min(ylim))
+  
+  par(xpd=NA)
+  text(min(xlim), 1.04*max(ylim),
+       labels = maxint, bty="n",
+       font = 2, cex=cx*1)
+  
+  if(!is.null(legendtext)){
+    legend("topright",
+           # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
+           legend = legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=cx*0.7)
+  }
+  
+}
 
+
+
+#' addLines
+#'
+#' Helper function for EICplot to plot the lines of EICs into a PlottingWindow. 
+#' Mass shifts will be handled by plotting different line types
+#' 
+#' @param EIClist matrix or list of EIC objects (potentially subsetted)
+#' @param TIC logical() if TRUE, TIC will be plotted instead of EIC
+#' @param colr character() of color values for lines
+#' @param relto if not NULL, intensities will be given as relative to this numeric(1)
+#' @param liwi line width of plotted lines
+#'
+#' @export
+addLines <- function(EIClist = EICsAdducts,
+                     TIC = F,
+                     colr = topo.colors(nrow(EIClistItem), alpha=1),
+                     relto = NULL,
+                     liwi = 2
+){
+  if(TIC){
+    reps <- 1
+  }else{
+    reps <- length(EIClist)
+  }
+  
+  for(n in 1:reps){
+    if(TIC){
+      int <- EIClist[[n]][,'tic']
+    }else{
+      int <- EIClist[[n]][,'intensity']
+    }
+    
     if(!is.null(relto) && relto != 1 ){int <- lapply(lapply(int,"/",relto),"*",100)
-                                      maxint <- format(relto, digits =3, scientific = T)
+    maxint <- format(relto, digits =3, scientific = T)
     }
     
     #convert to minutes
-    rts <- lapply(EIClistItem[,"rt"],"/",60)
-  #  par(xpd=NA)
-       # options(scipen=20)
-     
-    if(single){
-    par(#mfrow=c(1,2),
-         oma=c(0,2,0,0),
-        # mai=c(0,0.5,0,0),
-         xpd=FALSE,
-         bg=NA,
-         xaxs = "i", yaxs = "i"
-         )  
-    }else{
-     par(#mfrow=c(1,2),
-         # oma=c(0,2,0,0),
-         # mai=c(0,0.5,0,0),
-         xpd=FALSE,
-         bg=NA,
-         xaxs = "i", yaxs = "i"
-     )
-    }
-     
-     plot(numeric(),numeric(), type= "n", 
-         ylim = ylim,
-         xlim = xlim,
-             axes=F, ylab="",xlab="")
+    rts <- lapply(EIClist[[n]][,"rt"],"/",60)
+    #  par(xpd=NA)
+    # options(scipen=20)
+    
+    #colr <- topo.colors(2, alpha=1)#rainbow(length(eiccoll[[t]]), s = 1, v = 1, start = 0, end = max(1, length(eiccoll[[t]]) - 1)/length(eiccoll[[t]]), alpha = 0.7)#topo.colors(length(eiccoll[[t]]), alpha=1)
+    
+    ##draw the eics
+    tmp <-mapply(lines, x= rts, y = int, col = as.list(colr), MoreArgs = list(lty = n, lwd = liwi))}
+}
 
-     
-   pn <- if(max(ylim)==0){1}else{5}
-         #x axis
-    axis(side=1, lwd=1, at = pretty(xlim),
-         labels = format(pretty(xlim), scientific = F),
-         mgp=c(0,0.4,0), cex=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
-    
-    mtext(side=1, text= "RT (min)", line=1.5, cex=cx*1)
-    
-    if(!is.null(relto) && relto != 1 ){
-        axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
-             labels = format(pretty(ylim, n =pn), scientific = F),
-             mgp=c(0,0.6,0), cex=1*cx)
-        #axis labels
-        mtext(side=2, text="Relative intensity (%)", line=4, cex=1*cx)
-    }
-    else{
+
+#' PlotWindow
+#'
+#' Initiate a plot and draw axes
+#'
+#' @param cx character expansion factor (font size)
+#' @param ylim numeric(2) of y-axis range
+#' @param xlim numeric(2) of x-axis range
+#' @param heading heading of the plot
+#' @param single if TRUE, this plot is expected to be the only plot in a com,posite (different margin settings)
+#'
+#' @eexport
+PlotWindow <- function(cx = 1, 
+                       ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
+                       xlim = c(min(unlist(EIClistItem[,'rt'])),
+                                max(unlist(EIClistItem[,'rt'])))/60,
+                       heading = "test",
+                       single = F,
+                       relto = NULL
+){
+  
+  if(max(ylim)==0){ylim = c(0,1)}
+  
+  
+  if(single){
+    par(#mfrow=c(1,2),
+      oma=c(0,2,0,0),
+      # mai=c(0,0.5,0,0),
+      xpd=FALSE,
+      bg=NA,
+      xaxs = "i", yaxs = "i"
+    )  
+  }else{
+    par(#mfrow=c(1,2),
+      # oma=c(0,2,0,0),
+      # mai=c(0,0.5,0,0),
+      xpd=FALSE,
+      bg=NA,
+      xaxs = "i", yaxs = "i"
+    )
+  }
+  
+  plot(numeric(),numeric(), type= "n", 
+       ylim = ylim,
+       xlim = xlim,
+       axes=F, ylab="",xlab="")
+  
+  
+  pn <- if(max(ylim)==0){1}else{5}
+  #x axis
+  axis(side=1, lwd=1, at = pretty(xlim),
+       labels = format(pretty(xlim), scientific = F),
+       mgp=c(0,0.4,0), cex=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
+  
+  mtext(side=1, text= "RT (min)", line=1.5, cex=cx*1)
+  
+  if(!is.null(relto) && relto != 1 ){
+    axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
+         labels = format(pretty(ylim, n =pn), scientific = F),
+         mgp=c(0,0.6,0), cex=1*cx)
+    #axis labels
+    mtext(side=2, text="Relative intensity (%)", line=4, cex=1*cx)
+  }
+  else{
     #y axis
     axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = T,digits = 3),
          mgp=c(0,0.6,0), cex=1*cx)
-     #axis labels
+    #axis labels
     mtext(side=2, text="Intensity", line=4, cex=1*cx)
-        }
-    
-    
-    
-    if(length(midline)> 0 ){
-    for(i in midline){
-      abline(v=i/60, lty = 2, lwd = 1)
-    }
-    }
-    
-   #colr <- topo.colors(2, alpha=1)#rainbow(length(eiccoll[[t]]), s = 1, v = 1, start = 0, end = max(1, length(eiccoll[[t]]) - 1)/length(eiccoll[[t]]), alpha = 0.7)#topo.colors(length(eiccoll[[t]]), alpha=1)
-   
-    ##draw the eics
-    tmp <-mapply(lines, x= rts, y = int, col = as.list(colr))
-    
-    #fix axis to not have gaps at edges
-    abline(v=min(xlim), h=min(ylim))
-
-    Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
-    
-   par(xpd=NA)
-   text(min(xlim), 1.04*max(ylim),
-           labels = maxint, bty="n",
-        font = 2, cex=cx*1)
-    
-    if(!is.null(legendtext)){
-        legend("topright",
-          # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
-           legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=cx*0.7)
-    }
-    title(main=heading, line=2, cex = cx)
-    }
+  }
+  
+  #fix axis to not have gaps at edges
+  abline(v=min(xlim), h=min(ylim))
+  
+  Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
+  
+  title(main=heading, line=2, cex = cx)
+}

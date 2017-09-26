@@ -12,7 +12,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   RTall = input$RTtoggle, TICall = input$TICtoggle,
   rtw = MSData$layouts[[MSData$active]]$settings$rtw,
   ppm = MSData$layouts[[MSData$active]]$settings$ppm, rdata = MSData$data,
-  pdfFile = file, leadingTIC = T)
+  pdfFile = file, leadingTIC = T, lw = 1, adducts = c(0), cx = 1,
+  midline = T, yzoom = 1)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
@@ -40,6 +41,16 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 \item{pdfFile}{character - if not NULL, plotting result will be saved in a pdf file with this name.}
 
 \item{leadingTIC}{if TRUE, a TIC plot is made before the EIC plots (e.g. as first page of pdf file)}
+
+\item{lw}{line width for plot lines}
+
+\item{adducts}{numeric() of mass shifts to be added to feature masses}
+
+\item{cx}{character expansion factor (font size)}
+
+\item{midline}{if TRUE, dotted vertical line should be plotted at feature rt}
+
+\item{yzoom}{zoom factor into y-axis}
 }
 \description{
 wrapper function to plot multiple EICs

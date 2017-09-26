@@ -4,17 +4,15 @@
 \alias{EICplot}
 \title{EICplot}
 \usage{
-EICplot(EIClistItem = res[[1]], cx = 1, ylim = c(0,
-  max(unlist(EIClistItem[, "tic"]))), xlim = c(min(unlist(EIClistItem[,
-  "rt"])), max(unlist(EIClistItem[, "rt"])))/60,
-  legendtext = paste(sub("^([^.]*).*", "\\\\1",
-  basename(row.names(EIClistItem)))), colr = topo.colors(nrow(EIClistItem),
-  alpha = 1), heading = "test", relto = NULL, TIC = T, single = F,
-  midline = 100)
+EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0, max(unlist(EIClistItem[,
+  "tic"]))), xlim = c(min(unlist(EIClistItem[, "rt"])),
+  max(unlist(EIClistItem[, "rt"])))/60, legendtext = paste(sub("^([^.]*).*",
+  "\\\\1", basename(row.names(sEICs$EIClist[[1]])))),
+  colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha = 1), heading = "test",
+  relto = NULL, TIC = F, single = F, midline = 100, lw = 1,
+  yzoom = 1)
 }
 \arguments{
-\item{EIClistItem}{item from a list of EICs from Mosaic:multiEIC}
-
 \item{ylim}{numeric(2) min and max visible rt value (in seconds)}
 
 \item{xlim}{numeric(2) min and max visible intensity value (in seconds)}
@@ -30,6 +28,14 @@ EICplot(EIClistItem = res[[1]], cx = 1, ylim = c(0,
 \item{TIC}{if TRUE plot TIC}
 
 \item{single}{TRUE if this is not part of a composite plot}
+
+\item{midline}{numeric() of y-axis positions where a dotted vertical line should be plotted}
+
+\item{lw}{line width for plot lines}
+
+\item{yzoom}{zoom factor into y-axis}
+
+\item{EIClistItem}{item from a list of EICs from Mosaic:multiEIC}
 }
 \description{
 generate one EIC plot for multiple files

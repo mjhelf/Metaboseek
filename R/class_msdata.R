@@ -325,3 +325,71 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
   summe <- lapply(summe, fx )
   
   return(sapply(summe, mean))}
+
+#'multiEICplus
+#'
+#' get EICs for adducts, isotopes and neutral loss masses
+#'
+#' @param adducts numeric() of mass shifts
+#' @param ... all other arguments passed on to multiEIC
+#' 
+#' @export
+multiEICplus <- function (adducts = c(0,1,2,3),
+                          mz,
+                          rt,
+                          ...
+                          #          EICsets = list(mz,
+                          #                        rt,
+                          #    rnames,
+                          #   byFile = F,
+                          #  rawdata) #if true, table will be sorted by rawfile, otherwise by feature
+                          #
+){
+  
+  liEIC <- list()
+  if(is.null(adducts)){adducts <- 0}
+  
+  for (r in 1:length(adducts)){
+    liEIC[[r]] <- mz+adducts[r]
+    
+  }
+  
+  res <- sapply(liEIC,multiEIC,rt, ...)
+  #  rawdata= EICsets$rawdata,
+  
+  # rt = EICsets$rt,
+  # rnames = EICsets$rnames,
+  #byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
+  #XIC = F,
+  #getgauss = F
+  #)
+  return(res)
+}
+
+#' subsetEICs
+#'
+#' helper function to subset output from multiEICplus
+#'
+#' @param EIClist matrix or list of EIC objects
+#' @param group file grouping information (named list)
+#' 
+#' @export
+subsetEICs <- function(EIClist,
+                       group){
+  
+  maxEIC <- numeric(1)
+  maxTIC <- numeric(1)
+  ##subset lines
+  for(i in 1:length(EIClist)){
+    EIClist[[i]] <- EIClist[[i]][group,]
+  }
+  for(n in 1:length(EIClist)){
+    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"]))
+    maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"]))
+  }
+  
+  out <- list(EIClist,maxEIC,maxTIC)
+  names(out) <- c("EIClist","maxEIC","maxTIC")
+  
+  return (out)
+}
