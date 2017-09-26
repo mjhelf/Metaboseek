@@ -381,12 +381,24 @@ subsetEICs <- function(EIClist,
   maxTIC <- numeric(1)
   ##subset lines
   for(i in 1:length(EIClist)){
-    EIClist[[i]] <- EIClist[[i]][group,]
+    EIClist[[i]] <- matrix(EIClist[[i]][group,],
+                           nrow = length(group),
+                           ncol = ncol(EIClist[[i]]),
+                           dimnames = list(rows = group,
+                                           columns = colnames(EIClist[[i]])))
   }
+  
+  print(EIClist)
   for(n in 1:length(EIClist)){
+ #   if(length(group)==1){
+  #    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"][[1]]))
+   #   maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"][[1]]))
+      
+  #  }else{
     maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"]))
     maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"]))
-  }
+   # }
+    }
   
   out <- list(EIClist,maxEIC,maxTIC)
   names(out) <- c("EIClist","maxEIC","maxTIC")

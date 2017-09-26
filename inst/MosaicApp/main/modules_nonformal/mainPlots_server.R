@@ -83,6 +83,42 @@ output$mainPlotEICsPre <- renderPlot({
     
 }, bg = "white")
 
+
+output$mainPlotPlaceholder2 <- renderPlot({
+  if(is.null(MSData$data)){
+  EICsTIC <- multiEIC(rawdata= rdata,
+                      mz = mzx[1,],
+                      rt = NULL,
+                      rnames = "1", #major item names
+                      byFile = F #if true, table will be sorted by rawfile, otherwise by feature
+  )
+  groupPlot(EIClist = EICsTIC,
+            grouping = glist,
+            plotProps = list(TIC = T, #settings for single plots
+                             cx = cx,
+                             colr = colrs,
+                             lw = lw,
+                             midline = NULL,
+                             ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
+                             xlim = NULL,
+                             yzoom = 1),
+            compProps = list(mfrow=c(rows,cols), #par options for the composite plot
+                             oma=c(0,2,4,0),
+                             xpd=NA, bg="white",
+                             header =  "TICs",
+                             header2 = NULL,
+                             pdfFile = NULL,
+                             pdfHi = 6*rows,
+                             pdfWi = 6*cols,
+                             cx = cx,
+                             adductLabs = 0)
+  )
+  }
+})
+
+
+
+
 mainPlotHeight <- reactive({if(!is.null(MSData$active) && MSData$active != ""){
   paste0(ceiling(length(MSData$layouts[[MSData$active]]$grouping)/MSData$layouts[[MSData$active]]$settings$cols)*400+100,"px")
 }
@@ -102,8 +138,14 @@ output$mainPlotEICs <- renderUI({
                   # resetOnNew = TRUE)
                )
   }else{
+    
+    
+    
+    
+    
     imageOutput("mainPlotPlaceholder",
-                height ="500px")}
+                #height ="500px"
+                width = "auto")}
     
     
     

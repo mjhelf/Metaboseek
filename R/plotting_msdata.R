@@ -495,7 +495,7 @@ addLines <- function(EIClist = EICsAdducts,
 #' @param heading heading of the plot
 #' @param single if TRUE, this plot is expected to be the only plot in a com,posite (different margin settings)
 #'
-#' @eexport
+#' @export
 PlotWindow <- function(cx = 1, 
                        ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
                        xlim = c(min(unlist(EIClistItem[,'rt'])),
