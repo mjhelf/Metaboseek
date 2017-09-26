@@ -1,4 +1,8 @@
 
+#Project options
+source(file.path("modules_nonformal", "project_options_server.R"), local = TRUE)$value 
+
+
 ###Column Selection
 
 #output$selnormdata <- renderUI({checkboxInput('selnormdata', 'Use normalized data', value = FALSE)})

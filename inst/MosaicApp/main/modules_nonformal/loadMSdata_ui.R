@@ -1,6 +1,8 @@
 verticalLayout(
     #actionButton('uzi','Unzip'),
-    fileInput('rfileload',"ZIP file", accept = "application/zip"),
+  
+  #note: rfileload moved to mainPLots_ui.R
+   # fileInput('rfileload',"ZIP file", accept = "application/zip"),
     # numericInput('nrgroups', "Number of Groups", value = 1, min = 1),
     # rHandsontableOutput('rgroupnames'),
     htmlOutput("groupingName"),

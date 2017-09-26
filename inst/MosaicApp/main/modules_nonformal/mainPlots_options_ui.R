@@ -1,8 +1,11 @@
-tabBox(title = "Plotting options",
-       id = "PlotOpts", width = 12, side = "right", selected = "EICs",
+tabBox(title = "Options",
+       id = "PlotOpts", width = 12, side = "right", selected = "EIC options",
 
        tabPanel("_"),
-       tabPanel("EICs",
+       
+       
+       
+       tabPanel("EIC options",
               fluidRow(
              column(3,
        htmlOutput("PPMwindow")
@@ -10,10 +13,10 @@ tabBox(title = "Plotting options",
 column(3,
        htmlOutput("plotCols")
        ),
-column(1,
+column(2,
        htmlOutput("TICtoggle")
 ),
-column(3,
+column(2,
        # htmlOutput("RTwindow")
        HTML('
             <div class="form-group shiny-input-container" style="display:inline-block">
@@ -25,6 +28,47 @@ column(3,
 column(2,
        htmlOutput("RTtoggle")
 )
-       )
+       ),
+fluidRow(
+  column(3,
+  htmlOutput("plotYzoom")),
+  
+  column(3,
+  htmlOutput("plotLw")),
+  
+  column(2,
+         htmlOutput("MLtoggle")),
+  
+  column(2,
+  htmlOutput("plotCx")),
+  
+  column(2,
+         htmlOutput("colorscheme"))
+  
+  
+  
 )
+
+),
+
+tabPanel("Mass shifts",
+         fluidRow(
+           
+           column(9,
+                  rHandsontableOutput('massShiftTab'),
+                  actionButton('updateshifts', "Update mass shifts"),
+                  downloadButton("savemassShiftTab","Save mass shifts")
+           ),
+           column(3,
+                  fileInput('loadmassShift', "Upload a mass shift table", accept= NULL)
+           )
+           
+           )
+         ),
+
+
+tabPanel("Project options",
+         source(file.path("modules_nonformal", "project_options_ui.R"), local = TRUE)$value
+)
+
 )

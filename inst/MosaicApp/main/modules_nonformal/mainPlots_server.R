@@ -1,35 +1,4 @@
-output$TICtoggle <- renderUI({
-  checkboxInput("TICtoggle","TIC", value = F)
-})
-output$RTtoggle <- renderUI({
-  checkboxInput("RTtoggle","Full RT range", value = F)
-})
-
-#output$RTwindow <- renderUI({
- # numericInput("RTwindow","RT window (sec): ", value = 30, min = 0, width =60)
-#})
-observeEvent(input$RTwindow,{  if(!is.null(MSData$active)){
-  MSData$layouts[[MSData$active]]$settings$rtw <- input$RTwindow
-}
-  })
-
-output$PPMwindow <- renderUI({
-  numericInput("PPMwindow","Mass tol (ppm): ", value = 5, min = 0)
-})
-observeEvent(input$PPMwindow,{
-  if(!is.null(MSData$active)){
-  MSData$layouts[[MSData$active]]$settings$ppm <- input$PPMwindow
-}
-  })
-
-output$plotCols <- renderUI({
-    numericInput("plotCols","Plots per row: ", value = 1, min = 1)
-})
-observeEvent(input$plotCols,{
-    if(!is.null(MSData$active)){
-        MSData$layouts[[MSData$active]]$settings$cols <- input$plotCols
-    }
-})
+source(file.path("modules_nonformal", "mainPlots_options_server.R"), local = TRUE)$value 
 
 
 output$groupingActiveSelect <- renderUI({
@@ -63,7 +32,12 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                                                rdata = MSData$data,
                                                    pdfFile = file,
                                                    leadingTIC = T,
-                                                   TICall = input$TICtoggle
+                                                   TICall = input$TICtoggle,
+                                                   lw = input$plotLw,
+                                                   adducts = massShiftsOut()$shifts,
+                                                   cx = input$plotCx,
+                                                   midline = input$MLtoggle,
+                                                   yzoom = input$plotYzoom
                                         )
                                       },
                                     
@@ -72,7 +46,17 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                     contentType = "application/pdf")
 
 
-
+output$mainPlotPlaceholder <- renderImage({
+  
+  if(is.null(MSData$data)){
+    list(src = "img/PlotPlaceholder.png",
+         contentType = 'image/png',
+         #width = 250,
+         height = 500,
+         alt = "MOSAiC")
+  }
+  
+}, deleteFile = FALSE)
 
 output$mainPlotEICsPre <- renderPlot({
   if(!is.null(MSData$data)){
@@ -88,11 +72,64 @@ output$mainPlotEICsPre <- renderPlot({
                  ppm = MSData$layouts[[MSData$active]]$settings$ppm,
                  rdata = MSData$data,
                  pdfFile = NULL,
-                 leadingTIC = F
+                 leadingTIC = F,
+                 lw = input$plotLw,
+                 adducts = massShiftsOut()$shifts,
+                 cx = input$plotCx,
+                 midline = input$MLtoggle,
+                 yzoom = input$plotYzoom
       )
   }
     
 }, bg = "white")
+
+
+output$mainPlotPlaceholder2 <- renderPlot({
+  if(is.null(MSData$data)){
+  #Placeholder:
+    
+    PH <- list()
+  intens <- c(rep(0,31),(33:15)*3,(15:33)*3,rep(0,31))
+  PH[[1]]<- matrix(list(c(1:100),intens,c(1:100),intens,1,100,1,100,max(intens),500,50),
+                   nrow = 1,
+                   ncol = 11,
+                   dimnames = list(rows = c("sample1"),
+                                   columns = c("scan", "intensity", "rt", "tic", "mzmin", "mzmax", "rtmin", "rtmax", "intmax", "intsum", "intmean")))
+  
+  for(n in 1:8){
+    PH[[1]] <- rbind(PH[[1]], matrix(list(c(1:100)+n,intens,c(1:100)+n,intens,1+n,100+n,1+n,100+n,max(intens),500,50),
+                                     nrow = 1,
+                                     ncol = 11,
+                                     dimnames = list(rows = c(paste0("sample",n+1)),
+                                                     columns = c("scan", "intensity", "rt", "tic", "mzmin", "mzmax", "rtmin", "rtmax", "intmax", "intsum", "intmean"))))
+  }
+  groupPlot(EIClist = PH,
+            grouping = list("No Data Loaded" = row.names(PH[[1]])),
+            plotProps = list(TIC = T, #settings for single plots
+                             cx = 1.2,
+                             colr = do.call('topo.colors',
+                                            list(n=nrow(PH[[1]]), alpha = 0.8)),
+                             lw = 2,
+                             midline = NULL,
+                             ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
+                             xlim = NULL,
+                             yzoom = 1),
+            compProps = list(mfrow=c(1,1), #par options for the composite plot
+                             oma=c(0,2,4,0),
+                             xpd=NA, bg="white",
+                             header =  "Welcome to MOSAiC",
+                             header2 = NULL,
+                             pdfFile = NULL,
+                             pdfHi = 6*1,
+                             pdfWi = 6*1,
+                             cx = 1.2,
+                             adductLabs = 0)
+  )
+  }
+})
+
+
+
 
 mainPlotHeight <- reactive({if(!is.null(MSData$active) && MSData$active != ""){
   paste0(ceiling(length(MSData$layouts[[MSData$active]]$grouping)/MSData$layouts[[MSData$active]]$settings$cols)*400+100,"px")
@@ -101,7 +138,9 @@ mainPlotHeight <- reactive({if(!is.null(MSData$active) && MSData$active != ""){
   })
 
 output$mainPlotEICs <- renderUI({
-    plotOutput("mainPlotEICsPre", height = mainPlotHeight()#,
+  if(!is.null(MSData$data)){
+    plotOutput("mainPlotEICsPre",
+               height = mainPlotHeight()#,
                #click = "spec2_click",
                #hover = "mainPlot_hover",
                #dblclick = "mainPlot_dblclick",
@@ -110,7 +149,55 @@ output$mainPlotEICs <- renderUI({
                  #  direction = "x",
                   # resetOnNew = TRUE)
                )
+  }else{
+    
+    
+    
+    
+    
+    plotOutput("mainPlotPlaceholder2",
+                height ="600px"
+                )}
+    
+    
+    
 })
+massShiftsOut <- reactive({
+  if(is.null(input$massShiftTab)){
+    tab <- massShifts$table
+  }
+  else{
+    tab <- hot_to_r(input$massShiftTab)
+  }
+  
+  if(!any(tab$use)){
+    labs <- ""
+      shifts <- 0
+  }else{
+    labs <- tab$Name[which(tab$use)]
+    shifts <- tab$mz_shift[which(tab$use)]
+  }
+  
+  return(list(labs =labs, shifts = shifts))
+  
+  
+})
+
+
+output$adductLegend <- renderPlot({
+    if(length(massShiftsOut()$shifts) > 1 || massShiftsOut()$shifts != 0){
+      
+      legendplot("center",
+                 legend = massShiftsOut()$labs,
+                 lty = 1:length(massShiftsOut()$labs),
+                 lwd = input$plotLw*1.2,
+                 col = "black", bty = "n", 
+                 cex = input$plotCx, horiz = T)
+  }
+  
+}, height = 30)
+
+
 
 observe({
   toggleState(id = "pdfButton", condition = !is.null(MSData$active))
