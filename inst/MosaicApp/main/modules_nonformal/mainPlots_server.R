@@ -107,7 +107,7 @@ output$mainPlotPlaceholder2 <- renderPlot({
             grouping = list("No Data Loaded" = row.names(PH[[1]])),
             plotProps = list(TIC = T, #settings for single plots
                              cx = 1.2,
-                             colr = do.call('topo.colors',
+                             colr = do.call(input$colorscheme,
                                             list(n=nrow(PH[[1]]), alpha = 0.8)),
                              lw = 2,
                              midline = NULL,

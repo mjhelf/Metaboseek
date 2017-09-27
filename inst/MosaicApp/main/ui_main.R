@@ -4,6 +4,7 @@ dashboardPage(skin = "black",
                 #imageOutput("logo"),  
                 
                 sidebarMenu(
+                  useShinyjs(),
                   p(paste0("version ",packageVersion("Mosaic"))),
                   source(file.path("modules_nonformal", "background_ui.R"), local = TRUE)$value,
                      
@@ -14,13 +15,10 @@ dashboardPage(skin = "black",
                   menuItem("Explore Data", tabName = "exploredata", icon = icon("area-chart")),
                   
                   menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
-                           # menuSubItem("Feature Tables", tabName = "processTableData")
-                  menuItem("Help", tabName = "start", icon = icon("paper-plane"))
-                  ),
+                            menuSubItem("XCMS analysis", tabName = "XCMSrunpanel")),
+                  menuItem("Help", tabName = "start", icon = icon("question-circle-o")),
                   # menuSubItem("MS Data", tabName = "rawfiles")),
                   #  div(title = "Run basic statistical analyses", menuItem("Process Data", tabName = "processdata", icon = icon("desktop"))),
-                  
-                  
                   
                   bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable")
@@ -106,9 +104,9 @@ dashboardPage(skin = "black",
               #  tabItem(tabName = "rawfiles",
                #         source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value
                 #),
-              #  tabItem(tabName = "processTableData",
-               #         source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
-                #),
+                tabItem(tabName = "XCMSrunpanel",
+                        source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_ui.R",package = "Mosaic"), local = TRUE)$value
+                ),
                 tabItem(tabName = "exploredata",
                         source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
                 )

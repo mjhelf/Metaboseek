@@ -47,6 +47,7 @@ function(input, output, session) {
     
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
+    source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_server.R",package = "Mosaic"), local = TRUE)$value
     
     
 }

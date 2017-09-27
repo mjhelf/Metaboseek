@@ -50,7 +50,8 @@ output$plotCx <- renderUI({
 output$colorscheme <- renderUI({
   selectizeInput("colorscheme","Color palette: ", 
                  choices= c("topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
-                 selected = MSData$layouts[[MSData$active]]$settings$colr)
+                 selected = NULL
+                 )
 })
 observeEvent(input$colorscheme,{
   if(!is.null(MSData$active)){
