@@ -40,7 +40,7 @@ output$plotLw <- renderUI({
 })
 
 output$MLtoggle <- renderUI({
-  checkboxInput("MLtoggle","Mark feature RT", value = F)
+  checkboxInput("MLtoggle","Mark feature RT", value = T)
 })
 
 output$plotCx <- renderUI({
