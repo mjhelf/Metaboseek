@@ -187,11 +187,11 @@ output$xcms_settingstab <- renderRHandsontable({
 
 observeEvent(input$xcms_statustab,{
   if(!is.null(input$xcms_statustab) && !is.na(hot_to_r(input$xcms_statustab)$Status[1]) && hot_to_r(input$xcms_statustab)$Status[1] == "Finished"){
-    showNotification(paste("Analysis finished"), duration = 0)
+    showNotification(paste("XCMS analysis finished"), duration = 0)
   }
   
   if(!is.null(input$xcms_statustab) && !is.na(hot_to_r(input$xcms_statustab)$Status[1]) && hot_to_r(input$xcms_statustab)$Status[1] == "Starting analysis"){
-    showNotification(paste("Analysis running"), duration = 0)
+    showNotification(paste("XCMS analysis started"), duration = 0)
   }
 })
 

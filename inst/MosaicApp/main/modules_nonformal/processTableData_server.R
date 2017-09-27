@@ -72,11 +72,11 @@ observeEvent(input$analyzebutton,{
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)}
     if("p-values" %in% input$selAna){
         if(input$usenormdata){
-            inp <- multittest(pl = featureTables$tables[[featureTables$active]]$df
+            inp <- multittest(df = featureTables$tables[[featureTables$active]]$df
                               [,featureTables$tables[[featureTables$active]]$intensities_norm],
                               groups = featureTables$tables[[featureTables$active]]$anagroupnames_norm)
         }else{
-            inp <- multittest(pl = featureTables$tables[[featureTables$active]]$df
+            inp <- multittest(df = featureTables$tables[[featureTables$active]]$df
                                         [,featureTables$tables[[featureTables$active]]$intensities],
             groups = featureTables$tables[[featureTables$active]]$anagroupnames)}
         featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)

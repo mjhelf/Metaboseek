@@ -145,7 +145,7 @@ savetable <- function(xset,
           rtwin[rtwin < 0]<-0
         }
         
-        intens[[basename(names(rawdata)[i])]] <- exIntensities(rawfile= rawdata[[i]],
+        intens[[paste0(basename(names(rawdata)[i]),"__XIC")]] <- exIntensities(rawfile= rawdata[[i]],
                                                                mz = tb$mz,
                                                                ppm=intensities$ppm,
                                                                rtw= rtwin
