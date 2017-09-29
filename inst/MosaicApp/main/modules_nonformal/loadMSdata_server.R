@@ -12,7 +12,7 @@ incProgress(0.5, detail = "loading MS data")
 newfiles <- list.files(exfolder, pattern=".mzXML", recursive = TRUE, full.names=T)
 newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
 MSData$filelist <- unique(c(MSData$filelist, newfiles))
-MSData$data <- loadRaw(newfiles, workers = enabledCores)
+MSData$data <- loadRawM(newfiles, workers = enabledCores)
 temp_rawgrouptable <- data.frame(File = gsub(dirname(input$rfileload$datapath),"",MSData$filelist, ignore.case = T), Group = rep("All_Files", length(MSData$filelist)))
 if(is.null(input$rfileload$datapath)){
     MSData$filelist <- unique(c(MSData$filelist, list.files(exfolder, pattern=".mzXML", recursive = TRUE, full.names=T))) ## for local execution, doesnt work yet need Folder selection
@@ -77,7 +77,7 @@ if(is.null(input$rfileload$datapath)){
 MSData$layouts[[input$groupingName]] <- constructRawLayout(MSData$rawgrouptable, stem = dirname(input$rfileload$datapath))
 }
 newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
-MSData$data <- c(MSData$data, loadRaw(newfiles, workers = enabledCores))
+MSData$data <- c(MSData$data, loadRawM(newfiles, workers = enabledCores))
 MSData$index <- c(MSData$index,input$groupingName)
 MSData$active <- input$groupingName
 })

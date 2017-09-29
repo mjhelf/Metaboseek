@@ -102,8 +102,5 @@ FilterModule <- function(input, output, session, lab = "Filter", tag, df, preset
     })
     
     )
-    
-    #  return(reactive({list(col = typeof(df()[,input$colSel]), ty = "numeric",
-    #                        min = input$minSel, max = input$maxSel)}))
-    # })
+
 }
