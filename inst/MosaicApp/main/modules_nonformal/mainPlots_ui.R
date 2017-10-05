@@ -10,7 +10,7 @@ tabBox(title = "EIC viewer",
     #tags$head(
      # tags$style(type="text/css", "label{ display: table-cell; text-align: center; vertical-align: middle; } .form-group { display: table-row;}")
     #),
-    column(4,
+    column(2,
 downloadButton("pdfButton", "Save Plot")
 ),
 
@@ -20,7 +20,11 @@ htmlOutput("groupingActiveSelect")
 
 column(4,
 fileInput('rfileload',"Upload ZIP file with mzXML files", accept = "application/zip")
-)
+),
+
+column(2,
+       tags$div(title = "Load MS data directly from a local folder. Only works in non-server mode on Windows.", actionButton("loadRawFolder", "Load folder"))
+       )
 ),
 
 

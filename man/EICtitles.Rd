@@ -11,9 +11,7 @@ EICtitles(mzs, rts, ppm)
 
 \item{rts}{vector of retention time values (not ranges)}
 
-\item{ppm}{mz window +/- mzmid in ppm that will be plotted
-
-export}
+\item{ppm}{mz window +/- mzmid in ppm that will be plotted}
 }
 \description{
 helper function to generate titles for EICgeneral

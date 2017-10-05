@@ -81,7 +81,7 @@ output$mainPlotEICsPre <- renderPlot({
       )
   }
     
-}, bg = "white")
+}, bg = "white", execOnResize = T)
 
 
 output$mainPlotPlaceholder2 <- renderPlot({

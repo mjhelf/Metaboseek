@@ -16,4 +16,5 @@ Imports: xcms,
     shinyBS,
     shinythemes,
     CAMERA,
-    BiocParallel
+    BiocParallel,
+    cluster

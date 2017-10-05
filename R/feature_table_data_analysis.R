@@ -291,4 +291,22 @@ ttestx <- function(x=c(1,2,2,3,3,3,4,4,4,4,4,5,5,5,6,6,7) #input vector
     
 }
 
-    
+#' MosCluster
+#' 
+#' Cluster a matrix
+#'  
+#' @param mx matrix (of intensity values)
+#' @param method "clara" (from the cluster package)
+#' @param ... additional arguments to the clustering method
+#'
+#' @importFrom cluster clara
+#' 
+#' @export
+MosCluster <- function(method = "clara",
+                       ...){
+  #requireNamespace("cluster")
+  res <- do.call(paste0(method), list(...))
+  
+  return(data.frame(cluster__clara = res$clustering))
+  
+}    

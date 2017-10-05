@@ -41,6 +41,7 @@ legendplot <- function(...){
 #' @param yzoom zoom factor into y-axis
 #' @param cx character expansion factor (font size)
 #' @param adducts numeric() of mass shifts to be added to feature masses
+#' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -60,7 +61,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        adducts = c(0),
                        cx = 1,
                        midline = T,
-                       yzoom = 1
+                       yzoom = 1,
+                       RTcorrect = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -115,7 +117,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                         mz = mzx[1,],
                         rt = NULL,
                         rnames = "1", #major item names
-                        byFile = F #if true, table will be sorted by rawfile, otherwise by feature
+                        byFile = F,
+                        RTcorr = RTcorrect  #if true, table will be sorted by rawfile, otherwise by feature
     )
     groupPlot(EIClist = EICsTIC,
               grouping = glist,
@@ -142,10 +145,11 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   EICs <- multiEICplus(rawdata= rdata,
                        mz = mzx,
-                       rt = rtx,
+                       rt = if(is.null(RTcorrect)){rtx}else{NULL},
                        rnames = row.names(mzmid), #major item names
                        byFile = F, #if true, table will be sorted by rawfile, otherwise by feature
-                       adducts
+                       adducts,
+                       RTcorr = RTcorrect
   )
   
   groupPlot(EIClist = EICs,
@@ -176,6 +180,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 
 
 
+
 #' EICtitles
 #' 
 #' helper function to generate titles for EICgeneral
@@ -185,7 +190,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 #' @param mzs vector of mz values (not ranges)
 #' @param ppm mz window +/- mzmid in ppm that will be plotted
 #' 
-#' export
+#' @export
 EICtitles <- function(mzs, rts, ppm){
   
   numbs <- matrix(mapply(sprintf,matrix(c(mzs,
@@ -294,14 +299,21 @@ groupPlot <- function(EIClist = res,
       #minoritem <- if(length(items) == 1){t(as.matrix(EIClist[[majoritem]][items,]))}else{EIClist[[majoritem]][items,]}
       #if(length(items) == 1){row.names(minoritem) <- items}
       
+      xlimes = if (is.null(plotProps$xlim)){c(min(unlist(minoritem$EIClist[[1]][,'rt'])),
+                                            max(unlist(minoritem$EIClist[[1]][,'rt'])))/60}
+      else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60}
+      
+      
+      ### by default, only the visible part of the spectrum will be used to determine y-max
+      ylimes = if(plotProps$TIC){c(0,   max(unlist(minoritem$EIClist[,"tic"])[which(unlist(minoritem$EIClist[,"rt"]) >= min(xlimes)*60 & unlist(minoritem$EIClist[,"rt"]) <= max(xlimes)*60)]))}
+      else if (is.null(plotProps$ylim)){c(0,max(unlist(minoritem$EIClist[,"intensity"])[which(unlist(minoritem$EIClist[,"intensity"]) >= min(xlimes)*60 & unlist(minoritem$EIClist[,"intensity"]) <= max(xlimes)*60)]))}
+      else{c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}
+      
+      
+      
       EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
-              ylim = if(plotProps$TIC){c(0,minoritem$maxTIC)}
-              else if (is.null(plotProps$ylim)){c(0,minoritem$maxEIC)}
-              else{c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}, 
-              xlim = if (is.null(plotProps$xlim)){c(min(unlist(minoritem$EIClist[[1]][,'rt'])),
-                                                    max(unlist(minoritem$EIClist[[1]][,'rt'])))/60}
-              else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60},
-              legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]])))),
+              ylim = ylimes, 
+              xlim = xlimes,
               colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
               else{plotProps$colr[1:nrow(minoritem$EIClist[[1]])]},
               heading = names(grouping)[plotgroup],
