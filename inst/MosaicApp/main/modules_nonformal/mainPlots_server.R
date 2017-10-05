@@ -1,4 +1,5 @@
 source(file.path("modules_nonformal", "mainPlots_options_server.R"), local = TRUE)$value 
+source(file.path("modules_nonformal", "interactiveView_server.R"), local = TRUE)$value 
 
 
 output$groupingActiveSelect <- renderUI({

@@ -46,5 +46,9 @@ fluidRow(
 )
 
 )
-)
+),
+tabPanel("Interactive View (beta)",
+         source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
+         )
+
 )
