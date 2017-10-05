@@ -130,10 +130,6 @@ multiEIC <- function (rawdata= rawcoll,
     rxl <-unname(as.list(data.frame(t(mx[,3:4]))))
   }    
   
-  if(!is.null(RTcorr)){
-    names(RTcorr$corr) <- RTcorr$fnames
-    which(names(xcmsRaws)  == names(RTcorr$corr))
-  }
   
   fx3 <- function(ls, mz, rt, rfile, gauss = getgauss, RTcorrx = NULL){
     

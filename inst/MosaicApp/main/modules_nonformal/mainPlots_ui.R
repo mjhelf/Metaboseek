@@ -10,15 +10,24 @@ tabBox(title = "EIC viewer",
     #tags$head(
      # tags$style(type="text/css", "label{ display: table-cell; text-align: center; vertical-align: middle; } .form-group { display: table-row;}")
     #),
+    
+    
+column(2,
+    checkboxInput("RtCorrActive", "RT correction", value = F)
+    ),
+    
+    
     column(2,
 downloadButton("pdfButton", "Save Plot")
 ),
 
-column(4,
+column(3,
 htmlOutput("groupingActiveSelect")
 ),
 
-column(4,
+
+
+column(3,
 fileInput('rfileload',"Upload ZIP file with mzXML files", accept = "application/zip")
 ),
 

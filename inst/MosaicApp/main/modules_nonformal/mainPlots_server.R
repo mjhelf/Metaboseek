@@ -37,7 +37,8 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                                    adducts = massShiftsOut()$shifts,
                                                    cx = input$plotCx,
                                                    midline = input$MLtoggle,
-                                                   yzoom = input$plotYzoom
+                                                   yzoom = input$plotYzoom,
+                                                   RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr}
                                         )
                                       },
                                     
@@ -77,7 +78,8 @@ output$mainPlotEICsPre <- renderPlot({
                  adducts = massShiftsOut()$shifts,
                  cx = input$plotCx,
                  midline = input$MLtoggle,
-                 yzoom = input$plotYzoom
+                 yzoom = input$plotYzoom,
+                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr}
       )
   }
     

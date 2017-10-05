@@ -32,7 +32,11 @@ observe({
 })
 
 observeEvent(input$loadRawFolder,{
-  MSData$localfolders <- c(gsub("\\\\","/",choose.dir()), MSData$localfolders)
+  check <- choose.dir()
+  if(length(check)>0){
+    
+  MSData$localfolders <- c(gsub("\\\\","/",check), MSData$localfolders)
+  }
 })
 
 #### Load raw files from local folder
@@ -51,7 +55,8 @@ observeEvent(MSData$localfolders,{
     MSData$active = "default"
     
   })
-  }
+  
+}
 })
 
 
