@@ -299,7 +299,7 @@ if(tbouts["peaktable_CAMERA"]){
                         status = history,
                         fill = NULL,
                         nonfill = T,
-                        filename = "peaktable_CAMERA",
+                        filename = "peaktable_CAMERA.csv",
                         bparams = bparam,
                         intensities = if(getints["peaktable_CAMERA"]){mos_fparam}else{NULL},
                         rawdata = rfiles)  
