@@ -9,6 +9,7 @@ library(xcms)
 enableBookmarking("server")
 timeStamp <-  strftime(Sys.time(),"%Y%m%d_%H%M%S")
 Mosaic_mode <- "server"
+servermode <- F
 enabledCores <- 10
 options(scipen = 5)
 #source functions:

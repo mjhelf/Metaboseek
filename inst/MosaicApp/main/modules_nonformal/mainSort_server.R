@@ -80,7 +80,10 @@ F1out <-    reactive({
     actives <- sapply(out,"[[","active")
     selections <- lapply(out,"[[","selected")
     
-    if(length(selections) == 1){sele <- selections[[1]]} 
+   # if(!any(actives)){
+    #  sele <- row.names(featureTables$tables[[featureTables$active]]$df)
+    #}
+    if (length(selections) == 1){sele <- selections[[1]]} 
     else if(length(selections) > 1){
       sele <- selections[[1]]
       ##combining filter results
@@ -90,6 +93,8 @@ F1out <-    reactive({
       
     }
     else{sele <- row.names(featureTables$tables[[featureTables$active]]$df)}
+    
+    
     featureTables$tables[[featureTables$active]]$filters$sele <- sele 
     
     
@@ -112,7 +117,7 @@ output$FilterUI <- renderUI({
 
 #})
  
-allFilters <- eventReactive(c(input$mainSort,input$updateFilter),{#1:nrow(featureTables$tables[[featureTables$active]]$df)
+allFiltersPre <- eventReactive(c(input$mainSort,input$updateFilter),{#1:nrow(featureTables$tables[[featureTables$active]]$df)
   
   if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
     if(featureTables$tables[[featureTables$active]]$editable){
@@ -127,3 +132,6 @@ allFilters <- eventReactive(c(input$mainSort,input$updateFilter),{#1:nrow(featur
   #featureTables$tables[[featureTables$active]]$filters$sele
   
   })
+
+
+allFilters <- eventReactive(c(allFiltersPre(),input$confgroups,featureTables$active),{ return(F1out())})

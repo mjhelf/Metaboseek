@@ -1,7 +1,7 @@
 ##############LOAD RAW FILES MODULE#############
 ###Load the mzXML files
 
-#### Load grouping table from file
+#### Load raw files from zip file
 observeEvent(input$rfileload$datapath,{
     withProgress(message = 'Please wait!', detail = "unzipping files", value = 0.1, {
     exfolder = file.path(dirname(input$rfileload$datapath), gsub("\\.[^.]*$","",input$rfileload$name))
@@ -25,6 +25,42 @@ MSData$active = "default"
 
 })
 })
+
+##load rawfiles from folder directly on local windows machines
+observe({
+  toggleState(id = "loadRawFolder", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
+})
+
+observeEvent(input$loadRawFolder,{
+  check <- choose.dir()
+  if(length(check)>0){
+    
+  MSData$localfolders <- c(gsub("\\\\","/",check), MSData$localfolders)
+  }
+})
+
+#### Load raw files from local folder
+observeEvent(MSData$localfolders,{
+  if(length(MSData$localfolders) > 0){
+  withProgress(message = 'Please wait!', detail = "loading MS data", value = 0.3, {
+
+    incProgress(0.5, detail = "loading MS data")
+    newfiles <- list.files(MSData$localfolders[1], pattern=".mzXML", recursive = TRUE, full.names=T)
+    newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
+    MSData$filelist <- unique(c(MSData$filelist, newfiles))
+    MSData$data <- c(MSData$data,loadRawM(newfiles, workers = enabledCores))
+    temp_rawgrouptable <- data.frame(File = MSData$filelist, Group = rep("All_Files", length(MSData$filelist)))
+    MSData$layouts[["default"]] <- constructRawLayout(temp_rawgrouptable, stem = "")
+    MSData$index = unique(c("default",MSData$index))
+    MSData$active = "default"
+    
+  })
+  
+}
+})
+
+
+
 
 output$groupingName <- renderUI({
     textInput("groupingName", "Grouping Name:", value = if(input$groupingEditSelect == "__NEW"){ paste0("Grouping",length(MSData$index)) }

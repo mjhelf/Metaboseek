@@ -11,6 +11,8 @@ function(input, output, session) {
     MSData <- reactiveValues(layouts = list(), #List of rawfile paths (unsorted)
                              rawgrouptable = NULL,
                              index = NULL,
+                             localfolders = character(0),
+                             RTcorr = NULL,
                              active = NULL,
                              filelist = NULL,
                              data = NULL) #rawfs
@@ -47,6 +49,7 @@ function(input, output, session) {
     
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
+    source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_server.R",package = "Mosaic"), local = TRUE)$value
     
     
 }

@@ -1,4 +1,5 @@
 source(file.path("modules_nonformal", "mainPlots_options_server.R"), local = TRUE)$value 
+source(file.path("modules_nonformal", "interactiveView_server.R"), local = TRUE)$value 
 
 
 output$groupingActiveSelect <- renderUI({
@@ -37,7 +38,8 @@ output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectNam
                                                    adducts = massShiftsOut()$shifts,
                                                    cx = input$plotCx,
                                                    midline = input$MLtoggle,
-                                                   yzoom = input$plotYzoom
+                                                   yzoom = input$plotYzoom,
+                                                   RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr}
                                         )
                                       },
                                     
@@ -77,11 +79,12 @@ output$mainPlotEICsPre <- renderPlot({
                  adducts = massShiftsOut()$shifts,
                  cx = input$plotCx,
                  midline = input$MLtoggle,
-                 yzoom = input$plotYzoom
+                 yzoom = input$plotYzoom,
+                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr}
       )
   }
     
-}, bg = "white")
+}, bg = "white", execOnResize = T)
 
 
 output$mainPlotPlaceholder2 <- renderPlot({
@@ -107,7 +110,7 @@ output$mainPlotPlaceholder2 <- renderPlot({
             grouping = list("No Data Loaded" = row.names(PH[[1]])),
             plotProps = list(TIC = T, #settings for single plots
                              cx = 1.2,
-                             colr = do.call('topo.colors',
+                             colr = do.call(input$colorscheme,
                                             list(n=nrow(PH[[1]]), alpha = 0.8)),
                              lw = 2,
                              midline = NULL,

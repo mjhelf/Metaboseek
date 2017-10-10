@@ -1,5 +1,5 @@
 fluidPage(
-        h2("Welcome to MOSAiC!"),
+        h2("MOSAiC help"),
         p("You can upload MS data files and/or tables with LC-MS features to analyze them with MOSAiC."),
 
         #h1("MS data files"),

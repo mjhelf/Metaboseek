@@ -6,7 +6,8 @@
 \usage{
 PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
   xlim = c(min(unlist(EIClistItem[, "rt"])), max(unlist(EIClistItem[,
-  "rt"])))/60, heading = "test", single = F, relto = NULL)
+  "rt"])))/60, heading = "test", single = F, par = T, relto = NULL,
+  ylab = "Intensity", xlab = "RT (min)", ysci = T)
 }
 \arguments{
 \item{cx}{character expansion factor (font size)}
@@ -17,7 +18,17 @@ PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
 
 \item{heading}{heading of the plot}
 
-\item{single}{if TRUE, this plot is expected to be the only plot in a com,posite (different margin settings)}
+\item{single}{if TRUE, this plot is expected to be the only plot in a composite (different margin settings)}
+
+\item{par}{if FALSE, par margin settings are not set inside the function and should be set outside}
+
+\item{relto}{show y axis values relative to relto if not NULL.}
+
+\item{ylab}{y axis label}
+
+\item{xlab}{x axis label}
+
+\item{ysci}{if TRUE, y axis label numbers are shown in scientific format}
 }
 \description{
 Initiate a plot and draw axes

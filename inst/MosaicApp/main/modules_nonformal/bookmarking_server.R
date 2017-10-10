@@ -15,27 +15,7 @@
 #PYclusterstuff pre analysis: http://127.0.0.1:5341/?_state_id_=b5f5287d7066f359
 
 
-allIds <- c("._bookmark_", "activeTable", "shiny-tab-start", "projectName", "shiny-tab-loaddata",
-            "shiny-tab-loadtables", "file1", "file1_progress", "header", "sep", "quote", "ldtbl",
-            "confgroups", "anagroupswitch", "loadgroups", "loadgroups_progress", "anagrouping", "savegroups",
-            "intcols", "preview", "shiny-tab-rawfiles", "rfileload", "rfileload_progress", "groupingName",
-            "groupingEditSelect", "rnamelvl", "rawgrouping", "confrgroups", "savergroups", "loadrgroups",
-            "loadrgroups_progress", "shiny-tab-processTableData", "normbutton", "selctrl", "usenormdata",
-            "selAna", "analyzebutton", "nonNormalizedPlot-log", "nonNormalizedPlot-dplot", "nonNormalizedPlot-info",
-            "NormalizedPlot-log", "NormalizedPlot-dplot", "NormalizedPlot-info", "shiny-tab-exploredata",
-            "PlotOpts", "2408", "2408", "tab-2408-1", "tab-2408-2", "PPMwindow", "plotCols", "TICtoggle",
-            "RTtoggle", "EICplots", "2039", "2039", "tab-2039-1", "tab-2039-2", "pdfButton", "groupingActiveSelect",
-            "mainPlotEICs", "collapse", "maintable", "tbButton", "newTable", "tablePage", "tableInfo", "tableSaver",
-            "collapse", "selnormdata", "mainSelGroup", "mainSelgProps", "mainSelsProps", "mainSelIntensities",
-            "mainSelOthers", "mainSortDecreasing", "mainSortToggle", "mainSort", "addFilter", "updateFilter",
-            "Filter1-toggler", "Filter1-colSel", "Filter1-minSel", "Filter1-maxSel", "Filter1-modeSel",
-            "Filter1-txtSel", "Filter1-insider", "Filter2-toggler", "Filter2-colSel", "Filter2-minSel", 
-            "Filter2-maxSel", "Filter2-modeSel", "Filter2-txtSel", "Filter2-insider", "Filter3-toggler", 
-            "Filter3-colSel", "Filter3-minSel", "Filter3-maxSel", "Filter3-modeSel", "Filter3-txtSel",
-            "Filter3-insider", "Filter4-toggler", "Filter4-colSel", "Filter4-minSel", "Filter4-maxSel", 
-            "Filter4-modeSel", "Filter4-txtSel", "Filter4-insider", "Filter5-toggler", "Filter5-colSel",
-            "Filter5-minSel", "Filter5-maxSel", "Filter5-modeSel", "Filter5-txtSel", "Filter5-insider", 
-            "runcode_expr", "runcode_run", "runcode_error", "runcode_errorMsg", "diag"
+allIds <- c("._bookmark_", "activeTable", "shiny-tab-start", "shiny-tab-XCMSrunpanel", "xcms_folder", "xcms_loadfolder", "xcms_name", "xcms_settingsLoad", "xcms_settingsLoad_progress", "xcms_selectTab", "xcms_settingstab", "xcms_legend_master", "xcms_settingsDL", "xcms_start", "xcms_statustab", "summary", "shiny-tab-exploredata", "PlotOpts", "3673", "3673", "tab-3673-1", "tab-3673-2", "PPMwindow", "plotCols", "TICtoggle", "RTtoggle", "plotYzoom", "plotLw", "MLtoggle", "plotCx", "colorscheme", "tab-3673-3", "massShiftTab", "updateshifts", "savemassShiftTab", "loadmassShift", "loadmassShift_progress", "tab-3673-4", "RtCorrLoad", "RtCorrLoad_progress", "rtcorr", "tab-3673-5", "projectName", "EICplots", "1879", "1879", "tab-1879-1", "tab-1879-2", "groupingName", "groupingEditSelect", "rnamelvl", "rawgrouping", "confrgroups", "savergroups", "loadrgroups", "loadrgroups_progress", "tab-1879-3", "RtCorrActive", "pdfButton", "groupingActiveSelect", "rfileload", "rfileload_progress", "loadRawFolder", "mainPlotEICs", "adductLegend", "tab-1879-4", "interactiveRTcorr", "EicTic", "selEICs", "selMZ", "plainplot", "plainplot_click", "plainplot_dblclick", "plainplot_hover", "TRUE", "plainplot_brush", "Mspec", "Mspec_click", "Mspec_dblclick", "Mspec_hover", "TRUE", "Mspec_brush", "TableBox", "3674", "3674", "tab-3674-1", "tab-3674-2", "file1", "file1_progress", "header", "sep", "quote", "ldtbl", "confgroups", "anagroupswitch", "loadgroups", "loadgroups_progress", "anagrouping", "savegroups", "intcols", "preview", "tab-3674-3", "normbutton", "selctrl", "usenormdata", "selAna", "kclusternum", "analyzebutton", "nonNormalizedPlot-log", "nonNormalizedPlot-dplot", "nonNormalizedPlot-info", "NormalizedPlot-log", "NormalizedPlot-dplot", "NormalizedPlot-info", "tab-3674-4", "maintable", "tbButton", "newTable", "tablePage", "tableInfo", "tableSaver", "collapse", "selnormdata", "mainSelGroup", "mainSelgProps", "mainSelsProps", "mainSelIntensities", "mainSelOthers", "mainSortDecreasing", "mainSortToggle", "mainSort", "addFilter", "updateFilter", "Filter1-toggler", "Filter1-colSel", "Filter1-minSel", "Filter1-maxSel", "Filter1-modeSel", "Filter1-txtSel", "Filter1-insider", "Filter2-toggler", "Filter2-colSel", "Filter2-minSel", "Filter2-maxSel", "Filter2-modeSel", "Filter2-txtSel", "Filter2-insider", "Filter3-toggler", "Filter3-colSel", "Filter3-minSel", "Filter3-maxSel", "Filter3-modeSel", "Filter3-txtSel", "Filter3-insider", "Filter4-toggler", "Filter4-colSel", "Filter4-minSel", "Filter4-maxSel", "Filter4-modeSel", "Filter4-txtSel", "Filter4-insider", "Filter5-toggler", "Filter5-colSel", "Filter5-minSel", "Filter5-maxSel", "Filter5-modeSel", "Filter5-txtSel", "Filter5-insider", "runcode_expr", "runcode_run", "runcode_error", "runcode_errorMsg", "diag"
 )
 
 keepIds<- c("projectName", "rfileload", "rfileload_progress")
@@ -54,6 +34,8 @@ onBookmark(function(state) {
     state$values$MSData$layouts <- MSData$layouts
     state$values$MSData$index <- MSData$index
     state$values$MSData$active <- MSData$active
+    
+    state$values$MSData$RTcorr <- MSData$RTcorr
     #state$values$MSData$rawgrouptable <- MSData$rawgrouptable
     #state$values$MSData$filelist <- MSData$filelist
     #state$values$MSData$data <- MSData$data
@@ -104,6 +86,9 @@ onRestored(function(state) {
     #MSData$data <- loadRaw(MSData$filelist, workers = enabledCores)
 
     MSData$rawgrouptable <- state$values$MSData$rawgrouptable
+    MSData$RTcorr <- state$values$MSData$RTcorr
+    
+    
     # MSData$filelist is automatically updated on restore, because change of input$rfileload$datapath triggers unzip 
     #& construction of the filelist
 })

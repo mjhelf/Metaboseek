@@ -52,10 +52,14 @@ FilterModule <- function(input, output, session, lab = "Filter", tag, df, preset
   #  if(!is.null(cond()){
     output$minSel <- renderUI({if(length(cond()) !=0 && cond()){numericInput(ns('minSel'), 'min.', 
                                                        value = mins(),
+                                                       min = min(df()[,input$colSel]),
+                                                       max = max(df()[,input$colSel]),
                                                        width = '120px')}})
     
     output$maxSel <- renderUI({if(length(cond()) !=0 && cond()){numericInput(ns('maxSel'), 'max.',
                                                        value = maxs(),
+                                                       min = min(df()[,input$colSel]),
+                                                       max = max(df()[,input$colSel]),
                                                        width = '120px')}})
     
     output$modeSel <- renderUI({if(length(cond()) !=0 && !cond()){selectizeInput(ns('modeSel'), '',

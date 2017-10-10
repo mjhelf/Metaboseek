@@ -1,25 +1,25 @@
 xcmsSettings <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1)),
-                                             centWave = read.csv("defaults/xcmsAnalysis/centWave.csv",
+                                             centWave = read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "centWave.csv",package = "Mosaic"),
                                                                  row.names = 1,
                                                                  stringsAsFactors = F),
-                                             group = read.csv("defaults/xcmsAnalysis/group.csv",
+                                             group = read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "group.csv",package = "Mosaic"),
                                                               row.names = 1,
                                                               stringsAsFactors = F),
-                                             retcor = read.csv("defaults/xcmsAnalysis/retcor.csv",
+                                             retcor = read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "retcor.csv",package = "Mosaic"),
                                                                row.names = 1,
                                                                stringsAsFactors = F),
-                                             outputs = read.csv("defaults/xcmsAnalysis/outputs.csv",
+                                             outputs = read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "outputs.csv",package = "Mosaic"),
                                                                 row.names = 1,
                                                                 stringsAsFactors = F),
-                                             peakfilling = read.csv("defaults/xcmsAnalysis/peakfilling.csv",
+                                             peakfilling = read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "peakfilling.csv",package = "Mosaic"),
                                                                     row.names = 1,
                                                                     stringsAsFactors = F),
-                                             camera = read.csv("defaults/xcmsAnalysis/camera.csv",
+                                             camera = read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "camera.csv",package = "Mosaic"),
                                                                row.names = 1,
                                                                stringsAsFactors = F)
 ),
 wd = character(),
-active = "filegroups",
+active = "centWave",
 jobs = NULL,
 viewjob = NULL)
 
@@ -65,11 +65,24 @@ observeEvent(input$xcms_loadfolder,{
   xcmsSettings$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
   xcmsSettings$wd <- fol
   xcmsSettings$active <- "filegroups"
+
+  
 })
 
+output$xcms_selectTab <- renderUI({selectizeInput('xcms_selectTab',"Change settings for...", 
+                                                  choices = list("File Grouping" = "filegroups",
+                                                                         "Peak Detection" = "centWave",
+                                                                         "Peak filling" = "peakfilling",
+                                                                         "Feature grouping" = "group",
+                                                                         "CAMERA settings" = "camera",
+                                                                         "RT correction" = "retcor",
+                                                                         "Output Files" = "outputs"),
+                                                  selected = xcmsSettings$active
+)})
+
 observeEvent(input$xcms_selectTab,{
-  print(xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")])
-  print(input$xcms_settingstab)
+  #print(xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")])
+  #print(input$xcms_settingstab)
   if(!is.null(input$xcms_settingstab) && nrow(hot_to_r(input$xcms_settingstab)) != 0){
     xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
   }  
@@ -88,7 +101,7 @@ observeEvent(input$xcms_start,{
     
     write.csv(data.frame(X=1,Time=0,Status="",Details="",elapsed_time=0), file = file.path(fo,"status.csv"))
     xcmsSettings$jobs <- c(xcmsSettings$jobs, fo)
-    file.copy("scripts/xcms_runner_i.R",fo)
+    file.copy(system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic"),fo)
     
     for(i in 1:length(xcmsSettings$params)){
       write.csv(xcmsSettings$params[[i]], file = file.path(fo,paste0(names(xcmsSettings$params)[i],".csv")), row.names = T)
@@ -100,10 +113,10 @@ observeEvent(input$xcms_start,{
     #file.remove(file.path(fo,names(xcmsSettings$params))) #note: better delete files from the runner if necessary
     
     #fo <- "C:/Users/mjh43/OneDrive - Cornell University/"
-    runner <- file.path(getwd(),
-                        #"C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone",
-                        "scripts",
-                        "xcms_runner_i.R") 
+    runner <- system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic")
+                       #  file.path(getwd(),
+                        #"scripts",
+                        #"xcms_runner_i.R") 
     
     # runner <- file.path("C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone",
     #                    "scripts",
@@ -114,8 +127,8 @@ observeEvent(input$xcms_start,{
                   runner,
                   '" "',
                   fo,
-                  '" "',
-                  getwd(),
+                  #'" "',
+                  #getwd(),
                   '"'),
            wait = F)
   }
@@ -131,7 +144,7 @@ output$xcms_settingstab <- renderRHandsontable({
    }
   #MAT_comments[2, 2] = "Another test comment"
   
-  print(MAT_comments)
+ # print(MAT_comments)
   
   #necessary to handle case when only one column != Description
   showme <- as.data.frame(xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")],
@@ -174,11 +187,11 @@ output$xcms_settingstab <- renderRHandsontable({
 
 observeEvent(input$xcms_statustab,{
   if(!is.null(input$xcms_statustab) && !is.na(hot_to_r(input$xcms_statustab)$Status[1]) && hot_to_r(input$xcms_statustab)$Status[1] == "Finished"){
-    showNotification(paste("Analysis finished"), duration = 0)
+    showNotification(paste("XCMS analysis finished"), duration = 0)
   }
   
-  if(!is.null(input$xcms_statustab) && !is.na(hot_to_r(input$xcms_statustab)$Status[1]) && hot_to_r(input$xcms_statustab)$Status[1] != "Finished"){
-    showNotification(paste("Analysis running"), duration = 0)
+  if(!is.null(input$xcms_statustab) && !is.na(hot_to_r(input$xcms_statustab)$Status[1]) && hot_to_r(input$xcms_statustab)$Status[1] == "Starting analysis"){
+    showNotification(paste("XCMS analysis started"), duration = 0)
   }
 })
 
@@ -220,4 +233,9 @@ output$xcms_statustab <- renderRHandsontable({if(!is.null(xcmsSettings$jobs)){
 # Generate a text output ----
 output$summary <- renderPrint({
   print(gsub("\\\\","/", input$xcms_folder))
+})
+
+observe({
+  toggleState(id = "xcms_loadfolder", condition = !servermode)
+  toggleState(id = "xcms_start", condition = !servermode)
 })

@@ -100,6 +100,8 @@ observeEvent(input$confgroups,{inputTable$anagroupraw <- if(input$anagroupswitch
                                                                                  editable = F)
                                featureTables$index <- updateFTIndex(featureTables$tables)
                                featureTables$active <- tabid
+                               #solely to trigger updating of the filter..
+                               F1out()
               })
 
 ##control whether buttons are clickable
