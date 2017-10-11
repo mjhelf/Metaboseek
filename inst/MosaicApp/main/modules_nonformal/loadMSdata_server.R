@@ -28,14 +28,29 @@ MSData$active = "default"
 
 ##load rawfiles from folder directly on local windows machines
 observe({
-  toggleState(id = "loadRawFolder", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
+  toggleState(id = "loadRawFolder", condition = (servermode && activateLocalFiles))
 })
 
+toggle(id = "loadRawFolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
+toggle(id = "loadRawFolder", condition = (servermode))
+
+
+shinyDirChoose(input, 'loadRawFolder', roots=rootpath)
+
+
 observeEvent(input$loadRawFolder,{
-  check <- choose.dir()
+  check <-  parseDirPath(roots=rootpath, input$loadRawFolder)
   if(length(check)>0){
     
   MSData$localfolders <- c(gsub("\\\\","/",check), MSData$localfolders)
+  }
+})
+
+observeEvent(input$loadRawFolderOffline,{
+  check <-  gsub("\\\\","/",choose.dir())
+  if(length(check)>0){
+    
+    MSData$localfolders <- c(gsub("\\\\","/",check), MSData$localfolders)
   }
 })
 

@@ -11,6 +11,7 @@ function(input, output, session) {
     MSData <- reactiveValues(layouts = list(), #List of rawfile paths (unsorted)
                              rawgrouptable = NULL,
                              index = NULL,
+                             rootfolder = rootpath,
                              localfolders = character(0),
                              RTcorr = NULL,
                              active = NULL,
