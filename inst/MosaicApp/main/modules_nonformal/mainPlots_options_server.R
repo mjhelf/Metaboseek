@@ -70,7 +70,9 @@ massShifts <- reactiveValues(table = data.frame(use = c(T,F,F,F,F,F),
                                                 stringsAsFactors = F) )
 
 output$massShiftTab <- renderRHandsontable({if(!is.null(massShifts$table)){
-  rhandsontable(massShifts$table)
+  rhandsontable(massShifts$table,
+                digits = 9)%>%
+  hot_col("mz_shift", format="0.000000")
 }
 })
 
