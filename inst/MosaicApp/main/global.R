@@ -16,7 +16,7 @@ servermode <- F
 # activate features in servermode:
 activateXCMS <- F
 activateLocalFiles <- F
-rootpath <- c(root = "")  ##the root path for file selection (for server - set with care)
+rootpath <- c(root = getwd())  ##the root path for file selection (for server - set with care)
 
 enabledCores <- 10
 options(scipen = 5)
