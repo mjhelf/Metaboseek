@@ -1,11 +1,12 @@
 
 #needed to use xcms 2.99.X (for obiwarp!)
 
-tryCatch(library(devtools),
-         error = function(e){})
+#no longer necessary with bioconductor 3.6 (xcms 3.0)
+#tryCatch(library(devtools),
+ #        error = function(e){})
 
-tryCatch(dev_mode(on=T),
-         error = function(e){})
+#tryCatch(dev_mode(on=T),
+ #        error = function(e){})
 
 
 library(xcms)
