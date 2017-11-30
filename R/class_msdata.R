@@ -157,7 +157,7 @@ multiEIC <- function (rawdata= rawcoll,
     
     for(i in names(rawdata)){
       rawfile <- rawdata[[i]]
-      summe[[i]] <- mapply(rawEIC, mzrange = mxl,
+      summe[[i]] <- mapply(rawEICm, mzrange = mxl,
                            rtrange = rxl, MoreArgs=list(object=rawfile), SIMPLIFY = F)
       
       summe[[i]] <- t(mapply(fx3, summe[[i]], mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss, RTcorrx = RTcorr)))
@@ -194,7 +194,7 @@ multiEIC <- function (rawdata= rawcoll,
 #' @param mzrange a range of m/z values (numeric(2)).
 #' @param rtrange a range of rt values (numeric(2)).
 #' @param scanrange a range of scan number values (numeric(2)).
-#' @param viewermode True to change handling of out of range rt values for the Mosaic viewer.
+#' @param viewermode True to change handling of out of range rt values for the Mosaic viewer. DEPRECATED (always used)
 #' 
 #' @export
 rawEICm <- function(object,
@@ -206,12 +206,12 @@ rawEICm <- function(object,
   
     if (length(rtrange) >= 2 ) {
       
-      if(max(rtrange) == 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
+      if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
             rtrange <- range(rtrange)
             
       #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)
-      if(max(object@scantime) < rtrange[2] & viewermode){rtrange[2] <- max(object@scantime)}
-      if(max(object@scantime) < rtrange[1] & viewermode){rtrange[1] <- min(object@scantime)}
+      if(max(object@scantime) < rtrange[2] ){rtrange[2] <- max(object@scantime)}
+      if(max(object@scantime) < rtrange[1] ){rtrange[1] <- min(object@scantime)}
             
       
         
@@ -332,7 +332,7 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
   
   
   summe <- mapply(rawEICm, mzrange = mxl,
-                  rtrange = rxl, MoreArgs=list(object=rawfile, viewermode = F), SIMPLIFY = F)
+                  rtrange = rxl, MoreArgs=list(object=rawfile, scanrange = numeric(), viewermode = F), SIMPLIFY = F)
   
   #substract "baseline" and get rid of scan#
   fx <- function(x) x$intensity-min(x$intensity)

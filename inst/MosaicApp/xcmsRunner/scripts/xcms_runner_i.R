@@ -313,6 +313,3 @@ if(tbouts["peaktable_CAMERA"]){
 history <- writeStatus (previous = history,
                         message = list(Status = "Finished",
                                        Details = "all analyses done, total time"))
-
-zip("settings.zip", c("retcor", "camera" ))
-
