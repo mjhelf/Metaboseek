@@ -16,7 +16,7 @@ rawEICm(object, mzrange = numeric(), rtrange = numeric(),
 
 \item{scanrange}{a range of scan number values (numeric(2)).}
 
-\item{viewermode}{True to change handling of out of range rt values for the Mosaic viewer.}
+\item{viewermode}{True to change handling of out of range rt values for the Mosaic viewer. DEPRECATED (always used)}
 }
 \description{
 EICs from an xcmsRaw object, modified version of xcms::rawEIC xcmsRaw method.

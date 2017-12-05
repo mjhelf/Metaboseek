@@ -59,13 +59,44 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
 # write_json(mzxml_pos, paste0(wd,"files"))
 # mzxml_pos2 <- read_json(paste0(wd,"files"), simplifyVector = T)
 
+
+toggle(id = "xcms_loadfolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
+toggle(id = "xcms_loadfolder", condition = (servermode))
+
+observe({
+  toggleState(id = "xcms_loadfolder", condition = (servermode && activateXCMS))
+  toggleState(id = "xcms_start", condition = (!servermode || (servermode && activateXCMS)))
+})
+
+shinyDirChoose(input, 'xcms_loadfolder', roots=rootpath)
+
+
 observeEvent(input$xcms_loadfolder,{
-  fol <- gsub("\\\\","/", input$xcms_folder)
-  flist = list.files(fol, pattern=".mzXML", recursive = TRUE, full.names=T)
+  fol <-  parseDirPath(roots=rootpath, input$xcms_loadfolder)
+  if(length(fol)>0){
+    #taken from xcms package
+    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
+                     "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
+    filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+    flist = list.files(fol, pattern=filepattern, recursive = TRUE, full.names=T)
+    xcmsSettings$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
+    xcmsSettings$wd <- fol
+    xcmsSettings$active <- "filegroups"
+  }
+})
+
+observeEvent(input$xcms_loadfolderOffline,{
+  fol <- gsub("\\\\","/",choose.dir())
+  if(length(fol)>0){
+  #taken from xcms package
+  filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
+                   "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
+  filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+  flist = list.files(fol, pattern=filepattern, recursive = TRUE, full.names=T)
   xcmsSettings$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
   xcmsSettings$wd <- fol
   xcmsSettings$active <- "filegroups"
-
+}
   
 })
 
@@ -235,7 +266,3 @@ output$summary <- renderPrint({
   print(gsub("\\\\","/", input$xcms_folder))
 })
 
-observe({
-  toggleState(id = "xcms_loadfolder", condition = !servermode)
-  toggleState(id = "xcms_start", condition = !servermode)
-})

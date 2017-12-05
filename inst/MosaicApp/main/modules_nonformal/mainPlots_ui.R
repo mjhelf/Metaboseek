@@ -28,11 +28,19 @@ htmlOutput("groupingActiveSelect")
 
 
 column(3,
+       
 fileInput('rfileload',"Upload ZIP file with mzXML files", accept = "application/zip")
 ),
 
 column(2,
-       tags$div(title = "Load MS data directly from a local folder. Only works in non-server mode on Windows.", actionButton("loadRawFolder", "Load folder"))
+       
+       tags$div(title = "Load MS data directly from a local folder.",
+                shinyDirButton('loadRawFolder', label="Load folder", title='Please select a folder')),
+       
+       tags$div(title = "Load MS data directly from a local folder.",
+                actionButton('loadRawFolderOffline', label="Load folder"))
+       
+       
        )
 ),
 

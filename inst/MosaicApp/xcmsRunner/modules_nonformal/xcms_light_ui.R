@@ -2,9 +2,11 @@ fluidPage(
   h3("Run XCMS analysis"),
   p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
 
-  p(strong("Not available in Server mode!")," Currently only one xcms job per MOSAiC session (concurrent job monitoring coming later)."),
-  textInput('xcms_folder', "mzXML file folder"),
-  actionButton('xcms_loadfolder', "load files"),
+  p(strong("Not on by default in Server mode!")," Currently only one xcms job per MOSAiC session (concurrent job monitoring coming later)."),
+  #textInput('xcms_folder', "mzXML file folder"),
+  actionButton('xcms_loadfolderOffline', "load MS file folder"),
+  shinyDirButton('xcms_loadfolder', "load MS file folder", title = "select a folder with MS data files"),
+  
   
   textInput('xcms_name', "Title of this analysis", "xcms_run"),
   
