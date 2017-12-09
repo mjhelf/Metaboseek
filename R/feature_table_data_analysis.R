@@ -134,19 +134,24 @@ foldChange <- function(mx,
             
             out[[paste0(barename,"__meanInt")]] <- rmeans[,i]
             if(!is.null(foldmode) && foldmode=="complex"){
-            out[[paste0(barename,"__foldOver_")]] <- rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]
-            out[[paste0(barename,"__minFoldOver_")]] <- rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
+              out[[paste0(barename,"__foldOver_")]] <- rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]
+              out[[paste0(barename,"__minFoldOver_")]] <- rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
             }else{
-            out[[paste0(barename,"__foldOverRest")]] <- if(length(colnames(rmeans)) >2){
-                                         unname(rowMeans(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]))
-            }else{
+              out[[paste0(barename,"__foldOverRest")]] <- if(length(colnames(rmeans)) >2){
+                unname(rowMeans(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]))
+              }else{
                 unname(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)])
-            }
-            out[[paste0(barename,"__minFold")]] <- if(length(colnames(rmeans)) >2){
-                                                    rowMin(rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)])  
-            }else{
+              }
+              out[[paste0(barename,"__minFold")]] <- if(length(colnames(rmeans)) >2){
+                rowMin(rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)])  
+              }else{
                 rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
-            }
+              }
+              out[[paste0(barename,"__minFoldMean")]] <- if(length(colnames(rmeans)) >2){
+                rowMin(rmeans[,i]/rmaxes[,which(colnames(rmeans)!=i)])  
+              }else{
+                rmeans[,i]/rmaxes[,which(colnames(rmeans)!=i)]
+              }
             }
             
             if(!is.null(ctrl)){
@@ -155,6 +160,20 @@ foldChange <- function(mx,
             }
             }
     }
+    
+    
+    if(is.null(foldmode) || !foldmode=="complex"){
+      barenames <- gsub("_$","",gsub("_XIC","",gsub("__(.*)","",colnames(rmeans))))
+      minFoldCols <- paste0(barenames,"__minFold")
+      minFoldMeansCols <- paste0(barenames,"__minFoldMean")
+      minFoldCtrlCols <- paste0(barenames,"__minFoldOverCtrl")
+      
+      out$best_minFold <- rowMax(as.matrix(out[,minFoldCols]))
+      out$best_minFoldMean <- rowMax(as.matrix(out[,minFoldMeansCols]))
+      out$best_minFoldCtrl <- rowMax(as.matrix(out[,minFoldCtrlCols]))
+      
+      }
+    
     return(out[,which(colnames(out)!="pholder")])
         
        

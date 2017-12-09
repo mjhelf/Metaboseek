@@ -251,7 +251,7 @@ rawEICm <- function(object,
 #' @param x numeric() to fit the curve
 #' 
 #' @export
-getgauss <- function (x){
+getgauss <- function (x, pval = 1){
     
     
     #substract "baseline"
@@ -298,9 +298,9 @@ getgauss <- function (x){
 #' @param ... additional arguments passed on to multiEIC().
 #' 
 #' @export
-bestgauss <- function(rawdata = rawcoll, ...){
-    res <- multiEIC(...)
-    return(data.frame(maxgauss = rowMax(matrix(unlist(res),ncol = length(rawdata)))))
+bestgauss <- function(...){
+    res <- multiEIC(..., byFile = T, getgauss = T)
+    return(data.frame(maxgauss = rowMax(matrix(unlist(res),ncol = length(res)))))
 }  
 
 #' exIntensities

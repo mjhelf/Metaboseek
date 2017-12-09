@@ -53,9 +53,7 @@ observeEvent(input$analyzebutton,{
                 rawdata= MSData$data,
                 mz = data.frame(mzmin = featureTables$tables[[featureTables$active]]$df$mzmin, mzmax=featureTables$tables[[featureTables$active]]$df$mzmax),
                 rt = data.frame(rtmin = featureTables$tables[[featureTables$active]]$df$rt-5, rtmax=featureTables$tables[[featureTables$active]]$df$rt+5),
-                rnames = row.names(featureTables$tables[[featureTables$active]]$df),
-                byFile = T,
-                getgauss = T
+                rnames = row.names(featureTables$tables[[featureTables$active]]$df)
             )
 
         featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
@@ -74,7 +72,9 @@ observeEvent(input$analyzebutton,{
                                     
                                      #),
                            featureTables$tables[[featureTables$active]]$anagroupnames,ctrl = input$selctrl)}
+        
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)}
+  
     if("p-values" %in% input$selAna){
         if(input$usenormdata){
             inp <- multittest(df = featureTables$tables[[featureTables$active]]$df
