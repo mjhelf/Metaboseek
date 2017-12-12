@@ -54,13 +54,101 @@ observeEvent(input$loadRawFolderOffline,{
   }
 })
 
+
+###
+projectData <- reactiveValues(filegroupfiles =NULL,
+                              csvfiles = NULL,
+                              filegroups = NULL,
+                              projectName = paste0("MOSAiC_session_",timeStamp))
+
+###
+observeEvent(input$projectLoadOk,{
+  
+  withProgress(message = 'Please wait!', detail = "loading .csv file", value = 0.3, {
+
+    if(!is.null(input$projectTables)){
+  ColumnNames <- gsub("-",".",paste0(basename(projectData$filegroups$File),"__XIC"))
+  ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
+  
+inputTable$df <- read.csv(projectData$csvfiles[which(basename(projectData$csvfiles) == input$projectTables)],
+                          header=T, sep=",", 
+                          quote='"', stringsAsFactors = F)
+inputTable$tablename <- input$projectTables
+if(length(which(colnames(inputTable$df) %in% ColumnNames)==0)){
+  inputTable$colrange <- which(colnames(inputTable$df) %in% gsub("__XIC","",ColumnNames))
+}else{
+  inputTable$colrange <- grep("__XIC",colnames(inputTable$df))}
+
+inputTable$anagroupraw <- data.frame(Column=sort(colnames(inputTable$df)[inputTable$colrange]),
+                                     Group = projectData$filegroups$Group[order(ColumnNames)],
+                                     stringsAsFactors = F)
+}
+incProgress(0.5, detail = "loading MS data")
+newfiles <- projectData$filegroups$File
+newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
+MSData$filelist <- unique(c(MSData$filelist, newfiles))
+MSData$data <- c(MSData$data,loadRawM(newfiles, workers = enabledCores))
+temp_rawgrouptable <- projectData$filegroups
+MSData$layouts[[projectData$projectName]] <- constructRawLayout(temp_rawgrouptable, stem = "")
+MSData$index = unique(c(projectData$projectName,MSData$index))
+MSData$active = projectData$projectName
+})
+  removeModal()
+
+})
+
 #### Load raw files from local folder
 observeEvent(MSData$localfolders,{
   if(length(MSData$localfolders) > 0){
-  withProgress(message = 'Please wait!', detail = "loading MS data", value = 0.3, {
+ 
 
+    projectData$filegroupfiles <- list.files(MSData$localfolders[1], pattern="filegroups.csv", recursive = FALSE, full.names=T)
+    
+    if(length(projectData$filegroupfiles) == 1){
+      
+      rtfile <- list.files(MSData$localfolders[1], pattern="RTcorr_data.Rdata", recursive = FALSE, full.names=T)
+      if(length(rtfile) == 1){
+      MSData$RTcorr <- attach(rtfile)$rtx
+      
+      for(i in 1:length(MSData$RTcorr$noncorr)){
+        
+        MSData$RTcorr[["rtdiff"]][[i]] <- MSData$RTcorr$noncorr[[i]]-MSData$RTcorr$corr[[i]]
+        
+      }
+      }
+      projectData$projectName <- basename(dirname(projectData$filegroupfiles))
+      projectData$filegroups <- read.csv(projectData$filegroupfiles, stringsAsFactors = F, header = T)
+      projectData$csvfiles <- list.files(MSData$localfolders[1], pattern=".csv$", recursive = TRUE, full.names=T)
+      showModal(modalDialog(
+        p("You have selected a folder that contaions one specific Mosaic xcms job. Would you like to load its settings?"),
+        p("If you do not select a .csv file, only the MS data files will be loaded."),
+        selectizeInput("projectTables", "select feature table to load",
+                       choices = basename(projectData$csvfiles[which(!basename(projectData$csvfiles) %in% c("camera.csv",
+                                                                                                   "centWave.csv",
+                                                                                                   "filegroups.csv",
+                                                                                                   "group.csv",
+                                                                                                   "outputs.csv",
+                                                                                                   "peakfilling.csv",
+                                                                                                   "retcor.csv",
+                                                                                                   "status.csv",
+                                                                                                   "peaktable_all_unfilled.csv"
+                                                                                                   ))]),
+                       multiple = F),
+        actionButton("projectLoadOk", "OK"),
+        
+        title = "Import xcms results",
+        "",
+        size = "l"
+      ))
+      
+    }else{
+      withProgress(message = 'Please wait!', detail = "loading MS data", value = 0.3, {
     incProgress(0.5, detail = "loading MS data")
-    newfiles <- list.files(MSData$localfolders[1], pattern=".mzXML", recursive = TRUE, full.names=T)
+      
+      filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
+                       "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
+      filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+    newfiles <- list.files(MSData$localfolders[1], pattern=filepattern, recursive = TRUE, full.names=T)
     newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
     MSData$filelist <- unique(c(MSData$filelist, newfiles))
     MSData$data <- c(MSData$data,loadRawM(newfiles, workers = enabledCores))
@@ -68,8 +156,8 @@ observeEvent(MSData$localfolders,{
     MSData$layouts[["default"]] <- constructRawLayout(temp_rawgrouptable, stem = "")
     MSData$index = unique(c("default",MSData$index))
     MSData$active = "default"
-    
-  })
+    })
+  }
   
 }
 })

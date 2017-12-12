@@ -2,7 +2,7 @@
  
 
 output$projectName <- renderUI({
-    textInput('projectNamex', 'Project Name:', value = paste0("MOSAiC_session_",timeStamp))
+    textInput('projectNamex', 'Project Name:', value = projectData$projectName)
 })
 
 
