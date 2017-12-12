@@ -40,17 +40,18 @@ output$plotLw <- renderUI({
 })
 
 output$MLtoggle <- renderUI({
-  checkboxInput("MLtoggle","Mark feature RT", value = F)
+  checkboxInput("MLtoggle","Mark feature RT", value = T)
 })
 
 output$plotCx <- renderUI({
-  numericInput("plotCx","Font size: ", value = 1, min = 0.1)
+  numericInput("plotCx","Font size: ", value = 1, min = 0.1, step = 0.1)
 })
 
 output$colorscheme <- renderUI({
   selectizeInput("colorscheme","Color palette: ", 
                  choices= c("topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
-                 selected = MSData$layouts[[MSData$active]]$settings$colr)
+                 selected = NULL
+                 )
 })
 observeEvent(input$colorscheme,{
   if(!is.null(MSData$active)){
@@ -69,7 +70,9 @@ massShifts <- reactiveValues(table = data.frame(use = c(T,F,F,F,F,F),
                                                 stringsAsFactors = F) )
 
 output$massShiftTab <- renderRHandsontable({if(!is.null(massShifts$table)){
-  rhandsontable(massShifts$table)
+  rhandsontable(massShifts$table,
+                digits = 9)%>%
+  hot_col("mz_shift", format="0.000000")
 }
 })
 
@@ -85,4 +88,33 @@ output$savemassShiftTab <- downloadHandler(filename= function(){paste("massShift
 # onRestored(function(state){
 #### Load grouping table from file
 observeEvent(input$loadmassShift$datapath,{massShifts$table <- read.table(input$loadmassShift$datapath, header=T, sep='\t', stringsAsFactors = F)})
+
+###########################
+##RT correction
+
+observeEvent(input$RtCorrLoad$datapath,{
+  print(input$RtCorrLoad$datapath)
+  MSData$RTcorr <- attach(input$RtCorrLoad$datapath)$rtx
+  
+  for(i in 1:length(MSData$RTcorr$noncorr)){
+    
+    MSData$RTcorr[["rtdiff"]][[i]] <- MSData$RTcorr$noncorr[[i]]-MSData$RTcorr$corr[[i]]
+    
+  }
+  
+})
+
+output$rtcorr <- renderPlot({
+  if(!is.null(MSData$RTcorr)){
+  RTplot(MSData$RTcorr,
+         colscheme = input$colorscheme,
+         liwi =  2* input$plotLw,
+         cx = input$plotCx)
+  }
+  
+})
+
+
+
+
 

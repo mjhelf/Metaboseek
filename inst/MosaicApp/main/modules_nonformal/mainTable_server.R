@@ -84,7 +84,7 @@ output$tableInfo <- renderText({paste0(nrow(combino()),
      #                                    else{paste0(ceiling(nrow(combino())/50),"page(s))")}))
 #})
 
-output$tbButton <- downloadHandler(filename= function(){paste0(input$projectName,"_",featureTables$active,"_table.csv")}, 
+output$tbButton <- downloadHandler(filename= function(){paste0(featureTables$index[which(featureTables$index == featureTables$active)],"_export.csv")}, 
                                    content = function(file){
                                      
                                      if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){

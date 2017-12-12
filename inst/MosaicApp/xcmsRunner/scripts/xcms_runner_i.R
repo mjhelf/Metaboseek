@@ -1,7 +1,14 @@
 
 #needed to use xcms 2.99.X (for obiwarp!)
-library(devtools)
-dev_mode(on=T)
+
+#no longer necessary with bioconductor 3.6 (xcms 3.0)
+#tryCatch(library(devtools),
+ #        error = function(e){})
+
+#tryCatch(dev_mode(on=T),
+ #        error = function(e){})
+
+
 library(xcms)
 library(Mosaic)
 #library(CAMERA)
@@ -23,7 +30,7 @@ setwd(fols[1])
 #setwd("C:/Workspace/mzxml/MOSAIC Experimental/ppac vs cele new/full files/xcms_runner_v3/")
 
 history <- writeStatus (previous = NULL,
-                        message = list(Status = "Starting analysis wit xcms_runner v3",
+                        message = list(Status = paste0("Starting analysis with xcms_runner in MOSAiC v",packageVersion("Mosaic")," and xcms version ", packageVersion("xcms")),
                                        Details = "initializing parameters"))
 
 #Load settings from csv files in wd
@@ -143,13 +150,22 @@ history <- writeStatus (previous = history,
 
 #xcmsRaw object list for Mosaic intensity method
 if(any(na.omit(as.logical(outputs$MOSAIC_intensities)))){
-rfiles <- loadRaw(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
+rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
 }
 
-fileaccess <- readMSData2(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),
+if(packageVersion("xcms") < 2.99){
+  fileaccess <- readMSData2(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),
+                            msLevel. = 1,
                             centroided. = T,
                             smoothed. = NA)#,
-                         #mode = "onDisk")
+  #mode = "onDisk")
+}else{
+  fileaccess <- readMSData(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),
+                           msLevel. = 1,
+                           centroided. = T,
+                           smoothed. = NA,
+                           mode = "onDisk")
+}
 
 ###########
 history <- writeStatus (previous = history,
@@ -284,7 +300,7 @@ if(tbouts["peaktable_CAMERA"]){
                         status = history,
                         fill = NULL,
                         nonfill = T,
-                        filename = "peaktable_CAMERA",
+                        filename = "peaktable_CAMERA.csv",
                         bparams = bparam,
                         intensities = if(getints["peaktable_CAMERA"]){mos_fparam}else{NULL},
                         rawdata = rfiles)  
@@ -297,6 +313,3 @@ if(tbouts["peaktable_CAMERA"]){
 history <- writeStatus (previous = history,
                         message = list(Status = "Finished",
                                        Details = "all analyses done, total time"))
-
-zip("settings.zip", c("retcor", "camera" ))
-

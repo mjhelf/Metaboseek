@@ -38,9 +38,14 @@ observeEvent(input$selctrl,{featureTables$tables[[featureTables$active]]$ctrlGro
 })
 
 output$selAna <- renderUI({selectizeInput('selAna', 'Select analyses',
-                                           choices = c("Basic analysis", "p-values", "Peak shapes"),
+                                           choices = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes"),
                                            selected = "Basic analysis",
                                            multiple = T)})
+
+output$kclusternum <- renderUI({ numericInput('kclusternum',
+                                              "Number of clusters:",
+                                              value = length(featureTables$tables[[featureTables$active]]$gNames)+1,
+                                              min = 2, step = 1)})
 
 observeEvent(input$analyzebutton,{
     if("Peak shapes" %in% input$selAna){
@@ -48,9 +53,7 @@ observeEvent(input$analyzebutton,{
                 rawdata= MSData$data,
                 mz = data.frame(mzmin = featureTables$tables[[featureTables$active]]$df$mzmin, mzmax=featureTables$tables[[featureTables$active]]$df$mzmax),
                 rt = data.frame(rtmin = featureTables$tables[[featureTables$active]]$df$rt-5, rtmax=featureTables$tables[[featureTables$active]]$df$rt+5),
-                rnames = row.names(featureTables$tables[[featureTables$active]]$df),
-                byFile = T,
-                getgauss = T
+                rnames = row.names(featureTables$tables[[featureTables$active]]$df)
             )
 
         featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
@@ -69,17 +72,37 @@ observeEvent(input$analyzebutton,{
                                     
                                      #),
                            featureTables$tables[[featureTables$active]]$anagroupnames,ctrl = input$selctrl)}
+        
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)}
+  
     if("p-values" %in% input$selAna){
         if(input$usenormdata){
-            inp <- multittest(pl = featureTables$tables[[featureTables$active]]$df
+            inp <- multittest(df = featureTables$tables[[featureTables$active]]$df
                               [,featureTables$tables[[featureTables$active]]$intensities_norm],
                               groups = featureTables$tables[[featureTables$active]]$anagroupnames_norm)
         }else{
-            inp <- multittest(pl = featureTables$tables[[featureTables$active]]$df
+            inp <- multittest(df = featureTables$tables[[featureTables$active]]$df
                                         [,featureTables$tables[[featureTables$active]]$intensities],
             groups = featureTables$tables[[featureTables$active]]$anagroupnames)}
         featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
         
     }
+  if("clara_cluster" %in% input$selAna){
+    
+    if(input$usenormdata && length(featureTables$tables[[featureTables$active]]$intensities_norm) >1){
+      mx <- log10(as.matrix(featureTables$tables[[featureTables$active]]$df
+                      [,featureTables$tables[[featureTables$active]]$intensities_norm]))
+      
+      }else if(length(featureTables$tables[[featureTables$active]]$intensities) >1){
+        mx <- sqrt(as.matrix(featureTables$tables[[featureTables$active]]$df
+                        [,featureTables$tables[[featureTables$active]]$intensities])) #using sqrt here to condense data values which may contain 0s
+      }
+    
+      inp <- MosCluster(x = mx / rowMeans(mx),
+                        k = input$kclusternum,
+                        samples = 100)
+    
+    featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
+    
+  }
 })

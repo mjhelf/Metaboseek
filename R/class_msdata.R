@@ -100,6 +100,7 @@ rawGrouping <- function(rawgrouptable){
 #' @param byFile a data.frame with columns File and Group , holding file paths and group names, respectively.
 #' @param XIC deprecated
 #' @param getgauss additionally, fit a gauss curve to each EIC (time consuming), defaults to FALSE
+#' @param RTcorr if not NULL, this RTcorr object will be used to adjust retention times.
 #' 
 #' @export
 multiEIC <- function (rawdata= rawcoll,
@@ -108,66 +109,79 @@ multiEIC <- function (rawdata= rawcoll,
                       rnames = row.names(pcame_mini),
                       byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
                       XIC = F,
-                      getgauss = F
-                      ){
+                      getgauss = F,
+                      RTcorr = NULL
+){
   
-   if(is.null(rt)){
-     sts = lapply(rawdata,slot,"scantime")
-     rt <- data.frame(rtmin = rep(min(unname(sapply(sts,min))),nrow(mz)),
+  if(is.null(rt)){
+    sts = lapply(rawdata,slot,"scantime")
+    rt <- data.frame(rtmin = rep(min(unname(sapply(sts,min))),nrow(mz)),
                      rtmax = rep(max(unname(sapply(sts,max))),nrow(mz))
-          )
-   }
-    
-    mx <- as.matrix(cbind(mz,rt))
-    
-    if(nrow(mx) ==1){
+    )
+  }
+  
+  mx <- as.matrix(cbind(mz,rt))
+  
+  if(nrow(mx) ==1){
     mxl <-unname(as.list(data.frame((mx[,1:2]))))
     rxl <-unname(as.list(data.frame((mx[,3:4]))))}
-    else{
+  else{
     mxl <-unname(as.list(data.frame(t(mx[,1:2]))))
     rxl <-unname(as.list(data.frame(t(mx[,3:4]))))
-    }    
+  }    
+  
+  
+  fx3 <- function(ls, mz, rt, rfile, gauss = getgauss, RTcorrx = NULL){
     
-    fx3 <- function(ls, mz, rt, rfile, gauss = getgauss){
-        ls$rt <- rfile@scantime[ls$scan]
-        ls$tic <- rfile@tic[ls$scan]
-        ls$mzmin <- mz[1]
-        ls$mzmax <- mz[2]
-        ls$rtmin <- rt[1]
-        ls$rtmax <- rt[2]
-        ls$intmax <- max(ls$intensity)
-        ls$intsum <- sum(ls$intensity)
-        ls$intmean <- mean(ls$intensity)
-        if(gauss){
-            return(getgauss(ls$intensity))
-        }
-        return(ls)
+    if(!is.null(RTcorrx)){
+      ls$rt <- unname(RTcorrx$corr[[which(basename(RTcorrx$fnames) == basename(rfile@filepath@.Data))]])[ls$scan]
+    }else{
+      ls$rt <- rfile@scantime[ls$scan]
     }
-    summe <- list()
-    if(byFile){
+    
+    ls$tic <- rfile@tic[ls$scan]
+    ls$mzmin <- mz[1]
+    ls$mzmax <- mz[2]
+    ls$rtmin <- rt[1]
+    ls$rtmax <- rt[2]
+    ls$intmax <- max(ls$intensity)
+    ls$intsum <- sum(ls$intensity)
+    ls$intmean <- mean(ls$intensity)
+    if(gauss){
+      return(getgauss(ls$intensity))
+    }
+    return(ls)
+  }
+  summe <- list()
+  if(byFile){
     
     for(i in names(rawdata)){
-        rawfile <- rawdata[[i]]
-    summe[[i]] <- mapply(rawEIC, mzrange = mxl,
-                    rtrange = rxl, MoreArgs=list(object=rawfile), SIMPLIFY = F)
-    
-    summe[[i]] <- t(mapply(fx3, summe[[i]], mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss)))
+      rawfile <- rawdata[[i]]
+      summe[[i]] <- mapply(rawEICm, mzrange = mxl,
+                           rtrange = rxl, MoreArgs=list(object=rawfile), SIMPLIFY = F)
+      
+      summe[[i]] <- t(mapply(fx3, summe[[i]], mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss, RTcorrx = RTcorr)))
     }
     return(summe)
     
-    }else{
-        for(i in c(1:nrow(mz))){
-            if(!is.null(rnames)){
-            featname <- rnames[i]}
-            else{featname <-i}
-            
-            summe[[featname]] <- mapply(rawEICm, object=rawdata, 
-                                        MoreArgs=list(mzrange = mxl[[i]], rtrange = rxl[[i]]), SIMPLIFY = F)
-            
-            summe[[featname]] <- t(mapply(fx3, summe[[featname]], rfile=rawdata, MoreArgs=list(mz = mxl[[i]], rt = rxl[[i]])))
-        }
-        return(summe)
+  }else{
+    for(i in c(1:nrow(mz))){
+      if(!is.null(rnames)){
+        featname <- rnames[i]}
+      else{featname <-i}
+      
+      summe[[featname]] <- mapply(rawEICm, object=rawdata, 
+                                  MoreArgs=list(mzrange = mxl[[i]], rtrange = rxl[[i]]), SIMPLIFY = F)
+      
+      summe[[featname]] <- t(mapply(fx3, summe[[featname]], rfile=rawdata, MoreArgs=list(mz = mxl[[i]],
+                                                                                         rt = rxl[[i]],
+                                                                                         gauss = getgauss,
+                                                                                         RTcorrx = RTcorr
+      )
+      ))
     }
+    return(summe)
+  }
 }
 
 #' rawEICm
@@ -180,7 +194,7 @@ multiEIC <- function (rawdata= rawcoll,
 #' @param mzrange a range of m/z values (numeric(2)).
 #' @param rtrange a range of rt values (numeric(2)).
 #' @param scanrange a range of scan number values (numeric(2)).
-#' @param viewermode True to change handling of out of range rt values for the Mosaic viewer.
+#' @param viewermode True to change handling of out of range rt values for the Mosaic viewer. DEPRECATED (always used)
 #' 
 #' @export
 rawEICm <- function(object,
@@ -192,12 +206,12 @@ rawEICm <- function(object,
   
     if (length(rtrange) >= 2 ) {
       
-      if(max(rtrange) == 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
+      if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
             rtrange <- range(rtrange)
             
       #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)
-      if(max(object@scantime) < rtrange[2] & viewermode){rtrange[2] <- max(object@scantime)}
-      if(max(object@scantime) < rtrange[1] & viewermode){rtrange[1] <- min(object@scantime)}
+      if(max(object@scantime) < rtrange[2] ){rtrange[2] <- max(object@scantime)}
+      if(max(object@scantime) < rtrange[1] ){rtrange[1] <- min(object@scantime)}
             
       
         
@@ -237,7 +251,7 @@ rawEICm <- function(object,
 #' @param x numeric() to fit the curve
 #' 
 #' @export
-getgauss <- function (x){
+getgauss <- function (x, pval = 1){
     
     
     #substract "baseline"
@@ -284,9 +298,9 @@ getgauss <- function (x){
 #' @param ... additional arguments passed on to multiEIC().
 #' 
 #' @export
-bestgauss <- function(rawdata = rawcoll, ...){
-    res <- multiEIC(...)
-    return(data.frame(maxgauss = rowMax(matrix(unlist(res),ncol = length(rawdata)))))
+bestgauss <- function(...){
+    res <- multiEIC(..., byFile = T, getgauss = T)
+    return(data.frame(maxgauss = rowMax(matrix(unlist(res),ncol = length(res)))))
 }  
 
 #' exIntensities
@@ -318,7 +332,7 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
   
   
   summe <- mapply(rawEICm, mzrange = mxl,
-                  rtrange = rxl, MoreArgs=list(object=rawfile, viewermode = F), SIMPLIFY = F)
+                  rtrange = rxl, MoreArgs=list(object=rawfile, scanrange = numeric(), viewermode = F), SIMPLIFY = F)
   
   #substract "baseline" and get rid of scan#
   fx <- function(x) x$intensity-min(x$intensity)

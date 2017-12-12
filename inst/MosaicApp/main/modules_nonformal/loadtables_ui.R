@@ -1,5 +1,5 @@
 fluidPage(
-    useShinyjs(),
+    
     fluidRow(
         column(4,
                h3("Upload a feature Table"),

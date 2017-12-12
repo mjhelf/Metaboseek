@@ -41,6 +41,7 @@ legendplot <- function(...){
 #' @param yzoom zoom factor into y-axis
 #' @param cx character expansion factor (font size)
 #' @param adducts numeric() of mass shifts to be added to feature masses
+#' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -60,7 +61,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        adducts = c(0),
                        cx = 1,
                        midline = T,
-                       yzoom = 1
+                       yzoom = 1,
+                       RTcorrect = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -115,7 +117,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                         mz = mzx[1,],
                         rt = NULL,
                         rnames = "1", #major item names
-                        byFile = F #if true, table will be sorted by rawfile, otherwise by feature
+                        byFile = F,
+                        RTcorr = RTcorrect  #if true, table will be sorted by rawfile, otherwise by feature
     )
     groupPlot(EIClist = EICsTIC,
               grouping = glist,
@@ -142,10 +145,11 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   EICs <- multiEICplus(rawdata= rdata,
                        mz = mzx,
-                       rt = rtx,
+                       rt = if(is.null(RTcorrect)){rtx}else{NULL},
                        rnames = row.names(mzmid), #major item names
                        byFile = F, #if true, table will be sorted by rawfile, otherwise by feature
-                       adducts
+                       adducts,
+                       RTcorr = RTcorrect
   )
   
   groupPlot(EIClist = EICs,
@@ -176,6 +180,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 
 
 
+
 #' EICtitles
 #' 
 #' helper function to generate titles for EICgeneral
@@ -185,7 +190,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 #' @param mzs vector of mz values (not ranges)
 #' @param ppm mz window +/- mzmid in ppm that will be plotted
 #' 
-#' export
+#' @export
 EICtitles <- function(mzs, rts, ppm){
   
   numbs <- matrix(mapply(sprintf,matrix(c(mzs,
@@ -294,16 +299,39 @@ groupPlot <- function(EIClist = res,
       #minoritem <- if(length(items) == 1){t(as.matrix(EIClist[[majoritem]][items,]))}else{EIClist[[majoritem]][items,]}
       #if(length(items) == 1){row.names(minoritem) <- items}
       
+      xlimes = if (is.null(plotProps$xlim)){c(min(unlist(minoritem$EIClist[[1]][,'rt'])),
+                                            max(unlist(minoritem$EIClist[[1]][,'rt'])))/60}
+      else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60}
+      
+      ### by default, only the visible part of the spectrum will be used to determine y-max
+      if(plotProps$TIC){
+        mm <- 1
+          for(k in 1:length(minoritem$EIClist)){
+            mm <- max(mm,
+                      max(unlist(minoritem$EIClist[[k]][,"tic"])[which(unlist(minoritem$EIClist[[k]][,"rt"]) >= min(xlimes)*60 
+                                                                       & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)]))
+          }
+        ylimes = c(0,mm)
+        }
+      else if (is.null(plotProps$ylim)){
+        mm <- 1
+        for(k in 1:length(minoritem$EIClist)){
+          mm <- max(mm,
+                    max(unlist(minoritem$EIClist[[k]][,"intensity"])[which(unlist(minoritem$EIClist[[k]][,"rt"]) >= min(xlimes)*60 
+                                                                     & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)]))
+        }
+        ylimes = c(0,mm)
+      }
+      else{ylimes = c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}
+      
+      
+      
       EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
-              ylim = if(plotProps$TIC){c(0,minoritem$maxTIC)}
-              else if (is.null(plotProps$ylim)){c(0,minoritem$maxEIC)}
-              else{c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}, 
-              xlim = if (is.null(plotProps$xlim)){c(min(unlist(minoritem$EIClist[[1]][,'rt'])),
-                                                    max(unlist(minoritem$EIClist[[1]][,'rt'])))/60}
-              else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60},
-              legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]])))),
+              ylim = ylimes, 
+              xlim = xlimes,
               colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
               else{plotProps$colr[1:nrow(minoritem$EIClist[[1]])]},
+              legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]])))),
               heading = names(grouping)[plotgroup],
               relto = NULL,
               TIC = plotProps$TIC,
@@ -493,7 +521,12 @@ addLines <- function(EIClist = EICsAdducts,
 #' @param ylim numeric(2) of y-axis range
 #' @param xlim numeric(2) of x-axis range
 #' @param heading heading of the plot
-#' @param single if TRUE, this plot is expected to be the only plot in a com,posite (different margin settings)
+#' @param single if TRUE, this plot is expected to be the only plot in a composite (different margin settings)
+#' @param par if FALSE, par margin settings are not set inside the function and should be set outside
+#' @param xlab x axis label
+#' @param ylab y axis label
+#' @param relto show y axis values relative to relto if not NULL.
+#' @param ysci if TRUE, y axis label numbers are shown in scientific format
 #'
 #' @export
 PlotWindow <- function(cx = 1, 
@@ -502,28 +535,34 @@ PlotWindow <- function(cx = 1,
                                 max(unlist(EIClistItem[,'rt'])))/60,
                        heading = "test",
                        single = F,
-                       relto = NULL
+                       par = T,
+                       relto = NULL,
+                       ylab = "Intensity",
+                       xlab = "RT (min)",
+                       ysci = T
+                       
 ){
   
   if(max(ylim)==0){ylim = c(0,1)}
   
-  
-  if(single){
-    par(#mfrow=c(1,2),
-      oma=c(0,2,0,0),
-      # mai=c(0,0.5,0,0),
-      xpd=FALSE,
-      bg=NA,
-      xaxs = "i", yaxs = "i"
-    )  
-  }else{
-    par(#mfrow=c(1,2),
-      # oma=c(0,2,0,0),
-      # mai=c(0,0.5,0,0),
-      xpd=FALSE,
-      bg=NA,
-      xaxs = "i", yaxs = "i"
-    )
+  if(par){
+    if(single){
+      par(#mfrow=c(1,2),
+        oma=c(0,2,0,0),
+        # mai=c(0,0.5,0,0),
+        xpd=FALSE,
+        bg=NA,
+        xaxs = "i", yaxs = "i"
+      )  
+    }else{
+      par(#mfrow=c(1,2),
+        # oma=c(0,2,0,0),
+        # mai=c(0,0.5,0,0),
+        xpd=FALSE,
+        bg=NA,
+        xaxs = "i", yaxs = "i"
+      )
+    }
   }
   
   plot(numeric(),numeric(), type= "n", 
@@ -538,22 +577,22 @@ PlotWindow <- function(cx = 1,
        labels = format(pretty(xlim), scientific = F),
        mgp=c(0,0.4,0), cex=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
   
-  mtext(side=1, text= "RT (min)", line=1.5, cex=cx*1)
+  mtext(side=1, text= xlab, line=1.5, cex=cx*1)
   
   if(!is.null(relto) && relto != 1 ){
     axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = F),
          mgp=c(0,0.6,0), cex=1*cx)
     #axis labels
-    mtext(side=2, text="Relative intensity (%)", line=4, cex=1*cx)
+    mtext(side=2, text= ylab, line=4, cex=1*cx)
   }
   else{
     #y axis
     axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
-         labels = format(pretty(ylim, n =pn), scientific = T,digits = 3),
+         labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
          mgp=c(0,0.6,0), cex=1*cx)
     #axis labels
-    mtext(side=2, text="Intensity", line=4, cex=1*cx)
+    mtext(side=2, text= ylab, line=4, cex=1*cx)
   }
   
   #fix axis to not have gaps at edges
@@ -562,4 +601,86 @@ PlotWindow <- function(cx = 1,
   Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
   
   title(main=heading, line=2, cex = cx)
+}
+
+#' specplot
+#' 
+#' Plot an MS spectrum
+#' 
+#' @param x mz coordinates
+#' @param y intensity coordinates
+#' @param norm normalize by
+#' @param cx font size
+#' @param k top k intensity peaks will be labeled
+#' @param fileName which file this spectrum is taken from
+#' @param yrange y axis range
+#' @param xrange x axis range
+#' @param maxi max intensity to be plotted on side
+#'
+#' @importFrom TeachingDemos spread.labs
+#' @importFrom Hmisc minor.tick
+#' @export
+specplot <- function (x=sc[,1],
+                      y=sc[,2],
+                      norm=max(y)/100,
+                      cx=1.5,
+                      k = 10,
+                      fileName = "title",
+                      yrange = c(0,100),
+                      xrange = range(x),
+                      maxi = max(y)
+){
+  
+  pd <- data.frame(x=x,y=y/norm)  
+  par(oma=c(0,2,0,0), mar = c(5,4,10,2), xpd = FALSE, xaxs = "i", yaxs = "i")
+  PlotWindow(cx, 
+             ylim = yrange, 
+             xlim = xrange,
+             heading = "",
+             single = T,
+             par = F,
+             relto = norm,
+             ylab = "Relative Intensity (%)",
+             xlab = "m/z"
+  )
+  
+  points(pd$x,pd$y,type="h", bty="n")
+  #, axes=F,lwd=0.8,
+  #     main=fileName, cex.main=0.5*cx, ann=FALSE, ylab="Relative intensity", 
+  #    xlab= expression(italic(m/z)), 
+  #   xaxs="i",yaxs="i",
+  #  xlim=xrange,
+  # ylim=yrange,
+  # ...)
+  
+  
+  currview <- pd[which(pd$y <= max(yrange)
+                       & pd$y >= min(yrange)
+                       & pd$x <= max(xrange) 
+                       & pd$x >= min(xrange)),]
+  
+  if (length(currview$y) >= k){
+    kn <-  sort(currview$y, decreasing = T)[k]
+    labs <- currview[which(currview$y>=kn),]
+  }else{
+    labs <- currview}
+  
+  if(nrow(labs) > 0 ){
+    par(xpd=NA)
+    labs$xcorr <- spread.labs(labs[,1],1.05*strwidth("A"), maxiter=1000, min=min(labs[,1]), max=max(labs[,1]))
+    segments(labs[,1],labs[,2]+0.01*max(yrange),labs$xcorr,labs[,2]+0.05*max(yrange), col="red", lwd=0.8)
+    text(labs$xcorr,labs[,2]+0.055*max(yrange),labels=round(labs[,1],5), col="blue3", srt=90,adj=c(0,0.3), cex=1*cx)
+    text(min(xrange), 1.06*max(yrange),
+         labels = format(maxi*(max(labs$y)/100), scientific = T, digits =4), bty="n",
+         font = 2, cex=cx*1)
+    
+  }
+  
+  # mtext(side=1, text= expression(italic(m/z)), line=0.7, cex=0.5*cx)
+  #  mtext(side=2, text="Relative intensity (%)", line=1.1, cex=0.5*cx)
+  # mtext(side=1, text=fileName, line=1.2, cex=0.5*cx)
+  #mtext(side=3, text=Ptext, line=0.6, cex=0.5, adj=1)
+  #par(cex.axis=0.5*cx, tcl=-0.3)            
+  #axis(side=1, lwd=1, minor.tick(nx=10,ny=5, tick.ratio=0.5), mgp=c(0.5,0,0)) #x-axis mgp[2] controls distance of tick labels to axis
+  #axis(side=2, lwd=1, las=2, mgp=c(0.5,0.4,0)) #y-axis
 }

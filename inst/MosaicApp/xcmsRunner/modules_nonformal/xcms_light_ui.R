@@ -1,20 +1,19 @@
 fluidPage(
-  textInput('xcms_folder', "mzXML file folder"),
-  actionButton('xcms_loadfolder', "load files"),
+  h3("Run XCMS analysis"),
+  p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
+
+  p(strong("Not on by default in Server mode!")," Currently only one xcms job per MOSAiC session (concurrent job monitoring coming later)."),
+  #textInput('xcms_folder', "mzXML file folder"),
+  actionButton('xcms_loadfolderOffline', "load MS file folder"),
+  shinyDirButton('xcms_loadfolder', "load MS file folder", title = "select a folder with MS data files"),
+  
   
   textInput('xcms_name', "Title of this analysis", "xcms_run"),
   
   fileInput('xcms_settingsLoad',"Load settings", accept = "application/zip"),
   
-  #htmlOutput('xcms_selectTab'),
-  selectizeInput('xcms_selectTab',"Change settings for...", choices = list("File Grouping" = "filegroups",
-                                                                           "Peak Detection" = "centWave",
-                                                                           "Peak filling" = "peakfilling",
-                                                                           "Feature grouping" = "group",
-                                                                           "CAMERA settings" = "camera",
-                                                                           "RT correction" = "retcor",
-                                                                           "Output Files" = "outputs")
-  ),
+  htmlOutput('xcms_selectTab'),
+  
   
   rHandsontableOutput('xcms_settingstab'),
   

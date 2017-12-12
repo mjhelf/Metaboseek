@@ -13,7 +13,7 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   rtw = MSData$layouts[[MSData$active]]$settings$rtw,
   ppm = MSData$layouts[[MSData$active]]$settings$ppm, rdata = MSData$data,
   pdfFile = file, leadingTIC = T, lw = 1, adducts = c(0), cx = 1,
-  midline = T, yzoom = 1)
+  midline = T, yzoom = 1, RTcorrect = NULL)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
@@ -51,6 +51,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 \item{midline}{if TRUE, dotted vertical line should be plotted at feature rt}
 
 \item{yzoom}{zoom factor into y-axis}
+
+\item{RTcorrect}{if not NULL, this RTcorr object will be used to adjust retention times.}
 }
 \description{
 wrapper function to plot multiple EICs

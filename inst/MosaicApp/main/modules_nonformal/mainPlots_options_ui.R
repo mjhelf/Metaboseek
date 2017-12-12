@@ -66,6 +66,20 @@ tabPanel("Mass shifts",
            )
          ),
 
+tabPanel("RT correction",
+         fluidRow(
+           
+           column(4,
+                  fileInput('RtCorrLoad', "Load Retention time correction data",
+                            accept= NULL
+                            #placeholder=""
+                  )
+           ),
+           
+           column(8,
+                  plotOutput("rtcorr")
+           ))),
+
 
 tabPanel("Project options",
          source(file.path("modules_nonformal", "project_options_ui.R"), local = TRUE)$value

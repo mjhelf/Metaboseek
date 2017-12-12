@@ -43,19 +43,23 @@ FilterModule <- function(input, output, session, lab = "Filter", tag, df, preset
     #returns TRUE if the selected column is numeric
     cond <- reactive({!is.na(as.numeric(df()[1,input$colSel]))})
     mins <- reactive({
-      if(!is.na(input$colSel) && (is.null(presets()$minSel) | input$colSel != presets()$column)){min(fu()[,input$colSel])}else{presets()$minSel}
+      if(!is.na(input$colSel) && (is.null(presets()$minSel) | input$colSel != presets()$column)){min(fu()[,input$colSel])*0.99}else{presets()$minSel}
     })
     maxs <- reactive({
-      if(!is.na(input$colSel) && (is.null(presets()$minSel) | input$colSel != presets()$column)){max(fu()[,input$colSel])}else{presets()$maxSel}
+      if(!is.na(input$colSel) && (is.null(presets()$minSel) | input$colSel != presets()$column)){max(fu()[,input$colSel])*1.01}else{presets()$maxSel}
       
     })
   #  if(!is.null(cond()){
     output$minSel <- renderUI({if(length(cond()) !=0 && cond()){numericInput(ns('minSel'), 'min.', 
                                                        value = mins(),
+                                                       min = min(df()[,input$colSel])*0.99,
+                                                       max = max(df()[,input$colSel])*1.01,
                                                        width = '120px')}})
     
     output$maxSel <- renderUI({if(length(cond()) !=0 && cond()){numericInput(ns('maxSel'), 'max.',
                                                        value = maxs(),
+                                                       min = min(df()[,input$colSel])*0.99,
+                                                       max = max(df()[,input$colSel])*1.01,
                                                        width = '120px')}})
     
     output$modeSel <- renderUI({if(length(cond()) !=0 && !cond()){selectizeInput(ns('modeSel'), '',
