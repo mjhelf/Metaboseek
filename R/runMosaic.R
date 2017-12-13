@@ -25,6 +25,11 @@ runMosaic <- function(devel = F, server = T, ...) {
 #' @export
 devel__mode <- FALSE
 
+#' default__root
+#'
+#' @export
+default__root <- getwd()
+
 #' Run XCMS interface
 #' 
 #' Run the XCMS runner in your webbrowser. Currently only intended for use on a local computer (file system access required).
