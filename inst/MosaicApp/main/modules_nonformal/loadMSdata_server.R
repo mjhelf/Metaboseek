@@ -28,11 +28,11 @@ MSData$active = "default"
 
 ##load rawfiles from folder directly on local windows machines
 observe({
-  toggleState(id = "loadRawFolder", condition = (servermode && activateLocalFiles))
+  toggleState(id = "loadRawFolder", condition = ((servermode && activateLocalFiles) || (!servermode && Sys.info()['sysname'] != "Windows")))
 })
 
 toggle(id = "loadRawFolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
-toggle(id = "loadRawFolder", condition = (servermode))
+toggle(id = "loadRawFolder", condition = (servermode || (!servermode && Sys.info()['sysname'] != "Windows")))
 
 
 shinyDirChoose(input, 'loadRawFolder', roots=rootpath)

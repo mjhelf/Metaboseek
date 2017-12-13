@@ -61,10 +61,10 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
 
 
 toggle(id = "xcms_loadfolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
-toggle(id = "xcms_loadfolder", condition = (servermode))
+toggle(id = "xcms_loadfolder", condition = ((servermode) || (!servermode && Sys.info()['sysname'] != "Windows")))
 
 observe({
-  toggleState(id = "xcms_loadfolder", condition = (servermode && activateXCMS))
+  toggleState(id = "xcms_loadfolder", condition = ((servermode && activateXCMS) || (!servermode && Sys.info()['sysname'] != "Windows")))
   toggleState(id = "xcms_start", condition = (!servermode || (servermode && activateXCMS)))
 })
 
