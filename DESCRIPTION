@@ -19,4 +19,5 @@ Imports: xcms (>= 2.99),
     CAMERA,
     BiocParallel,
     cluster,
-    TeachingDemos
+    TeachingDemos,
+    data.table
