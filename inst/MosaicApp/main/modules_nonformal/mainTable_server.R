@@ -85,22 +85,9 @@ output$tableInfo <- renderText({paste0(nrow(combino()),
 #})
 
 output$tbButton <- downloadHandler(filename= function(){
-  titleout <- paste(projectData$projectName, 
-                    featureTables$index[which(featureTables$tables[[featureTables$active]] == featureTables$active)],
-                    sep = "_")
-  for(f in featureTables$tables[[featureTables$active]]$filters[grep("Filter",names(featureTables$tables[[featureTables$active]]$filters))]){
-    
-    if(!is.atomic(f) && f$active){
-      titleout <- paste(titleout,f$column,f$minSel, f$maxSel, f$txtSel, sep = "_")
-    }
-    
-    
-  }
-  print(titleout)
+  titleout <- filenamemaker(projectData$projectName,featureTables)
   
-  return(paste0(#featureTables$index[which(featureTables$index == featureTables$active)],
-                titleout,
-                ".csv")
+  return(paste0(titleout,".csv")
          )}, 
                                    content = function(file){
                                      

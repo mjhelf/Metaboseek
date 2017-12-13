@@ -42,3 +42,32 @@ runXcms <- function(...) {
   
   shiny::runApp(appDir, ...)
 }
+
+#' Make filenames for exported .csv or .pdf files
+#' 
+#' Generate a filename from project name and filter criteria
+#' 
+#' @param projectName ProjectName used as prefix
+#' @param FT Mosaic's featureTable reactiveValues (or a list with same structure)
+#'
+#'
+#' @export
+filenamemaker <- function(projectName,
+                          FT){
+  
+  titleout <- paste(projectName, 
+                    names(FT$index[which(FT$index == FT$active)]),
+                    sep = "_")
+  
+  
+  for(f in FT$tables[[FT$active]]$filters$filters){
+    
+    if(!is.atomic(f) && f$active){
+      titleout <- paste(titleout,f$column,f$minSel, f$maxSel, f$txtSel, sep = "_")
+    }
+    
+    
+  }
+  return(gsub(".csv$","",gsub("_$","",titleout)))
+  
+}

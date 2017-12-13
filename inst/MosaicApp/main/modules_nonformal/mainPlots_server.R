@@ -11,7 +11,10 @@ observeEvent(input$groupingActiveSelect,{
     MSData$active <- input$groupingActiveSelect
 })
 
-output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectName,"_mainPlot.pdf")}, 
+output$pdfButton <- downloadHandler(filename= function(){
+  titleout <- filenamemaker(projectData$projectName,featureTables)
+  
+  return(paste0(titleout,".pdf"))}, 
                                     content = function(file){
                                       
                                       if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
