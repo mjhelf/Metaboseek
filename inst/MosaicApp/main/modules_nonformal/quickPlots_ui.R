@@ -1,0 +1,1 @@
+featurePlotModuleUI("quickplots")

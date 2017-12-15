@@ -1,7 +1,7 @@
-library(BiocGenerics)
-library(grDevices)
-library(graphics)
-library(stats)
+#library(BiocGenerics)
+#library(grDevices)
+#library(graphics)
+#library(stats)
 
 
 #' densplot
@@ -43,3 +43,51 @@ densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtra
     graphics::legend("topright", inset=c(0,0.03*max(dens$y)),legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=.5)
 }
 
+
+#' Plot summary data on grouped data
+#' 
+#' @param ... arguments passed to ggplot2::ggplot
+#' @param main plot type
+#' @param dotplot boolean whether or not to plot individual values as dots
+#' @param mark select a value to be plotted
+#' @param errorbar select type of error bar
+#' @param rotate boolean whether or not to rotate x-axis labels
+#' 
+#' 
+#' @import ggplot2
+#' @export
+groupedplot <- function(...,
+                        main = c("boxplot", "barplot"),
+                        dotplot = T,
+                        dsize = 1,
+                        mark = c("mean", "median"),
+                        errorbar = c("Standard Deviation", "95% Confidence Interval"),
+                        rotate = T
+){
+  
+  
+  p<-ggplot2::ggplot(...) 
+  
+  switch(main,
+         boxplot = {p <- p + ggplot2::geom_boxplot()},
+         barplot = {p <- p + ggplot2::geom_bar(stat = "summary", fun.y = "mean")})
+  p
+  if(dotplot){p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)}
+  
+  switch(mark,
+         mean = {p <- p + ggplot2::stat_summary(fun.y = mean, geom = "point", shape = 17, size = 3, color = "red")},
+         median = {p <- p + ggplot2::stat_summary(fun.y = median, geom = "point", shape = 17, size = 3, color = "red")}
+  )
+  
+  
+  switch(errorbar,
+         "Standard Deviation" = {p <- p + ggplot2::stat_summary(fun.data=mean_sdl, fun.args = list(mult=1),
+                                                       geom="errorbar", color="orange", width = 0.2)},
+         "95% Confidence Interval" = {p <- p + ggplot2::stat_summary(fun.data=mean_cl_normal, fun.args = list(mult=1),
+                                                            geom="errorbar", color="orange", width = 0.2)}
+  )
+  
+  
+  if(rotate){p <- p + ggplot2::theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5))}
+  p
+}

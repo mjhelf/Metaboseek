@@ -1,9 +1,9 @@
 Package: Mosaic
 Title: Metabolite Online Spectrum Analysis Center
-Version: 0.0.4.9000
+Version: 0.0.5.000
 Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
 Description: Access some of the best mass spectrometry data analysis tools and databases from a single, intuitive user interface, with powerful comparative metabolomics workflows!
-Depends: R (>= 3.4.2)
+Depends: R (>= 3.4.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -20,4 +20,5 @@ Imports: xcms (>= 2.99),
     BiocParallel,
     cluster,
     TeachingDemos,
-    data.table
+    data.table,
+    ggplot2

@@ -193,6 +193,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 #' @export
 EICtitles <- function(mzs, rts, ppm){
   
+  if(!is.null(ppm)){
   numbs <- matrix(mapply(sprintf,matrix(c(mzs,
                                           mzs-mzs*ppm*1e-6,
                                           mzs+mzs*ppm*1e-6),ncol=3),
@@ -206,6 +207,18 @@ EICtitles <- function(mzs, rts, ppm){
                    paste0(
                      " @ RT: ", sprintf( "%.2f", rts/60), " min",
                      " (", sprintf("%.1f", rts)," sec)")})
+  }
+  else{
+    numbs <- sprintf("%.5f", mzs)
+    
+    titx <- paste0('m/z: ',numbs, 
+                   if(!is.null(rts)){
+                     paste0(
+                       " @ RT: ", sprintf( "%.2f", rts/60), " min",
+                       " (", sprintf("%.1f", rts)," sec)")})
+    
+    
+  }
   return(titx)
   
 }

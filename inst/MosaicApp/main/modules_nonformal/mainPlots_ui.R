@@ -57,6 +57,9 @@ fluidRow(
 ),
 tabPanel("Interactive View (beta)",
          source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
-         )
+         ),
+tabPanel("Quickplots",
+         source(file.path("modules_nonformal", "quickPlots_ui.R"), local = TRUE)$value
+)
 
 )
