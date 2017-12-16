@@ -45,12 +45,15 @@ densplotModule <- function(input, output, session, mx, heading = "Default"){
 featurePlotModuleUI <- function(id){
   ns <- NS(id)
   tagList(
-    selectizeInput(ns('ptype'), "Plot type", choices = c("none", "boxplot", "barplot"), selected = "barplot"),
+    selectizeInput(ns('gtype'), "Plot type", choices = c("by group", "by sample"), selected = "by group"),
+    selectizeInput(ns('ptype'), "Plot type", choices = c("none", "boxplot", "barplot", "violinplot"), selected = "barplot"),
     selectizeInput(ns('errorbar'), "Error bar", choices = c("none", "Standard Deviation", "95% Confidence Interval"), selected = "none"),
     selectizeInput(ns('mark'), "Plot additional value", choices = c("none", "mean", "median"), selected = "none"),
     checkboxInput(ns('usenorm'),'use normalized data', value = F),
     checkboxInput(ns('pdots'),'Plot sample values', value = T),
     checkboxInput(ns('rot'),'rotate axis labels', value = F),
+    checkboxInput(ns('multidata'),'Combine data from all filtered features', value = F),
+    
     plotOutput(ns('fplot')),
     verbatimTextOutput(ns('info'))
   )
@@ -62,39 +65,56 @@ featurePlotModule <- function(input, output, session, FT, rname, heading = "Defa
   sam <- character(0)
   group <- character(0)
   
-  suffix <- ""
+  gn <- reactive({
+                 if(input$usenorm && length(grep("__norm", colnames(FT()$df))) > 0){
+      FT()$anagroupnames_norm
+    }else{
+      FT()$anagroupnames
+    }
+    })
   
   
-  mx2 <- reactive({if (!is.null(rname())){
-    if(input$usenorm && length(grep("__norm", colnames(FT()$df))) > 0){
-      suffix <- "__norm"
+  mx2 <- reactive({if (!is.null(rname()) | input$multidata){
+    
+    
+    for(n in 1:length(gn())){
+      sam <- c(sam, paste0(gn()[[n]]))
+      group <- c(group, rep(names(gn())[n],length(gn()[[n]])))
     }
     
-    for(n in 1:length(FT()$sNames)){
-      sam <- c(sam, paste0(FT()$sNames[[n]], "__norm"))
-      group <- c(group, rep(names(FT()$sNames)[n],length(FT()$sNames[[n]])))
-    }
-    
-    intens <- data.frame(sam,
-                         group,
+    if(input$multidata){
+    intens <- data.frame(sam = rep(sam,length(FT()$filters$sele)),
+                         group = rep(group,length(FT()$filters$sele)),
                          stringsAsFactors = T)
+    intens$values <- as.vector(t(FT()$df[FT()$filters$sele,sam]))
     
-    intens$values <- t(FT()$df[rname(),intens$sam])
+    }else{
+      intens <- data.frame(sam,
+                           group,
+                           stringsAsFactors = T)
+      
+      intens$values <- as.vector(t(FT()$df[rname(),sam]))
+    }
+    #print(FT()$df[rname(),intens$sam])
+    
     return(intens)}
   })
   
   
-  output$fplot <- renderPlot({if(!is.null(mx2())){
-    groupedplot(mx2(), ggplot2::aes(x=group, y=values),
+  output$fplot <- renderPlot({if(!is.null(rname())){
+    groupedplot(data = mx2(), 
+                mapping = switch(input$gtype,
+                                 "by group" = ggplot2::aes(x=group, y=values),
+                                 "by sample" = ggplot2::aes(x=sam, y=values)),
                 main = input$ptype,
                 dotplot = input$pdots,
-                dsize = (max(mx2()$values)-min(mx2()$values))/50,
+                dsize = max(mx2()$values)/50,
                 mark = input$mark,
                 errorbar = input$errorbar,
                 rotate = input$rot)
   }
   })
-  output$info <- renderPrint({if(!is.null(mx2())){
+  output$info <- renderPrint({if(!is.null(rname())){
     summary(as.vector(mx2()$values))}   
   })
 }

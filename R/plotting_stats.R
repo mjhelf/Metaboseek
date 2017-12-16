@@ -57,7 +57,7 @@ densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtra
 #' @import ggplot2
 #' @export
 groupedplot <- function(...,
-                        main = c("boxplot", "barplot"),
+                        main = c("boxplot", "barplot","violinplot"),
                         dotplot = T,
                         dsize = 1,
                         mark = c("mean", "median"),
@@ -70,9 +70,11 @@ groupedplot <- function(...,
   
   switch(main,
          boxplot = {p <- p + ggplot2::geom_boxplot()},
-         barplot = {p <- p + ggplot2::geom_bar(stat = "summary", fun.y = "mean")})
-  p
-  if(dotplot){p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)}
+         barplot = {p <- p + ggplot2::geom_bar(stat = "summary", fun.y = "mean")},
+         violinplot = {p <- p + ggplot2::geom_violin(trim = F)})
+  
+  if(dotplot){#p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)
+    p <- p + ggplot2::geom_points()}
   
   switch(mark,
          mean = {p <- p + ggplot2::stat_summary(fun.y = mean, geom = "point", shape = 17, size = 3, color = "red")},
@@ -89,5 +91,5 @@ groupedplot <- function(...,
   
   
   if(rotate){p <- p + ggplot2::theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5))}
-  p
+  return(p)
 }
