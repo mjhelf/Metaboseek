@@ -1,5 +1,6 @@
 source(file.path("modules_nonformal", "mainPlots_options_server.R"), local = TRUE)$value 
 source(file.path("modules_nonformal", "interactiveView_server.R"), local = TRUE)$value 
+source(file.path("modules_nonformal", "quickPlots_server.R"), local = TRUE)$value 
 
 
 output$groupingActiveSelect <- renderUI({
@@ -11,7 +12,10 @@ observeEvent(input$groupingActiveSelect,{
     MSData$active <- input$groupingActiveSelect
 })
 
-output$pdfButton <- downloadHandler(filename= function(){paste0(input$projectName,"_mainPlot.pdf")}, 
+output$pdfButton <- downloadHandler(filename= function(){
+  titleout <- filenamemaker(projectData$projectName,featureTables)
+  
+  return(paste0(titleout,".pdf"))}, 
                                     content = function(file){
                                       
                                       if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
@@ -205,3 +209,5 @@ output$adductLegend <- renderPlot({
 observe({
   toggleState(id = "pdfButton", condition = !is.null(MSData$active))
 })
+
+

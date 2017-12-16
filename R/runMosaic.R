@@ -25,6 +25,11 @@ runMosaic <- function(devel = F, server = T, ...) {
 #' @export
 devel__mode <- FALSE
 
+#' default__root
+#'
+#' @export
+default__root <- getwd()
+
 #' Run XCMS interface
 #' 
 #' Run the XCMS runner in your webbrowser. Currently only intended for use on a local computer (file system access required).
@@ -41,4 +46,33 @@ runXcms <- function(...) {
   }
   
   shiny::runApp(appDir, ...)
+}
+
+#' Make filenames for exported .csv or .pdf files
+#' 
+#' Generate a filename from project name and filter criteria
+#' 
+#' @param projectName ProjectName used as prefix
+#' @param FT Mosaic's featureTable reactiveValues (or a list with same structure)
+#'
+#'
+#' @export
+filenamemaker <- function(projectName,
+                          FT){
+  
+  titleout <- paste(projectName, 
+                    names(FT$index[which(FT$index == FT$active)]),
+                    sep = "_")
+  
+  
+  for(f in FT$tables[[FT$active]]$filters$filters){
+    
+    if(!is.atomic(f) && f$active){
+      titleout <- paste(titleout,f$column,f$minSel, f$maxSel, f$txtSel, sep = "_")
+    }
+    
+    
+  }
+  return(gsub(".csv$","",gsub("_$","",titleout)))
+  
 }
