@@ -4,9 +4,10 @@
 \alias{groupedplot}
 \title{Plot summary data on grouped data}
 \usage{
-groupedplot(..., main = c("boxplot", "barplot"), dotplot = T, dsize = 1,
-  mark = c("mean", "median"), errorbar = c("Standard Deviation",
-  "95\% Confidence Interval"), rotate = T)
+groupedplot(..., main = c("boxplot", "barplot", "violinplot"), dotplot = T,
+  dsize = 1, mark = c("mean", "median"),
+  errorbar = c("Standard Deviation", "95\% Confidence Interval"),
+  rotate = T)
 }
 \arguments{
 \item{...}{arguments passed to ggplot2::ggplot}

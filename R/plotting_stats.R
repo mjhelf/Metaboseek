@@ -74,7 +74,7 @@ groupedplot <- function(...,
          violinplot = {p <- p + ggplot2::geom_violin(trim = F)})
   
   if(dotplot){#p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)
-    p <- p + ggplot2::geom_points()}
+    p <- p + ggplot2::geom_point()}
   
   switch(mark,
          mean = {p <- p + ggplot2::stat_summary(fun.y = mean, geom = "point", shape = 17, size = 3, color = "red")},

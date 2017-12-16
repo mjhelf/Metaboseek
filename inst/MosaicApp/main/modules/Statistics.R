@@ -53,7 +53,7 @@ featurePlotModuleUI <- function(id){
     checkboxInput(ns('pdots'),'Plot sample values', value = T),
     checkboxInput(ns('rot'),'rotate axis labels', value = F),
     checkboxInput(ns('multidata'),'Combine data from all filtered features', value = F),
-    
+    checkboxInput(ns('log10'),'log10 scale', value = F),
     plotOutput(ns('fplot')),
     verbatimTextOutput(ns('info'))
   )
@@ -102,7 +102,7 @@ featurePlotModule <- function(input, output, session, FT, rname, heading = "Defa
   
   
   output$fplot <- renderPlot({if(!is.null(rname())){
-    groupedplot(data = mx2(), 
+    p <- groupedplot(data = mx2(), 
                 mapping = switch(input$gtype,
                                  "by group" = ggplot2::aes(x=group, y=values),
                                  "by sample" = ggplot2::aes(x=sam, y=values)),
@@ -112,6 +112,9 @@ featurePlotModule <- function(input, output, session, FT, rname, heading = "Defa
                 mark = input$mark,
                 errorbar = input$errorbar,
                 rotate = input$rot)
+    if(input$log10){ p <- p + ggplot2::scale_y_continuous(na.value = 0, trans = "log10")}
+    p
+    
   }
   })
   output$info <- renderPrint({if(!is.null(rname())){
