@@ -18,6 +18,12 @@ function(input, output, session) {
                              filelist = NULL,
                              data = NULL) #rawfs
     
+    projectData <- reactiveValues(filegroupfiles =NULL,
+                                  csvfiles = NULL,
+                                  filegroups = NULL,
+                                  projectName = paste0("MOSAiC_session_",timeStamp))
+    
+    
     output$activeTable <- renderUI({
         selectizeInput('activeTable', 'Active Table', selected = featureTables$active, choices = featureTables$index, multiple = FALSE)
     })  

@@ -56,10 +56,6 @@ observeEvent(input$loadRawFolderOffline,{
 
 
 ###
-projectData <- reactiveValues(filegroupfiles =NULL,
-                              csvfiles = NULL,
-                              filegroups = NULL,
-                              projectName = paste0("MOSAiC_session_",timeStamp))
 
 ###
 observeEvent(input$projectLoadOk,{
