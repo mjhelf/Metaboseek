@@ -9,7 +9,7 @@ observeEvent(input$rfileload$datapath,{
 unzip(input$rfileload$datapath, exdir = exfolder )
 
 incProgress(0.5, detail = "loading MS data")
-newfiles <- list.files(exfolder, pattern=".mzXML", recursive = TRUE, full.names=T)
+newfiles <- list.files(exfolder, pattern=filepattern, recursive = TRUE, full.names=T)
 newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
 MSData$filelist <- unique(c(MSData$filelist, newfiles))
 MSData$data <- loadRawM(newfiles, workers = enabledCores)
@@ -141,9 +141,7 @@ observeEvent(MSData$localfolders,{
       withProgress(message = 'Please wait!', detail = "loading MS data", value = 0.3, {
     incProgress(0.5, detail = "loading MS data")
       
-      filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
-                       "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
-      filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+      
     newfiles <- list.files(MSData$localfolders[1], pattern=filepattern, recursive = TRUE, full.names=T)
     newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
     MSData$filelist <- unique(c(MSData$filelist, newfiles))
