@@ -191,6 +191,12 @@ massShiftsOut <- reactive({
 })
 
 
+output$adductPlot <- renderUI({
+  if(length(massShiftsOut()$shifts) > 1 || massShiftsOut()$shifts != 0){
+    plotOutput("adductLegend", height = "30px")
+    }
+})
+
 output$adductLegend <- renderPlot({
     if(length(massShiftsOut()$shifts) > 1 || massShiftsOut()$shifts != 0){
       

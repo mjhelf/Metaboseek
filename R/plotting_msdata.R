@@ -298,7 +298,7 @@ groupPlot <- function(EIClist = res,
         oma=compProps$oma,
         xpd=compProps$xpd,
         bg=compProps$bg,
-        mar = c(5.1,4.1,4.1,2.1))
+        mar = c(2.6,4.1,4.1,2.1))
     # layout(t(as.matrix(c(1,2))))
     
     for(plotgroup in c(1:length(grouping))){

@@ -50,7 +50,7 @@ fluidRow(
 htmlOutput("mainPlotEICs")),
 #plotOutput("mainPlotEICsPre")
 fluidRow(
-  plotOutput("adductLegend", height = "30px")
+  htmlOutput("adductPlot")
 )
 
 )

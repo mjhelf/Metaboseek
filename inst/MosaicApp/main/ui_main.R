@@ -8,18 +8,14 @@ dashboardPage(skin = "black",
                   p(paste0("version ",packageVersion("Mosaic"))),
                   source(file.path("modules_nonformal", "background_ui.R"), local = TRUE)$value,
                      
-                  # menuItem("Load Data", tabName = "loaddata", icon = icon("files-o"),
-                  #         menuSubItem("Feature Tables", tabName = "loadtables"),
-                  #        menuSubItem("MS Data", tabName = "rawfiles")
-                  #       ),
+
                   menuItem("Explore Data", tabName = "exploredata", icon = icon("area-chart")),
+                  menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
                   
                   menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
-                            menuSubItem("XCMS analysis", tabName = "XCMSrunpanel")),
-                  menuItem("Help", tabName = "start", icon = icon("question-circle-o")),
-                  # menuSubItem("MS Data", tabName = "rawfiles")),
-                  #  div(title = "Run basic statistical analyses", menuItem("Process Data", tabName = "processdata", icon = icon("desktop"))),
-                  
+                            menuSubItem("Coming soon", tabName = "workflow1")),
+                                    menuItem("Help", tabName = "help", icon = icon("question-circle-o")),
+                 
                   bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable")
                 )
@@ -92,9 +88,19 @@ dashboardPage(skin = "black",
                                           border-right-color:#666666;
                                           border-top-color:#666666;
                                           }
+
+                                          div.col-sm-12 {padding: 0px;margin-top: -15px;margin-right: -8px; };  
+                                          .box-body {
+                                          padding-bottom: 0px;
+                                          }
+.shiny-plot-output {
+margin-bottom: 0px;
+}
+
+
                                           '))),
             tabItems(
-                tabItem(tabName = "start",
+                tabItem(tabName = "help",
                         source(file.path("modules_nonformal", "start_ui.R"), local = TRUE)$value
                 ),
                 
@@ -109,7 +115,10 @@ dashboardPage(skin = "black",
                 ),
                 tabItem(tabName = "exploredata",
                         source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
-                )
+                ),
+              tabItem(tabName = "workflow1",
+                      p("In the making")
+              )
             )
 
 
