@@ -7,7 +7,7 @@
 PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
   xlim = c(min(unlist(EIClistItem[, "rt"])), max(unlist(EIClistItem[,
   "rt"])))/60, heading = "test", single = F, par = T, relto = NULL,
-  ylab = "Intensity", xlab = "RT (min)", ysci = T)
+  ylab = "Intensity", xlab = "RT (min)", ysci = T, liwi = 1)
 }
 \arguments{
 \item{cx}{character expansion factor (font size)}
