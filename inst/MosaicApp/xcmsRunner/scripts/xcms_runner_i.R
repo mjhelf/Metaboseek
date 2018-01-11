@@ -1,33 +1,13 @@
 
-#needed to use xcms 2.99.X (for obiwarp!)
-
-#no longer necessary with bioconductor 3.6 (xcms 3.0)
-#tryCatch(library(devtools),
- #        error = function(e){})
-
-#tryCatch(dev_mode(on=T),
- #        error = function(e){})
+tryCatch({
 
 
 library(xcms)
 library(Mosaic)
-#library(CAMERA)
-#library(BiocParallel)
+
 fols <- commandArgs(trailingOnly=TRUE)
-#fols <- c("C:/Workspace/mzxml/MOSAIC Experimental/ppac vs cele new/full files//xcms_runX3",  
- #         "C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone")
-
-#source("C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone/functions/class_msdata.R")
-#source("C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone/functions/xcms_retcorAdjust.R")
-#source("C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone/functions/xcms_runner_stepping.R")
-print(fols)
-
-#source(file.path(fols[2],"functions","class_msdata.R"))
-#source(file.path(fols[2],"functions","xcms_retcorAdjust.R"))
-#source(file.path(fols[2],"functions","xcms_runner_stepping.R"))
 
 setwd(fols[1])
-#setwd("C:/Workspace/mzxml/MOSAIC Experimental/ppac vs cele new/full files/xcms_runner_v3/")
 
 history <- writeStatus (previous = NULL,
                         message = list(Status = paste0("Starting analysis with xcms_runner in MOSAiC v",packageVersion("Mosaic")," and xcms version ", packageVersion("xcms")),
@@ -313,3 +293,10 @@ if(tbouts["peaktable_CAMERA"]){
 history <- writeStatus (previous = history,
                         message = list(Status = "Finished",
                                        Details = "all analyses done, total time"))
+},
+
+error = error = function(e){writeStatus (previous = history,
+                                         message = list(Status = "ERROR",
+                                                        Details = "An error has occured"))
+  }
+)

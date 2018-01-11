@@ -4,11 +4,10 @@ dashboardPage(skin = "black",
                 
                 sidebarMenu(
                   useShinyjs(),
-                  p(paste0("version ",packageVersion("Mosaic"))),
                   source(file.path("modules_nonformal", "background_ui.R"), local = TRUE)$value,
                      
 
-                  menuItem("Explore Data", tabName = "exploredata", icon = icon("area-chart")),
+                  menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
                   menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
                   
                   menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
@@ -16,7 +15,10 @@ dashboardPage(skin = "black",
                                     menuItem("Help", tabName = "help", icon = icon("question-circle-o")),
                  
                   bookmarkButton(label ="Bookmark this session"),
-                  htmlOutput("activeTable")
+                  htmlOutput("activeTable"),
+                  hr(),
+                  h5(paste0("MOSAiC version ",packageVersion("Mosaic")), align = "center")
+
                 )
                 
                 
@@ -101,9 +103,18 @@ dashboardPage(skin = "black",
                                           border-top-color: #C41230;
                                           }
 
-                                          div.col-sm-12 {padding: 0px;
-                                          margin-top: -15px;
-                                          margin-right: -8px;
+                                          /* removes padding for all column width 12 objects */
+                                          div.col-sm-12 {
+                                          padding: 0px;
+                                          
+                                          }
+
+
+                                          div.col-sm-12 {
+                                          padding: 0px;
+                                          margin-bottom:-15px;
+                                          margin-right: 0px;
+                                          margin-left: 0px;
                                           }
 
                                           .box-body {
