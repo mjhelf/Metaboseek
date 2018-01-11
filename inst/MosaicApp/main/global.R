@@ -16,7 +16,7 @@ filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
 
 Mosaic_mode <- "server"
 servermode <- F
-
+fppage <- as.integer(100) #feats per page
 
 # activate features in servermode:
 activateXCMS <- F
@@ -25,12 +25,6 @@ rootpath <- c(root = default__root)  ##the root path for file selection (for ser
 
 enabledCores <- 10
 options(scipen = 5)
-#source functions:
-#source("functions/class_feature_table.R")
-#source("functions/feature_table_data_analysis.R")
-#source("functions/plotting_stats.R")
-#source("functions/class_msdata.R")
-#source("functions/plotting_msdata.R")
 
 
 
