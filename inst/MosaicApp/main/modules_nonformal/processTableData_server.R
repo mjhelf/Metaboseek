@@ -69,8 +69,7 @@ observeEvent(input$analyzebutton,{
     }else{
         inp <- foldChange(as.matrix(featureTables$tables[[featureTables$active]]$df
                                      [,featureTables$tables[[featureTables$active]]$intensities]),
-                                    
-                                     #),
+                                  
                            featureTables$tables[[featureTables$active]]$anagroupnames,ctrl = input$selctrl)}
         
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)}

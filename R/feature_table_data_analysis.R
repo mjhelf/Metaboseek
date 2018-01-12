@@ -102,81 +102,90 @@ foldChange <- function(mx,
                        foldmode = "simple" #or "complex" (which gives ratios between all groups)
                        ){
     
-    out <- data.frame(pholder=integer(nrow(mx)))   
-    out$maxint <- if(ncol(mx)==1){mx}else{rowMax(mx)}
-    if(calc == "mean"){
-        
-        #make rowMeans for each group
-         rme <- function(cols,mx){return(if(length(cols)==1){mx[,cols]}else{rowMeans(mx[,cols])})}
-         rmeans <- sapply(groups,rme, mx)
-         rmax <- function(cols,mx){return(if(length(cols)==1){mx[,cols]}else{rowMax(mx[,cols])})}
-         rmaxes <- sapply(groups,rmax, mx)
-         rmin <- function(cols,mx){return(if(length(cols)==1){mx[,cols]}else{rowMin(mx[,cols])})}
-         rmins <- sapply(groups,rmin, mx)
-         
-        out$topgroup <- colnames(rmeans)[apply(rmeans,1,which.max)]
-        out$maxfold <- rowMax(rmeans)/rowMin(rmeans)
-     
-        if(!is.null(foldMaxK)){
-        k <- if(foldMaxK >= ncol(rmeans)){1}else{ncol(rmeans) - foldMaxK + 1}
-        out[[paste0("maxfoldover",foldMaxK)]] <- rowMax(rmeans)/rowQ(rmeans,k)
-        }
-        
-        #make columns for each group, fold over all the other groups, and fold over ctrl if ctrl is defined
-        
-        for(i in colnames(rmeans)){
-            
-            #remove everything after double underscore (new default notation)
-            #remove the XIC tag if it has only one underscore (old notation)
-            #remove trailing underscores if any
-            
-            barename <- gsub("_$","",gsub("_XIC","",gsub("__(.*)","",i)))
-            
-            out[[paste0(barename,"__meanInt")]] <- rmeans[,i]
-            if(!is.null(foldmode) && foldmode=="complex"){
-              out[[paste0(barename,"__foldOver_")]] <- rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]
-              out[[paste0(barename,"__minFoldOver_")]] <- rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
-            }else{
-              out[[paste0(barename,"__foldOverRest")]] <- if(length(colnames(rmeans)) >2){
-                unname(rowMeans(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]))
-              }else{
-                unname(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)])
-              }
-              out[[paste0(barename,"__minFold")]] <- if(length(colnames(rmeans)) >2){
-                rowMin(rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)])  
-              }else{
-                rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
-              }
-              out[[paste0(barename,"__minFoldMean")]] <- if(length(colnames(rmeans)) >2){
-                rowMin(rmeans[,i]/rmaxes[,which(colnames(rmeans)!=i)])  
-              }else{
-                rmeans[,i]/rmaxes[,which(colnames(rmeans)!=i)]
-              }
-            }
-            
-            if(!is.null(ctrl)){
-            out[[paste0(barename,"__foldOverCtrl")]] <- rmeans[,i]/rmeans[,ctrl]
-            out[[paste0(barename,"__minFoldOverCtrl")]] <- rmins[,i]/rmaxes[,ctrl]
-            }
-            }
+  #needed to fix a problem where 0/0 results in NaN, which causes problems with rowQ functions
+  removeNaNs <- function(mat, replacement = 1){
+    mat[is.na(mat)] <- replacement
+    return(mat)
+  }
+  
+  out <- data.frame(pholder=integer(nrow(mx)))   
+  out$maxint <- if(ncol(mx)==1){mx}else{rowMax(mx)}
+  if(calc == "mean"){
+    
+    #make rowMeans for each group
+    rme <- function(cols,mx){return(if(length(cols)==1){mx[,cols]}else{rowMeans(mx[,cols])})}
+    rmeans <- sapply(groups,rme, mx)
+    rmax <- function(cols,mx){return(if(length(cols)==1){mx[,cols]}else{rowMax(mx[,cols])})}
+    rmaxes <- sapply(groups,rmax, mx)
+    rmin <- function(cols,mx){return(if(length(cols)==1){mx[,cols]}else{rowMin(mx[,cols])})}
+    rmins <- sapply(groups,rmin, mx)
+    
+    out$topgroup <- colnames(rmeans)[apply(rmeans,1,which.max)]
+    out$maxfold <- rowMax(rmeans)/rowMin(rmeans)
+    
+    if(!is.null(foldMaxK)){
+      k <- if(foldMaxK >= ncol(rmeans)){1}else{ncol(rmeans) - foldMaxK + 1}
+      out[[paste0("maxfoldover",foldMaxK)]] <- rowMax(rmeans)/rowQ(rmeans,k)
     }
     
+    #make columns for each group, fold over all the other groups, and fold over ctrl if ctrl is defined
     
-    if(is.null(foldmode) || !foldmode=="complex"){
-      barenames <- gsub("_$","",gsub("_XIC","",gsub("__(.*)","",colnames(rmeans))))
-      minFoldCols <- paste0(barenames,"__minFold")
-      minFoldMeansCols <- paste0(barenames,"__minFoldMean")
-      minFoldCtrlCols <- paste0(barenames,"__minFoldOverCtrl")
+    for(i in colnames(rmeans)){
       
-      out$best_minFold <- rowMax(as.matrix(out[,minFoldCols]))
-      out$best_minFoldMean <- rowMax(as.matrix(out[,minFoldMeansCols]))
+      #remove everything after double underscore (new default notation)
+      #remove the XIC tag if it has only one underscore (old notation)
+      #remove trailing underscores if any
+      
+      barename <- gsub("_$","",gsub("_XIC","",gsub("__(.*)","",i)))
+      
+      out[[paste0(barename,"__meanInt")]] <- rmeans[,i]
+      if(!is.null(foldmode) && foldmode=="complex"){
+        out[[paste0(barename,"__foldOver_")]] <- rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]
+        out[[paste0(barename,"__minFoldOver_")]] <- rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
+      }else{
+        out[[paste0(barename,"__foldOverRest")]] <- if(length(colnames(rmeans)) >2){
+          unname(rowMeans(removeNaNs(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)])))
+        }else{
+          unname(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)])
+        }
+        out[[paste0(barename,"__minFold")]] <- if(length(colnames(rmeans)) >2){
+          
+          rowMin(removeNaNs(rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]))  
+          
+          
+        }else{
+          rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
+        }
+        out[[paste0(barename,"__minFoldMean")]] <- if(length(colnames(rmeans)) >2){
+          rowMin(removeNaNs(rmeans[,i]/rmaxes[,which(colnames(rmeans)!=i)]))  
+        }else{
+          rmeans[,i]/rmaxes[,which(colnames(rmeans)!=i)]
+        }
+      }
+      
       if(!is.null(ctrl)){
-      out$best_minFoldCtrl <- rowMax(as.matrix(out[,minFoldCtrlCols]))
+        out[[paste0(barename,"__foldOverCtrl")]] <- rmeans[,i]/rmeans[,ctrl]
+        out[[paste0(barename,"__minFoldOverCtrl")]] <- rmins[,i]/rmaxes[,ctrl]
       }
-      
-      }
+    }
+  }
+  
+  
+  if(is.null(foldmode) || !foldmode=="complex"){
+    barenames <- gsub("_$","",gsub("_XIC","",gsub("__(.*)","",colnames(rmeans))))
+    minFoldCols <- paste0(barenames,"__minFold")
+    minFoldMeansCols <- paste0(barenames,"__minFoldMean")
+    minFoldCtrlCols <- paste0(barenames,"__minFoldOverCtrl")
     
-    return(out[,which(colnames(out)!="pholder")])
+    out$best_minFold <- rowMax(as.matrix(out[,minFoldCols]))
+    out$best_minFoldMean <- rowMax(as.matrix(out[,minFoldMeansCols]))
+    if(!is.null(ctrl)){
+      out$best_minFoldCtrl <- rowMax(as.matrix(out[,minFoldCtrlCols]))
+    }
+    
+  }
+  
+  return(out[,which(colnames(out)!="pholder")])
         
        
     }
