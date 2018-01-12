@@ -1,12 +1,12 @@
 #featureTables$tables[[featureTables$active]]$intensities_normalized <- callModule(NormalizeModule, "intensityNormalizer",
  #                                                                                 mx = reactive({featureTables$tables[[featureTables$active]]$intensities}))
 
-callModule(densplotModule, "nonNormalizedPlot",
-                            mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities])}),
-                            heading = "Input Data")
-callModule(densplotModule, "NormalizedPlot",
-           mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities_norm])}),
-           heading = "Normalized Data")
+#callModule(densplotModule, "nonNormalizedPlot",
+ #                           mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities])}),
+  #                          heading = "Input Data")
+#callModule(densplotModule, "NormalizedPlot",
+ #          mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities_norm])}),
+  #         heading = "Normalized Data")
 
 
 
@@ -104,4 +104,11 @@ observeEvent(input$analyzebutton,{
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
     
   }
+})
+
+observe({
+  
+  toggle(id = 'clarainfo', condition = "clara_cluster" %in% input$selAna)
+  toggle(id = 'kclusternum', condition = "clara_cluster" %in% input$selAna)
+  
 })
