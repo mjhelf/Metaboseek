@@ -170,7 +170,9 @@ foldChange <- function(mx,
       
       out$best_minFold <- rowMax(as.matrix(out[,minFoldCols]))
       out$best_minFoldMean <- rowMax(as.matrix(out[,minFoldMeansCols]))
+      if(!is.null(ctrl)){
       out$best_minFoldCtrl <- rowMax(as.matrix(out[,minFoldCtrlCols]))
+      }
       
       }
     
