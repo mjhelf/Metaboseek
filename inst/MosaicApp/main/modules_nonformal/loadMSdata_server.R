@@ -88,6 +88,7 @@ temp_rawgrouptable <- projectData$filegroups
 MSData$layouts[[projectData$projectName]] <- constructRawLayout(temp_rawgrouptable, stem = "")
 MSData$index = unique(c(projectData$projectName,MSData$index))
 MSData$active = projectData$projectName
+selectedTabs$FeatureTable <- "Load Table"
 })
   removeModal()
 
