@@ -295,7 +295,7 @@ history <- writeStatus (previous = history,
                                        Details = "all analyses done, total time"))
 },
 
-error = error = function(e){writeStatus (previous = history,
+error = function(e){writeStatus (previous = history,
                                          message = list(Status = "ERROR",
                                                         Details = "An error has occured"))
   }

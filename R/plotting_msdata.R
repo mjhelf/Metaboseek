@@ -584,7 +584,7 @@ PlotWindow <- function(cx = 1,
   
   pn <- if(max(ylim)==0){1}else{5}
   #x axis
-  axis(side=1, lwd=liwi, at = pretty(xlim),
+  axis(side=1, lwd=liwi, lwd.ticks = liwi, at = pretty(xlim),
        labels = format(pretty(xlim), scientific = F),
        mgp=c(0,0.4*cx,0), cex.axis=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
   
@@ -593,7 +593,7 @@ PlotWindow <- function(cx = 1,
   if(!is.null(relto) && relto != 1 ){
     axis(side=2,  las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = F),
-         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi)
+         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
     mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
   }
@@ -601,7 +601,7 @@ PlotWindow <- function(cx = 1,
     #y axis
     axis(side=2,  las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
-         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi)
+         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
     mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
   }
