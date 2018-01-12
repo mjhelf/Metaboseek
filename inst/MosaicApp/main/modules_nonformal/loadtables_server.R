@@ -6,8 +6,9 @@ inputTable <- reactiveValues(df = NULL,
                              )
 
 #When Load Table button is pressed, initialize inputTable with defaults
- observeEvent(input$ldtbl,
-              {inputTable$df <- read.csv(input$file1$datapath, header=input$header, sep=input$sep, 
+ observeEvent(input$file1$datapath,
+              {
+                inputTable$df <- read.csv(input$file1$datapath, header=input$header, sep=input$sep, 
                                                quote=input$quote, stringsAsFactors = F)
               inputTable$tablename <- input$file1$name
                if(length(grep("_XIC",colnames(inputTable$df)))==0){
@@ -42,16 +43,6 @@ selcols <- reactive({ # sp<- strsplit("R1C1:R10C10",":")
     return(rng)
 })
 
-
-#output$importSettings <- renderUI ({
- # 
-  #tagList(
-   # selectizeInput('rtColSelect', label = "Retention Time column", choices = colnames(inputTable$df), selected = "rt")
-    #selectizeInput('mzColSelect', label = "Retention Time column", choices = colnames(inputTable$df), selected = "rt")
-    
-  #)
-  
-#})
 
 #' when pressing Select Columns button (intcols)
 ###Override default column range with selected columns when pressing Button intcols, and load new anagrouptable template
@@ -106,13 +97,23 @@ observeEvent(input$confgroups,{inputTable$anagroupraw <- if(input$anagroupswitch
 
 ##control whether buttons are clickable
 
+
 observe({
-    toggleState(id = "ldtbl", condition = !is.null(input$file1$datapath))
     toggleState(id = "confgroups", condition = !is.null(inputTable$df))
     #toggle(id = "intcols", condition = !is.null(inputTable$df))
     toggleState(id = "intcols", condition = !is.null(input$preview_select$select$c))
-    toggle(id = 'anagrouping', condition = input$anagroupswitch)
-    toggle(id = 'savegroups', condition = input$anagroupswitch)
-    toggle(id = 'loadgroups', condition = input$anagroupswitch)
+    
+    toggle(id = 'anagroupswitch', condition = !is.null(inputTable$df))
+    
+    toggle(id = 'anagrouping', condition = !is.null(inputTable$df) && input$anagroupswitch)
+    toggle(id = 'savegroups', condition = !is.null(inputTable$df) && input$anagroupswitch)
+    toggle(id = 'loadgroups', condition = !is.null(inputTable$df) && input$anagroupswitch)
+    toggle(id = 'header', condition = input$toggleTabOpts)
+    toggle(id = 'sep', condition = input$toggleTabOpts)
+    toggle(id = 'quote', condition = input$toggleTabOpts)
+    toggle(id = 'loadLine', condition = !is.null(inputTable$df))
+    toggle(id = 'previewH3', condition = !is.null(inputTable$df))
+    toggle(id = 'intcols', condition = !is.null(inputTable$df))
+    toggle(id = 'preview', condition = !is.null(inputTable$df))
     
 })
