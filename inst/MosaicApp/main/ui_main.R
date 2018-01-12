@@ -1,5 +1,11 @@
 dashboardPage(skin = "black",
-              dashboardHeader(title = "MOSAiC"),
+              dashboardHeader(title = "MOSAiC",
+                              dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
+                                                            icon = shiny::icon("fullscreen", lib = "glyphicon"), 
+                                                            href = NULL),
+                                           type = c("messages"),
+                                           badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL)
+                              ),
               dashboardSidebar(
                 
                 sidebarMenu(
@@ -17,7 +23,8 @@ dashboardPage(skin = "black",
                   bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable"),
                   hr(),
-                  h5(paste0("MOSAiC version ",packageVersion("Mosaic")), align = "center")
+                  h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
+                     href="https://github.com/mjhelf/Mosaic", target="_blank"), align = "center")
 
                 )
                 
