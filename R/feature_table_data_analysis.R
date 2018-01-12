@@ -177,10 +177,17 @@ foldChange <- function(mx,
     minFoldMeansCols <- paste0(barenames,"__minFoldMean")
     minFoldCtrlCols <- paste0(barenames,"__minFoldOverCtrl")
     
+<<<<<<< HEAD
     out$best_minFold <- rowMax(as.matrix(removeNaNs(out[,minFoldCols])))
     out$best_minFoldMean <- rowMax(as.matrix(removeNaNs(out[,minFoldMeansCols])))
     if(!is.null(ctrl)){
       out$best_minFoldCtrl <- rowMax(as.matrix(removeNaNs(out[,minFoldCtrlCols])))
+=======
+    out$best_minFold <- rowMax(as.matrix(out[,minFoldCols]))
+    out$best_minFoldMean <- rowMax(as.matrix(out[,minFoldMeansCols]))
+    if(!is.null(ctrl)){
+      out$best_minFoldCtrl <- rowMax(as.matrix(out[,minFoldCtrlCols]))
+>>>>>>> 05bebed13e8ea492696a199436f3d5c976f513ff
     }
     
   }
