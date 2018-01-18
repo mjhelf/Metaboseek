@@ -76,3 +76,27 @@ filenamemaker <- function(projectName,
   return(gsub(".csv$","",gsub("_$","",titleout)))
   
 }
+
+
+#' Get common root folder of file paths
+#' 
+#' From: https://rosettacode.org/wiki/Find_common_directory_path#R
+#' 
+#' @param paths vector of paths
+#' @param delim folder delimiter
+#'
+#'
+#' @export
+get_common_dir <- function(paths, delim = "/")
+{
+  path_chunks <- strsplit(paths, delim)
+  
+  i <- 1
+  repeat({
+    current_chunk <- sapply(path_chunks, function(x) x[i])
+    if(any(current_chunk != current_chunk[1])) break
+    i <- i + 1
+  })
+  paste(path_chunks[[1]][seq_len(i - 1)], collapse = delim)
+  
+}

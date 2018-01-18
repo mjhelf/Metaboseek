@@ -298,7 +298,7 @@ groupPlot <- function(EIClist = res,
         oma=compProps$oma,
         xpd=compProps$xpd,
         bg=compProps$bg,
-        mar = c(5.1,4.1,4.1,2.1))
+        mar = c(2.6*(1+(compProps$cx-1)/2),4.1*(1+(compProps$cx-1)/4),4.1,2.1))
     # layout(t(as.matrix(c(1,2))))
     
     for(plotgroup in c(1:length(grouping))){
@@ -358,14 +358,10 @@ groupPlot <- function(EIClist = res,
     }
     
     if(!is.null(compProps$header)){
-      
-      #       autosize <- compProps$cx*1.5
-      #      while(strwidth(compProps$header[majoritem], units = "figure", cex = autosize, font = 2) > 0.98){
-      #         autosize <- autosize*0.95
-      #    }
-      
-      
-      mtext(compProps$header[majoritem], side=3, outer=T,line=2, cex=autosize, font = 2)}
+    
+      title(main = compProps$header[majoritem], outer=T,line=2, cex.main=autosize, font = 2)}
+    
+    
     if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0.5, cex=compProps$cx)}
     # par(mar=c(0,0,0,0))
     
@@ -445,7 +441,8 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
              ylim, 
              xlim,
              heading,
-             single
+             single,
+             liwi = lw
   )
   
   if(length(midline)> 0 ){
@@ -465,7 +462,7 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
   abline(v=min(xlim), h=min(ylim))
   
   par(xpd=NA)
-  text(min(xlim), 1.04*max(ylim),
+  text(min(xlim), 1.05*max(ylim),
        labels = maxint, bty="n",
        font = 2, cex=cx*1)
   
@@ -552,7 +549,8 @@ PlotWindow <- function(cx = 1,
                        relto = NULL,
                        ylab = "Intensity",
                        xlab = "RT (min)",
-                       ysci = T
+                       ysci = T,
+                       liwi = 1
                        
 ){
   
@@ -586,34 +584,34 @@ PlotWindow <- function(cx = 1,
   
   pn <- if(max(ylim)==0){1}else{5}
   #x axis
-  axis(side=1, lwd=1, at = pretty(xlim),
+  axis(side=1, lwd=liwi, lwd.ticks = liwi, at = pretty(xlim),
        labels = format(pretty(xlim), scientific = F),
-       mgp=c(0,0.4,0), cex=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
+       mgp=c(0,0.4*cx,0), cex.axis=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
   
-  mtext(side=1, text= xlab, line=1.5, cex=cx*1)
+  mtext(side=1, text= xlab, line=1.5*(1+(cx-1)/2), cex=par("cex")*cx*1)
   
   if(!is.null(relto) && relto != 1 ){
-    axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
+    axis(side=2,  las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = F),
-         mgp=c(0,0.6,0), cex=1*cx)
+         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4, cex=1*cx)
+    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
   }
   else{
     #y axis
-    axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
+    axis(side=2,  las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
-         mgp=c(0,0.6,0), cex=1*cx)
+         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4, cex=1*cx)
+    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
   }
   
   #fix axis to not have gaps at edges
-  abline(v=min(xlim), h=min(ylim))
+  abline(v=min(xlim), h=min(ylim), lwd = liwi)
   
   Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
   
-  title(main=heading, line=2, cex = cx)
+  title(main=heading, line=2, cex.main = cx)
 }
 
 #' specplot

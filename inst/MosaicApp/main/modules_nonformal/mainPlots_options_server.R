@@ -36,7 +36,7 @@ output$plotYzoom <- renderUI({
 })
 
 output$plotLw <- renderUI({
-  numericInput("plotLw","Line width: ", value = 1, min = 0)
+  numericInput("plotLw","Line width: ", value = 1, min = 1, step = 1)
 })
 
 output$MLtoggle <- renderUI({
@@ -44,7 +44,7 @@ output$MLtoggle <- renderUI({
 })
 
 output$plotCx <- renderUI({
-  numericInput("plotCx","Font size: ", value = 1, min = 0.1, step = 0.1)
+  numericInput("plotCx","Font size: ", value = 1.5, min = 0.1, step = 0.1)
 })
 
 output$colorscheme <- renderUI({

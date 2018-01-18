@@ -37,6 +37,7 @@ observeEvent(input$xcms_settingsLoad$datapath,{
                                                                         row.names = 1,
                                                                         stringsAsFactors = F)
   }
+  xcmsSettings$wd <- get_common_dir(dirname(xcmsSettings$params$filegroups$File))
   
 })
 
@@ -55,17 +56,13 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
                                           },
                                           contentType = "application/zip")
 
-#fromJSON(toJSON(mzxml_pos))
-# write_json(mzxml_pos, paste0(wd,"files"))
-# mzxml_pos2 <- read_json(paste0(wd,"files"), simplifyVector = T)
-
 
 toggle(id = "xcms_loadfolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
 toggle(id = "xcms_loadfolder", condition = ((servermode) || (!servermode && Sys.info()['sysname'] != "Windows")))
 
 observe({
   toggleState(id = "xcms_loadfolder", condition = ((servermode && activateXCMS) || (!servermode && Sys.info()['sysname'] != "Windows")))
-  toggleState(id = "xcms_start", condition = (!servermode || (servermode && activateXCMS)))
+  toggleState(id = "xcms_start", condition = (length(xcmsSettings$wd)>0 && (!servermode || (servermode && activateXCMS))))
 })
 
 shinyDirChoose(input, 'xcms_loadfolder', roots=rootpath)
