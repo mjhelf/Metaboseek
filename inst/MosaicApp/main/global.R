@@ -15,12 +15,12 @@ filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
 filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
 
 Mosaic_mode <- "server"
-servermode <- F
+servermode <- T
 fppage <- as.integer(100) #feats per page
 
 # activate features in servermode:
-activateXCMS <- F
-activateLocalFiles <- F
+activateXCMS <- T
+activateLocalFiles <- T
 rootpath <- c(root = default__root)  ##the root path for file selection (for server - set with care)
 
 enabledCores <- 10

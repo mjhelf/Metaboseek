@@ -145,6 +145,7 @@ multiEIC <- function (rawdata= rawcoll,
     ls$rtmin <- rt[1]
     ls$rtmax <- rt[2]
     ls$intmax <- max(ls$intensity)
+    ls$intmin <- min(ls$intensity)
     ls$intsum <- sum(ls$intensity)
     ls$intmean <- mean(ls$intensity)
     if(gauss){
