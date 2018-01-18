@@ -89,6 +89,10 @@ filenamemaker <- function(projectName,
 #' @export
 get_common_dir <- function(paths, delim = "/")
 {
+  if(length(unique(dirname(paths))) == 1){
+    return(dirname(paths)[1])
+  }else{
+  
   path_chunks <- strsplit(paths, delim)
   
   i <- 1
@@ -98,5 +102,5 @@ get_common_dir <- function(paths, delim = "/")
     i <- i + 1
   })
   paste(path_chunks[[1]][seq_len(i - 1)], collapse = delim)
-  
+  }
 }
