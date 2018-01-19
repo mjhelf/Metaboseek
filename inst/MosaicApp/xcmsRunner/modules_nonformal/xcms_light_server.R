@@ -37,7 +37,7 @@ observeEvent(input$xcms_settingsLoad$datapath,{
                                                                         row.names = 1,
                                                                         stringsAsFactors = F)
   }
-  xcmsSettings$wd <- get_common_dir(dirname(xcmsSettings$params$filegroups$File))
+  xcmsSettings$wd <- get_common_dir(xcmsSettings$params$filegroups$File)
   
 })
 
