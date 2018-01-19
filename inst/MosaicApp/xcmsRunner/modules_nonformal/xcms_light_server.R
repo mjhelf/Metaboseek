@@ -37,7 +37,7 @@ observeEvent(input$xcms_settingsLoad$datapath,{
                                                                         row.names = 1,
                                                                         stringsAsFactors = F)
   }
-  xcmsSettings$wd <- get_common_dir(dirname(xcmsSettings$params$filegroups$File))
+  xcmsSettings$wd <- get_common_dir(xcmsSettings$params$filegroups$File)
   
 })
 
@@ -124,6 +124,8 @@ observeEvent(input$xcms_selectTab,{
 observeEvent(input$xcms_start,{
   if(!is.null(input$xcms_settingstab) && nrow(hot_to_r(input$xcms_settingstab)) != 0){
     xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
+  }
+    
     fo <- file.path(xcmsSettings$wd, paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),"_", input$xcms_name))
     dir.create(fo)
     
@@ -159,7 +161,7 @@ observeEvent(input$xcms_start,{
                   #getwd(),
                   '"'),
            wait = F)
-  }
+  
   
 })
 

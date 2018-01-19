@@ -101,6 +101,6 @@ get_common_dir <- function(paths, delim = "/")
     if(any(current_chunk != current_chunk[1])) break
     i <- i + 1
   })
-  paste(path_chunks[[1]][seq_len(i - 1)], collapse = delim)
+  return(paste(path_chunks[[1]][seq_len(i - 1)], collapse = delim))
   }
 }
