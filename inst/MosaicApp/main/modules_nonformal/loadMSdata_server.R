@@ -73,8 +73,6 @@ inputTable$tablename <- input$projectTables
  ColumnNames <- gsub("-",".",paste0(basename(projectData$filegroups$File),"__XIC"))
   ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
 
-  print(ColumnNames)
-  
 #if the expected column names with __XIC do not occur, find them without __XIC  
 if(length(which(colnames(inputTable$df) %in% ColumnNames))==0){
   #check if the colum name exists without leading X (difference in  Linux vs Windows)
@@ -88,7 +86,6 @@ if(length(which(colnames(inputTable$df) %in% ColumnNames))==0){
     }
   
 }else{
-  print("else")
   #or if these don't work out, pick the columns with __XIC in their name
   inputTable$colrange <- grep("__XIC",colnames(inputTable$df))}
 
