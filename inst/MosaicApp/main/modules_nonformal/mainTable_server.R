@@ -181,14 +181,14 @@ output$maintable <- renderRHandsontable({if(!is.null(combino())){
                  highlightCol = TRUE, highlightRow = TRUE) %>%
         hot_col("comments", readOnly = FALSE)%>%
         hot_cols(columnSorting = FALSE,format="0.000000")%>%
-      hot_cols(fixedColumnsLeft = 3)%>%
+      hot_cols(fixedColumnsLeft = 3)#%>%
     #  hot_cols(columnSorting = TRUE)%>%
         #hot_col("em",format="0.000000")%>%
-        hot_cols(renderer = "
-                 function(instance, td, row, col, prop, value, cellProperties) {
-                 Handsontable.TextCell.renderer.apply(this, arguments);
-                 td.style.color = 'black';
-                 }")
+       # hot_cols(renderer = "
+        #         function(instance, td, row, col, prop, value, cellProperties) {
+         #        Handsontable.TextCell.renderer.apply(this, arguments);
+          #       td.style.color = 'black';
+           #      }")
     
     
     

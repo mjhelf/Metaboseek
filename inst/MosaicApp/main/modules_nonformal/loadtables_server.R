@@ -24,12 +24,12 @@ inputTable <- reactiveValues(df = NULL,
 
 ####Render the preview table with first 10 rows of inputTable$df
 output$preview <- renderRHandsontable({if(!is.null(inputTable$df)){
-    rhandsontable(inputTable$df[1:10,], selectCallback = T)%>%
-        hot_cols(renderer = "
-                 function(instance, td, row, col, prop, value, cellProperties) {
-                 Handsontable.TextCell.renderer.apply(this, arguments);
-                 td.style.color = 'black';
-                 }")
+    rhandsontable(inputTable$df[1:10,], selectCallback = T)#%>%
+      #  hot_cols(renderer = "
+       #          function(instance, td, row, col, prop, value, cellProperties) {
+        #         Handsontable.TextCell.renderer.apply(this, arguments);
+         #        td.style.color = 'black';
+          #       }")
         #return td;
 }
 })

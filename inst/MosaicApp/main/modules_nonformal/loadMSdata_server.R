@@ -89,7 +89,9 @@ if(length(which(colnames(inputTable$df) %in% ColumnNames))==0){
   #or if these don't work out, pick the columns with __XIC in their name
   inputTable$colrange <- grep("__XIC",colnames(inputTable$df))}
 
-
+inputTable$anagroupraw <- data.frame(Column=sort(colnames(inputTable$df)[inputTable$colrange]),
+                                     Group = projectData$filegroups$Group[order(ColumnNames)],
+                                     stringsAsFactors = F)
 print(inputTable$anagroupraw)
 
 }
@@ -105,11 +107,7 @@ MSData$active = projectData$projectName
 selectedTabs$FeatureTable <- "Load Table"
 })
   removeModal()
-  
-  #moved this down here to see if that helps in linux
-  inputTable$anagroupraw <- data.frame(Column=sort(colnames(inputTable$df)[inputTable$colrange]),
-                                       Group = projectData$filegroups$Group[order(ColumnNames)],
-                                       stringsAsFactors = F)
+
 })
 
 #### Load raw files from local folder
