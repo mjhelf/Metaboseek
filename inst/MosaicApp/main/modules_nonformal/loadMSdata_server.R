@@ -62,22 +62,38 @@ observeEvent(input$projectLoadOk,{
   
   withProgress(message = 'Please wait!', detail = "loading .csv file", value = 0.3, {
 
+    #if a feature table is selected in the modal dialog, infer column names for intensity columns from filgroups data
     if(!is.null(input$projectTables)){
-  ColumnNames <- gsub("-",".",paste0(basename(projectData$filegroups$File),"__XIC"))
-  ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
-  
+   
 inputTable$df <- read.csv(projectData$csvfiles[which(basename(projectData$csvfiles) == input$projectTables)],
                           header=T, sep=",", 
                           quote='"', stringsAsFactors = F)
 inputTable$tablename <- input$projectTables
-if(length(which(colnames(inputTable$df) %in% ColumnNames)==0)){
+
+ ColumnNames <- gsub("-",".",paste0(basename(projectData$filegroups$File),"__XIC"))
+  ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
+
+#if the expected column names with __XIC do not occur, find them without __XIC  
+if(length(which(colnames(inputTable$df) %in% ColumnNames))==0){
+  #check if the colum name exists without leading X (difference in  Linux vs Windows)
+  if(length(which(colnames(inputTable$df) %in% gsub("^X","",ColumnNames)))>0){
+    print("ifif")
+    inputTable$colrange <- which(colnames(inputTable$df) %in% gsub("^X","",ColumnNames))
+  }
+    else{
+      print("ifelse")
   inputTable$colrange <- which(colnames(inputTable$df) %in% gsub("__XIC","",ColumnNames))
+    }
+  
 }else{
+  #or if these don't work out, pick the columns with __XIC in their name
   inputTable$colrange <- grep("__XIC",colnames(inputTable$df))}
 
 inputTable$anagroupraw <- data.frame(Column=sort(colnames(inputTable$df)[inputTable$colrange]),
                                      Group = projectData$filegroups$Group[order(ColumnNames)],
                                      stringsAsFactors = F)
+print(inputTable$anagroupraw)
+
 }
 incProgress(0.5, detail = "loading MS data")
 newfiles <- projectData$filegroups$File

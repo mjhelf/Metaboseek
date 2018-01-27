@@ -24,12 +24,12 @@ inputTable <- reactiveValues(df = NULL,
 
 ####Render the preview table with first 10 rows of inputTable$df
 output$preview <- renderRHandsontable({if(!is.null(inputTable$df)){
-    rhandsontable(inputTable$df[1:10,], selectCallback = T)%>%
-        hot_cols(renderer = "
-                 function(instance, td, row, col, prop, value, cellProperties) {
-                 Handsontable.TextCell.renderer.apply(this, arguments);
-                 td.style.color = 'black';
-                 }")
+    rhandsontable(inputTable$df[1:10,], selectCallback = T)#%>%
+      #  hot_cols(renderer = "
+       #          function(instance, td, row, col, prop, value, cellProperties) {
+        #         Handsontable.TextCell.renderer.apply(this, arguments);
+         #        td.style.color = 'black';
+          #       }")
         #return td;
 }
 })
@@ -75,9 +75,12 @@ observeEvent(input$loadgroups$datapath,{inputTable$anagroupraw <- read.table(inp
 ### When the Groups are confirmed, generate a Mosaic Feature table object
 ### And also generate corresponding list objects
 
-observeEvent(input$confgroups,{inputTable$anagroupraw <- if(input$anagroupswitch){data.frame(Column = as.character(hot_to_r(input$anagrouping)$Column),
+observeEvent(input$confgroups,{if(!is.null(input$anagrouping)){
+  
+  inputTable$anagroupraw <- if(input$anagroupswitch){data.frame(Column = as.character(hot_to_r(input$anagrouping)$Column),
                                                                   Group = as.character(hot_to_r(input$anagrouping)$Group), stringsAsFactors = F)}
                                                          else{NULL}
+}
 
                                tabid <- paste0("table",length(featureTables$tables))
                                featureTables$tables[[tabid]] <- constructFeatureTable(inputTable$df,
