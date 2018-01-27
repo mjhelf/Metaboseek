@@ -75,9 +75,12 @@ observeEvent(input$loadgroups$datapath,{inputTable$anagroupraw <- read.table(inp
 ### When the Groups are confirmed, generate a Mosaic Feature table object
 ### And also generate corresponding list objects
 
-observeEvent(input$confgroups,{inputTable$anagroupraw <- if(input$anagroupswitch){data.frame(Column = as.character(hot_to_r(input$anagrouping)$Column),
+observeEvent(input$confgroups,{if(!is.null(input$anagrouping)){
+  
+  inputTable$anagroupraw <- if(input$anagroupswitch){data.frame(Column = as.character(hot_to_r(input$anagrouping)$Column),
                                                                   Group = as.character(hot_to_r(input$anagrouping)$Group), stringsAsFactors = F)}
                                                          else{NULL}
+}
 
                                tabid <- paste0("table",length(featureTables$tables))
                                featureTables$tables[[tabid]] <- constructFeatureTable(inputTable$df,
