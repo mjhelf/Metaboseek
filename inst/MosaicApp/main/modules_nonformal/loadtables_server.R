@@ -11,10 +11,10 @@ inputTable <- reactiveValues(df = NULL,
                 inputTable$df <- read.csv(input$file1$datapath, header=input$header, sep=input$sep, 
                                                quote=input$quote, stringsAsFactors = F)
               inputTable$tablename <- input$file1$name
-               if(length(grep("_XIC",colnames(inputTable$df)))==0){
+               if(length(grep("_XIC$",colnames(inputTable$df)))==0){
                    inputTable$colrange <- 1
                }else{
-                   inputTable$colrange <- grep("_XIC",colnames(inputTable$df))}
+                   inputTable$colrange <- grep("_XIC$",colnames(inputTable$df))}
               
               inputTable$anagroupraw <- data.frame(Column=colnames(inputTable$df)[inputTable$colrange],
                                                  Group = rep("G1",(length(inputTable$colrange))),
