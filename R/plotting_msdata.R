@@ -559,7 +559,8 @@ PlotWindow <- function(cx = 1,
   if(par){
     if(single){
       par(#mfrow=c(1,2),
-        oma=c(0,2,0,0),
+        #oma=c(0,2,0,0),
+        mar = c(5.1,6,4.1,0),#oma causes issues in interactive mode
         # mai=c(0,0.5,0,0),
         xpd=FALSE,
         bg=NA,
@@ -643,7 +644,9 @@ specplot <- function (x=sc[,1],
 ){
   
   pd <- data.frame(x=x,y=y/norm)  
-  par(oma=c(0,2,0,0), mar = c(5,4,10,2), xpd = FALSE, xaxs = "i", yaxs = "i")
+  par(#oma=c(0,2,0,0), 
+      mar = c(5,6,10,2),#changed mar[2] to 6 because oma was removed because of issues with interactive view
+      xpd = FALSE, xaxs = "i", yaxs = "i")
   PlotWindow(cx, 
              ylim = yrange, 
              xlim = xrange,
