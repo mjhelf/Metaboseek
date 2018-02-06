@@ -19,7 +19,7 @@ specplot(x = sc[, 1], y = sc[, 2], norm = max(y)/100, cx = 1.5,
 
 \item{k}{top k intensity peaks will be labeled}
 
-\item{fileName}{which file this spectrum is taken from}
+\item{fileName}{plot title}
 
 \item{yrange}{y axis range}
 

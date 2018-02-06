@@ -537,6 +537,7 @@ addLines <- function(EIClist = EICsAdducts,
 #' @param ylab y axis label
 #' @param relto show y axis values relative to relto if not NULL.
 #' @param ysci if TRUE, y axis label numbers are shown in scientific format
+#' @param textadj passed on to mtext adj for orientation of plot description/title text line
 #'
 #' @export
 PlotWindow <- function(cx = 1, 
@@ -550,7 +551,8 @@ PlotWindow <- function(cx = 1,
                        ylab = "Intensity",
                        xlab = "RT (min)",
                        ysci = T,
-                       liwi = 1
+                       liwi = 1,
+                       textadj = 0.5
                        
 ){
   
@@ -612,7 +614,7 @@ PlotWindow <- function(cx = 1,
   
   Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
   
-  title(main=heading, line=2, cex.main = cx)
+  title(main=heading, line=2, cex.main = cx, adj = textadj)
 }
 
 #' specplot
@@ -624,7 +626,7 @@ PlotWindow <- function(cx = 1,
 #' @param norm normalize by
 #' @param cx font size
 #' @param k top k intensity peaks will be labeled
-#' @param fileName which file this spectrum is taken from
+#' @param fileName plot title
 #' @param yrange y axis range
 #' @param xrange x axis range
 #' @param maxi max intensity to be plotted on side
@@ -645,17 +647,17 @@ specplot <- function (x=sc[,1],
   
   pd <- data.frame(x=x,y=y/norm)  
   par(#oma=c(0,2,0,0), 
-      mar = c(5,6,10,2),#changed mar[2] to 6 because oma was removed because of issues with interactive view
+      mar = c(4,6,6,2),#changed mar[2] to 6 because oma was removed because of issues with interactive view
       xpd = FALSE, xaxs = "i", yaxs = "i")
   PlotWindow(cx, 
              ylim = yrange, 
              xlim = xrange,
-             heading = "",
+             heading = fileName,
              single = T,
              par = F,
              relto = norm,
              ylab = "Relative Intensity (%)",
-             xlab = "m/z"
+             xlab = "m/z", textadj = 1
   )
   
   points(pd$x,pd$y,type="h", bty="n")
