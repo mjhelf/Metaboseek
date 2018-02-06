@@ -1,11 +1,21 @@
 #library(jsonlite)
-
-
+#' massquery
+#' 
+#' 
+#' get molecular formula predictions from chemcalc
+#' 
+#' @param mz m/z value
+#' @param range maximum absolute error
+#' @param ppm maximum relative error in ppm
+#' @param elem String containing information on which elements are allowed for prediction
+#' @param charge charge state (positive or negative integer)
+#' 
+#' @export
 massquery <- function(mz, range=0.01, ppm=5,
                       elem= "C0-100H0-202N0-10O0-10F0-3Cl0-3Br0-1",
                       charge = 1){
   
-  charge <- as.numeric(charge)
+  charge <- as.integer(charge)
   if (charge > 0 ){charge2 <- paste0("%2B",abs(charge))}
   if (charge < 0 ){charge2 <- paste0("-",abs(charge))}
   if (charge == 0 ){charge2 <- paste0("")}
@@ -24,7 +34,19 @@ massquery <- function(mz, range=0.01, ppm=5,
 
 
 
-####Chemcalc mz query module######
+
+#' massquery
+#' 
+#' Chemcalc mz query module
+#' server module to get molecular formula predictions from chemcalc
+#' 
+#' @param input m/z value
+#' @param output maximum absolute error
+#' @param session maximum relative error in ppm
+#' @param tag id to be used in ns()
+#' @param set Import data from the shiny session
+#' 
+#' @export 
 MzqueryModule <- function(input,output, session, tag, 
                           set = list(search = list(elements = NULL,
                                                                           mz = NULL, 
@@ -137,7 +159,7 @@ output$hot1 <- renderRHandsontable({
                 readOnly = TRUE,
                 contextMenu = FALSE,
                 selectCallback = TRUE,
-                height = 300,
+                height = 200,
               
                 digits=8) %>%
     hot_cols(columnSorting = TRUE,format="0.000000")%>%
@@ -146,7 +168,15 @@ output$hot1 <- renderRHandsontable({
 
 }
 
-
+#' massquery
+#' 
+#' Chemcalc mz query module
+#' UI module to get molecular formula predictions from chemcalc
+#' 
+#' @param id id to be used in ns()
+#'
+#' 
+#' @export 
 MzqueryModuleUI <- function(id){
  ns <- NS(id)
  
