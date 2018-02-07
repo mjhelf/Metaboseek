@@ -148,7 +148,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                cx=set()$layout$cex/1.5,
                k = 20,
                fileName = paste0(basename(set()$spec$sel$File), "#", set()$spec$sel$scan,
-                                 " (", round(as.numeric(set()$spec$sel$rt),3), " min / ", round(as.numeric(set()$spec$sel$rt*60),1), " sec)"),
+                                 " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)"),
                yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
                xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
                maxi = selections$plots$spec$ymax
