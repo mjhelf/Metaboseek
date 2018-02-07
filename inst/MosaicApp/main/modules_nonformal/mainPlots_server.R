@@ -124,7 +124,7 @@ output$mainPlotEICsPre <- renderPlot({
                  midline = input$MLtoggle,
                  yzoom = input$plotYzoom,
                  RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr},
-                 importmode = T
+                 importEIC = MSData$layouts[[MSData$active]]$EICcache
       )
    
   }
