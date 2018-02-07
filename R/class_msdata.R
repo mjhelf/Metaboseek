@@ -16,7 +16,7 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
     MSD$settings = list(rtw = 30,
                         ppm = 5,
                         cols = 1,
-                        colr = 'topo.colors',
+                        colr = 'mosaic.colors',
                         alpha = 0.8)
     
     class(MSD) <- "rawLayout"
