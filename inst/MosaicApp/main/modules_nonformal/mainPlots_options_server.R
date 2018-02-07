@@ -49,7 +49,7 @@ output$plotCx <- renderUI({
 
 output$colorscheme <- renderUI({
   selectizeInput("colorscheme","Color palette: ", 
-                 choices= c("topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
+                 choices= c("mosaic.colors", "topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
                  selected = NULL
                  )
 })

@@ -20,6 +20,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                               layout = list(lw = 1,
                                                                             cex = 1,
                                                                             controls = F,
+                                                                            ppm = 5,
                                                                             active = T),
                                                               msdata = NULL),
                                                     keys){
@@ -77,7 +78,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         vispoints <- (selections$plots$spec$data[which(selections$plots$spec$data[,1]>= min(xr) 
                                                        & selections$plots$spec$data[,1]<= max(xr)),])
         
-        if(min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*5e-6 ){
+        #set marker to peak closest to requested mz if within set ppm window
+        if(min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
                 selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
                                                                  intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
                                                                  )
@@ -110,7 +112,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$specAll <- renderUI({
-    if(set()$layout$active){
+    if(!is.null(set()$layout$active) && set()$layout$active){
     fluidPage(
       fluidRow(
         plotOutput(ns("Mspec"),

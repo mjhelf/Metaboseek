@@ -283,6 +283,7 @@ iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1",
                                           layout = list(lw = 1,
                                                         cex = 1.5,
                                                         controls = F,
+                                                        ppm = MSData$layouts[[MSData$active]]$settings$ppm,
                                                         active = input$ShowSpec),
                                           msdata = MSData$data)
                      }), 

@@ -705,3 +705,30 @@ specplot <- function (x=sc[,1],
   #axis(side=1, lwd=1, minor.tick(nx=10,ny=5, tick.ratio=0.5), mgp=c(0.5,0,0)) #x-axis mgp[2] controls distance of tick labels to axis
   #axis(side=2, lwd=1, las=2, mgp=c(0.5,0.4,0)) #y-axis
 }
+
+#' mosaic.colors
+#' 
+#' custom color spectrum using color brewer Set1 colors plus topo.colors; good color discrimination up to n = 13
+#' 
+#' @param n number of colors
+#' @param alpha transparency
+#' 
+#' @export
+mosaic.colors<- function (n, alpha){
+  
+  alphahex <- as.hexmode(as.integer(alpha*255))
+  if(nchar(alphahex) == 1){alphahex <- paste0("0",alphahex)}
+  alphahex <- toupper(alphahex)
+  base <- c("#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00","#FFFF33","#A65628","#F781BF","#999999","#1FFFB4","#000000")
+  
+  
+  
+  if(n<=11){
+    return(paste0(base[1:n],alphahex))
+  }else{
+    add <- topo.colors(n = n-11, alpha = alpha)
+    return(c(paste0(base[1:11],alphahex),add))
+  }
+  
+  
+}
