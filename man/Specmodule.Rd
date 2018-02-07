@@ -6,8 +6,8 @@
 \usage{
 Specmodule(input, output, session, tag, set = list(spec = list(xrange = NULL,
   yrange = NULL, maxxrange = NULL, maxyrange = NULL, sel = NULL, mz = NULL, data
-  = NULL), layout = list(lw = 1, cex = 1, controls = F, active = T), msdata =
-  NULL), keys)
+  = NULL), layout = list(lw = 1, cex = 1, controls = F, ppm = 5, active = T),
+  msdata = NULL), keys)
 }
 \arguments{
 \item{input}{}
