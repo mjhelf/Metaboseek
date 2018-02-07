@@ -42,6 +42,7 @@ legendplot <- function(...){
 #' @param cx character expansion factor (font size)
 #' @param adducts numeric() of mass shifts to be added to feature masses
 #' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
+#' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -62,7 +63,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        cx = 1,
                        midline = T,
                        yzoom = 1,
-                       RTcorrect = NULL
+                       RTcorrect = NULL,
+                       importmode = F
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -151,7 +153,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        adducts,
                        RTcorr = RTcorrect
   )
-  
+ 
   groupPlot(EIClist = EICs,
             grouping = glist,
             plotProps = list(TIC = tictog, #settings for single plots
@@ -173,6 +175,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              adductLabs = adducts)
   )
   if(!is.null(pdfFile)){dev.off()}
+  
+  
+  
 }
 
 

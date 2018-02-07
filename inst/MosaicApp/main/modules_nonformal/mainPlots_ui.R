@@ -16,18 +16,21 @@ column(2,
     checkboxInput("RtCorrActive", "RT correction", value = F)
     ),
     
+column(2,
+       checkboxInput("ShowSpec", "Show spectrum", value = F)
+),
     
     column(2,
 downloadButton("pdfButton", "Save Plot")
 ),
 
-column(3,
+column(2,
 htmlOutput("groupingActiveSelect")
 ),
 
 
 
-column(3,
+column(2,
        
 fileInput('rfileload',"Upload ZIP file with mzXML files", accept = "application/zip")
 ),
@@ -51,8 +54,10 @@ htmlOutput("mainPlotEICs")),
 #plotOutput("mainPlotEICsPre")
 fluidRow(
   htmlOutput("adductPlot")
+),
+fluidRow(
+  SpecmoduleUI("Spec1")
 )
-
 )
 ),
 tabPanel("Interactive View (beta)",

@@ -2,17 +2,17 @@
 % Please edit documentation in R/SF_prediction_module.R
 \name{MzqueryModule}
 \alias{MzqueryModule}
-\title{massquery}
+\title{MzqueryModule}
 \usage{
 MzqueryModule(input, output, session, tag, set = list(search = list(elements =
   NULL, mz = NULL, data = NULL)))
 }
 \arguments{
-\item{input}{m/z value}
+\item{input}{}
 
-\item{output}{maximum absolute error}
+\item{output}{}
 
-\item{session}{maximum relative error in ppm}
+\item{session}{}
 
 \item{tag}{id to be used in ns()}
 

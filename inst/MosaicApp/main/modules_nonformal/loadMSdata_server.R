@@ -90,7 +90,7 @@ if(length(which(colnames(inputTable$df) %in% ColumnNames))==0){
 inputTable$anagroupraw <- data.frame(Column=sort(colnames(inputTable$df)[inputTable$colrange]),
                                      Group = projectData$filegroups$Group[order(ColumnNames)],
                                      stringsAsFactors = F)
-print(inputTable$anagroupraw)
+#print(inputTable$anagroupraw)
 
 }
 incProgress(0.5, detail = "loading MS data")

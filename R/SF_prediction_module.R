@@ -28,6 +28,11 @@ massquery <- function(mz, range=0.01, ppm=5,
                  elem,
                  "(",charge2,")")
   res <- jsonlite::fromJSON(mzq)
+  
+  if(length(res$results) == 0){
+    return(data.frame(em = "", mf= "", unsat = "", error = "", ppm = "", stringsAsFactors = F))
+  }
+  
   return(res$results)}
 
 
@@ -35,14 +40,14 @@ massquery <- function(mz, range=0.01, ppm=5,
 
 
 
-#' massquery
+#' MzqueryModule
 #' 
 #' Chemcalc mz query module
 #' server module to get molecular formula predictions from chemcalc
 #' 
-#' @param input m/z value
-#' @param output maximum absolute error
-#' @param session maximum relative error in ppm
+#' @param input 
+#' @param output 
+#' @param session 
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
 #' 
@@ -77,7 +82,7 @@ observe({
     })
 
 output$mzUI <- renderUI({
-  print("ui")
+  #print("ui")
   fluidPage(
     fluidRow(
       h3("Molecular formula prediction"),
@@ -141,7 +146,7 @@ mzauto <- reactive({
 
 #get sum formula table from ChemCalc
 mztab <- eventReactive(input$mzButton,{
-  print(input$source)
+  #print(input$source)
   if(length(input$source) > 0){
     mzi <- if(input$source != "custom"){as.numeric(selections$search$mz[[input$source]])}else{as.numeric(input$mzquery)}
   

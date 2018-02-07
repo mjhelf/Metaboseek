@@ -1,3 +1,15 @@
+#' Specmodule
+#' 
+#' 
+#' server module for interactive mass spectrum view
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param tag id to be used in ns()
+#' @param set Import data from the shiny session
+#' 
+#' @export 
 Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange = NULL,
                                                                           yrange = NULL,
                                                                           maxxrange = NULL,
@@ -7,7 +19,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                           data = NULL),
                                                               layout = list(lw = 1,
                                                                             cex = 1,
-                                                                            controls = F),
+                                                                            controls = F,
+                                                                            active = T),
                                                               msdata = NULL),
                                                     keys){
   
@@ -29,7 +42,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
  # observeEvent(set(),{sc()})
   sc <- reactive({
     # observe({
-    if(!is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
+    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
 
       
       
@@ -82,7 +95,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   })
   
   output$specinfo <- renderUI({ 
-    if(!is.null(set()$spec$sel$File)){
+    if(set()$layout$active && !is.null(set()$spec$sel$File)){
       
       p(paste0("Marker on: ", round(as.numeric(selections$plots$spec$marker), 5),
         ", Cursor on: ", round(as.numeric(selections$plots$spec$hover$mz),5),
@@ -95,8 +108,32 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
     
       })
   
+  
+  output$specAll <- renderUI({
+    if(set()$layout$active){
+    fluidPage(
+      fluidRow(
+        plotOutput(ns("Mspec"),
+                   click = ns("Mspec_click"),
+                   hover = hoverOpts(id = ns("Mspec_hover"),
+                                     delay = 150),
+                   dblclick = ns("Mspec_dblclick"),
+                   brush = brushOpts(
+                     id = ns("Mspec_brush"),
+                     #direction = "x",
+                     resetOnNew = TRUE),
+                   height = "550px"
+        ),
+        htmlOutput(ns("specinfo"))
+        
+      )
+    )
+    }
+  })
+  
+  
   output$Mspec <- renderPlot({
-    if(!is.null(set()$spec$sel$File)){
+    if(set()$layout$active && !is.null(set()$spec$sel$File)){
       sc()
       
       xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
@@ -239,7 +276,18 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
 
 
 
-###EICMODULE
+#' EICmodule
+#' 
+#' 
+#' server module for interactive EIC view
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param tag id to be used in ns()
+#' @param set Import data from the shiny session
+#' 
+#' @export 
 EICmodule <- function(input, output, session, tag, set, keys){
   
   
@@ -471,27 +519,31 @@ EICmodule <- function(input, output, session, tag, set, keys){
   
 }
 
-
+#' SpecmoduleUI
+#' 
+#' 
+#' UI module for interactive spectrum view
+#' 
+#' @param id id to be used in ns()
+#' 
+#' @export
 SpecmoduleUI <- function(id){
   ns <- NS(id)
   
-  fluidRow(
-    plotOutput(ns("Mspec"),
-               click = ns("Mspec_click"),
-               hover = hoverOpts(id = ns("Mspec_hover"),
-                                 delay = 150),
-               dblclick = ns("Mspec_dblclick"),
-               brush = brushOpts(
-                 id = ns("Mspec_brush"),
-                 #direction = "x",
-                 resetOnNew = TRUE),
-               height = "550px"
-    ),
-    htmlOutput(ns("specinfo"))
-
-  )
+  htmlOutput(ns("specAll"))
+  
+  
 }
 
+
+#' EICmoduleUI
+#' 
+#' 
+#' UI module for interactive EIC view
+#' 
+#' @param id id to be used in ns()
+#' 
+#' @export 
 EICmoduleUI <- function(id){
   ns <- NS(id)
   fluidPage(

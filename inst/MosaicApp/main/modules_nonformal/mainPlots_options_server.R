@@ -120,9 +120,9 @@ output$rtcorr <- renderPlot({
 callModule(MzqueryModule,"mz1", tag = "mz1", 
            set = reactive({list(search = list(elements = "C0-100H0-202N0-15O0-20",
                                               mz = list("feature table" = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]},
-                                                        "spectrum" = 542.32405482 #iSpec1()$spec$marker$mz
+                                                        "spectrum" = iSpec1()$spec$marker$mz
                                                         ), 
-                                              data = NULL#iSpec1()$spec$data
+                                              data = iSpec1()$spec$data
                                               ) # the entire spectrum data for isotope matching
            )})
 )

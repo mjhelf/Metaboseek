@@ -66,6 +66,45 @@ output$mainPlotPlaceholder <- renderImage({
 
 output$mainPlotEICsPre <- renderPlot({
   if(!is.null(MSData$data)){
+    
+    rtmid <- if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"rt"]}
+    mzmid <- if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]}
+    RTall <- input$RTtoggle
+    adducts <- massShiftsOut()$shifts
+    RTcorrect <- if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr}
+
+   # mzx <- data.frame(mzmin = mzmid - mzmid*MSData$layouts[[MSData$active]]$settings$ppm*1e-6,
+    #                  mzmax = mzmid + mzmid*MSData$layouts[[MSData$active]]$settings$ppm*1e-6)
+
+    if(any(RTall, is.null(rtmid))){ # any can handle NULL, seems more flexible than ||
+      rtmid <- NULL
+      rtx <- NULL
+    }else{
+      rtx <- data.frame(rtmin = rtmid - MSData$layouts[[MSData$active]]$settings$rtw,
+                        rtmax = rtmid + MSData$layouts[[MSData$active]]$settings$rtw)
+    }
+    
+    #generate mz boundary df
+    if(any(input$TICtoggle, is.null(mzmid)) ){
+      mzmid <- if(!is.null(rtmid)){rep(100,length(rtmid))}else{100}
+      mzx <- data.frame(mzmin = mzmid-1,
+                        mzmax = mzmid+1)
+      
+    }else{
+      mzx <- data.frame(mzmin = mzmid - mzmid*MSData$layouts[[MSData$active]]$settings$ppm*1e-6,
+                        mzmax = mzmid + mzmid*MSData$layouts[[MSData$active]]$settings$ppm*1e-6)
+    }
+    
+    
+    MSData$layouts[[MSData$active]]$EICcache <- multiEICplus(rawdata= MSData$data,
+                         mz = mzx,
+                         rt = if(is.null(RTcorrect)){rtx}else{NULL},
+                         rnames = row.names(mzmid), #major item names
+                         byFile = F, #if true, table will be sorted by rawfile, otherwise by feature
+                         adducts,
+                         RTcorr = RTcorrect
+    )
+    
       EICgeneral(rtmid = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"rt"]},
                  mzmid = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]},
                  glist = MSData$layouts[[MSData$active]]$grouping,
@@ -84,8 +123,10 @@ output$mainPlotEICsPre <- renderPlot({
                  cx = input$plotCx,
                  midline = input$MLtoggle,
                  yzoom = input$plotYzoom,
-                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr}
+                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{MSData$RTcorr},
+                 importmode = T
       )
+   
   }
     
 }, bg = "white", execOnResize = T)
@@ -216,4 +257,34 @@ observe({
   toggleState(id = "pdfButton", condition = !is.null(MSData$active))
 })
 
+iSpec1_feed <- eventReactive(MSData$layouts[[MSData$active]]$EICcache,{
+  if(!is.null(MSData$layouts[[MSData$active]]$EICcache)){
+  maxI <- which.max(MSData$layouts[[MSData$active]]$EICcache[[1]][,"intmax"])
+  maxsc <- which.max(MSData$layouts[[MSData$active]]$EICcache[[1]][maxI,"intensity"][[1]])
+  return(list(File = row.names(MSData$layouts[[MSData$active]]$EICcache[[1]])[maxI],
+              scan = MSData$layouts[[MSData$active]]$EICcache[[1]][maxI,"scan"][[1]][maxsc],
+              rt = MSData$layouts[[MSData$active]]$EICcache[[1]][maxI,"rt"][[1]][maxsc]
+    
+  ))
+  }
+})
 
+iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1", 
+                     set = reactive({list(spec = list(xrange = if(is.null(maintabsel())){NULL}else{c(hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]-10,
+                                                                                                     hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]+10)},
+                                                      yrange = NULL,
+                                                      maxxrange = NULL,
+                                                      maxyrange = NULL,
+                                                      sel = list(File = iSpec1_feed()$File[1],
+                                                                 scan = iSpec1_feed()$scan[1],
+                                                                 rt = iSpec1_feed()$rt[1]),
+                                                      data = NULL,
+                                                      mz = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]}),
+                                          layout = list(lw = 1,
+                                                        cex = 1.5,
+                                                        controls = F,
+                                                        active = input$ShowSpec),
+                                          msdata = MSData$data)
+                     }), 
+                     keys = reactive({keyin$keyd})
+)
