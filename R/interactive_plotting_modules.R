@@ -23,28 +23,28 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                             ppm = 5,
                                                                             active = T),
                                                               msdata = NULL),
-                                                    keys){
+                       keys){
   
   ns <- NS(tag)
   selections <- reactiveValues(plots = list(spec = list(xrange = NULL, #the x axis range
-                                                         yrange = NULL, #the y axis range
-                                                         maxxrange = NULL, #maximum x axis range
-                                                         maxyrange = NULL, #maximum y axis range
-                                                         sel = NULL, # selected feature from set() (if used)
+                                                        yrange = NULL, #the y axis range
+                                                        maxxrange = NULL, #maximum x axis range
+                                                        maxyrange = NULL, #maximum y axis range
+                                                        sel = NULL, # selected feature from set() (if used)
                                                         marker = NULL, #selected peak with $mz and $intensity
                                                         hover = NULL, #peak hovered over with $mz and $intensity
                                                         mz = NULL, 
-                                                         data = NULL,
-                                                         ymax = 100),
+                                                        data = NULL,
+                                                        ymax = 100),
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
   
- # observeEvent(set(),{sc()})
+  # observeEvent(set(),{sc()})
   sc <- reactive({
     # observe({
     if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
-
+      
       
       
       #get the MS scan
@@ -52,14 +52,14 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       #print("sc")
       #set the maximum x axis range to cover the spectrum data
       selections$plots$spec$maxxrange <- c(min(res[,1])-1,
-                                                 max(res[,1])+1)
+                                           max(res[,1])+1)
       
       #set the actual x-axis view range
       if(is.null(selections$plots$spec$xrange) || !identical(selections$plots$set,set()$spec )){
-      selections$plots$spec$xrange <- set()$spec$xrange
+        selections$plots$spec$xrange <- set()$spec$xrange
       }
       
-     # if(is.null(selections$plots$spec$yrange)){
+      # if(is.null(selections$plots$spec$yrange)){
       #selections$plots$spec$yrange <- set()$spec$yrange}
       
       
@@ -72,23 +72,23 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       #find maximum Y axis value (absolute intensity) within visible x- axis range
       xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
       selections$plots$spec$ymax <- max(selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
-                                                                                         & selections$plots$spec$data[,1]<= max(xr))])
+                                                                             & selections$plots$spec$data[,1]<= max(xr))])
       
       if(is.null(selections$plots$spec$marker) || !identical(selections$plots$set,set()$spec )){
         vispoints <- (selections$plots$spec$data[which(selections$plots$spec$data[,1]>= min(xr) 
                                                        & selections$plots$spec$data[,1]<= max(xr)),])
         
         #set marker to peak closest to requested mz if within set ppm window
-        if(min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
-                selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
-                                                                 intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
-                                                                 )
+        if(!is.na(set()$spec$mz) && !is.null(set()$spec$mz) && min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
+          selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
+                                                     intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
+          )
         }else{
           selections$plots$spec$marker <- NULL
         }
       }
       #print(identical(selections$plots$set,set()$spec ))
-     # print(selections$plots$spec$marker)
+      # print(selections$plots$spec$marker)
       selections$plots$set <- set()$spec
       
       return(res)
@@ -99,37 +99,37 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   output$specinfo <- renderUI({ 
     if(set()$layout$active && !is.null(set()$spec$sel$File)){
       
-      p(paste0("Marker on: ", round(as.numeric(selections$plots$spec$marker), 5),
-        ", Cursor on: ", round(as.numeric(selections$plots$spec$hover$mz),5),
-        if(length(selections$plots$spec$hover$mz) !=0 && length(selections$plots$spec$marker) != 0){paste0(" (", 
-        if(as.numeric(selections$plots$spec$hover$mz) > as.numeric(selections$plots$spec$marker$mz)){"+"}else{""},
-        round(as.numeric(selections$plots$spec$hover$mz) - as.numeric(selections$plots$spec$marker),5), ")")}else{""}  ))
+      p(paste0("Marker on: ", round(as.numeric(selections$plots$spec$marker[1]), 5),
+               ", Cursor on: ", round(as.numeric(selections$plots$spec$hover$mz[1]),5),
+               if(length(selections$plots$spec$hover$mz) !=0 && length(selections$plots$spec$marker) != 0){paste0(" (", 
+                                                                                                                  if(as.numeric(selections$plots$spec$hover$mz) > as.numeric(selections$plots$spec$marker$mz)){"+"}else{""},
+                                                                                                                  round(as.numeric(selections$plots$spec$hover$mz[1]) - as.numeric(selections$plots$spec$marker[1]),5), ")")}else{""}  ))
       
     }
     
     
-      })
+  })
   
   
   output$specAll <- renderUI({
     if(!is.null(set()$layout$active) && set()$layout$active){
-    fluidPage(
-      fluidRow(
-        plotOutput(ns("Mspec"),
-                   click = ns("Mspec_click"),
-                   hover = hoverOpts(id = ns("Mspec_hover"),
-                                     delay = 150),
-                   dblclick = ns("Mspec_dblclick"),
-                   brush = brushOpts(
-                     id = ns("Mspec_brush"),
-                     #direction = "x",
-                     resetOnNew = TRUE),
-                   height = "550px"
-        ),
-        htmlOutput(ns("specinfo"))
-        
+      fluidPage(
+        fluidRow(
+          plotOutput(ns("Mspec"),
+                     click = ns("Mspec_click"),
+                     hover = hoverOpts(id = ns("Mspec_hover"),
+                                       delay = 150),
+                     dblclick = ns("Mspec_dblclick"),
+                     brush = brushOpts(
+                       id = ns("Mspec_brush"),
+                       #direction = "x",
+                       resetOnNew = TRUE),
+                     height = "550px"
+          ),
+          htmlOutput(ns("specinfo"))
+          
+        )
       )
-    )
     }
   })
   
@@ -142,7 +142,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       #intensity values in the current x-axis range view 
       yinview <- selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
-                                                          & selections$plots$spec$data[,1]<= max(xr))]
+                                                      & selections$plots$spec$data[,1]<= max(xr))]
       
       specplot(x=selections$plots$spec$data[,1],
                y=selections$plots$spec$data[,2],
@@ -193,13 +193,13 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       temp <- as.data.frame(selections$plots$spec$data)
       temp$intensity <- temp$intensity/(selections$plots$spec$ymax/100)
       
-     # selections$plots$spec$marker <- temp[which.min(abs(temp$mz - input$Mspec_click$x)),]
+      # selections$plots$spec$marker <- temp[which.min(abs(temp$mz - input$Mspec_click$x)),]
       selections$plots$spec$marker <- nearPoints(temp,
-                                                input$Mspec_click,
-                                                xvar = "mz",
-                                                yvar = "intensity",
-                                                threshold = 100,
-                                                maxpoints = 1)
+                                                 input$Mspec_click,
+                                                 xvar = "mz",
+                                                 yvar = "intensity",
+                                                 threshold = 100,
+                                                 maxpoints = 1)
       
       # datadf
       
@@ -218,39 +218,39 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       #selections$plots$spec$hover <- temp[which.min(abs(temp$mz - input$Mspec_hover$x)),]
       
       selections$plots$spec$hover <- nearPoints(temp,
-                                                      input$Mspec_hover,
-                                                      xvar = "mz",
-                                                      yvar = "intensity",
-                                                      threshold = 100,
-                                                      maxpoints = 1)
-     # print(selections$plots$spec$hover)
+                                                input$Mspec_hover,
+                                                xvar = "mz",
+                                                yvar = "intensity",
+                                                threshold = 100,
+                                                maxpoints = 1)
+      # print(selections$plots$spec$hover)
     }
     
   })
   
   observeEvent(input$Mspec_dblclick, {
     
-       ymax_old <- selections$plots$spec$ymax
-
+    ymax_old <- selections$plots$spec$ymax
+    
     if (!is.null(input$Mspec_brush)) {
-     
-     
+      
+      
       
       
       selections$plots$spec$xrange <- c(input$Mspec_brush$xmin, input$Mspec_brush$xmax)
-
+      
       #intensity values in the current x-axis range view 
       xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
       
       #intensity values in the current x-axis range view - avoiding div by 0
       selections$plots$spec$ymax <- max(c(1,selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
-                                                            & selections$plots$spec$data[,1]<= max(xr))]))
+                                                                                 & selections$plots$spec$data[,1]<= max(xr))]))
       
       
       
       selections$plots$spec$yrange <- c(0, min(c(100,input$Mspec_brush$ymax*(ymax_old/selections$plots$spec$ymax))))
       if(!is.null(selections$plots$spec$marker)){
-      selections$plots$spec$marker$intensity <-min(c(100,selections$plots$spec$marker$intensity*(ymax_old/selections$plots$spec$ymax)))
+        selections$plots$spec$marker$intensity <-min(c(100,selections$plots$spec$marker$intensity*(ymax_old/selections$plots$spec$ymax)))
       }
     } else {
       selections$plots$spec$xrange <- selections$plots$spec$maxxrange
@@ -268,10 +268,10 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   return(
     reactive({
-    selections$plots
-      })
+      selections$plots
+    })
   )
-  }
+}
 
 
 
@@ -290,7 +290,15 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
 #' @param set Import data from the shiny session
 #' 
 #' @export 
-EICmodule <- function(input, output, session, tag, set, keys){
+EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$layouts, #List of rawfile paths (unsorted)
+                                                              RTcorr = NULL,
+                                                              activeGroup = "Group1",
+                                                              filelist = MSData$filelist,
+                                                              data = MSData$data,
+                                                              mz = 542.32405482,
+                                                              rtr = NULL,
+                                                              active = T),
+                      keys){
   
   
   ns <- NS(tag)
@@ -300,60 +308,169 @@ EICmodule <- function(input, output, session, tag, set, keys){
                                                              maxyrange = NULL,
                                                              marker = NULL,
                                                              mz = NULL,
-                                                             tic = T)
-  )
+                                                             tic = F,
+                                                             rtcorrSet = F,
+                                                             hotlink = T),
+                                               files = list(choices = NULL,
+                                                            selected = NULL)),
+                                  set = NULL
+                                  
   )
   
-  # observe({selectionsEIC$plots[["chrom1"]]$mz <- set()$mz})
+  observeEvent(c(set()),{
+    if(set()$active && is.null(selectionsEIC$plots$files$choices) && !is.null(set()$layouts[[set()$activeGroup]]$grouping)){
+      selectionsEIC$plots$files$choices <- lapply(set()$layouts[[set()$activeGroup]]$grouping,basename)
+      selectionsEIC$plots$files$selected <- selectionsEIC$plots$files$choices[[1]]
+      
+    }
+    if(set()$active && selectionsEIC$plots[["chrom1"]]$hotlink){
+      if(!is.null(set()$mz)){
+        selectionsEIC$plots[["chrom1"]]$mz <- set()$mz}
+      selectionsEIC$plots[["chrom1"]]$xrange <- set()$rtr
+    }
+  })
   
   
   output$controls <- renderUI({ 
-    
-    fluidRow(
-      column(2,
-             
-             
-             checkboxInput(ns('interactiveRTcorr'), "RT correction", value = F)
-             
-             
-      ),
-      column(2,
-             checkboxInput(ns('EicTic'), "TIC",
-                           value = T)
-      ),
-      column(3,
-             selectizeInput(ns('selEICs'),
-                            "select files", 
-                            choices = lapply(set()$layouts[[set()$active]]$grouping,basename),
-                            selected = lapply(set()$layouts[[set()$active]]$grouping,basename)[[1]],
-                            multiple = TRUE)  
-             
-      ),
-      column(3,
-             numericInput(ns('selMZ'), "m/z", 
-                          value = set()$mz,#NULL,#selectionsEIC$plots[["chrom1"]]$mz,
-                          min = 0, 
-                          step = 0.01)   
-      ))
-    
+    if(set()$active){
+      fluidRow(
+        column(2,
+               
+               
+               htmlOutput(ns('rtcorr')) 
+               
+               
+        ),
+        column(2,
+               htmlOutput(ns('tic')) 
+        ),
+        column(2,
+               htmlOutput(ns('hotlink')) 
+        ),
+        column(3,
+               selectizeInput(ns('selEICs'),
+                              "select files", 
+                              choices = selectionsEIC$plots$files$choices,
+                              selected = selectionsEIC$plots$files$selected,
+                              multiple = TRUE)  
+               
+        ),
+        column(3,
+               htmlOutput(ns('mzin'))   
+        ))
+    }
+  })
+  
+  output$mzin <- renderUI({
+    if(set()$active){
+      numericInput(ns('selMZ'), "m/z", 
+                   value = selectionsEIC$plots[["chrom1"]]$mz,#NULL,#selectionsEIC$plots[["chrom1"]]$mz,
+                   min = 0, 
+                   step = 0.01)
+    }
   })
   
   
-  #observeEvent(input$selEICs,{
-  #initialize sEICs
-  # sEICs()
   
-  #})
-  
+  output$tic <- renderUI({
+    if(set()$active){
+      checkboxInput(ns('EicTic'), "TIC",
+                    value = selectionsEIC$plots[["chrom1"]]$tic)
+    }
+  })
   observeEvent(input$EicTic,{
-    selectionsEIC$plots[["chrom1"]]$tic <-  input$EicTic
+    if(set()$active){
+      selectionsEIC$plots[["chrom1"]]$tic <-  input$EicTic
+    }
     #  sEICs()
   })
   
+  output$rtcorr <- renderUI({
+    if(set()$active){
+  checkboxInput(ns('interactiveRTcorr'), "RT correction", value = selectionsEIC$plots[["chrom1"]]$rtcorrSet)
+    }
+      })
+  
+  observeEvent(input$interactiveRTcorr,{
+    if(set()$active){
+      selectionsEIC$plots[["chrom1"]]$rtcorrSet <-  input$interactiveRTcorr
+    }
+    #  sEICs()
+  })
+  
+  output$hotlink <- renderUI({
+    if(set()$active){
+      checkboxInput(ns('hotl'), "Hotlink mz and rt ranges",
+                    value = selectionsEIC$plots[["chrom1"]]$hotlink)
+    }
+  })
+  
+  observeEvent(input$hotl,{
+    if(set()$active){
+      selectionsEIC$plots[["chrom1"]]$hotlink <-  input$hotl
+    }
+    #  sEICs()
+  })
+  #observeEvent(input$tic,{
+  #selectionsEIC$plots$chrom1
+  #})
+  
+  
+  
   observeEvent(input$selMZ,{
-  # print("mz changed")
-  selectionsEIC$plots[["chrom1"]]$mz <-  input$selMZ
-  #sEICs()
+    # print("mz changed")
+    if(set()$active){
+      selectionsEIC$plots[["chrom1"]]$mz <-  input$selMZ
+      #sEICs()
+    }
+  })
+  
+  observeEvent(input$selEICs,{
+    if(set()$active){
+      selectionsEIC$plots$files$selected <- input$selEICs
+    }
+  })
+  
+  
+  output$EICout <- renderUI({
+    if(set()$active){
+      fluidPage(
+        htmlOutput(ns("controls")),
+        
+        fluidRow(
+          
+          #p("Brush and double click to zoom in, double click to zoom out, press SHIFT and click to select a data point to view Spectrum. SHIFT + click in Spectrum generates EIC for selected peak."),
+          # EICinteractiveUI("chrom1"),
+          plotOutput(ns("plainplot"),
+                     click = ns("plainplot_click"),
+                     hover = hoverOpts(id = ns("plainplot_hover"),
+                                       delay = 50),
+                     dblclick = ns("plainplot_dblclick"),
+                     brush = brushOpts(
+                       id = ns("plainplot_brush"),
+                       #direction = "x",
+                       resetOnNew = TRUE)
+          )
+        ),
+        fluidRow(htmlOutput(ns('chrominfo')))
+      )
+    }
+  })
+  
+  output$chrominfo <- renderUI({ 
+    if(set()$active){
+      p(if(!is.null(selectionsEIC$plots[["chrom1"]]$hover$File)){
+        paste0("Cursor on: ", basename(selectionsEIC$plots[["chrom1"]]$hover$File[1]),
+               " @ ", round(as.numeric(selectionsEIC$plots[["chrom1"]]$hover$rt[1]), 3),
+               " min / ", round(as.numeric(selectionsEIC$plots[["chrom1"]]$hover$rt[1]*60), 2), " sec")}
+        else{""},
+        if(!is.null(selectionsEIC$plots[["chrom1"]]$marker$File)){
+          paste0("Marker on: ", basename(selectionsEIC$plots[["chrom1"]]$marker$File[1]),
+                 " @ ", round(as.numeric(selectionsEIC$plots[["chrom1"]]$marker$rt[1]), 3),
+                 " min / ", round(as.numeric(selectionsEIC$plots[["chrom1"]]$marker$rt[1]*60), 2), " sec")}
+        else{""}
+      )
+    }
   })
   
   #observeEvent(selectionsEIC$plots$spec$marker$mz,{
@@ -363,11 +480,11 @@ EICmodule <- function(input, output, session, tag, set, keys){
   #})
   
   sEICs <- reactive ({
-    if(length(input$selMZ)>0){
+    if(set()$active && length(input$selMZ)>0){
       #print(input$selMZ)
       r1 <- multiEICplus(adducts = c(0),
-                         mz = data.frame(mzmin = max(1,input$selMZ-input$selMZ*set()$layouts[[set()$active]]$settings$ppm*1e-6),
-                                         mzmax=max(1,input$selMZ+input$selMZ*set()$layouts[[set()$active]]$settings$ppm*1e-6)),
+                         mz = data.frame(mzmin = max(1,input$selMZ-input$selMZ*set()$layouts[[set()$activeGroup]]$settings$ppm*1e-6),
+                                         mzmax=max(1,input$selMZ+input$selMZ*set()$layouts[[set()$activeGroup]]$settings$ppm*1e-6)),
                          rt = NULL,#data.frame(rtmin = FT$df$rt[1]-5, rtmax= FT$df$rt[1]+5),
                          rnames = 1:length(input$selMZ),
                          rawdata= set()$data,
@@ -389,34 +506,34 @@ EICmodule <- function(input, output, session, tag, set, keys){
   
   #neccessary to run shiny nearPoints to determine data point nearest to pointer
   sEICsDF <- reactive({
-    
-    f <- as.data.frame(sEICs()$EIClist[[1]][1,], stringsAsFactors = F)
-    f$File <- row.names(sEICs()$EIClist[[1]])[1]
-    if(nrow(sEICs()$EIClist[[1]])>1){
-      for( r in 2:nrow(sEICs()$EIClist[[1]])){
-        f2 <- as.data.frame(sEICs()$EIClist[[1]][r,], stringsAsFactors = F)
-        f2$File <- row.names(sEICs()$EIClist[[1]])[r]
-        f <- rbind(f,f2)
+    if(set()$active && !is.null(sEICs())){
+      f <- as.data.frame(sEICs()$EIClist[[1]][1,], stringsAsFactors = F)
+      f$File <- row.names(sEICs()$EIClist[[1]])[1]
+      if(nrow(sEICs()$EIClist[[1]])>1){
+        for( r in 2:nrow(sEICs()$EIClist[[1]])){
+          f2 <- as.data.frame(sEICs()$EIClist[[1]][r,], stringsAsFactors = F)
+          f2$File <- row.names(sEICs()$EIClist[[1]])[r]
+          f <- rbind(f,f2)
+        }
       }
+      
+      f$rt <- f$rt/60
+      #print("sEICsDF")
+      return(f)
     }
-    
-    f$rt <- f$rt/60
-    #print("sEICsDF")
-    return(f)
-    
   })
   
   output$plainplot <- renderPlot({
-    if(!is.null(sEICs())){
+    if(set()$active && !is.null(sEICs())){
       #sEICs()
       # pt1<- proc.time()
-      
+      #print(selectionsEIC$plots[["chrom1"]]$marker)
       EICplot(EICs = sEICs()$EIClist, cx = 1,#input$plotCx, 
               ylim = if(!is.null(selectionsEIC$plots[['chrom1']]$yrange)){selectionsEIC$plots[['chrom1']]$yrange}else{selectionsEIC$plots[['chrom1']]$maxyrange}, 
               xlim = if(!is.null(selectionsEIC$plots[['chrom1']]$xrange)){selectionsEIC$plots[['chrom1']]$xrange}else{selectionsEIC$plots[['chrom1']]$maxxrange},
               legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(sEICs()$EIClist[[1]])))),
-              colr = do.call(set()$layouts[[set()$active]]$settings$colr, list(n = nrow(sEICs()$EIClist[[1]]), alpha=0.8)),
-              heading = if(input$EicTic){"TICs"}else{paste0("EIC for m/z ", round(input$selMZ,5), " +/- ",round(set()$layouts[[set()$active]]$settings$ppm,1), " ppm")},
+              colr = do.call(set()$layouts[[set()$activeGroup]]$settings$colr, list(n = nrow(sEICs()$EIClist[[1]]), alpha=0.8)),
+              heading = if(input$EicTic){"TICs"}else{paste0("EIC for m/z ", round(input$selMZ,5), " +/- ",round(set()$layouts[[set()$activeGroup]]$settings$ppm,1), " ppm")},
               relto = NULL,
               TIC = input$EicTic,
               single = T,
@@ -427,10 +544,10 @@ EICmodule <- function(input, output, session, tag, set, keys){
       if(!is.null(selectionsEIC$plots[["chrom1"]]$hover)){
         if(input$EicTic){
           points(selectionsEIC$plots[["chrom1"]]$hover$rt,
-                 selectionsEIC$plots[["chrom1"]]$hover$tic)
+                 selectionsEIC$plots[["chrom1"]]$hover$tic, cex =2)
         }else{
           points(selectionsEIC$plots[["chrom1"]]$hover$rt,
-                 selectionsEIC$plots[["chrom1"]]$hover$intensity)
+                 selectionsEIC$plots[["chrom1"]]$hover$intensity, cex =2)
         }
       }
       
@@ -438,52 +555,50 @@ EICmodule <- function(input, output, session, tag, set, keys){
         if(input$EicTic){
           points(selectionsEIC$plots[["chrom1"]]$marker$rt,
                  selectionsEIC$plots[["chrom1"]]$marker$tic,
-                 col = "red")
+                 col = "red", cex =2)
         }else{
           points(selectionsEIC$plots[["chrom1"]]$marker$rt,
                  selectionsEIC$plots[["chrom1"]]$marker$intensity,
-                 col = "red")
+                 col = "red", cex =2)
         }
       }
     }
     
     
     
-    #pt1 <- proc.time() - pt1
-    #print(pt1)
-    
-    
   })
   
   observeEvent(input$plainplot_dblclick,{
-    selectionsEIC$plots[["chrom1"]]$dblclick <- input$plainplot_dblclick
-    selectionsEIC$lastChangedEIC <- "chrom1"
+    if(set()$active){
+      selectionsEIC$plots[["chrom1"]]$dblclick <- input$plainplot_dblclick
+      selectionsEIC$lastChangedEIC <- "chrom1"
+    }
   })  
   
   observeEvent(input$plainplot_click,{
     #print("click")
-    
-    if (keys() == 16) {
-      
-      selectionsEIC$plots[["chrom1"]]$click <- input$plainplot_click
-      selectionsEIC$plots[["chrom1"]]$marker <- nearPoints(sEICsDF(),
-                                                           input$plainplot_click,
-                                                           xvar = "rt",
-                                                           yvar = if(input$EicTic){"tic"}else{"intensity"},
-                                                           threshold = 20,
-                                                           maxpoints = 1)
-      
-      selectionsEIC$lastChangedEIC <- "chrom1"
-      
-      #initiate sc()
-      #sc()
-      
+    if(set()$active){
+      if (keys() == 16) {
+        
+        selectionsEIC$plots[["chrom1"]]$click <- input$plainplot_click
+        selectionsEIC$plots[["chrom1"]]$marker <- nearPoints(sEICsDF(),
+                                                             input$plainplot_click,
+                                                             xvar = "rt",
+                                                             yvar = if(input$EicTic){"tic"}else{"intensity"},
+                                                             threshold = 20,
+                                                             maxpoints = 1)
+        
+        selectionsEIC$lastChangedEIC <- "chrom1"
+        
+        #initiate sc()
+        #sc()
+      }
     }
   })
   
   
   observeEvent(input$plainplot_hover,{
-    if(is.null(input$plainplot_brush)){
+    if(set()$active && is.null(input$plainplot_brush) && !is.null(sEICsDF())){
       selectionsEIC$plots[["chrom1"]]$hover <- nearPoints(sEICsDF(),
                                                           input$plainplot_hover,
                                                           xvar = "rt",
@@ -495,18 +610,29 @@ EICmodule <- function(input, output, session, tag, set, keys){
   })
   
   observeEvent(input$plainplot_dblclick, {
-    
-    if (!is.null(input$plainplot_brush)) {
-      #print("dblcklick plus brushing")
-      selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
-      selectionsEIC$plots[['chrom1']]$yrange <- c(input$plainplot_brush$ymin, input$plainplot_brush$ymax)
-      
-    } else {
-     # print("dblcklick")
-      
-      selectionsEIC$plots[['chrom1']]$xrange <- selectionsEIC$plots[['chrom1']]$maxxrange
-      selectionsEIC$plots[['chrom1']]$yrange <- selectionsEIC$plots[['chrom1']]$maxyrange
-    }})
+    if(set()$active){
+      if (!is.null(input$plainplot_brush)) {
+        #print(sEICsDF())
+        selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
+        
+        if(input$EicTic){
+          ymax <- max(sEICsDF()$tic[which(sEICsDF()$rt <= input$plainplot_brush$xmax
+                                          & sEICsDF()$rt >= input$plainplot_brush$xmin)])
+        }else{
+          ymax <- max(sEICsDF()$intensity[which(sEICsDF()$rt <= input$plainplot_brush$xmax
+                                                & sEICsDF()$rt >= input$plainplot_brush$xmin)])
+        }
+        
+        selectionsEIC$plots[['chrom1']]$yrange <- c(input$plainplot_brush$ymin, min(ymax,input$plainplot_brush$ymax))
+        
+      } else {
+        # print("dblcklick")
+        
+        selectionsEIC$plots[['chrom1']]$xrange <- selectionsEIC$plots[['chrom1']]$maxxrange
+        selectionsEIC$plots[['chrom1']]$yrange <- selectionsEIC$plots[['chrom1']]$maxyrange
+      }}
+  }
+  )
   
   return(reactive({
     
@@ -514,12 +640,13 @@ EICmodule <- function(input, output, session, tag, set, keys){
     
     
   })
+  
   )
-  
-  
-  
-  
 }
+
+
+
+
 
 #' SpecmoduleUI
 #' 
@@ -548,24 +675,6 @@ SpecmoduleUI <- function(id){
 #' @export 
 EICmoduleUI <- function(id){
   ns <- NS(id)
-  fluidPage(
-    htmlOutput(ns("controls")),
-    
-    fluidRow(
-      
-      p("Brush and double click to zoom in, double click to zoom out, press SHIFT and click to select a data point to view Spectrum. SHIFT + click in Spectrum generates EIC for selected peak."),
-      # EICinteractiveUI("chrom1"),
-      plotOutput(ns("plainplot"),
-                 click = ns("plainplot_click"),
-                 hover = hoverOpts(id = ns("plainplot_hover"),
-                                   delay = 50),
-                 dblclick = ns("plainplot_dblclick"),
-                 brush = brushOpts(
-                   id = ns("plainplot_brush"),
-                   #direction = "x",
-                   resetOnNew = TRUE)
-      )
-    )
-  )
+  htmlOutput(ns('EICout'))
   
 }

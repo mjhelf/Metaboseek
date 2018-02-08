@@ -4,7 +4,9 @@
 \alias{EICmodule}
 \title{EICmodule}
 \usage{
-EICmodule(input, output, session, tag, set, keys)
+EICmodule(input, output, session, tag, set = list(layouts = MSData$layouts,
+  RTcorr = NULL, activeGroup = "Group1", filelist = MSData$filelist, data =
+  MSData$data, mz = 542.32405482, rtr = NULL, active = T), keys)
 }
 \arguments{
 \item{input}{}

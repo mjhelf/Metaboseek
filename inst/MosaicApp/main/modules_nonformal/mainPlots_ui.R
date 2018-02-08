@@ -61,6 +61,7 @@ fluidRow(
 )
 ),
 tabPanel("Interactive View (beta)",
+        # p("temp")
          source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
          ),
 tabPanel("Quickplots",
