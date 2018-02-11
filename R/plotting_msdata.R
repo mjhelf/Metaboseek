@@ -64,7 +64,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        midline = T,
                        yzoom = 1,
                        RTcorrect = NULL,
-                       importmode = F
+                       importEIC = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -145,6 +145,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     )
   }
   
+  if(is.null(importEIC)){
   EICs <- multiEICplus(rawdata= rdata,
                        mz = mzx,
                        rt = if(is.null(RTcorrect)){rtx}else{NULL},
@@ -152,7 +153,10 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        byFile = F, #if true, table will be sorted by rawfile, otherwise by feature
                        adducts,
                        RTcorr = RTcorrect
-  )
+  )}
+  else{
+    EICs <- importEIC
+  }
  
   groupPlot(EIClist = EICs,
             grouping = glist,
