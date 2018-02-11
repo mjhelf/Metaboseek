@@ -323,11 +323,9 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
       selectionsEIC$plots$files$selected <- selectionsEIC$plots$files$choices[[1]]
       
     }
-    if(set()$active && selectionsEIC$plots[["chrom1"]]$hotlink){
-      if(!is.null(set()$mz)){
-        selectionsEIC$plots[["chrom1"]]$mz <- set()$mz}
-      selectionsEIC$plots[["chrom1"]]$xrange <- set()$rtr
-    }
+    
+    
+    
   })
   
   
@@ -480,25 +478,60 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
   #})
   
   sEICs <- reactive ({
-    if(set()$active && length(input$selMZ)>0){
+    if(set()$active && length(input$selMZ)>0 && length(input$selEICs)>0){
       #print(input$selMZ)
-      r1 <- multiEICplus(adducts = c(0),
-                         mz = data.frame(mzmin = max(1,input$selMZ-input$selMZ*set()$layouts[[set()$activeGroup]]$settings$ppm*1e-6),
-                                         mzmax=max(1,input$selMZ+input$selMZ*set()$layouts[[set()$activeGroup]]$settings$ppm*1e-6)),
+      if(set()$active && selectionsEIC$plots[["chrom1"]]$hotlink && !identical(selectionsEIC$set,set())){
+        if(!is.null(set()$mz)){
+          selectionsEIC$plots[["chrom1"]]$mz <- set()$mz}
+        selectionsEIC$plots[["chrom1"]]$xrange <- set()$rtr
+      }
+        
+        
+      res <- multiEICplus(adducts = c(0),
+                         mz = data.frame(mzmin = max(1,selectionsEIC$plots[["chrom1"]]$mz-selectionsEIC$plots[["chrom1"]]$mz*set()$layouts[[set()$activeGroup]]$settings$ppm*1e-6),
+                                         mzmax=max(1,selectionsEIC$plots[["chrom1"]]$mz+selectionsEIC$plots[["chrom1"]]$mz*set()$layouts[[set()$activeGroup]]$settings$ppm*1e-6)),
                          rt = NULL,#data.frame(rtmin = FT$df$rt[1]-5, rtmax= FT$df$rt[1]+5),
-                         rnames = 1:length(input$selMZ),
+                         rnames = 1:length(selectionsEIC$plots[["chrom1"]]$mz),
                          rawdata= set()$data,
                          RTcorr = if(is.null(input$interactiveRTcorr) || !input$interactiveRTcorr){NULL}else{set()$RTcorr}
       )
+     # print(set()$data[which(basename(set()$filelist) %in% input$selEICs)])
       
-      
-      res <- subsetEICs(r1, set()$filelist[which(basename(set()$filelist) %in% input$selEICs)])
+      res <- subsetEICs(res, set()$filelist[which(basename(set()$filelist) %in% input$selEICs)])
       
       selectionsEIC$plots[['chrom1']]$maxxrange <- c(min(unlist(res$EIClist[[1]][,'rt'])),
                                                      max(unlist(res$EIClist[[1]][,'rt'])))/60
       
       selectionsEIC$plots[['chrom1']]$maxyrange <- if(input$EicTic){c(0,res$maxTIC)}else{c(0,res$maxEIC)}
       #print("sEICs")
+      
+      if(!is.null(selectionsEIC$plots[["chrom1"]]$xrange) && selectionsEIC$plots[["chrom1"]]$hotlink && !identical(selectionsEIC$set,set())
+      ){
+        mm <- 1
+        
+        if(selectionsEIC$plots[["chrom1"]]$tic){
+          for(k in 1:length(res$EIClist)){
+            mm <- max(mm,
+                      max(unlist(res$EIClist[[k]][,"tic"])[which(unlist(res$EIClist[[k]][,"rt"]) >= min(selectionsEIC$plots[["chrom1"]]$xrange)*60 
+                                                                     & unlist(res$EIClist[[k]][,"rt"]) <= max(selectionsEIC$plots[["chrom1"]]$xrange)*60)]))
+          }
+        }
+        else{
+          for(k in 1:length(res$EIClist)){
+            mm <- max(mm,
+                      max(unlist(res$EIClist[[k]][,"intensity"])[which(unlist(res$EIClist[[k]][,"rt"]) >= min(selectionsEIC$plots[["chrom1"]]$xrange)*60 
+                                                                           & unlist(res$EIClist[[k]][,"rt"]) <= max(selectionsEIC$plots[["chrom1"]]$xrange)*60)]))
+          }
+        } 
+        #print(mm)
+        #print(unlist(res$EIClist[[k]][,"rt"])[which(unlist(res$EIClist[[k]][,"rt"]) >= min(selectionsEIC$plots[["chrom1"]]$xrange)*60 
+         #                                               & unlist(res$EIClist[[k]][,"rt"]) <= max(selectionsEIC$plots[["chrom1"]]$xrange)*60)]/60)
+        selectionsEIC$plots[['chrom1']]$yrange <- c(0,mm)
+        
+      }
+    
+    isolate(selectionsEIC$set <- set())
+      
       
       return (res)
     }
@@ -528,6 +561,10 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
       #sEICs()
       # pt1<- proc.time()
       #print(selectionsEIC$plots[["chrom1"]]$marker)
+      
+      
+      
+      
       EICplot(EICs = sEICs()$EIClist, cx = 1,#input$plotCx, 
               ylim = if(!is.null(selectionsEIC$plots[['chrom1']]$yrange)){selectionsEIC$plots[['chrom1']]$yrange}else{selectionsEIC$plots[['chrom1']]$maxyrange}, 
               xlim = if(!is.null(selectionsEIC$plots[['chrom1']]$xrange)){selectionsEIC$plots[['chrom1']]$xrange}else{selectionsEIC$plots[['chrom1']]$maxxrange},
