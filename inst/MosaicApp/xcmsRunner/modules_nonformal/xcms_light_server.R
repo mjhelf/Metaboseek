@@ -65,7 +65,7 @@ observe({
   toggleState(id = "xcms_start", condition = (length(xcmsSettings$wd)>0 && (!servermode || (servermode && activateXCMS))))
 })
 
-shinyDirChoose(input, 'xcms_loadfolder', roots=rootpath)
+shinyDirChoose(input, 'xcms_loadfolder', session = session, roots=rootpath)
 
 
 observeEvent(input$xcms_loadfolder,{

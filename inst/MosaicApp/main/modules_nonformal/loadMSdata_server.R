@@ -35,7 +35,7 @@ toggle(id = "loadRawFolderOffline", condition = (!servermode && Sys.info()['sysn
 toggle(id = "loadRawFolder", condition = (servermode || (!servermode && Sys.info()['sysname'] != "Windows")))
 
 
-shinyDirChoose(input, 'loadRawFolder', roots=rootpath)
+shinyDirChoose(input, 'loadRawFolder', session = session, roots=rootpath)
 
 
 observeEvent(input$loadRawFolder,{
