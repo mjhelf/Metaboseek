@@ -9,6 +9,8 @@
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
 #' 
+#' @importFrom xcms getMsnScan
+#' @importFrom xcms getScan
 #' @export 
 Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange = NULL,
                                                                           yrange = NULL,
@@ -16,7 +18,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                           maxyrange = NULL,
                                                                           sel = NULL,
                                                                           mz = NULL,
-                                                                          data = NULL),
+                                                                          data = NULL,
+                                                                          MS2 = T),
                                                               layout = list(lw = 1,
                                                                             cex = 1,
                                                                             controls = F,
@@ -48,7 +51,12 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       
       #get the MS scan
-      res <- getScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
+      if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+      res <- getMsnScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
+      }else{
+        res <- getScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
+        
+      }
       #print("sc")
       #set the maximum x axis range to cover the spectrum data
       selections$plots$spec$maxxrange <- c(min(res[,1])-1,
@@ -149,7 +157,11 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                norm=selections$plots$spec$ymax/100,
                cx=set()$layout$cex/1.5,
                k = 20,
-               fileName = paste0(basename(set()$spec$sel$File), "#", set()$spec$sel$scan,
+               fileName = paste0(basename(set()$spec$sel$File), "#", 
+                                 if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+                                   set()$msdata[[set()$spec$sel$File]]@msnAcquisitionNum[set()$spec$sel$scan]
+                                 }
+                                 else{set()$msdata[[set()$spec$sel$File]]@acquisitionNum[set()$spec$sel$scan]},
                                  " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)"),
                yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
                xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},

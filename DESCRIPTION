@@ -22,4 +22,5 @@ Imports: xcms (>= 2.99),
     TeachingDemos,
     data.table,
     ggplot2,
-    jsonlite
+    jsonlite,
+    cluster
