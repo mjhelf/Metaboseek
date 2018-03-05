@@ -28,7 +28,7 @@ devel__mode <- FALSE
 #' default__root
 #'
 #' @export
-default__root <- getwd()
+default__root <- "/home/"
 
 #' Run XCMS interface
 #' 

@@ -1,3 +1,4 @@
+library(Mosaic)
 library(shinythemes)
 library(shinyjs)
 library(shinydashboard)
