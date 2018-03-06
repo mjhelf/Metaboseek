@@ -135,7 +135,7 @@ margin-bottom: 0px;
                                           '))),
             tabItems(
                 tabItem(tabName = "help",
-                        source(file.path("modules_nonformal", "start_ui.R"), local = TRUE)$value
+                        source(file.path("modules_nonformal", "help_ui.R"), local = TRUE)$value
                 ),
                 
                # tabItem(tabName = "loadtables",

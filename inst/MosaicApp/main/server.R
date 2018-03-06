@@ -49,7 +49,7 @@ function(input, output, session) {
     source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
     source(file.path("modules_nonformal", "background_server.R"), local = TRUE)$value
     
-    source(file.path("modules_nonformal", "start_server.R"), local = TRUE)$value 
+    source(file.path("modules_nonformal", "help_server.R"), local = TRUE)$value 
     
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
     source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value
