@@ -1,6 +1,6 @@
 callModule(updaterModule, 'update', tag = 'update', set =list(package = "Mosaic",
                                                                     refs = c("master", "devel", "devel_raw"),
-                                                                    active = T))
+                                                                    active = !servermode))
  
 
 #output$projectName <- renderUI({
