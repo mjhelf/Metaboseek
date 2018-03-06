@@ -20,7 +20,7 @@ dashboardPage(skin = "black",
                             menuSubItem("Coming soon", tabName = "workflow1")),
                                     menuItem("Help", tabName = "help", icon = icon("question-circle-o")),
                  
-                  bookmarkButton(label ="Bookmark this session"),
+                  #bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable"),
                   hr(),
                   h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
