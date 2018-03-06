@@ -1,3 +1,6 @@
+#output$FTBox <- renderUI({})
+
+
 
 precombino <- reactive({
     
@@ -60,10 +63,10 @@ observeEvent(input$tablePage,{
     featureTables$tables[[featureTables$active]]$filters$page <- 1
   }else{
   
-    if(input$tablePage <= if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/50)}){
+    if(input$tablePage <= if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/fppage)}){
     featureTables$tables[[featureTables$active]]$filters$page <- input$tablePage
     }else{
-        featureTables$tables[[featureTables$active]]$filters$page <- if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/50)}
+        featureTables$tables[[featureTables$active]]$filters$page <- if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/fppage)}
     }
   }
 })
@@ -72,7 +75,7 @@ observeEvent(input$tablePage,{
 output$tableInfo <- renderText({paste0(nrow(combino()),
                                              " items (",
                                              if(featureTables$tables[[featureTables$active]]$editable){"1 page, editable)"}
-                                             else{paste0(ceiling(nrow(combino())/50),"page(s))")}
+                                             else{paste0(ceiling(nrow(combino())/fppage),"page(s))")}
                                         )
 })
 
@@ -84,7 +87,11 @@ output$tableInfo <- renderText({paste0(nrow(combino()),
      #                                    else{paste0(ceiling(nrow(combino())/50),"page(s))")}))
 #})
 
-output$tbButton <- downloadHandler(filename= function(){paste0(input$projectName,"_",featureTables$active,"_table.csv")}, 
+output$tbButton <- downloadHandler(filename= function(){
+  titleout <- filenamemaker(projectData$projectName,featureTables)
+  
+  return(paste0(titleout,".csv")
+         )}, 
                                    content = function(file){
                                      
                                      if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
@@ -148,8 +155,8 @@ observeEvent(input$tablePage,{
                         pagenum <- input$tablePage
                       }
     featureTables$tables[[featureTables$active]]$filters$inpage       <-     if(featureTables$tables[[featureTables$active]]$editable){c(1:nrow(combino()))}
-                           else if(pagenum == ceiling(nrow(combino())/50)){c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(nrow(combino())))}#-((input$tablePage-1)*50)))}
-                           else{c((pagenum*50-49):(pagenum*50))}
+                           else if(pagenum == ceiling(nrow(combino())/fppage)){c((featureTables$tables[[featureTables$active]]$filters$page*fppage-(fppage-1)):(nrow(combino())))}#-((input$tablePage-1)*50)))}
+                           else{c((pagenum*fppage-(fppage-1)):(pagenum*fppage))}
                                
                                })
 
@@ -158,8 +165,8 @@ output$maintable <- renderRHandsontable({if(!is.null(combino())){
   
     inpage <- reactive({
               if(featureTables$tables[[featureTables$active]]$editable){c(1:nrow(combino()))}
-              else if(featureTables$tables[[featureTables$active]]$filters$page == ceiling(nrow(combino())/50)){c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(nrow(combino())))}#c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(nrow(combino())-((featureTables$tables[[featureTables$active]]$filters$page-1)*50)))}
-              else{c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(featureTables$tables[[featureTables$active]]$filters$page*50))}
+              else if(featureTables$tables[[featureTables$active]]$filters$page == ceiling(nrow(combino())/fppage)){c((featureTables$tables[[featureTables$active]]$filters$page*fppage-(fppage-1)):(nrow(combino())))}#c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(nrow(combino())-((featureTables$tables[[featureTables$active]]$filters$page-1)*50)))}
+              else{c((featureTables$tables[[featureTables$active]]$filters$page*fppage-(fppage-1)):(featureTables$tables[[featureTables$active]]$filters$page*fppage))}
     })
     
   rheight <- if(nrow(combino()[inpage(),])<40){NULL}else{500}
@@ -174,14 +181,14 @@ output$maintable <- renderRHandsontable({if(!is.null(combino())){
                  highlightCol = TRUE, highlightRow = TRUE) %>%
         hot_col("comments", readOnly = FALSE)%>%
         hot_cols(columnSorting = FALSE,format="0.000000")%>%
-      hot_cols(fixedColumnsLeft = 3)%>%
+      hot_cols(fixedColumnsLeft = 3)#%>%
     #  hot_cols(columnSorting = TRUE)%>%
         #hot_col("em",format="0.000000")%>%
-        hot_cols(renderer = "
-                 function(instance, td, row, col, prop, value, cellProperties) {
-                 Handsontable.TextCell.renderer.apply(this, arguments);
-                 td.style.color = 'black';
-                 }")
+       # hot_cols(renderer = "
+        #         function(instance, td, row, col, prop, value, cellProperties) {
+         #        Handsontable.TextCell.renderer.apply(this, arguments);
+          #       td.style.color = 'black';
+           #      }")
     
     
     

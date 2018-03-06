@@ -8,6 +8,8 @@ function(input, output, session) {
                                     active = "table0"
     )
     
+    selectedTabs <- reactiveValues(FeatureTable = "View Table"    )
+    
     MSData <- reactiveValues(layouts = list(), #List of rawfile paths (unsorted)
                              rawgrouptable = NULL,
                              index = NULL,
@@ -17,6 +19,12 @@ function(input, output, session) {
                              active = NULL,
                              filelist = NULL,
                              data = NULL) #rawfs
+    
+    projectData <- reactiveValues(filegroupfiles =NULL,
+                                  csvfiles = NULL,
+                                  filegroups = NULL,
+                                  projectName = paste0("MOSAiC_session_",timeStamp))
+    
     
     output$activeTable <- renderUI({
         selectizeInput('activeTable', 'Active Table', selected = featureTables$active, choices = featureTables$index, multiple = FALSE)
@@ -41,7 +49,7 @@ function(input, output, session) {
     source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
     source(file.path("modules_nonformal", "background_server.R"), local = TRUE)$value
     
-    source(file.path("modules_nonformal", "start_server.R"), local = TRUE)$value 
+    source(file.path("modules_nonformal", "help_server.R"), local = TRUE)$value 
     
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
     source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value

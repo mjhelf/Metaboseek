@@ -10,7 +10,7 @@ fluidPage(
           ),
     
     fluidRow(
-      box(title = "Filter and Sort", status = "primary", collapsible = T, width = 12,
+      box(title = "Filter and Sort", status = "danger", collapsible = T, width = 12,
           fluidRow(
         column(6,
     htmlOutput('selnormdata'),

@@ -36,7 +36,7 @@ output$plotYzoom <- renderUI({
 })
 
 output$plotLw <- renderUI({
-  numericInput("plotLw","Line width: ", value = 1, min = 0)
+  numericInput("plotLw","Line width: ", value = 1, min = 1, step = 1)
 })
 
 output$MLtoggle <- renderUI({
@@ -44,12 +44,12 @@ output$MLtoggle <- renderUI({
 })
 
 output$plotCx <- renderUI({
-  numericInput("plotCx","Font size: ", value = 1, min = 0.1, step = 0.1)
+  numericInput("plotCx","Font size: ", value = 1.5, min = 0.1, step = 0.1)
 })
 
 output$colorscheme <- renderUI({
   selectizeInput("colorscheme","Color palette: ", 
-                 choices= c("topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
+                 choices= c("mosaic.colors", "topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
                  selected = NULL
                  )
 })
@@ -115,6 +115,17 @@ output$rtcorr <- renderPlot({
 })
 
 
-
+#########
+## MF prediction
+callModule(MzqueryModule,"mz1", tag = "mz1", 
+           set = reactive({list(search = list(elements = "C0-100H0-202N0-15O0-20",
+                                              mz = list("feature table" = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]},
+                                                        "spectrum" = iSpec1()$spec$marker$mz,
+                                                        "interactive view" = iSpec2()$spec$marker$mz
+                                                        ), 
+                                              data = iSpec1()$spec$data
+                                              ) # the entire spectrum data for isotope matching
+           )})
+)
 
 

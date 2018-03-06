@@ -16,7 +16,7 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
     MSD$settings = list(rtw = 30,
                         ppm = 5,
                         cols = 1,
-                        colr = 'topo.colors',
+                        colr = 'mosaic.colors',
                         alpha = 0.8)
     
     class(MSD) <- "rawLayout"
@@ -145,6 +145,7 @@ multiEIC <- function (rawdata= rawcoll,
     ls$rtmin <- rt[1]
     ls$rtmax <- rt[2]
     ls$intmax <- max(ls$intensity)
+    ls$intmin <- min(ls$intensity)
     ls$intsum <- sum(ls$intensity)
     ls$intmean <- mean(ls$intensity)
     if(gauss){
@@ -251,7 +252,7 @@ rawEICm <- function(object,
 #' @param x numeric() to fit the curve
 #' 
 #' @export
-getgauss <- function (x){
+getgauss <- function (x, pval = 1){
     
     
     #substract "baseline"
@@ -298,9 +299,9 @@ getgauss <- function (x){
 #' @param ... additional arguments passed on to multiEIC().
 #' 
 #' @export
-bestgauss <- function(rawdata = rawcoll, ...){
-    res <- multiEIC(...)
-    return(data.frame(maxgauss = rowMax(matrix(unlist(res),ncol = length(rawdata)))))
+bestgauss <- function(...){
+    res <- multiEIC(..., byFile = T, getgauss = T)
+    return(data.frame(maxgauss = rowMax(matrix(unlist(res),ncol = length(res)))))
 }  
 
 #' exIntensities

@@ -80,6 +80,9 @@ tabPanel("RT correction",
                   plotOutput("rtcorr")
            ))),
 
+tabPanel("Molecular formula prediction",
+         MzqueryModuleUI("mz1")
+),
 
 tabPanel("Project options",
          source(file.path("modules_nonformal", "project_options_ui.R"), local = TRUE)$value

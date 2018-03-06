@@ -1,12 +1,12 @@
 #featureTables$tables[[featureTables$active]]$intensities_normalized <- callModule(NormalizeModule, "intensityNormalizer",
  #                                                                                 mx = reactive({featureTables$tables[[featureTables$active]]$intensities}))
 
-callModule(densplotModule, "nonNormalizedPlot",
-                            mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities])}),
-                            heading = "Input Data")
-callModule(densplotModule, "NormalizedPlot",
-           mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities_norm])}),
-           heading = "Normalized Data")
+#callModule(densplotModule, "nonNormalizedPlot",
+ #                           mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities])}),
+  #                          heading = "Input Data")
+#callModule(densplotModule, "NormalizedPlot",
+ #          mx = reactive({as.matrix(featureTables$tables[[featureTables$active]]$df[,featureTables$tables[[featureTables$active]]$intensities_norm])}),
+  #         heading = "Normalized Data")
 
 
 
@@ -53,9 +53,7 @@ observeEvent(input$analyzebutton,{
                 rawdata= MSData$data,
                 mz = data.frame(mzmin = featureTables$tables[[featureTables$active]]$df$mzmin, mzmax=featureTables$tables[[featureTables$active]]$df$mzmax),
                 rt = data.frame(rtmin = featureTables$tables[[featureTables$active]]$df$rt-5, rtmax=featureTables$tables[[featureTables$active]]$df$rt+5),
-                rnames = row.names(featureTables$tables[[featureTables$active]]$df),
-                byFile = T,
-                getgauss = T
+                rnames = row.names(featureTables$tables[[featureTables$active]]$df)
             )
 
         featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
@@ -71,10 +69,11 @@ observeEvent(input$analyzebutton,{
     }else{
         inp <- foldChange(as.matrix(featureTables$tables[[featureTables$active]]$df
                                      [,featureTables$tables[[featureTables$active]]$intensities]),
-                                    
-                                     #),
+                                  
                            featureTables$tables[[featureTables$active]]$anagroupnames,ctrl = input$selctrl)}
+        
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)}
+  
     if("p-values" %in% input$selAna){
         if(input$usenormdata){
             inp <- multittest(df = featureTables$tables[[featureTables$active]]$df
@@ -105,4 +104,11 @@ observeEvent(input$analyzebutton,{
     featureTables$tables[[featureTables$active]] <- updateFeatureTable(featureTables$tables[[featureTables$active]],inp)
     
   }
+})
+
+observe({
+  
+  toggle(id = 'clarainfo', condition = "clara_cluster" %in% input$selAna)
+  toggle(id = 'kclusternum', condition = "clara_cluster" %in% input$selAna)
+  
 })

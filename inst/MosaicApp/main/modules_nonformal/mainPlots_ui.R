@@ -16,18 +16,21 @@ column(2,
     checkboxInput("RtCorrActive", "RT correction", value = F)
     ),
     
+column(2,
+       checkboxInput("ShowSpec", "Show spectrum", value = F)
+),
     
     column(2,
 downloadButton("pdfButton", "Save Plot")
 ),
 
-column(3,
+column(2,
 htmlOutput("groupingActiveSelect")
 ),
 
 
 
-column(3,
+column(2,
        
 fileInput('rfileload',"Upload ZIP file with mzXML files", accept = "application/zip")
 ),
@@ -50,13 +53,19 @@ fluidRow(
 htmlOutput("mainPlotEICs")),
 #plotOutput("mainPlotEICsPre")
 fluidRow(
-  plotOutput("adductLegend", height = "30px")
+  htmlOutput("adductPlot")
+),
+fluidRow(
+  SpecmoduleUI("Spec1")
 )
-
 )
 ),
 tabPanel("Interactive View (beta)",
+        # p("temp")
          source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
-         )
+         ),
+tabPanel("Quickplots",
+         source(file.path("modules_nonformal", "quickPlots_ui.R"), local = TRUE)$value
+)
 
 )

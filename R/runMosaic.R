@@ -25,6 +25,13 @@ runMosaic <- function(devel = F, server = T, ...) {
 #' @export
 devel__mode <- FALSE
 
+#' default__root
+#' 
+#' Avoiding access denials in windows.
+#' 
+#' @export
+default__root <- if(Sys.info()['sysname'] == "Windows"){getwd()}else{"/"}
+
 #' Run XCMS interface
 #' 
 #' Run the XCMS runner in your webbrowser. Currently only intended for use on a local computer (file system access required).
@@ -41,4 +48,61 @@ runXcms <- function(...) {
   }
   
   shiny::runApp(appDir, ...)
+}
+
+#' Make filenames for exported .csv or .pdf files
+#' 
+#' Generate a filename from project name and filter criteria
+#' 
+#' @param projectName ProjectName used as prefix
+#' @param FT Mosaic's featureTable reactiveValues (or a list with same structure)
+#'
+#'
+#' @export
+filenamemaker <- function(projectName,
+                          FT){
+  
+  titleout <- paste(projectName, 
+                    names(FT$index[which(FT$index == FT$active)]),
+                    sep = "_")
+  
+  
+  for(f in FT$tables[[FT$active]]$filters$filters){
+    
+    if(!is.atomic(f) && f$active){
+      titleout <- paste(titleout,f$column,f$minSel, f$maxSel, f$txtSel, sep = "_")
+    }
+    
+    
+  }
+  return(gsub(".csv$","",gsub("_$","",titleout)))
+  
+}
+
+
+#' Get common root folder of file paths
+#' 
+#' From: https://rosettacode.org/wiki/Find_common_directory_path#R
+#' 
+#' @param paths vector of paths
+#' @param delim folder delimiter
+#'
+#'
+#' @export
+get_common_dir <- function(paths, delim = "/")
+{
+  if(length(unique(dirname(paths))) == 1){
+    return(dirname(paths)[1])
+  }else{
+  
+  path_chunks <- strsplit(paths, delim)
+  
+  i <- 1
+  repeat({
+    current_chunk <- sapply(path_chunks, function(x) x[i])
+    if(any(current_chunk != current_chunk[1])) break
+    i <- i + 1
+  })
+  return(paste(path_chunks[[1]][seq_len(i - 1)], collapse = delim))
+  }
 }

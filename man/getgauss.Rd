@@ -4,7 +4,7 @@
 \alias{getgauss}
 \title{getgauss}
 \usage{
-getgauss(x)
+getgauss(x, pval = 1)
 }
 \arguments{
 \item{x}{numeric() to fit the curve}

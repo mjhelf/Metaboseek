@@ -42,6 +42,7 @@ legendplot <- function(...){
 #' @param cx character expansion factor (font size)
 #' @param adducts numeric() of mass shifts to be added to feature masses
 #' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
+#' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -62,7 +63,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        cx = 1,
                        midline = T,
                        yzoom = 1,
-                       RTcorrect = NULL
+                       RTcorrect = NULL,
+                       importEIC = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -143,6 +145,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     )
   }
   
+  if(is.null(importEIC)){
   EICs <- multiEICplus(rawdata= rdata,
                        mz = mzx,
                        rt = if(is.null(RTcorrect)){rtx}else{NULL},
@@ -150,8 +153,11 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        byFile = F, #if true, table will be sorted by rawfile, otherwise by feature
                        adducts,
                        RTcorr = RTcorrect
-  )
-  
+  )}
+  else{
+    EICs <- importEIC
+  }
+ 
   groupPlot(EIClist = EICs,
             grouping = glist,
             plotProps = list(TIC = tictog, #settings for single plots
@@ -173,6 +179,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              adductLabs = adducts)
   )
   if(!is.null(pdfFile)){dev.off()}
+  
+  
+  
 }
 
 
@@ -193,6 +202,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 #' @export
 EICtitles <- function(mzs, rts, ppm){
   
+  if(!is.null(ppm)){
   numbs <- matrix(mapply(sprintf,matrix(c(mzs,
                                           mzs-mzs*ppm*1e-6,
                                           mzs+mzs*ppm*1e-6),ncol=3),
@@ -206,6 +216,18 @@ EICtitles <- function(mzs, rts, ppm){
                    paste0(
                      " @ RT: ", sprintf( "%.2f", rts/60), " min",
                      " (", sprintf("%.1f", rts)," sec)")})
+  }
+  else{
+    numbs <- sprintf("%.5f", mzs)
+    
+    titx <- paste0('m/z: ',numbs, 
+                   if(!is.null(rts)){
+                     paste0(
+                       " @ RT: ", sprintf( "%.2f", rts/60), " min",
+                       " (", sprintf("%.1f", rts)," sec)")})
+    
+    
+  }
   return(titx)
   
 }
@@ -285,7 +307,7 @@ groupPlot <- function(EIClist = res,
         oma=compProps$oma,
         xpd=compProps$xpd,
         bg=compProps$bg,
-        mar = c(5.1,4.1,4.1,2.1))
+        mar = c(2.6*(1+(compProps$cx-1)/2),4.1*(1+(compProps$cx-1)/4),4.1,2.1))
     # layout(t(as.matrix(c(1,2))))
     
     for(plotgroup in c(1:length(grouping))){
@@ -345,14 +367,10 @@ groupPlot <- function(EIClist = res,
     }
     
     if(!is.null(compProps$header)){
-      
-      #       autosize <- compProps$cx*1.5
-      #      while(strwidth(compProps$header[majoritem], units = "figure", cex = autosize, font = 2) > 0.98){
-      #         autosize <- autosize*0.95
-      #    }
-      
-      
-      mtext(compProps$header[majoritem], side=3, outer=T,line=2, cex=autosize, font = 2)}
+    
+      title(main = compProps$header[majoritem], outer=T,line=2, cex.main=autosize, font = 2)}
+    
+    
     if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0.5, cex=compProps$cx)}
     # par(mar=c(0,0,0,0))
     
@@ -432,7 +450,8 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
              ylim, 
              xlim,
              heading,
-             single
+             single,
+             liwi = lw
   )
   
   if(length(midline)> 0 ){
@@ -452,7 +471,7 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
   abline(v=min(xlim), h=min(ylim))
   
   par(xpd=NA)
-  text(min(xlim), 1.04*max(ylim),
+  text(min(xlim), 1.05*max(ylim),
        labels = maxint, bty="n",
        font = 2, cex=cx*1)
   
@@ -527,6 +546,7 @@ addLines <- function(EIClist = EICsAdducts,
 #' @param ylab y axis label
 #' @param relto show y axis values relative to relto if not NULL.
 #' @param ysci if TRUE, y axis label numbers are shown in scientific format
+#' @param textadj passed on to mtext adj for orientation of plot description/title text line
 #'
 #' @export
 PlotWindow <- function(cx = 1, 
@@ -539,7 +559,9 @@ PlotWindow <- function(cx = 1,
                        relto = NULL,
                        ylab = "Intensity",
                        xlab = "RT (min)",
-                       ysci = T
+                       ysci = T,
+                       liwi = 1,
+                       textadj = 0.5
                        
 ){
   
@@ -548,7 +570,8 @@ PlotWindow <- function(cx = 1,
   if(par){
     if(single){
       par(#mfrow=c(1,2),
-        oma=c(0,2,0,0),
+        #oma=c(0,2,0,0),
+        mar = c(5.1,6,4.1,0),#oma causes issues in interactive mode
         # mai=c(0,0.5,0,0),
         xpd=FALSE,
         bg=NA,
@@ -573,34 +596,34 @@ PlotWindow <- function(cx = 1,
   
   pn <- if(max(ylim)==0){1}else{5}
   #x axis
-  axis(side=1, lwd=1, at = pretty(xlim),
+  axis(side=1, lwd=liwi, lwd.ticks = liwi, at = pretty(xlim),
        labels = format(pretty(xlim), scientific = F),
-       mgp=c(0,0.4,0), cex=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
+       mgp=c(0,0.4*cx,0), cex.axis=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
   
-  mtext(side=1, text= xlab, line=1.5, cex=cx*1)
+  mtext(side=1, text= xlab, line=1.5*(1+(cx-1)/2), cex=par("cex")*cx*1)
   
   if(!is.null(relto) && relto != 1 ){
-    axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
+    axis(side=2,  las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = F),
-         mgp=c(0,0.6,0), cex=1*cx)
+         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4, cex=1*cx)
+    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
   }
   else{
     #y axis
-    axis(side=2, lwd=1, las=2, at = pretty(ylim, n =pn),
+    axis(side=2,  las=2, at = pretty(ylim, n =pn),
          labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
-         mgp=c(0,0.6,0), cex=1*cx)
+         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4, cex=1*cx)
+    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
   }
   
   #fix axis to not have gaps at edges
-  abline(v=min(xlim), h=min(ylim))
+  abline(v=min(xlim), h=min(ylim), lwd = liwi)
   
   Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
   
-  title(main=heading, line=2, cex = cx)
+  title(main=heading, line=2, cex.main = cx, adj = textadj)
 }
 
 #' specplot
@@ -612,7 +635,7 @@ PlotWindow <- function(cx = 1,
 #' @param norm normalize by
 #' @param cx font size
 #' @param k top k intensity peaks will be labeled
-#' @param fileName which file this spectrum is taken from
+#' @param fileName plot title
 #' @param yrange y axis range
 #' @param xrange x axis range
 #' @param maxi max intensity to be plotted on side
@@ -632,16 +655,18 @@ specplot <- function (x=sc[,1],
 ){
   
   pd <- data.frame(x=x,y=y/norm)  
-  par(oma=c(0,2,0,0), mar = c(5,4,10,2), xpd = FALSE, xaxs = "i", yaxs = "i")
+  par(#oma=c(0,2,0,0), 
+      mar = c(4,6,6,2),#changed mar[2] to 6 because oma was removed because of issues with interactive view
+      xpd = FALSE, xaxs = "i", yaxs = "i")
   PlotWindow(cx, 
              ylim = yrange, 
              xlim = xrange,
-             heading = "",
+             heading = fileName,
              single = T,
              par = F,
              relto = norm,
              ylab = "Relative Intensity (%)",
-             xlab = "m/z"
+             xlab = "m/z", textadj = 1
   )
   
   points(pd$x,pd$y,type="h", bty="n")
@@ -683,4 +708,31 @@ specplot <- function (x=sc[,1],
   #par(cex.axis=0.5*cx, tcl=-0.3)            
   #axis(side=1, lwd=1, minor.tick(nx=10,ny=5, tick.ratio=0.5), mgp=c(0.5,0,0)) #x-axis mgp[2] controls distance of tick labels to axis
   #axis(side=2, lwd=1, las=2, mgp=c(0.5,0.4,0)) #y-axis
+}
+
+#' mosaic.colors
+#' 
+#' custom color spectrum using color brewer Set1 colors plus topo.colors; good color discrimination up to n = 13
+#' 
+#' @param n number of colors
+#' @param alpha transparency
+#' 
+#' @export
+mosaic.colors<- function (n, alpha){
+  
+  alphahex <- as.hexmode(as.integer(alpha*255))
+  if(nchar(alphahex) == 1){alphahex <- paste0("0",alphahex)}
+  alphahex <- toupper(alphahex)
+  base <- c("#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00","#FFFF33","#A65628","#F781BF","#999999","#1FFFB4","#000000")
+  
+  
+  
+  if(n<=11){
+    return(paste0(base[1:n],alphahex))
+  }else{
+    add <- topo.colors(n = n-11, alpha = alpha)
+    return(c(paste0(base[1:11],alphahex),add))
+  }
+  
+  
 }
