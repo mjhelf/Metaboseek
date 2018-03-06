@@ -86,13 +86,13 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                                  '" ',
                                  input$branch
                                  ),
-                          wait = T, intern = T)
+                          intern = T, wait = T)
                    
                    #scriptPath <- paste0('Rscript "C:/Users/mjh43/OneDrive - Cornell University/R scripts new/devel_update_script.R" ', input$branch)
                    
                    #updateVals$report <- system(scriptPath, intern = T, wait = T)
                    
-                   mes <- ""
+                   mes <- "See console output for details!"
                    
                    if(length(grep("Installation failed", updateVals$report))>0){
                      mes <- p(strong("Installation failed!"), "Dependencies may have changed.

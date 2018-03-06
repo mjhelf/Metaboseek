@@ -18,7 +18,7 @@ dashboardPage(skin = "black",
                   
                   menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
                             menuSubItem("Coming soon", tabName = "workflow1")),
-                                    menuItem("Help", tabName = "help", icon = icon("question-circle-o")),
+                                    menuItem("Update / Help", tabName = "help", icon = icon("question-circle-o")),
                  
                   #bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable"),
