@@ -1,3 +1,4 @@
+library(Mosaic)
 library(shinythemes)
 library(shinyjs)
 library(shinydashboard)
@@ -7,7 +8,7 @@ library(BiocParallel)
 library(xcms)
 library(shinyFiles)
 #source("Functions/EIC_reader_v8-functions_p10.R")
-enableBookmarking("server")
+#enableBookmarking("server")
 timeStamp <-  strftime(Sys.time(),"%Y%m%d_%H%M%S")
 
 filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",

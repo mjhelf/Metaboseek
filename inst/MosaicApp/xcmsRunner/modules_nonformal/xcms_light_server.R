@@ -65,7 +65,7 @@ observe({
   toggleState(id = "xcms_start", condition = (length(xcmsSettings$wd)>0 && (!servermode || (servermode && activateXCMS))))
 })
 
-shinyDirChoose(input, 'xcms_loadfolder', roots=rootpath)
+shinyDirChoose(input, 'xcms_loadfolder', session = session, roots=rootpath)
 
 
 observeEvent(input$xcms_loadfolder,{
@@ -137,13 +137,13 @@ observeEvent(input$xcms_start,{
       write.csv(xcmsSettings$params[[i]], file = file.path(fo,paste0(names(xcmsSettings$params)[i],".csv")), row.names = T)
     }
     
-    ver <- "version_1"
-    file.create(file.path(fo,ver))
-    zip(file.path(fo,"settings.zip"), file.path(fo, c(paste0(names(xcmsSettings$params),".csv"),ver)), flags = "-j")
+    
+    zip(file.path(fo,"settings.zip"), file.path(fo, c(paste0(names(xcmsSettings$params),".csv"))), flags = "-j")
     #file.remove(file.path(fo,names(xcmsSettings$params))) #note: better delete files from the runner if necessary
     
     #fo <- "C:/Users/mjh43/OneDrive - Cornell University/"
     runner <- system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic")
+    rpath <- file.path(R.home(component = "bin"), "Rscript --vanilla ")
                        #  file.path(getwd(),
                         #"scripts",
                         #"xcms_runner_i.R") 
@@ -152,7 +152,7 @@ observeEvent(input$xcms_start,{
     #                    "scripts",
     #                   "tester.R") 
     
-    system(paste0("Rscript ",
+    system(paste0(rpath,
                   '"',
                   runner,
                   '" "',
@@ -162,7 +162,13 @@ observeEvent(input$xcms_start,{
                   '"'),
            wait = F)
   
-  
+  showModal(modalDialog(p("The xcms analysis is running in a separate process now.
+                        You can continue using MOSAiC or close MOSAiC now without interrupting the analysis.
+                        The results of this analysis can be found in ", strong(fo)),
+                        title = "xcms analysis is running!",
+                        easyClose = T
+                        ))
+    
 })
 
 output$xcms_settingstab <- renderRHandsontable({
@@ -243,7 +249,7 @@ output$xcms_statustab <- renderRHandsontable({if(!is.null(xcmsSettings$jobs)){
                 digits=8,
                 highlightCol = TRUE,
                 highlightRow = TRUE,
-                rowHeaderWidth = 200) %>%
+                rowHeaderWidth = 200)# %>%
     #hot_cell(1, 1, "Test comment")
   #hot_col("Value", readOnly = FALSE)%>%
   #hot_col("Group", readOnly = FALSE)%>%
@@ -252,11 +258,11 @@ output$xcms_statustab <- renderRHandsontable({if(!is.null(xcmsSettings$jobs)){
   #hot_cols(fixedColumnsLeft = 3)%>%
   #  hot_cols(columnSorting = TRUE)%>%
   #hot_col("em",format="0.000000")%>%
-  hot_cols(renderer = "
-           function(instance, td, row, col, prop, value, cellProperties) {
-           Handsontable.TextCell.renderer.apply(this, arguments);
-           td.style.color = 'black';
-           }")
+  # hot_cols(renderer = "
+  #          function(instance, td, row, col, prop, value, cellProperties) {
+  #          Handsontable.TextCell.renderer.apply(this, arguments);
+  #          td.style.color = 'black';
+  #          }")
   }
 })
 

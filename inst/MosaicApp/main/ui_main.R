@@ -18,9 +18,9 @@ dashboardPage(skin = "black",
                   
                   menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
                             menuSubItem("Coming soon", tabName = "workflow1")),
-                                    menuItem("Help", tabName = "help", icon = icon("question-circle-o")),
+                                    menuItem("Update / Help", tabName = "help", icon = icon("question-circle-o")),
                  
-                  bookmarkButton(label ="Bookmark this session"),
+                  #bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable"),
                   hr(),
                   h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
@@ -135,7 +135,7 @@ margin-bottom: 0px;
                                           '))),
             tabItems(
                 tabItem(tabName = "help",
-                        source(file.path("modules_nonformal", "start_ui.R"), local = TRUE)$value
+                        source(file.path("modules_nonformal", "help_ui.R"), local = TRUE)$value
                 ),
                 
                # tabItem(tabName = "loadtables",

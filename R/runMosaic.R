@@ -26,9 +26,11 @@ runMosaic <- function(devel = F, server = T, ...) {
 devel__mode <- FALSE
 
 #' default__root
-#'
+#' 
+#' Avoiding access denials in windows.
+#' 
 #' @export
-default__root <- getwd()
+default__root <- if(Sys.info()['sysname'] == "Windows"){getwd()}else{"/"}
 
 #' Run XCMS interface
 #' 
