@@ -9,24 +9,38 @@
 #' @param ppm maximum relative error in ppm
 #' @param elem String containing information on which elements are allowed for prediction
 #' @param charge charge state (positive or negative integer)
+#' @param IntegerSaturation if true, only allows full integers for unsaturation
+#' @param minUnsat minimum unsaturation
+#' @param maxUnsat maximum unsaturation
 #' 
 #' @export
 massquery <- function(mz, range=0.01, ppm=5,
                       elem= "C0-100H0-202N0-10O0-10F0-3Cl0-3Br0-1",
-                      charge = 1){
+                      charge = 1,
+                      IntegerSaturation = FALSE,
+                      minUnsat = 0,
+                      maxUnsat = 40){
   
   charge <- as.integer(charge)
   if (charge > 0 ){charge2 <- paste0("%2B",abs(charge))}
   if (charge < 0 ){charge2 <- paste0("-",abs(charge))}
   if (charge == 0 ){charge2 <- paste0("")}
   
+  IntegerSaturation <-  switch(EXPR = {as.character(IntegerSaturation)}, "FALSE" = "false", "TRUE" = "true")
   
   if (!is.null(ppm)){range <- as.numeric(mz)*ppm*1e-6}             
   
   mzq <-  paste0("http://www.chemcalc.org/service?action=em2mf&monoisotopicMass=",
                  mz,"&massRange=",range,"&mfRange=",
                  elem,
-                 "(",charge2,")")
+                 "(",charge2,")",
+                 "&integerUnsaturation=",
+                 IntegerSaturation,
+                 "&minUnsaturation=",
+                 minUnsat,
+                 "&maxUnsaturation=",
+                 maxUnsat)
+  
   res <- jsonlite::fromJSON(mzq)
   
   if(length(res$results) == 0){
@@ -86,30 +100,45 @@ output$mzUI <- renderUI({
   fluidPage(
     fluidRow(
       h3("Molecular formula prediction"),
+      column(4,
+             fluidRow(
+               column(6,
+                      textInput(ns("mzspace"), label = "Select elements:", value = "C0-100H0-202N0-15O0-20")
+                      ),
+               column(6,
+                      checkboxInput(ns("integUnsat"), label = "only integer unsaturation", value = FALSE))
+               ),
+             fluidRow(
+               column(6,
+                      numericInput(ns("mzcharge"), "Charge", 1, step=1) 
+               ),
+               column(6,
+                      numericInput(ns("mzppm"), "ppm", 5, step=0.1))
+               ),
+             fluidRow(
+               column(6,
+                      numericInput(ns("minUnsat"), "min. unsaturation", 0, step=1)),
+               column(6,
+                      numericInput(ns("maxUnsat"), "max. unsaturation", 40, step=1))
+               
+             )),
       column(3,
-             
-  textInput(ns("mzspace"), label = "Select elements:", value = "C0-100H0-202N0-15O0-20"
-            ),
-  numericInput(ns("mzcharge"), "Charge", 1, step=1),
-  numericInput(ns("mzppm"), "ppm", 5, step=0.1)),
-  
-  column(3,
-  selectizeInput(ns("source"), label = "source", choices = c(selections$sources, "custom") ),
-  textInput(ns("mzquery"), label = "custom m/z:", value = 0),
- htmlOutput(ns("mzInfo")),
- fluidRow(
-   column(4,
-  actionButton(ns("mzButton"), "calculate")),
-  column(8,
-  checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = FALSE))
-  )
- ),
- 
- column(6,
-  rHandsontableOutput(ns('hot1')),
- htmlOutput(ns("mzInfo2")),
- a("Search uses the chemcalc web service", href = "http://www.chemcalc.org/", target = "_blank")
- )
+             selectizeInput(ns("source"), label = "source", choices = c(selections$sources, "custom") ),
+             textInput(ns("mzquery"), label = "custom m/z:", value = 0),
+             htmlOutput(ns("mzInfo")),
+             fluidRow(
+               column(4,
+                      actionButton(ns("mzButton"), "calculate")),
+               column(8,
+                      checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = FALSE))
+             )
+      ),
+      
+      column(5,
+             rHandsontableOutput(ns('hot1')),
+             htmlOutput(ns("mzInfo2")),
+             a("Search uses the chemcalc web service", href = "http://www.chemcalc.org/", target = "_blank")
+      )
     ))
 }) 
 
@@ -134,7 +163,13 @@ mzauto <- reactive({
   if(length(input$source) > 0 && input$source != "custom" && input$autoCalc){
     mzi <- as.numeric(selections$search$mz[[input$source]])
     
-    return(list(table = massquery(mzi,elem = input$mzspace, ppm= input$mzppm, charge = input$mzcharge),
+    return(list(table = massquery(mzi,
+                                  elem = input$mzspace,
+                                  ppm= input$mzppm,
+                                  charge = input$mzcharge,
+                                  IntegerSaturation = input$integUnsat,
+                                  minUnsat = input$minUnsat,
+                                  maxUnsat = input$maxUnsat),
                 mz = mzi,
                 source = input$source))
   }
@@ -150,7 +185,13 @@ mztab <- eventReactive(input$mzButton,{
   if(length(input$source) > 0){
     mzi <- if(input$source != "custom"){as.numeric(selections$search$mz[[input$source]])}else{as.numeric(input$mzquery)}
   
-    return(list(table = massquery(mzi,elem = input$mzspace, ppm= input$mzppm, charge = input$mzcharge),
+    return(list(table = massquery(mzi,
+                                  elem = input$mzspace,
+                                  ppm= input$mzppm,
+                                  charge = input$mzcharge,
+                                  IntegerSaturation = input$integUnsat,
+                                  minUnsat = input$minUnsat,
+                                  maxUnsat = input$maxUnsat),
                 mz = mzi,
                 source = input$source))
   }
@@ -168,7 +209,10 @@ output$hot1 <- renderRHandsontable({
               
                 digits=8) %>%
     hot_cols(columnSorting = TRUE,format="0.000000")%>%
-    hot_col("em",format="0.000000")
+    hot_col("em",format="0.000000")%>%
+    hot_col("unsat",format="0.0")%>%
+    hot_col("ppm",format="0.000")
+  
 })
 
 }
