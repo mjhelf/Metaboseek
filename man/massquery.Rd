@@ -5,7 +5,8 @@
 \title{massquery}
 \usage{
 massquery(mz, range = 0.01, ppm = 5,
-  elem = "C0-100H0-202N0-10O0-10F0-3Cl0-3Br0-1", charge = 1)
+  elem = "C0-100H0-202N0-10O0-10F0-3Cl0-3Br0-1", charge = 1,
+  IntegerSaturation = FALSE, minUnsat = 0, maxUnsat = 40)
 }
 \arguments{
 \item{mz}{m/z value}
@@ -17,6 +18,12 @@ massquery(mz, range = 0.01, ppm = 5,
 \item{elem}{String containing information on which elements are allowed for prediction}
 
 \item{charge}{charge state (positive or negative integer)}
+
+\item{IntegerSaturation}{if true, only allows full integers for unsaturation}
+
+\item{minUnsat}{minimum unsaturation}
+
+\item{maxUnsat}{maximum unsaturation}
 }
 \description{
 get molecular formula predictions from chemcalc

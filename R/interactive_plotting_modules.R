@@ -192,10 +192,9 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   
-  observeEvent(input$Mspec_dblclick,{
-    selections$plots$spec$dblclick <- input$Mspec_dblclick
-    #selections$lastChangedEIC <- "spec1"
-  })  
+  # observeEvent(input$Mspec_dblclick,{
+  #   #selections$lastChangedEIC <- "spec1"
+  # })  
   
   observeEvent(input$Mspec_click,{
     if (keys() == 16) {
@@ -241,6 +240,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   })
   
   observeEvent(input$Mspec_dblclick, {
+    
+    selections$plots$spec$dblclick <- input$Mspec_dblclick
     
     ymax_old <- selections$plots$spec$ymax
     
