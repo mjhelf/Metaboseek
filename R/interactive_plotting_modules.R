@@ -57,7 +57,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       if(length(datasel) > 0){
       
-        if(length(datasel) == 1){
+        if(length(set()$spec$sel$File) == 1){
       #get the MS scan
       
       filesel <- which(basename(names(set()$msdata)) == basename(set()$spec$sel$File[datasel]))
@@ -97,9 +97,13 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         speclist <- speclist[which(!sapply(speclist, is.null))]
         
         #make sure signal to other functions that the spectrum IS a merge product
+        if(length(speclist) > 1){
         selections$plots$spec$MSmerge <- mergeMS(speclist)
         
-        res <- selections$plots$spec$MSmerge$merged
+        res <- selections$plots$spec$MSmerge$merged}
+        else{
+          selections$plots$spec$MSmerge <- NULL
+        }
   
       }          
       #print("sc")
@@ -219,18 +223,23 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       #select file based on basename rather than full path
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
+      label <- if(length(set()$spec$sel$File) == 1){
+                      paste0(basename(set()$spec$sel$File), "#", 
+                      if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+                        set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
+                      }
+                      else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
+                      " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
+                      collapse = " ")}
+      else{"merged spectra"}
+      
+      
       specplot(x=selections$plots$spec$data[,1],
                y=selections$plots$spec$data[,2],
                norm=selections$plots$spec$ymax/100,
                cx=set()$layout$cex/1.5,
                k = 20,
-               fileName = paste0(basename(set()$spec$sel$File), "#", 
-                                 if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-                                   set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
-                                 }
-                                 else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
-                                 " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
-                                 collapse = " "),
+               fileName = label,
                yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
                xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
                maxi = selections$plots$spec$ymax
