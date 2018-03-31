@@ -40,7 +40,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         hover = NULL, #peak hovered over with $mz and $intensity
                                                         mz = NULL, 
                                                         data = NULL,
-                                                        ymax = 100),
+                                                        ymax = 100,
+                                                        MSmerge = NULL),
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
@@ -51,17 +52,56 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
     if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
       
       #select file based on basename rather than full path
-      filesel <- which(basename(names(set()$msdata))  == basename(set()$spec$sel$File))
+      datasel <- which(basename(set()$spec$sel$File)  %in% basename(names(set()$msdata)))
       
       
-      if(length(filesel) > 0){
+      if(length(datasel) > 0){
+      
+        if(length(datasel) == 1){
       #get the MS scan
+      
+      filesel <- which(basename(names(set()$msdata)) == basename(set()$spec$sel$File[datasel]))
+      
+      #make sure signal to other functions that the spectrum is NOT a merge product
+      selections$plots$spec$MSmerge <- NULL
+
       if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-      res <- getMsnScan(set()$msdata[[filesel]], set()$spec$sel$scan)
+      res <- getMsnScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
       }else{
-        res <- getScan(set()$msdata[[filesel]], set()$spec$sel$scan)
-        
+        res <- getScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
       }
+        }
+        #if there is input information on more than one scan, and more than one file matches the input
+      else{
+        
+        fx <- function(MSfile, scan, MS2 = F){
+          # print(MSfile@filepath)
+          print(scan)
+          tryCatch({
+            if(MS2){
+              return(getMsnScan(MSfile, scan))
+            }else{
+              return(getScan(MSfile, scan))
+            }
+          },
+          error = function(e){NULL})
+          
+        }
+        
+        speclist <- mapply(fx,
+                           MSfile = xcmsRaws[match(basename(set()$spec$sel$File[datasel]),basename(names(set()$msdata)))],
+                           scan = set()$spec$sel$scan[datasel],
+                           MoreArgs = list(MS2 = (!is.null(set()$spec$MS2) && set()$spec$MS2)))
+        
+        #remove NULL results (from errors)
+        speclist <- speclist[which(!sapply(speclist, is.null))]
+        
+        #make sure signal to other functions that the spectrum IS a merge product
+        selections$plots$spec$MSmerge <- mergeMS(speclist)
+        
+        res <- selections$plots$spec$MSmerge$merged
+  
+      }          
       #print("sc")
       #set the maximum x axis range to cover the spectrum data
       selections$plots$spec$maxxrange <- c(min(res[,1])-1,
@@ -177,7 +217,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                       & selections$plots$spec$data[,1]<= max(xr))]
       
       #select file based on basename rather than full path
-      filesel <- which(basename(names(set()$msdata))  == basename(set()$spec$sel$File))
+      filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
       specplot(x=selections$plots$spec$data[,1],
                y=selections$plots$spec$data[,2],
@@ -189,7 +229,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                    set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
                                  }
                                  else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
-                                 " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)"),
+                                 " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
+                                 collapse = " "),
                yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
                xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
                maxi = selections$plots$spec$ymax
