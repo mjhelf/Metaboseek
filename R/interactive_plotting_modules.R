@@ -24,7 +24,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                             cex = 1,
                                                                             controls = F,
                                                                             ppm = 5,
-                                                                            active = T),
+                                                                            active = T,
+                                                                            highlights = NULL),
                                                               msdata = NULL),
                        keys){
   
@@ -35,6 +36,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         maxyrange = NULL, #maximum y axis range
                                                         sel = NULL, # selected feature from set() (if used)
                                                         marker = NULL, #selected peak with $mz and $intensity
+                                                        highlights = NULL, #peaks to be highlighted with $mz and $intensity
                                                         hover = NULL, #peak hovered over with $mz and $intensity
                                                         mz = NULL, 
                                                         data = NULL,
@@ -48,13 +50,16 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
     # observe({
     if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
       
+      #select file based on basename rather than full path
+      filesel <- which(basename(names(set()$msdata))  == basename(set()$spec$sel$File))
       
       
+      if(length(filesel) > 0){
       #get the MS scan
       if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-      res <- getMsnScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
+      res <- getMsnScan(set()$msdata[[filesel]], set()$spec$sel$scan)
       }else{
-        res <- getScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
+        res <- getScan(set()$msdata[[filesel]], set()$spec$sel$scan)
         
       }
       #print("sc")
@@ -97,11 +102,30 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       }
       #print(identical(selections$plots$set,set()$spec ))
       # print(selections$plots$spec$marker)
+      
+      if(length(set()$layout$highlights) > 0){
+        selections$plots$spec$highlights <- set()$layout$highlights
+      }else{
+        selections$plots$spec$highlights <- NULL
+        
+      }
+      
       selections$plots$set <- set()$spec
       
       return(res)
+      }
+    }
+  })
+  
+  observeEvent(set()$layout$highlights,{
+    
+    if(length(set()$layout$highlights) > 0){
+      selections$plots$spec$highlights <- set()$layout$highlights
+    }else{
+      selections$plots$spec$highlights <- NULL
       
     }
+    
   })
   
   output$specinfo <- renderUI({ 
@@ -152,6 +176,9 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       yinview <- selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
                                                       & selections$plots$spec$data[,1]<= max(xr))]
       
+      #select file based on basename rather than full path
+      filesel <- which(basename(names(set()$msdata))  == basename(set()$spec$sel$File))
+      
       specplot(x=selections$plots$spec$data[,1],
                y=selections$plots$spec$data[,2],
                norm=selections$plots$spec$ymax/100,
@@ -159,9 +186,9 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                k = 20,
                fileName = paste0(basename(set()$spec$sel$File), "#", 
                                  if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-                                   set()$msdata[[set()$spec$sel$File]]@msnAcquisitionNum[set()$spec$sel$scan]
+                                   set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
                                  }
-                                 else{set()$msdata[[set()$spec$sel$File]]@acquisitionNum[set()$spec$sel$scan]},
+                                 else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
                                  " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)"),
                yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
                xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
@@ -182,6 +209,14 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         points(selections$plots$spec$marker$mz,
                selections$plots$spec$marker$intensity,
                bty = "n", type = "h", lwd = 5, col = "#FFAB3680")
+        
+      }
+      
+      if(!is.null(selections$plots$spec$highlights)){
+        
+        points(selections$plots$spec$highlights$mz,
+               selections$plots$spec$highlights$intensity/(selections$plots$spec$ymax/100),
+               bty = "n", type = "h", lwd = 5, col = "#6A88C380")
         
       }
       
