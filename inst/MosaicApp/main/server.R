@@ -10,7 +10,7 @@ function(input, output, session) {
     
     selectedTabs <- reactiveValues(FeatureTable = "View Table"    )
     
-    MSData <- reactiveValues(layouts = list(), #List of rawfile paths (unsorted)
+    MSData <- reactiveValues(layouts = NULL, #List of rawfile paths (unsorted)
                              rawgrouptable = NULL,
                              index = NULL,
                              rootfolder = rootpath,

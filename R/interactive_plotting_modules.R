@@ -25,7 +25,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                             controls = F,
                                                                             ppm = 5,
                                                                             active = T,
-                                                                            highlights = NULL),
+                                                                            highlights = NULL,
+                                                                            height = 550),
                                                               msdata = NULL),
                        keys){
   
@@ -41,7 +42,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         mz = NULL, 
                                                         data = NULL,
                                                         ymax = 100,
-                                                        MSmerge = NULL),
+                                                        MSmerge = NULL,
+                                                        fullplot = NULL),
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
@@ -49,119 +51,122 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   # observeEvent(set(),{sc()})
   sc <- reactive({
     # observe({
-    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
+    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set, set()$spec )){
       
       #select file based on basename rather than full path
       datasel <- which(basename(set()$spec$sel$File)  %in% basename(names(set()$msdata)))
       
       
       if(length(datasel) > 0){
-      
+        
         if(length(set()$spec$sel$File) == 1){
-      #get the MS scan
-      
-      filesel <- which(basename(names(set()$msdata)) == basename(set()$spec$sel$File[datasel]))
-      
-      #make sure signal to other functions that the spectrum is NOT a merge product
-      selections$plots$spec$MSmerge <- NULL
-
-      if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-      res <- getMsnScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
-      }else{
-        res <- getScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
-      }
+          #get the MS scan
+          
+          filesel <- which(basename(names(set()$msdata)) == basename(set()$spec$sel$File[datasel]))
+          
+          #make sure signal to other functions that the spectrum is NOT a merge product
+          selections$plots$spec$MSmerge <- NULL
+          
+          if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+            res <- getMsnScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
+          }else{
+            res <- getScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
+          }
         }
         #if there is input information on more than one scan, and more than one file matches the input
-      else{
+        else{
+          
+          fx <- function(MSfile, scan, MS2 = F){
+            # print(MSfile@filepath)
+            print(scan)
+            tryCatch({
+              if(MS2){
+                return(getMsnScan(MSfile, scan))
+              }else{
+                return(getScan(MSfile, scan))
+              }
+            },
+            error = function(e){NULL})
+            
+          }
+          
+          speclist <- mapply(fx,
+                             MSfile = xcmsRaws[match(basename(set()$spec$sel$File[datasel]),basename(names(set()$msdata)))],
+                             scan = set()$spec$sel$scan[datasel],
+                             MoreArgs = list(MS2 = (!is.null(set()$spec$MS2) && set()$spec$MS2)))
+          
+          #remove NULL results (from errors)
+          speclist <- speclist[which(!sapply(speclist, is.null))]
+          
+          #make sure signal to other functions that the spectrum IS a merge product
+          if(length(speclist) > 1){
+            selections$plots$spec$MSmerge <- mergeMS(speclist)
+            
+            res <- selections$plots$spec$MSmerge$merged}
+          else{
+            selections$plots$spec$MSmerge <- NULL
+          }
+          
+        }          
+        #print("sc")
+        #set the maximum x axis range to cover the spectrum data
+        if(!is.null(set()$spec$maxxrange) && !identical(selections$plots$set$maxxrange,set()$spec$maxxrange)){
+          selections$plots$spec$maxxrange <- set()$spec$maxxrange
+        }else{
+          selections$plots$spec$maxxrange <- c(min(res[,1])-1,
+                                               max(res[,1])+1)
+        }
+        #set the actual x-axis view range
+        if(is.null(selections$plots$spec$xrange) || !identical(selections$plots$set,set()$spec )){
+          selections$plots$spec$xrange <- set()$spec$xrange
+        }
         
-        fx <- function(MSfile, scan, MS2 = F){
-          # print(MSfile@filepath)
-          print(scan)
-          tryCatch({
-            if(MS2){
-              return(getMsnScan(MSfile, scan))
-            }else{
-              return(getScan(MSfile, scan))
-            }
-          },
-          error = function(e){NULL})
+        # if(is.null(selections$plots$spec$yrange)){
+        #selections$plots$spec$yrange <- set()$spec$yrange}
+        
+        
+        #maximum y axis range
+        selections$plots$spec$maxyrange <- c(0, 100)
+        
+        #save the spectrum so it can be accessed without another call to sc()
+        selections$plots$spec$data <- res
+        
+        #find maximum Y axis value (absolute intensity) within visible x- axis range
+        xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
+        selections$plots$spec$ymax <- max(selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
+                                                                               & selections$plots$spec$data[,1]<= max(xr))])
+        
+        if(is.null(selections$plots$spec$marker) || !identical(selections$plots$set,set()$spec )){
+          vispoints <- (selections$plots$spec$data[which(selections$plots$spec$data[,1]>= min(xr) 
+                                                         & selections$plots$spec$data[,1]<= max(xr)),])
+          
+          #set marker to peak closest to requested mz if within set ppm window
+          if(!is.na(set()$spec$mz) && !is.null(set()$spec$mz) && min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
+            selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
+                                                       intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
+            )
+          }else{
+            selections$plots$spec$marker <- NULL
+          }
+        }
+        #print(identical(selections$plots$set,set()$spec ))
+        # print(selections$plots$spec$marker)
+        
+        if(length(set()$layout$highlights) > 0){
+          selections$plots$spec$highlights <- set()$layout$highlights
+        }else{
+          selections$plots$spec$highlights <- NULL
           
         }
         
-        speclist <- mapply(fx,
-                           MSfile = xcmsRaws[match(basename(set()$spec$sel$File[datasel]),basename(names(set()$msdata)))],
-                           scan = set()$spec$sel$scan[datasel],
-                           MoreArgs = list(MS2 = (!is.null(set()$spec$MS2) && set()$spec$MS2)))
+        selections$plots$set <- set()$spec
         
-        #remove NULL results (from errors)
-        speclist <- speclist[which(!sapply(speclist, is.null))]
-        
-        #make sure signal to other functions that the spectrum IS a merge product
-        if(length(speclist) > 1){
-        selections$plots$spec$MSmerge <- mergeMS(speclist)
-        
-        res <- selections$plots$spec$MSmerge$merged}
-        else{
-          selections$plots$spec$MSmerge <- NULL
-        }
-  
-      }          
-      #print("sc")
-      #set the maximum x axis range to cover the spectrum data
-      selections$plots$spec$maxxrange <- c(min(res[,1])-1,
-                                           max(res[,1])+1)
-      
-      #set the actual x-axis view range
-      if(is.null(selections$plots$spec$xrange) || !identical(selections$plots$set,set()$spec )){
-        selections$plots$spec$xrange <- set()$spec$xrange
-      }
-      
-      # if(is.null(selections$plots$spec$yrange)){
-      #selections$plots$spec$yrange <- set()$spec$yrange}
-      
-      
-      #maximum y axis range
-      selections$plots$spec$maxyrange <- c(0, 100)
-      
-      #save the spectrum so it can be accessed without another call to sc()
-      selections$plots$spec$data <- res
-      
-      #find maximum Y axis value (absolute intensity) within visible x- axis range
-      xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
-      selections$plots$spec$ymax <- max(selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
-                                                                             & selections$plots$spec$data[,1]<= max(xr))])
-      
-      if(is.null(selections$plots$spec$marker) || !identical(selections$plots$set,set()$spec )){
-        vispoints <- (selections$plots$spec$data[which(selections$plots$spec$data[,1]>= min(xr) 
-                                                       & selections$plots$spec$data[,1]<= max(xr)),])
-        
-        #set marker to peak closest to requested mz if within set ppm window
-        if(!is.na(set()$spec$mz) && !is.null(set()$spec$mz) && min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
-          selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
-                                                     intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
-          )
-        }else{
-          selections$plots$spec$marker <- NULL
-        }
-      }
-      #print(identical(selections$plots$set,set()$spec ))
-      # print(selections$plots$spec$marker)
-      
-      if(length(set()$layout$highlights) > 0){
-        selections$plots$spec$highlights <- set()$layout$highlights
-      }else{
-        selections$plots$spec$highlights <- NULL
-        
-      }
-      
-      selections$plots$set <- set()$spec
-      
-      return(res)
+        return(res)
       }
     }
   })
   
-  observeEvent(set()$layout$highlights,{
+  observeEvent(set(),{
     
     if(length(set()$layout$highlights) > 0){
       selections$plots$spec$highlights <- set()$layout$highlights
@@ -188,7 +193,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$specAll <- renderUI({
-    if(!is.null(set()$layout$active) && set()$layout$active){
+    if(length(set()$layout$active) > 0 && set()$layout$active){
       fluidPage(
         fluidRow(
           plotOutput(ns("Mspec"),
@@ -200,7 +205,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                        id = ns("Mspec_brush"),
                        #direction = "x",
                        resetOnNew = TRUE),
-                     height = "550px"
+                     height = if(is.null(set()$layout$height)){"550px"}else{paste0(set()$layout$height,"px")}
           ),
           htmlOutput(ns("specinfo"))
           
@@ -208,6 +213,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       )
     }
   })
+  
+  
   
   
   output$Mspec <- renderPlot({
@@ -224,14 +231,15 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
       label <- if(length(set()$spec$sel$File) == 1){
-                      paste0(basename(set()$spec$sel$File), "#", 
-                      if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-                        set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
-                      }
-                      else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
-                      " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
-                      collapse = " ")}
+        paste0(basename(set()$spec$sel$File), "#", 
+               if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+                 set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
+               }
+               else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
+               " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
+               collapse = " ")}
       else{"merged spectra"}
+      
       
       
       specplot(x=selections$plots$spec$data[,1],
@@ -270,10 +278,10 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         
       }
       
-      
+      selections$plots$spec$fullplot <- recordPlot()
       
     }
-  }, height = 550)
+  })#, height = if(is.null(set()$layout$height)){550}else{set()$layout$height})
   
   
   
@@ -746,8 +754,10 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
   
   observeEvent(input$plainplot_dblclick, {
     if(set()$active){
+      print("doubleclick!")
       if (!is.null(input$plainplot_brush)) {
-        #print(sEICsDF())
+        
+        print(input$plainplot_brush)
         selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
         
         if(input$EicTic){
