@@ -15,6 +15,7 @@ fluidPage(
         p("You can browse through the MS data files (mzXML) in the \"Explore Data\" section and run xcms analyses.")
     )
   ),
+  
   fluidRow(
     box(title = "Update mosaic!", status = "danger", collapsible = T, width = 12,
         updaterModuleUI('update')

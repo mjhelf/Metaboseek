@@ -78,7 +78,6 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
           
           fx <- function(MSfile, scan, MS2 = F){
             # print(MSfile@filepath)
-            print(scan)
             tryCatch({
               if(MS2){
                 return(getMsnScan(MSfile, scan))
@@ -197,10 +196,10 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       fluidPage(
         fluidRow(
           plotOutput(ns("Mspec"),
-                     click = ns("Mspec_click"),
+                     click = clickOpts(ns("Mspec_click"), clip = T),
                      hover = hoverOpts(id = ns("Mspec_hover"),
                                        delay = 150),
-                     dblclick = ns("Mspec_dblclick"),
+                     dblclick = dblclickOpts(id = ns("Mspec_dblclick"),clip = F, delay = 400),
                      brush = brushOpts(
                        id = ns("Mspec_brush"),
                        #direction = "x",
@@ -253,7 +252,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                maxi = selections$plots$spec$ymax
       ) 
       
-      
+      par(xpd = FALSE)
       if(!is.null(selections$plots$spec$hover)){
         
         points(selections$plots$spec$hover$mz,
@@ -269,6 +268,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                bty = "n", type = "h", lwd = 5, col = "#FFAB3680")
         
       }
+      
+      
       
       if(!is.null(selections$plots$spec$highlights)){
         
@@ -290,6 +291,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   # })  
   
   observeEvent(input$Mspec_click,{
+   #print("click!")
     if (keys() == 16) {
       #print("MSmarker")
       selections$plots$spec$click <- input$Mspec_click
@@ -309,11 +311,54 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       #selections$lastChangedEIC <- "spec1"
     }
+    
+    ###TEMPORARY FIX FOR BROKEN DOUBLECLICK, Ctrl + click
+    if (keys() == 17) {
+    selections$plots$spec$dblclick <- input$Mspec_dblclick
+    
+    ymax_old <- selections$plots$spec$ymax
+    
+    if (!is.null(input$Mspec_brush)) {
+      
+      #print(input$Mspec_brush)
+      
+      
+      selections$plots$spec$xrange <- c(input$Mspec_brush$xmin, input$Mspec_brush$xmax)
+      
+      #intensity values in the current x-axis range view 
+      xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
+      
+      #intensity values in the current x-axis range view - avoiding div by 0
+      selections$plots$spec$ymax <- max(c(1,selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
+                                                                                 & selections$plots$spec$data[,1]<= max(xr))]))
+      
+      
+      
+      selections$plots$spec$yrange <- c(0, min(c(100,input$Mspec_brush$ymax*(ymax_old/selections$plots$spec$ymax))))
+      if(!is.null(selections$plots$spec$marker)){
+        selections$plots$spec$marker$intensity <-min(c(100,selections$plots$spec$marker$intensity*(ymax_old/selections$plots$spec$ymax)))
+      }
+    } else {
+      selections$plots$spec$xrange <- selections$plots$spec$maxxrange
+      selections$plots$spec$yrange <- selections$plots$spec$maxyrange
+      
+      #intensity values in the current x-axis range view - avoiding div by 0
+      selections$plots$spec$ymax <- max(c(1,selections$plots$spec$data[,2]))
+      
+      if(!is.null(selections$plots$spec$marker)){
+        selections$plots$spec$marker$intensity <-min(c(100,selections$plots$spec$marker$intensity*(ymax_old/selections$plots$spec$ymax)))
+      }
+    
+    }
+    }
+    
+    
   })
   
   
   
   observeEvent(input$Mspec_hover,{
+    #print("hover!")
     if(is.null(input$Mspec_brush)){
       #print(input$Mspec_hover)
       temp <- as.data.frame(selections$plots$spec$data)
@@ -333,14 +378,14 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   })
   
   observeEvent(input$Mspec_dblclick, {
-    
+   # print("doubleclick!")
     selections$plots$spec$dblclick <- input$Mspec_dblclick
     
     ymax_old <- selections$plots$spec$ymax
     
     if (!is.null(input$Mspec_brush)) {
       
-      
+      print(input$Mspec_brush)
       
       
       selections$plots$spec$xrange <- c(input$Mspec_brush$xmin, input$Mspec_brush$xmax)
@@ -736,6 +781,40 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
         #initiate sc()
         #sc()
       }
+      
+      
+      ###TEMPORARY FIX FOR BROKEN DOUBLECLICK, Ctrl + click
+
+      if (keys() == 17) {
+      if (!is.null(input$plainplot_brush)) {
+        
+        
+        selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
+        
+        if(input$EicTic){
+          ymax <- max(sEICsDF()$tic[which(sEICsDF()$rt <= input$plainplot_brush$xmax
+                                          & sEICsDF()$rt >= input$plainplot_brush$xmin)])
+        }else{
+          ymax <- max(sEICsDF()$intensity[which(sEICsDF()$rt <= input$plainplot_brush$xmax
+                                                & sEICsDF()$rt >= input$plainplot_brush$xmin)])
+        }
+        
+        selectionsEIC$plots[['chrom1']]$yrange <- c(input$plainplot_brush$ymin, min(ymax,input$plainplot_brush$ymax))
+        
+      } else {
+        # print("dblcklick")
+        
+        selectionsEIC$plots[['chrom1']]$xrange <- selectionsEIC$plots[['chrom1']]$maxxrange
+        selectionsEIC$plots[['chrom1']]$yrange <- selectionsEIC$plots[['chrom1']]$maxyrange
+      }
+      }
+      
+      
+      
+      
+      
+      
+      
     }
   })
   
@@ -754,10 +833,10 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
   
   observeEvent(input$plainplot_dblclick, {
     if(set()$active){
-      print("doubleclick!")
+      
       if (!is.null(input$plainplot_brush)) {
         
-        print(input$plainplot_brush)
+        
         selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
         
         if(input$EicTic){

@@ -55,6 +55,7 @@ htmlOutput("mainPlotEICs")),
 fluidRow(
   htmlOutput("adductPlot")
 ),
+
 fluidRow(
   SpecmoduleUI("Spec1")
 )

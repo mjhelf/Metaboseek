@@ -292,3 +292,4 @@ iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1",
                      }), 
                      keys = reactive({keyin$keyd})
 )
+
