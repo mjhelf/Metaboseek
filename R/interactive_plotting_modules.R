@@ -229,15 +229,19 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       #select file based on basename rather than full path
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
-      label <- if(length(set()$spec$sel$File) == 1){
+      label <- if(length(set()$spec$sel$File) >0){
+        if(length(set()$spec$sel$File) == 1){
         paste0(basename(set()$spec$sel$File), "#", 
                if(!is.null(set()$spec$MS2) && set()$spec$MS2){
                  set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
                }
                else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
                " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
-               collapse = " ")}
+               if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+                 paste0("\nParent m/z:", round(as.numeric(set()$msdata[[filesel]]@msnPrecursorMz[set()$spec$sel$scan]),5))}else{""},
+                 collapse = " ")}
       else{"merged spectra"}
+      }else{""}
       
       
       
