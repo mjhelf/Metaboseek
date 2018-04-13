@@ -26,4 +26,4 @@ Imports: xcms (>= 2.99),
     cluster,
     igraph,
     qgraph,
-    BioGenerics
+    BiocGenerics
