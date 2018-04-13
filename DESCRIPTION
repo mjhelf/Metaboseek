@@ -23,4 +23,7 @@ Imports: xcms (>= 2.99),
     data.table,
     ggplot2,
     jsonlite,
-    cluster
+    cluster,
+    igraph,
+    qgraph,
+    BioGenerics

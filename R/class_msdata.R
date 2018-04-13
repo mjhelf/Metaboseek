@@ -520,3 +520,102 @@ mergeMS <- function(speclist,
   return(res)
   
 }
+
+#' makeScanlist
+#' 
+#' Make a scan list
+#' 
+#' @param splitme character string with format filename:scannumber###filename:scannumber###... as found in gnps networking output tables
+#' @param MSData list of xcmsRaw objects. Only scans from files loaded in this object will be returned
+#' 
+#' @export
+makeScanlist <- function(splitme, MSData = NULL){
+  
+  pounds <- gregexpr('###',splitme)[[1]]
+  pounds <- c(-2,pounds)
+  
+  subs <- character(length(pounds)-1)
+  for(i in seq(length(pounds)-1)){
+    subs[i] <- substr(splitme,pounds[i]+3,pounds[i+1]-1)
+  }
+  
+  scantab <- data.frame(file = character(length(subs)),
+                        acquisition = integer(length(subs)),
+                        scan = integer(length(subs)),
+                        rt = numeric(length(subs)),
+                        parentMz = numeric(length(subs)),
+                        parentIntensity = numeric(length(subs)),
+                        stringsAsFactors = F)
+  
+  for(i in seq(length(subs))){
+    colon <- regexpr(':',subs[i])
+    scantab$file[i] <- substr(subs[i],1,colon-1)
+    
+    rawsel <- which(basename(names(MSData)) == scantab$file[i])
+    
+    if(!is.null(MSData) && sum(basename(names(MSData)) == scantab$file[i]) ==1){
+      scantab$file[i] <- basename(names(MSData)[rawsel])
+      
+      scantab$acquisition[i] <- as.integer(substr(subs[i],colon+1,nchar(subs[i])))
+      scantab$scan[i] <- which(MSData[[rawsel]]@msnAcquisitionNum == scantab$acquisition[i])
+      scantab$rt[i] <- MSData[[rawsel]]@msnRt[scantab$scan[i]]
+      scantab$parentMz[i] <- MSData[[rawsel]]@msnPrecursorMz[scantab$scan[i]]
+      scantab$parentIntensity[i] <- MSData[[rawsel]]@msnPrecursorIntensity[scantab$scan[i]]
+      
+      
+    }
+  }
+  
+  return(scantab)
+  
+}
+
+#' Parentsearch
+#'
+#' Make a list of all MS2 scans with the defined parent masses at a given retention time
+#' 
+#'  @param xcmsRaws list of xcmsRaw objects
+#'  @param mz parent mz values (mumeric vector)
+#'  @param rt parent retention time (in seconds, numeric vector), needs to be same length as mz
+#'  @param ppm parent mz tolerance in ppm
+#'  @param rtw parent rt tolerance in seconds
+#'
+#'
+Parentsearch <- function (xcmsRaws,
+                          mz = c(499.11085),
+                          rt = c(366.65),
+                          ppm = 5,
+                          rtw = 200){
+  
+  fx <- function(rfile, mz, rt, ppm, rtw){
+    
+    if(length(rfile@msnPrecursorMz) > 0 ){
+      sel <- which( abs((rfile@msnPrecursorMz - mz)) < ppm*mz*1e-6
+                    &  abs(rfile@msnRt - mz ) < rtw )
+      
+      if(length(sel) >0){
+        scantab <- data.frame(file = rep( basename(rfile@filepath[[1]]) ,length(sel)),
+                              acquisition = rfile@msnAcquisitionNum[sel],
+                              scan = sel,
+                              rt = rfile@msnRt[sel],
+                              parentMz = rfile@msnPrecursorMz[sel],
+                              parentIntensity = rfile@msnPrecursorIntensity[sel],
+                              charge = rfile@msnPrecursorCharge[sel],
+                              ppm = 1e6*(rfile@msnPrecursorMz[sel]-mz)/mz,
+                              stringsAsFactors = F)
+        
+        return(scantab)
+      }
+    }
+    
+    
+    return(NULL)
+  }
+  res <- list()
+  for(i in length(mz)){
+    res <- c(res, lapply(xcmsRaws, fx, mz[i], rt[i], ppm, rtw))
+  }
+  
+  return(data.table::rbindlist(res))
+}
+
