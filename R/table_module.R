@@ -62,7 +62,7 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
   })
   
   observeEvent(c(tableProperties$page, tableProperties$decreasing, tableProperties$sortBy, tableProperties$sortCheck, tableProperties$set$update),{
-    if(!is.null(tableProperties$set$df)){
+    if(!is.null(tableProperties$set$df) && length(tableProperties$set$df) > 0){
       if(tableProperties$updating){
         tableProperties$updating <- F
       }else{
@@ -237,9 +237,9 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
   
   
   
-  return(reactive({list(props = tableProperties,
-                        live = if(!is.null(input$maintable)){hot_to_r(input$maintable)}else{NULL})
-  }))
+  return(reactive({list(props = tableProperties#,
+                        #live = if(!is.null(input$maintable)){hot_to_r(input$maintable)}else{NULL})
+  )}))
   
 }
 

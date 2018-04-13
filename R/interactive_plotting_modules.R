@@ -90,7 +90,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
           }
           
           speclist <- mapply(fx,
-                             MSfile = xcmsRaws[match(basename(set()$spec$sel$File[datasel]),basename(names(set()$msdata)))],
+                             MSfile = set()$msdata[match(basename(set()$spec$sel$File[datasel]),basename(names(set()$msdata)))],
                              scan = set()$spec$sel$scan[datasel],
                              MoreArgs = list(MS2 = (!is.null(set()$spec$MS2) && set()$spec$MS2)))
           
@@ -215,9 +215,9 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
         #get the precursors
         if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-          acn <- round(mapply("[",lapply(xcmsRaws[filesel],slot,"msnAcquisitionNum"),set()$spec$sel$scan),5)
+          acn <- round(mapply("[",lapply(set()$msdata[filesel],slot,"msnAcquisitionNum"),set()$spec$sel$scan),5)
         }else{
-          acn <- round(mapply("[",lapply(xcmsRaws[filesel],slot,"acquisitionNum"),set()$spec$sel$scan),5)
+          acn <- round(mapply("[",lapply(set()$msdata[filesel],slot,"acquisitionNum"),set()$spec$sel$scan),5)
         }
         
         coll <- character(0)
@@ -268,7 +268,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
       #get the precursors
-      prec <- round(mapply("[",lapply(xcmsRaws[filesel],slot,"msnPrecursorMz"),set()$spec$sel$scan),5)
+      prec <- round(mapply("[",lapply(set()$msdata[filesel],slot,"msnPrecursorMz"),set()$spec$sel$scan),5)
       
       
       label <- if(length(set()$spec$sel$File) >0){

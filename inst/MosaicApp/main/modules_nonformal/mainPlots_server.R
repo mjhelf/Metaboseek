@@ -293,3 +293,9 @@ iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1",
                      keys = reactive({keyin$keyd})
 )
 
+MS2Browser <- callModule(MS2BrowserModule, 'MS2B', tag = "MS2B", 
+                         set = reactive({list(MSData = MSData$data,
+                                query = list(mz = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng,"mz"]},
+                                             rt = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng,"rt"]}
+                                    ))}),
+                         keys = reactive({input$keyd}))

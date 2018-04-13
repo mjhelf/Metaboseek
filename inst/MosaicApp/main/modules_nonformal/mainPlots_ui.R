@@ -67,6 +67,9 @@ tabPanel("Interactive View (beta)",
          ),
 tabPanel("Quickplots",
          source(file.path("modules_nonformal", "quickPlots_ui.R"), local = TRUE)$value
+),
+tabPanel("MS2 Browser",
+         MS2BrowserModuleUI('MS2B')
 )
 
 )

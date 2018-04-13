@@ -21,10 +21,7 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
   
   
   dataSets <- reactiveValues(
-    graphs = list(default = list(tables = list (nodes = n1,
-                                                edges = e1),
-                                 graph = g1)
-    ),
+    graphs = list(),
     activeGraph = NULL,
     
     spectab = NULL
@@ -127,7 +124,7 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
   
   observeEvent(set()$query,{ 
     if(length(set()$query$mz) > 0 ){
-      dataSets$spectab <- Parentsearch(xcmsRaws, mz = set()$query$mz, rt = set()$query$rt, ppm = 5, rtw = 200)
+      dataSets$spectab <- Parentsearch(set()$MSData, mz = set()$query$mz, rt = set()$query$rt, ppm = 5, rtw = 200)
       
     }
   })
@@ -187,7 +184,7 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
 #' @export 
 MS2BrowserModuleUI <-  function(id){
   ns <- NS(id)
-  
+  fluidPage(
   fluidRow(
     column(6,
            fluidRow(
@@ -204,6 +201,7 @@ MS2BrowserModuleUI <-  function(id){
              MultiSpecmoduleUI(ns('Spec2'))
            )
     )
+  )
   )
 }
 
