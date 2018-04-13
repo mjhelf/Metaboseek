@@ -41,7 +41,7 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                                     set = NULL)
   
   observeEvent(set(),{
-    if(is.null(set()$df)){
+    if(length(set()$df) == 0 ){
       tableProperties$set <- set()
       tableProperties$selected_cols <- NULL
       tableProperties$selected_rows <- NULL

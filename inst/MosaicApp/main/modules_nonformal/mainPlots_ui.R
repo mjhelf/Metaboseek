@@ -1,4 +1,4 @@
-tabBox(title = "EIC viewer",
+tabBox(title = "Data viewer",
        id = "EICplots", width = 12, side = "right", selected = "Grouped EICs",
        
        tabPanel("_"),
