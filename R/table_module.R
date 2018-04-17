@@ -41,7 +41,6 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                                     set = NULL)
   
   observeEvent(set(),{
-    print(set()$df)
     if(length(set()$df) == 0 ){
       tableProperties$set <- set()
       tableProperties$selected_cols <- NULL
@@ -72,15 +71,15 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                  tableProperties$set$update,
                  tableProperties$set$df),{
     if(!is.null(tableProperties$set$df) && length(tableProperties$set$df) > 0){
-      if(tableProperties$updating){
-        tableProperties$updating <- F
-      }else{
-        #update the df with any possible changes before changing anything else
-        if(!is.null(input$maintable) && !identical(tableProperties$showTable, hot_to_r(input$maintable))){
-          
-          tableProperties$set$df[row.names(hot_to_r(input$maintable)),colnames(hot_to_r(input$maintable))] <- hot_to_r(input$maintable)
-        }
-      }
+      # if(tableProperties$updating){
+      #   tableProperties$updating <- F
+      # }else{
+      #   #update the df with any possible changes before changing anything else
+      #   if(!is.null(input$maintable) && !identical(tableProperties$showTable, hot_to_r(input$maintable))){
+      #     
+      #     tableProperties$set$df[row.names(hot_to_r(input$maintable)),colnames(hot_to_r(input$maintable))] <- hot_to_r(input$maintable)
+      #   }
+      # }
       
       if(tableProperties$sortCheck && length(tableProperties$sortBy) > 0){
         tableProperties$row_order <- order(tableProperties$set$df[,tableProperties$sortBy], decreasing = tableProperties$decreasing)
@@ -102,27 +101,6 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
     }
   })
   
-  
-  # observeEvent(input$maintable$changes$changes,{
-  
-  #  if(!is.null(input$maintable$changes$changes)){
-  #   targetrow <- tableProperties$inpage[input$maintable$changes$changes[[1]][[1]]+1]
-  #  targetcol <- input$maintable$changes$changes[[1]][[1]]+1
-  # tableProperties$set$df[targetrow,targetcol] <- input$maintable$changes$changes[[1]][[4]]
-  #}
-  
-  #})
-  
-  
-  #observeEvent(c("tableProperties$page", "tableProperties$"),{
-  
-  # if(!is.null(input$maintable$changes$changes)){
-  #  targetrow <- tableProperties$inpage[input$maintable$changes$changes[[1]][[1]]+1]
-  # targetcol <- input$maintable$changes$changes[[1]][[1]]+1
-  #    tableProperties$set$df[targetrow,targetcol] <- input$maintable$changes$changes[[1]][[4]]
-  # }
-  
-  #})
   
   output$maintable <- renderRHandsontable({
     if(!is.null(tableProperties$showTable) 
@@ -176,11 +154,11 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
   
   output$tabUI <- renderUI({
     
-    if(!is.null(tableProperties$set$df)){
+   # if(!is.null(tableProperties$set$df)){
       fluidRow(
         rHandsontableOutput(ns("maintable"))
       )
-    }
+  #  }
   })
   
   
