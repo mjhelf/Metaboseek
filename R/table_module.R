@@ -41,10 +41,14 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                                     set = NULL)
   
   observeEvent(set(),{
+    print(set()$df)
     if(length(set()$df) == 0 ){
       tableProperties$set <- set()
       tableProperties$selected_cols <- NULL
       tableProperties$selected_rows <- NULL
+      tableProperties$df <- NULL
+      tableProperties$showTable <- NULL
+      
     }
     
     if(!is.null(set()$df) && (is.null(tableProperties$set$update) || set()$update != tableProperties$set$update)){
@@ -61,7 +65,12 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
     
   })
   
-  observeEvent(c(tableProperties$page, tableProperties$decreasing, tableProperties$sortBy, tableProperties$sortCheck, tableProperties$set$update),{
+  observeEvent(c(tableProperties$page,
+                 tableProperties$decreasing,
+                 tableProperties$sortBy,
+                 tableProperties$sortCheck,
+                 tableProperties$set$update,
+                 tableProperties$set$df),{
     if(!is.null(tableProperties$set$df) && length(tableProperties$set$df) > 0){
       if(tableProperties$updating){
         tableProperties$updating <- F
@@ -73,7 +82,7 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
         }
       }
       
-      if(tableProperties$sortCheck){
+      if(tableProperties$sortCheck && length(tableProperties$sortBy) > 0){
         tableProperties$row_order <- order(tableProperties$set$df[,tableProperties$sortBy], decreasing = tableProperties$decreasing)
       }else{
         tableProperties$row_order <- seq(nrow(tableProperties$set$df))

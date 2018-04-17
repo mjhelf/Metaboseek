@@ -27,3 +27,6 @@ Imports: xcms (>= 2.99),
     igraph,
     qgraph,
     BiocGenerics
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
