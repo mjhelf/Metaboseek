@@ -113,13 +113,10 @@ outputs = read.csv("outputs.csv",
                        row.names = 1,
                        stringsAsFactors = F)
 
-#logical() which outputs are requested
-tbouts <- as.logical(outputs$Value[-1])
-names(tbouts) <- row.names(outputs[-1,])
-
-#logical() which outputs should get MOSAIC intensities
-getints <- as.logical(outputs$MOSAIC_intensities[-1])
-names(getints) <- row.names(outputs[-1,])
+#make all columns except the desxr
+for (i in seq(ncol(outputs) - 1)){
+  outputs[,i] <- as.logical(outputs[,i])
+}
 
 #############################
 
@@ -155,7 +152,7 @@ history <- writeStatus (previous = history,
 xset <- findChromPeaks(fileaccess, cparam,
                                BPPARAM = bparam, return.type = "XCMSnExp")
 
-if(tbouts["peaktable_all"]){
+if(outputs["peaktable_all",1]){
   history <- writeStatus (previous = history,
                           message = list(Status = "Exporting data",
                                          Details = "peaktable_all.csv"))
@@ -163,7 +160,8 @@ if(tbouts["peaktable_all"]){
    write.csv(chromPeaks(xset),file = "peaktable_all_unfilled.csv")
 }
 
-if(any(tbouts[!names(tbouts) == "peaktable_all"])){
+#only run this if anything other than the peaktable_all is requested
+if(any(outputs[-1,1])){
 
 ### GROUPING STEP  
   history <- writeStatus (previous = history,
@@ -177,18 +175,60 @@ xset <- groupChromPeaks(xset,
 ##DATA EXPORT
   history  <- savetable(xset,
                         status = history,
-                        fill = if(tbouts["peaktable_grouped_filled"]){
+                        fill = if(outputs["peaktable_grouped","xcms_peakfilling"]){
                                   fparam}
                                else{NULL},
-                        nonfill = tbouts["peaktable_grouped"],
+                        nonfill = outputs["peaktable_grouped", "Value"],
                         filename = "peaktable_grouped.csv",
                         bparams = bparam,
-                        intensities = if((getints["peaktable_grouped"] | getints["peaktable_grouped_filled"])){mos_fparam}else{NULL},
+                        intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                         rawdata = rfiles)  
 
+  if(outputs["peaktable_grouped", "CAMERA_analysis"]){
+    
+    history <- writeStatus (previous = history,
+                            message = list(Status = "CAMERA annotation",
+                                           Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
+    
+    library(CAMERA)
+    an   <- xsAnnotate(as(xset, "xcmsSet"),
+                       nSlaves = as.integer(centWave["workers",1]),
+                       polarity = cam_param$polarity)###CHANGE POLARITY
+    
+    an <- groupFWHM(an,
+                    sigma = cam_param$sigma,
+                    perfwhm = cam_param$perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
+    #verify grouping
+    an <- groupCorr(an,
+                    cor_eic_th = cam_param$cor_eic_th,
+                    pval = cam_param$pval)
+    
+    an <- findIsotopes(an,
+                       maxcharge = cam_param$maxcharge,
+                       maxiso = cam_param$maxiso,
+                       ppm = cam_param$ppm,
+                       mzabs = cam_param$mzabs,
+                       minfrac = max(0.001,cam_param$minfrac), #minFrac of 0 throws error otherwise
+                       filter = cam_param$filter)
+    an <- findAdducts(an,
+                      ppm = cam_param$ppm,
+                      mzabs = cam_param$mzabs,
+                      polarity= cam_param$polarity)
+    peaklist <- getPeaklist(an)
+    
+    history  <- savetable(an,
+                          status = history,
+                          fill = NULL,
+                          nonfill = T,
+                          filename = "peaktable_noRTcorr_CAMERA.csv",
+                          bparams = bparam,
+                          intensities = if(outputs["peaktable_grouped", "MOSAIC_intensities"]){mos_fparam}else{NULL},
+                          rawdata = rfiles)  
+    cleanParallel(an)
+    
+  }
 
-
-if(tbouts["peaktable_grouped_Rtcorr"] | tbouts["peaktable_grouped_Rtcorr_filled"]){
+if(outputs["peaktable_grouped_Rtcorr","Value"]){
 ###RETCOR STEP
 
 history <- writeStatus (previous = history,
@@ -208,7 +248,7 @@ xset <- tryCatch(adjustRtime(xset,
 
 if(is.list(xset)){
   xset <- xset[[2]]
-  history$status[1,"Details"] <- paste("ERROR: Obiwarp failed, used PeakGroups method instead.")  #,paste(attr(xset[[1]], "result"), collapse = " ")
+  history$status[1,"Details"] <- paste("ERROR: Obiwarp failed, used PeakGroups method instead.")
   
 }
   
@@ -231,20 +271,17 @@ xset <- groupChromPeaks(xset,
 ##DATA EXPORT
 history  <- savetable(xset,
                       status = history,
-                      fill = if(tbouts["peaktable_grouped_Rtcorr_filled"]){
+                      fill = if(outputs["peaktable_grouped_Rtcorr", "xcms_peakfilling"]){
                         fparam}
                       else{NULL},
-                      nonfill = tbouts["peaktable_grouped_Rtcorr"],
+                      nonfill = outputs["peaktable_grouped_Rtcorr", "Value"],
                       filename = "peaktable_grouped_Rtcorr.csv",
                       bparams = bparam,
-                      intensities = if(getints["peaktable_grouped_Rtcorr"] | getints["peaktable_grouped_Rtcorr_filled"]){mos_fparam}else{NULL},
+                      intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                       rawdata = rfiles)  
 
-}
 
-}
-
-if(tbouts["peaktable_CAMERA"]){
+if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
   
   history <- writeStatus (previous = history,
                           message = list(Status = "CAMERA annotation",
@@ -280,12 +317,14 @@ if(tbouts["peaktable_CAMERA"]){
                         status = history,
                         fill = NULL,
                         nonfill = T,
-                        filename = "peaktable_CAMERA.csv",
+                        filename = "peaktable_RTcorr_CAMERA.csv",
                         bparams = bparam,
-                        intensities = if(getints["peaktable_CAMERA"]){mos_fparam}else{NULL},
+                        intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                         rawdata = rfiles)  
   cleanParallel(an)
   
+}
+}
 }
 
 #####################
@@ -297,6 +336,5 @@ history <- writeStatus (previous = history,
 
 error = function(e){writeStatus (previous = history,
                                          message = list(Status = "ERROR",
-                                                        Details = "An error has occured"))
-  }
+                                                        Details = paste("An error has occured:", e, collapse = " ")))  }
 )

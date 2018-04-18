@@ -111,9 +111,11 @@ observe({
     toggle(id = 'anagrouping', condition = !is.null(inputTable$df) && input$anagroupswitch)
     toggle(id = 'savegroups', condition = !is.null(inputTable$df) && input$anagroupswitch)
     toggle(id = 'loadgroups', condition = !is.null(inputTable$df) && input$anagroupswitch)
+    
     toggle(id = 'header', condition = input$toggleTabOpts)
     toggle(id = 'sep', condition = input$toggleTabOpts)
     toggle(id = 'quote', condition = input$toggleTabOpts)
+    
     toggle(id = 'loadLine', condition = !is.null(inputTable$df))
     toggle(id = 'previewH3', condition = !is.null(inputTable$df))
     toggle(id = 'intcols', condition = !is.null(inputTable$df))

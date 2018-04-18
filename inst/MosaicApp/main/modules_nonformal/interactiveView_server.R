@@ -30,15 +30,19 @@ iEIC2 <- callModule(EICmodule,"EIC2", tag = "EIC2", set= reactive({
 keys = reactive({keyin$keyd}))
 
 iSpec2 <- callModule(Specmodule,"Spec2", tag = "Spec2", 
-                     set = reactive({list(spec = list(xrange = if(is.na(iEIC2()$chrom1$mz) || is.null(iEIC2()$chrom1$mz)){
+                     set = reactive({
+                       
+                       list(spec = list(xrange = if(length(iEIC2()$chrom1$mz) < 1 || is.na(iEIC2()$chrom1$mz) || is.null(iEIC2()$chrom1$mz)){
                        NULL}
                        else{c(iEIC2()$chrom1$mz-10,iEIC2()$chrom1$mz+10)},
                                                       yrange = NULL,
                                                       maxxrange = NULL,
                                                       maxyrange = NULL,
-                                                      sel = list(File = iEIC2()$chrom1$marker$File[1],
+                                                      sel = if(length(iEIC2()$chrom1$mz) < 1 || is.na(iEIC2()$chrom1$mz) || is.null(iEIC2()$chrom1$mz)){
+                                                        NULL}
+                                                        else{list(File = iEIC2()$chrom1$marker$File[1],
                                                                  scan = iEIC2()$chrom1$marker$scan[1],
-                                                                 rt = iEIC2()$chrom1$marker$rt[1]*60),
+                                                                 rt = iEIC2()$chrom1$marker$rt[1]*60)},
                                                       data = NULL,
                                                       mz = iEIC2()$chrom1$mz),
                                           layout = list(lw = 1,
