@@ -468,6 +468,37 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
       }
       
     }
+    
+    #replacement for doubleclick zoom-in or zoom-out: press Z and click.
+    if (length(keys())>0 && keys() == 90) {
+      
+    if (!is.null(input$Netw_brush)) {
+      
+      selections$plots$net$xrange <- c(input$Netw_brush$xmin, input$Netw_brush$xmax)
+      selections$plots$net$yrange <- c(input$Netw_brush$ymin, input$Netw_brush$ymax)
+      
+    } else {
+      #switch back into overview mode on doubleclick in subgraph if full xy range is shown in current plot
+      if(selections$plots$net$xrange == selections$plots$net$maxxrange
+         && selections$plots$net$yrange == selections$plots$net$maxyrange
+         && !selections$plots$net$overview){
+        selections$plots$net$activelayout$graph <- disjoint_union(selections$plots$net$layouts$subgraphs)#selections$plots$net$graph
+        
+        #update large layout with new coords from changes in subgraphs
+        selections$plots$net$layouts$layout <- merge_coords(selections$plots$net$layouts$subgraphs, selections$plots$net$layouts$sublayouts)
+        selections$plots$net$activelayout$layout <- norm_coords(selections$plots$net$layouts$layout)
+        colnames(selections$plots$net$activelayout$layout) <- c("x", "y")
+        selections$plots$net$overview <- T
+        selections$plots$net$hover <- NULL
+        selections$plots$net$marker <- NULL
+        
+      }
+      selections$plots$net$xrange <- selections$plots$net$maxxrange
+      selections$plots$net$yrange <- selections$plots$net$maxyrange
+      
+    }
+    }
+    
   })
   
   observeEvent(input$Netw_brush,{
