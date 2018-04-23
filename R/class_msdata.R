@@ -580,7 +580,7 @@ makeScanlist <- function(splitme, MSData = NULL){
 #'  @param ppm parent mz tolerance in ppm
 #'  @param rtw parent rt tolerance in seconds
 #'
-#'
+#' @export
 Parentsearch <- function (xcmsRaws,
                           mz = c(499.11085),
                           rt = c(366.65),
@@ -591,7 +591,7 @@ Parentsearch <- function (xcmsRaws,
     
     if(length(rfile@msnPrecursorMz) > 0 ){
       sel <- which( abs((rfile@msnPrecursorMz - mz)) < ppm*mz*1e-6
-                    &  abs(rfile@msnRt - mz ) < rtw )
+                    &  abs(rfile@msnRt - rt ) < rtw )
       
       if(length(sel) >0){
         scantab <- data.frame(file = rep( basename(rfile@filepath[[1]]) ,length(sel)),

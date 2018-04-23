@@ -362,7 +362,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   observeEvent(input$Mspec_click,{
    #print("click!")
-    if (keys() == 16) {
+    if (length(keys()) >0 && keys() == 16) {
       #print("MSmarker")
       selections$plots$spec$click <- input$Mspec_click
       
@@ -383,7 +383,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
     }
     
     ###TEMPORARY FIX FOR BROKEN DOUBLECLICK, Ctrl + click
-    if (keys() == 17) {
+    if (length(keys()) >0 && keys() == 17) {
     selections$plots$spec$dblclick <- input$Mspec_dblclick
     
     ymax_old <- selections$plots$spec$ymax
@@ -1000,7 +1000,8 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
                                                                                  active = T,
                                                                                  height = 350),
                                                                    msdata = NULL),
-                            keys){
+                            keys,
+                            static = list(title = "MS spectra")){
   
   ns <- NS(tag)
   
@@ -1021,7 +1022,10 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
                                    height = 550),
                      msdata = NULL)
   
-  selections <- reactiveValues(plots = list(spec = list(keep = logical(5)),
+  selections <- reactiveValues(plots = list(spec = list(keep = logical(5),
+                                                        compare = !logical(5),
+                                                        delete = logical(5),
+                                                        active = logical(5)),
                                             sets = list("Spec1" = defaultSet,
                                                         "Spec2" = defaultSet,
                                                         "Spec3" = defaultSet,
@@ -1056,108 +1060,136 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
   })
   #unlist(sapply(setstest,"[[","layout")["active",])
   
-  observeEvent(input$checkCompare,{
-    selections$plots$global$compare <- input$checkCompare
-    if(!selections$plots$global$compare){
-      for(i in seq(length(selections$plots$sets))){
-        selections$plots$sets[[i]]$layout$highlights <- NULL
+  observeEvent(selections$plots$spec$delete,{
+    if(any(selections$plots$spec$delete)){
+      selections$plots$spec$active <- unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[", "active"))
+      
+      delnum <- which(selections$plots$spec$delete)
+      activenum <- which(selections$plots$spec$active)
+      
+      #move spectra up if the deleted one is not the last one
+      if(delnum != max(activenum)){
+        for(i in activenum[which(activenum > delnum)]){
+          selections$plots$sets[[i-1]] <- selections$plots$sets[[i]]
+          
+        }
       }
+      
+      #inactivate the deleted spectrum or the last spectrum in list if spectra were moved up
+      selections$plots$sets[[max(activenum)]]$layout$active <- FALSE
+      
+      
+      #reset deletion trigger
+      isolate(selections$plots$spec$delete[delnum] <- FALSE)
     }
   })
   
-  observeEvent(c(Spec1(),Spec2(),Spec3(),Spec4(),Spec5(),selections$plots$global$compare),{
-    #print(sapply(selections$plots$sets,"[[","layout"))
-    if(any(unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[", "active")))
-    ){
-      
-      
-      #list all spectra
-      
-      complist <- list()
-      rangelist <- list()
-      for (i in seq(length(selections$plots$sets))){
-        if (selections$plots$sets[[i]]$layout$active){
-          out <- eval(call(paste0("Spec",i)))
-          #print(out)
-          if(!is.null(out$spec$data)){
-            complist[[paste0("Spec",i)]] <- out$spec$data
-            rangelist[[paste0("Spec",i)]] <- out$spec$xrange
-          }
-        }
-      }
-      
-      
-      
-      
-      
-      if(length(complist) >0){
-        comp <- mergeMS(complist)
-        
-        selections$plots$global$maxxrange <- range(comp$merged[,1]) + c(-1,1)
-        
-        #harmonize maxxrange
-        for (i in names(complist)){
-          #print(dfr)
-          if(!all(selections$plots$sets[[i]]$spec$maxxrange == selections$plots$global$maxxrange)){
-            selections$plots$sets[[i]]$spec$maxxrange <- selections$plots$global$maxxrange
-          }
-          
-        }
-        
-        #find spectrum that has a new xrange
-        newrange <- sapply(rangelist,identical,selections$plots$global$xrange)
-        
-        if(any(!newrange)){
-          
-          newxr <- rangelist[[which(!newrange)[1]]]
-          
-          if(identical(newxr,selections$plots$global$maxxrange)){
-            
-            selections$plots$global$xrange <- NULL
-            
-            for(i in names(newrange)){
-              selections$plots$sets[[i]]$spec$xrange <- selections$plots$global$xrange
-            }
-            
-          }else{
-            #set global xrange to that new range
-            selections$plots$global$xrange <- rangelist[[which(!newrange)[1]]]
-            selections$plots$global$xrangeCache <- rangelist[[which(!newrange)[1]]]
-            
-            
-            #set all old/ different xranges to this range
-            if(length(newrange >1)){
-              for(i in names(newrange)#[which(newrange)]
-              ){
-                selections$plots$sets[[i]]$spec$xrange <- selections$plots$global$xrange
-              }
-            }
-          }
-        }
-        
-        #set comparison highlights
-        if(selections$plots$global$compare){
-          #print(comp)
-          #print(comp$intensity)
-          
-          sel <- which(comp$counts > 1)
-          if(length(sel > 0)){
-            for (i in colnames(comp$mz)){
-              
-              dfr <- data.frame(mz = na.omit(comp$mz[sel,i]),
-                                intensity = na.omit(comp$intensity[sel,i]))
-              #print(dfr)
-              if(nrow(dfr)>0){
-                selections$plots$sets[[i]]$layout$highlights <- dfr
-              }
-              
-            }
-          } 
-        }
-      }
-    }
-    #print(selections$plots$sets[[1]]$layout)
-  })
+  observeEvent(c(Spec1()$spec$data,Spec2()$spec$data,Spec3()$spec$data,Spec4()$spec$data,Spec5()$spec$data,
+                 selections$plots$global$compare, selections$plots$spec$compare),{
+                   #print(sapply(selections$plots$sets,"[[","layout"))
+                   if(any(unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[", "active")))
+                   ){
+                     
+                     #list all spectra
+                     
+                     complist <- list()
+                     rangelist <- list()
+                     for (i in seq(length(selections$plots$sets))){
+                       if (selections$plots$sets[[i]]$layout$active && selections$plots$spec$compare[i]){
+                         out <- eval(call(paste0("Spec",i)))
+                         #print(out)
+                         if(!is.null(out$spec$data)){
+                           complist[[paste0("Spec",i)]] <- out$spec$data
+                           rangelist[[paste0("Spec",i)]] <- out$spec$xrange
+                         }
+                       }
+                     }
+                     
+                     
+                     
+                     
+                     
+                     if(length(complist) >0){
+                       comp <- mergeMS(complist)
+                       
+                       selections$plots$global$maxxrange <- range(comp$merged[,1]) + c(-1,1)
+                       
+                       #harmonize maxxrange
+                       for (i in names(complist)){
+                         #print(dfr)
+                         if(!all(selections$plots$sets[[i]]$spec$maxxrange == selections$plots$global$maxxrange)){
+                           selections$plots$sets[[i]]$spec$maxxrange <- selections$plots$global$maxxrange
+                         }
+                         
+                       }
+                       
+                       #find spectrum that has a new xrange
+                       newrange <- sapply(rangelist,identical,selections$plots$global$xrange)
+                       
+                       if(any(!newrange)){
+                         
+                         newxr <- rangelist[[which(!newrange)[1]]]
+                         
+                         if(identical(newxr,selections$plots$global$maxxrange)){
+                           
+                           selections$plots$global$xrange <- NULL
+                           
+                           for(i in names(newrange)){
+                             selections$plots$sets[[i]]$spec$xrange <- selections$plots$global$xrange
+                           }
+                           
+                         }else{
+                           #set global xrange to that new range
+                           selections$plots$global$xrange <- rangelist[[which(!newrange)[1]]]
+                           selections$plots$global$xrangeCache <- rangelist[[which(!newrange)[1]]]
+                           
+                           
+                           #set all old/ different xranges to this range
+                           if(length(newrange >1)){
+                             for(i in names(newrange)#[which(newrange)]
+                             ){
+                               selections$plots$sets[[i]]$spec$xrange <- selections$plots$global$xrange
+                             }
+                           }
+                         }
+                       }
+                       
+                       #set comparison highlights
+                       if(selections$plots$global$compare){
+                         #print(comp)
+                         #print(comp$intensity)
+                         
+                         sel <- which(comp$counts > 1)
+                         if(length(sel > 0)){
+                           for (i in colnames(comp$mz)){
+                             
+                             dfr <- data.frame(mz = na.omit(comp$mz[sel,i]),
+                                               intensity = na.omit(comp$intensity[sel,i]))
+                             #print(dfr)
+                             if(nrow(dfr)>0){
+                               selections$plots$sets[[i]]$layout$highlights <- dfr
+                             }
+                             
+                           }
+                         } 
+                       }
+                     }
+                     if(!is.null(input$checkCompare)){
+                       selections$plots$global$compare <- input$checkCompare
+                     }
+                     
+                     for(i in seq(length(selections$plots$sets))){
+                       # print(selections$plots$global$compare)
+                       if(!selections$plots$global$compare 
+                          || !selections$plots$spec$compare[i] #remove highlights in spectra that are not in comparison
+                          || length(complist) == 1) #this is 0 if there is no peak in the comparison that is in more than one spectrum (e.g. if only one spectrum loaded)
+                       {
+                         selections$plots$sets[[i]]$layout$highlights <- NULL
+                       }
+                     }
+                   }
+                   #print(selections$plots$sets[[1]]$layout)
+                 })
   
   output$pdfButton <- downloadHandler(filename= function(){
     titleout <- "spectrum"
@@ -1222,9 +1254,11 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
     fluidPage(
       fluidRow(
         column(3,
+               h4(static$title)),
+        column(3,
                downloadButton(ns('pdfButton'), "Download spectra")),
         column(3,
-               checkboxInput(ns('checkCompare'), "Compare", value = selections$plots$global$compare)
+               checkboxInput(ns('checkCompare'), "allow comparisons", value = selections$plots$global$compare)
         )
         
       ),
@@ -1232,9 +1266,15 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       
       if(actives[1]){
         fluidRow(
-          
-          
-          checkboxInput(ns('checkkeep1'), "Keep", value = selections$plots$spec$keep[1])
+          column(3,
+                 actionButton(ns('removespec1'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep1'), "Keep", value = selections$plots$spec$keep[1])
+          ),
+          column(3,
+                 checkboxInput(ns('checkcompare1'), "Compare", value = selections$plots$spec$compare[1])
+                 
+          )
         )}else{NULL}
       ,
       if(actives[1]){
@@ -1244,7 +1284,14 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       ,
       if(actives[2]){
         fluidRow(
-          checkboxInput(ns('checkkeep2'), "Keep", value = selections$plots$spec$keep[2])
+          column(3,
+                 actionButton(ns('removespec2'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep2'), "Keep", value = selections$plots$spec$keep[2])),
+          column(3,
+                 checkboxInput(ns('checkcompare2'), "Compare", value = selections$plots$spec$compare[2])
+                 
+          )
           
         )}else{NULL}
       ,
@@ -1255,7 +1302,14 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       ,
       if(actives[3]){
         fluidRow(
-          checkboxInput(ns('checkkeep3'), "Keep", value = selections$plots$spec$keep[3])
+          column(3,
+                 actionButton(ns('removespec3'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep3'), "Keep", value = selections$plots$spec$keep[3])),
+          column(3,
+                 checkboxInput(ns('checkcompare3'), "Compare", value = selections$plots$spec$compare[3])
+                 
+          )
           
         )}else{NULL}
       ,
@@ -1266,7 +1320,14 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       ,
       if(actives[4]){
         fluidRow(
-          checkboxInput(ns('checkkeep4'), "Keep", value = selections$plots$spec$keep[4])
+          column(3,
+                 actionButton(ns('removespec4'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep4'), "Keep", value = selections$plots$spec$keep[4])),
+          column(3,
+                 checkboxInput(ns('checkcompare4'), "Compare", value = selections$plots$spec$compare[4])
+                 
+          )
           
         )}else{NULL}
       ,
@@ -1277,7 +1338,14 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       ,
       if(actives[5]){
         fluidRow(
-          checkboxInput(ns('checkkeep5'), "Keep", value = selections$plots$spec$keep[5])
+          column(3,
+                 actionButton(ns('removespec5'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep5'), "Keep", value = selections$plots$spec$keep[5])),
+          column(3,
+                 checkboxInput(ns('checkcompare5'), "Compare", value = selections$plots$spec$compare[5])
+                 
+          )
           
         )}else{NULL}
       ,
@@ -1317,8 +1385,44 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
   })
   
   
+  #####Compare toggle
+  observeEvent(input$checkcompare1,{
+    selections$plots$spec$compare[1] <- input$checkcompare1
+  })
+  
+  observeEvent(input$checkcompare2,{
+    selections$plots$spec$compare[2] <- input$checkcompare2
+  })
+  
+  observeEvent(input$checkcompare3,{
+    selections$plots$spec$compare[3] <- input$checkcompare3
+  })
+  
+  observeEvent(input$checkcompare4,{
+    selections$plots$spec$compare[4] <- input$checkcompare4
+  })
+  
+  observeEvent(input$checkcompare5,{
+    selections$plots$spec$compare[5] <- input$checkcompare5
+  })
+  
+  
+  observeEvent(input$removespec1,{
+    selections$plots$spec$delete[1] <- TRUE
+  })
+  observeEvent(input$removespec2,{
+    selections$plots$spec$delete[2] <- TRUE
+  })
+  observeEvent(input$removespec3,{
+    selections$plots$spec$delete[3] <- TRUE
+  })
+  observeEvent(input$removespec4,{
+    selections$plots$spec$delete[4] <- TRUE
+  })
+  observeEvent(input$removespec5,{
+    selections$plots$spec$delete[5] <- TRUE
+  })
 }
-
 #' MultiSpecmoduleUI
 #' 
 #' 

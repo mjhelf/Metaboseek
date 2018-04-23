@@ -7,7 +7,8 @@
 MultiSpecmodule(input, output, session, tag, set = list(spec = list(xrange =
   NULL, yrange = NULL, maxxrange = NULL, maxyrange = NULL, sel = NULL, mz =
   NULL, data = NULL, MS2 = T), layout = list(lw = 1, cex = 1, controls = F, ppm
-  = 5, active = T, height = 350), msdata = NULL), keys)
+  = 5, active = T, height = 350), msdata = NULL), keys, static = list(title =
+  "MS spectra"))
 }
 \arguments{
 \item{input}{}
