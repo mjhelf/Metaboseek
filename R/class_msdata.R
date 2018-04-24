@@ -433,7 +433,7 @@ subsetEICs <- function(EIClist,
 #' 
 #' @export
 mergeMS <- function(speclist,
-                    ppm = 5){
+                     ppm = 5){
   
   #set up the mergeMS object
   res <- list(mz = NULL,
@@ -469,8 +469,10 @@ mergeMS <- function(speclist,
           res$intensity[pos[,2],i] <- rest_i[pos[,1]]
           
           #keep unmatched entries for next iteration
-          rest <- rest[-pos[,1]]
-          rest_i <- rest_i[-pos[,1]]
+          if(length(pos[,1]) > 0){ #this prevents bug if there are no hits
+            rest <- rest[-pos[,1]]
+            rest_i <- rest_i[-pos[,1]]
+          }
         }
       }
       
@@ -512,10 +514,6 @@ mergeMS <- function(speclist,
     colnames(res$mz) <- basename(res$names)
     colnames(res$intensity) <- basename(res$names)
   }
-  
-  
-  
-  
   
   return(res)
   
