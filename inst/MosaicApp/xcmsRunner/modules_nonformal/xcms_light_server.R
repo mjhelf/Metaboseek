@@ -149,7 +149,7 @@ observeEvent(input$xcms_start,{
     
     #fo <- "C:/Users/mjh43/OneDrive - Cornell University/"
     runner <- system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic")
-    rpath <- file.path(R.home(component = "bin"), "Rscript ")
+    rpath <- file.path(R.home(component = "bin"), "Rscript")
                        #  file.path(getwd(),
                         #"scripts",
                         #"xcms_runner_i.R") 
@@ -158,7 +158,9 @@ observeEvent(input$xcms_start,{
     #                    "scripts",
     #                   "tester.R") 
     
-    system(paste0(rpath,
+    system(paste0( '"',
+                   rpath,
+                   '" ',
                   '"',
                   runner,
                   '" "',

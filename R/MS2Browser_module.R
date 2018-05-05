@@ -1,5 +1,3 @@
-
-
 #' MS2BrowserModule
 #' 
 #' 
@@ -38,9 +36,17 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
   })
   
   output$showNet <- renderUI({
-    #if(length(names(Graphloader()$graphs)) >0 ){
-    checkboxInput(ns('showNet'), "Show network", value = F)
-    #}
+    fluidRow(
+      column(3,
+             h4("Parent m/z search options:")),
+      column(3,
+             numericInput(ns('ppmSearch'), "m/z tolerance (ppm)", value = 5)),
+      column(3,
+             numericInput(ns('rtSearch'), "RT tolerance (seconds)", value = 60)),
+      column(3,
+             checkboxInput(ns('showNet'), "Show network options", value = F)
+      )
+    )
   })
   
   
@@ -122,9 +128,9 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
     }
   })
   
-  observeEvent(set()$query,{ 
+  observeEvent(c(input$ppmSearch,input$rtSearch,set()$query),{ 
     if(length(set()$query$mz) > 0 ){
-      dataSets$spectab <- Parentsearch(set()$MSData, mz = set()$query$mz, rt = set()$query$rt, ppm = 5, rtw = 200)
+      dataSets$spectab <- Parentsearch(set()$MSData, mz = set()$query$mz, rt = set()$query$rt, ppm = input$ppmSearch, rtw = input$rtSearch)
       
     }
   })
@@ -161,7 +167,8 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
                                                           height = 350),
                                             msdata = set()$MSData)
                        }),
-                       keys = reactive({keys()})
+                       keys = reactive({keys()}),
+                       static = list(title = "MS2 spectra")
   )
   
   
@@ -185,23 +192,21 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
 MS2BrowserModuleUI <-  function(id){
   ns <- NS(id)
   fluidPage(
-  fluidRow(
-    column(6,
-           fluidRow(
-             htmlOutput(ns('showNet'))),
-           fluidRow(
-             
-             TableModuleUI(ns('scantab'))
-           ),
-           fluidRow(
-             htmlOutput(ns("network")))
-    ),
-    column(6,
-           fluidRow(
-             MultiSpecmoduleUI(ns('Spec2'))
-           )
+    fluidRow(
+      column(6,
+             htmlOutput(ns('showNet')),
+             fluidRow(
+               
+               TableModuleUI(ns('scantab'))
+             ),
+             fluidRow(
+               htmlOutput(ns("network")))
+      ),
+      column(6,
+             fluidRow(
+               MultiSpecmoduleUI(ns('Spec2'))
+             )
+      )
     )
   )
-  )
 }
-
