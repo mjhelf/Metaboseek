@@ -430,15 +430,17 @@ subsetEICs <- function(EIClist,
 #' 
 #' @param speclist data.frame or matrix containing mz and intensity values of a spectrum (mz in column 1)
 #' @param ppm accuracy
+#' @param mergeOnly if TRUE, only the merged spectrum is returned
 #' 
 #' @export
 mergeMS <- function(speclist,
-                     ppm = 5){
+                    ppm = 5,
+                    mergeOnly = F){
   
   #set up the mergeMS object
   res <- list(mz = NULL,
               intensity = NULL,
-              spectra = speclist,
+              #spectra = speclist,
               names = names(speclist),
               counts = NULL,
               merged = NULL
@@ -463,17 +465,30 @@ mergeMS <- function(speclist,
       #commpare with all previously analyzed spectra
       for (n in seq(i-1)){
         if(length(rest) > 0){
-          dists <- sapply(res$mz[,n], "-", rest)/rest*1e6
-          pos <- which(abs(dists) < ppm, arr.ind = T)
-          res$mz[pos[,2],i] <- rest[pos[,1]]
-          res$intensity[pos[,2],i] <- rest_i[pos[,1]]
-          
-          #keep unmatched entries for next iteration
-          if(length(pos[,1]) > 0){ #this prevents bug if there are no hits
-            rest <- rest[-pos[,1]]
-            rest_i <- rest_i[-pos[,1]]
+          if(length(rest) == 1){
+            dists <- (res$mz[,n] - rest)/rest*1e6
+            pos <- which(abs(dists) < ppm, arr.ind = T)
+            
+            if(length(pos) > 0){
+              res$mz[pos,i] <- rest
+              res$intensity[pos,i] <- rest_i
+              rest <- numeric(0)
+              rest_i <- numeric(0)
+            }
+          }else{
+            dists <- sapply(res$mz[,n], "-", rest)/rest*1e6
+            pos <- which(abs(dists) < ppm, arr.ind = T)
+            res$mz[pos[,2],i] <- rest[pos[,1]]
+            res$intensity[pos[,2],i] <- rest_i[pos[,1]]
+            
+            #keep unmatched entries for next iteration
+            if(length(pos[,1]) > 0){ #this prevents bug if there are no hits
+              rest <- rest[-pos[,1]]
+              rest_i <- rest_i[-pos[,1]]
+            }
           }
         }
+        
       }
       
       if(length(rest > 0)){
@@ -509,15 +524,19 @@ mergeMS <- function(speclist,
     res$merged <- speclist[[1]]
   }
   
-  
-  if(length(res$names) == length(speclist)){
-    colnames(res$mz) <- basename(res$names)
-    colnames(res$intensity) <- basename(res$names)
+  if(mergeOnly){
+    return(res$merged)
+  }else{
+    
+    if(length(res$names) == length(speclist)){
+      colnames(res$mz) <- basename(res$names)
+      colnames(res$intensity) <- basename(res$names)
+    }
+    
+    return(res)
   }
-  
-  return(res)
-  
 }
+
 
 #' makeScanlist
 #' 
@@ -528,7 +547,6 @@ mergeMS <- function(speclist,
 #' 
 #' @export
 makeScanlist <- function(splitme, MSData = NULL){
-  
   pounds <- gregexpr('###',splitme)[[1]]
   pounds <- c(-2,pounds)
   
@@ -548,13 +566,15 @@ makeScanlist <- function(splitme, MSData = NULL){
   for(i in seq(length(subs))){
     colon <- regexpr(':',subs[i])
     scantab$file[i] <- substr(subs[i],1,colon-1)
-    
-    rawsel <- which(basename(names(MSData)) == scantab$file[i])
+    scantab$acquisition[i] <- as.integer(substr(subs[i],colon+1,nchar(subs[i])))
     
     if(!is.null(MSData) && sum(basename(names(MSData)) == scantab$file[i]) ==1){
+    rawsel <- which(basename(names(MSData)) == scantab$file[i])
+    
+    
       scantab$file[i] <- basename(names(MSData)[rawsel])
       
-      scantab$acquisition[i] <- as.integer(substr(subs[i],colon+1,nchar(subs[i])))
+      
       scantab$scan[i] <- which(MSData[[rawsel]]@msnAcquisitionNum == scantab$acquisition[i])
       scantab$rt[i] <- MSData[[rawsel]]@msnRt[scantab$scan[i]]
       scantab$parentMz[i] <- MSData[[rawsel]]@msnPrecursorMz[scantab$scan[i]]
