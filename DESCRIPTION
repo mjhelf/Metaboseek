@@ -28,5 +28,7 @@ Imports: xcms (>= 2.99),
     qgraph,
     BiocGenerics
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    covr,
+    testthat
 VignetteBuilder: knitr
