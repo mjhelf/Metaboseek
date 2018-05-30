@@ -3,7 +3,7 @@ Title: Metabolite Online Spectrum Analysis Center
 Version: 0.6.1
 Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
 Description: Access some of the best mass spectrometry data analysis tools and databases from a single, intuitive user interface, with powerful comparative metabolomics workflows!
-Depends: R (>= 3.4.0)
+Depends: R (>= 3.3.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -28,5 +28,7 @@ Imports: xcms (>= 2.99),
     qgraph,
     BiocGenerics
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    covr,
+    testthat
 VignetteBuilder: knitr

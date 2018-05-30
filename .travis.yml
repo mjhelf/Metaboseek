@@ -1,0 +1,24 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: r
+sudo: false
+cache: packages
+
+r:
+
+- oldrel
+- release
+- bioc-release
+- bioc-devel
+
+bioc_required: true
+
+branches:
+  except:
+  - devel_raw
+
+r_github_packages:
+  - r-lib/covr
+
+after_success:
+  - Rscript -e 'covr::codecov()'

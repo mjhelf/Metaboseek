@@ -4,12 +4,14 @@
 \alias{mergeMS}
 \title{mergeMS}
 \usage{
-mergeMS(speclist, ppm = 5)
+mergeMS(speclist, ppm = 5, mergeOnly = F)
 }
 \arguments{
 \item{speclist}{data.frame or matrix containing mz and intensity values of a spectrum (mz in column 1)}
 
 \item{ppm}{accuracy}
+
+\item{mergeOnly}{if TRUE, only the merged spectrum is returned}
 }
 \description{
 Merge MS spectra by combining peaks that are within a ppm distance

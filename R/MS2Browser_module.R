@@ -172,9 +172,6 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
   )
   
   
-  
-  
-  
 }
 
 #' MS2BrowserModule

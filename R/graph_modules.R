@@ -747,7 +747,7 @@ LoadNetworkModule <- function(input,output, session, tag, set = list(allowGNPS =
       g1 <- graph_from_data_frame(d=res$tables$edges, vertices=res$tables$nodes, directed=F) 
       
       
-      V(g1)$label <- V(g1)$parent.mass
+      #V(g1)$label <- V(g1)$parent.mass
       V(g1)$id <- seq(vcount(g1))
       
       # Removing loops from the graph:
