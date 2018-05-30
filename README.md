@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/mjhelf/Mosaic.svg?branch=master)](https://travis-ci.org/mjhelf/Mosaic)
+[![codecov](https://codecov.io/gh/mjhelf/Mosaic/branch/master/graph/badge.svg)](https://codecov.io/gh/mjhelf/Mosaic)
+
 # MOSAiC
 
 The Metabolite Online Sprectrum Analysis Center is here to help you analyze your mass spectrometry data!

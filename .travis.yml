@@ -8,6 +8,14 @@ r:
 
 - oldrel
 - release
+- bioc-release
+- bioc-devel
+
+bioc_required: true
+
+branches:
+  except:
+  - devel_raw
 
 r_github_packages:
   - r-lib/covr
