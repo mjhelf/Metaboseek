@@ -3,7 +3,7 @@
 language: r
 sudo: false
 cache: packages
-
+dist: trusty
 r:
 
 - oldrel
@@ -13,12 +13,44 @@ r:
 
 bioc_required: true
 
+r_packages:
+  - knitr
+  - XML
+  - plyr
+  - doParallel
+  - foreach
+  - iterators
+
+
+ r_github_packages:
+  - r-lib/covr 
+
+bioc_packages: 
+  - xcms 
+  - Rgraphviz
+  - MSnbase
+  - CAMERA
+  - mzR
+  
+apt_packages:
+  - texlive-latex-extra
+  - texlive-fonts-extra
+  - texlive-latex-recommended
+  - libnetcdf-dev
+  - netcdf-bin
+  - libhdf5-dev
+  - libxml2-dev #for XML...
+  
+# Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
+# Thanks to jimhester pointing this out!
+before_install:
+- if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
+
 branches:
   except:
   - devel_raw
 
-r_github_packages:
-  - r-lib/covr
+
 
 after_success:
   - Rscript -e 'covr::codecov()'
