@@ -92,7 +92,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                                  ),
                           intern = T, wait = F)
         
-        q()
+        q(save = "no")
                    
                    # #scriptPath <- paste0('Rscript "C:/Users/mjh43/OneDrive - Cornell University/R scripts new/devel_update_script.R" ', input$branch)
                    # 
