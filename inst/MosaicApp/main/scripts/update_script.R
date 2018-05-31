@@ -7,11 +7,11 @@ tryCatch({
   message("Mosaic version after update: ", packageVersion("Mosaic")[1])
   message(paste0("Update complete! (from ", commandArgs(trailingOnly=TRUE)[1], " branch on GitHub"))
   message("You can close this window now and restart MOSAiC.")
-  Sys.sleep(Inf)
+  Sys.sleep(10000)
 },
 error = function(e){
   warning("Installation failed. Try to install from the R console using the command:")
   message(paste0('devtools::install_github("mjhelf/Mosaic", ref ="',commandArgs(trailingOnly=TRUE)[1],'")'))
   message("You can close this window now.")
-  Sys.sleep(Inf)
+  Sys.sleep(10000)
 })
