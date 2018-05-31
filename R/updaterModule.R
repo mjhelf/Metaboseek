@@ -81,7 +81,8 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                    rpath <- file.path(R.home(component = "bin"), "Rscript")
                    
                    
-        updateVals$report <-  system(paste0(
+        #updateVals$report <-  
+          system(paste0(
                                  '"',
                                  rpath,
                                  '" ',
@@ -90,7 +91,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                                  '" ',
                                  input$branch
                                  ),
-                          intern = T, wait = F)
+                          intern = F, wait = F)
         
         q(save = "no")
                    
