@@ -6,7 +6,6 @@ cache: packages
 dist: trusty
 r:
 
-- oldrel
 - release
 - bioc-release
 - bioc-devel
@@ -31,9 +30,6 @@ bioc_packages:
   - mzR
   
 apt_packages:
-  - texlive-latex-extra
-  - texlive-fonts-extra
-  - texlive-latex-recommended
   - libnetcdf-dev
   - netcdf-bin
   - libhdf5-dev
