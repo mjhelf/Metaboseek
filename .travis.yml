@@ -11,6 +11,8 @@ r:
 - bioc-release
 - bioc-devel
 
+warnings_are_errors: false
+
 bioc_required: true
 
 r_packages:
