@@ -59,7 +59,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
           p(strong("WARNING: This will shut down the current MOSAiC session and unsaved work will be lost!")),
           p("Mosaic will shut down, and a terminal window will appear with information on the update progress."),
           actionButton(ns('startUpdate'), 'Start Update Now!'),
-          title = "Update status",
+          title = paste0('Update to latest "',input$branch,'" branch of Mosaic?'),
           easyClose = T,
           footer = modalButton("Cancel")
 
