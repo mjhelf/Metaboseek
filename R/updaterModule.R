@@ -91,7 +91,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                                  '" ',
                                  input$branch
                                  ),
-                          intern = F, wait = F)
+                          intern = F, wait = F, invisible = FALSE)
         
         q(save = "no")
                    
