@@ -45,6 +45,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
           column(2,
                  selectizeInput(ns('branch'), "Select version", choices = set$refs)),
           column(3,
+                 p(strong("WARNING: This will shut down the current MOSAiC session and unsaved work will be lost!")),
                  actionButton(ns('updatePackage'), "Update!"))
         ))
     }
@@ -72,9 +73,9 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
   
   observeEvent(input$updatePackage,{
     
-    withProgress(message = "Please wait!",
-                 detail = "Updating Mosaic...",
-                 value = 0.5, {
+    # withProgress(message = "Please wait!",
+    #              detail = "Updating Mosaic...",
+    #              value = 0.5, {
                    
                    runner <- system.file("MosaicApp", "main","scripts", "update_script.R",package = "Mosaic")
                    rpath <- file.path(R.home(component = "bin"), "Rscript")
@@ -89,43 +90,45 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                                  '" ',
                                  input$branch
                                  ),
-                          intern = T, wait = T)
+                          intern = T, wait = F)
+        
+        q()
                    
-                   #scriptPath <- paste0('Rscript "C:/Users/mjh43/OneDrive - Cornell University/R scripts new/devel_update_script.R" ', input$branch)
-                   
-                   #updateVals$report <- system(scriptPath, intern = T, wait = T)
-                   
-                   mes <- "See console output for details!"
-                   
-                   if(length(grep("Installation failed", updateVals$report))>0){
-                     mes <- p(strong("Installation failed!"), "Dependencies may have changed.
-                              View details for information on missing packages or download latest version of pre-packaged MOSAiC from",
-                              a("http://mosaic.bti.cornell.edu", href="http://mosaic.bti.cornell.edu", target="_blank"))
-                   } 
-                   if(length(grep("DONE (Mosaic)", updateVals$report, fixed = T))>0){
-                     mes <- p(strong("Mosaic updated successfully!"), "Close and restart Mosaic to use the new version.")
-                   }
-                   
-                   if(length(grep("Skipping install of 'Mosaic'", updateVals$report))>0){
-                     mes <- p(strong("Mosaic was already up-to-date!"))
-                   }
+                   # #scriptPath <- paste0('Rscript "C:/Users/mjh43/OneDrive - Cornell University/R scripts new/devel_update_script.R" ', input$branch)
+                   # 
+                   # #updateVals$report <- system(scriptPath, intern = T, wait = T)
+                   # 
+                   # mes <- "See console output for details!"
+                   # 
+                   # if(length(grep("Installation failed", updateVals$report))>0){
+                   #   mes <- p(strong("Installation failed!"), "Dependencies may have changed.
+                   #            View details for information on missing packages or download latest version of pre-packaged MOSAiC from",
+                   #            a("http://mosaic.bti.cornell.edu", href="http://mosaic.bti.cornell.edu", target="_blank"))
+                   # } 
+                   # if(length(grep("DONE (Mosaic)", updateVals$report, fixed = T))>0){
+                   #   mes <- p(strong("Mosaic updated successfully!"), "Close and restart Mosaic to use the new version.")
+                   # }
+                   # 
+                   # if(length(grep("Skipping install of 'Mosaic'", updateVals$report))>0){
+                   #   mes <- p(strong("Mosaic was already up-to-date!"))
+                   # }
                    
                  })
     
-    showModal(
-      #ns <- session$ns,
-      
-      modalDialog(
-        
-        
-        mes,
-        checkboxInput(ns('showDetails'), 'Show details', value = FALSE),
-        verbatimTextOutput(ns('updateReport')),
-        title = "Update status",
-        easyClose = T
-        
-      ))
+    # showModal(
+    #   #ns <- session$ns,
+    #   
+    #   modalDialog(
+    #     
+    #     
+    #     mes,
+    #     checkboxInput(ns('showDetails'), 'Show details', value = FALSE),
+    #     verbatimTextOutput(ns('updateReport')),
+    #     title = "Update status",
+    #     easyClose = T
+    #     
+    #   ))
     
-                 })
+                 # })
   
   }
