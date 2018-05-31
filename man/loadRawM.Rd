@@ -23,7 +23,3 @@ in memory from MS data files defined in the file list.
 \details{
 Note that there is an xcms function of the same name.
 }
-\examples{
-loadRaw(filelist)
-
-}

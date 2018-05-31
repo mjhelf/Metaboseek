@@ -48,9 +48,6 @@ updateRawLayout <- function(MSD, new.stem=NULL){
 #' 
 #' Note that there is an xcms function of the same name.
 #' 
-#' @examples
-#' loadRaw(filelist)
-#' 
 #' @param filelist a list of mzXML or mzML files (character vector)
 #' @param MSn should MSn data be read in? defaults to TRUE
 #' @param workers How many cores to use (cf. BiocParallel and SnowParam, argument only used if more than 10 files are loaded).
