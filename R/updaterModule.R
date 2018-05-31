@@ -78,7 +78,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
     #              value = 0.5, {
                    
                    runner <- system.file("MosaicApp", "main","scripts", "update_script.R",package = "Mosaic")
-                   rpath <- file.path(R.home(component = "bin"), "Rscript")
+                   rpath <- file.path(R.home(component = "bin"), "Rscript --verbose")
                    
                    
         #updateVals$report <-  
