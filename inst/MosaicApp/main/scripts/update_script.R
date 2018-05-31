@@ -5,7 +5,7 @@ tryCatch({
   devtools::install_github("mjhelf/Mosaic", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F)
   message("Mosaic version before update: ", packageVersion("Mosaic")[1])
   message("Mosaic version after update: ", packageVersion("Mosaic")[1])
-  message(paste0("Update complete! (from ", commandArgs(trailingOnly=TRUE)[1], " branch on GitHub"))
+  message(paste0("Update complete! (from ", commandArgs(trailingOnly=TRUE)[1], " branch on GitHub: https://github.com/mjhelf/Mosaic)"))
   message("You can close this window now and restart MOSAiC.")
   Sys.sleep(10000)
 },
