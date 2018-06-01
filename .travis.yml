@@ -1,15 +1,16 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-sudo: false
+sudo: required
 cache: packages
 dist: trusty
 r:
 
-- oldrel
 - release
 - bioc-release
 - bioc-devel
+
+warnings_are_errors: false
 
 bioc_required: true
 
@@ -21,10 +22,6 @@ r_packages:
   - foreach
   - iterators
 
-
- r_github_packages:
-  - r-lib/covr 
-
 bioc_packages: 
   - xcms 
   - Rgraphviz
@@ -33,9 +30,6 @@ bioc_packages:
   - mzR
   
 apt_packages:
-  - texlive-latex-extra
-  - texlive-fonts-extra
-  - texlive-latex-recommended
   - libnetcdf-dev
   - netcdf-bin
   - libhdf5-dev
@@ -46,11 +40,9 @@ apt_packages:
 before_install:
 - if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
 
-branches:
-  except:
-  - devel_raw
 
-
+r_github_packages:
+  - r-lib/covr
 
 after_success:
   - Rscript -e 'covr::codecov()'
