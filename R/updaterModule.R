@@ -89,7 +89,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                      ),
                      intern = F, wait = F, invisible = FALSE)
                    },
-                   error = function(e){
+                   warning = function(w){
                      system(paste0(
                                  '"',
                                  rpath,
