@@ -1,4 +1,4 @@
-tabBox(title = "EIC viewer",
+tabBox(title = "Data viewer",
        id = "EICplots", width = 12, side = "right", selected = "Grouped EICs",
        
        tabPanel("_"),
@@ -55,6 +55,7 @@ htmlOutput("mainPlotEICs")),
 fluidRow(
   htmlOutput("adductPlot")
 ),
+
 fluidRow(
   SpecmoduleUI("Spec1")
 )
@@ -66,6 +67,9 @@ tabPanel("Interactive View (beta)",
          ),
 tabPanel("Quickplots",
          source(file.path("modules_nonformal", "quickPlots_ui.R"), local = TRUE)$value
+),
+tabPanel("MS2 Browser",
+         MS2BrowserModuleUI('MS2B')
 )
 
 )

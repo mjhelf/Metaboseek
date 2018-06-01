@@ -258,6 +258,7 @@ observe({
 })
 
 iSpec1_feed <- eventReactive(MSData$layouts[[MSData$active]]$EICcache,{
+  
   if(!is.null(MSData$layouts[[MSData$active]]$EICcache)){
   maxI <- which.max(MSData$layouts[[MSData$active]]$EICcache[[1]][,"intmax"])
   maxsc <- which.max(MSData$layouts[[MSData$active]]$EICcache[[1]][maxI,"intensity"][[1]])
@@ -270,14 +271,16 @@ iSpec1_feed <- eventReactive(MSData$layouts[[MSData$active]]$EICcache,{
 })
 
 iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1", 
-                     set = reactive({list(spec = list(xrange = if(is.null(maintabsel())){NULL}else{c(hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]-10,
+                     set = reactive({
+                       
+                       list(spec = list(xrange = if(is.null(maintabsel())){NULL}else{c(hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]-10,
                                                                                                      hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]+10)},
                                                       yrange = NULL,
                                                       maxxrange = NULL,
                                                       maxyrange = NULL,
-                                                      sel = list(File = iSpec1_feed()$File[1],
+                                                      sel = if(!is.null(iSpec1_feed())){list(File = iSpec1_feed()$File[1],
                                                                  scan = iSpec1_feed()$scan[1],
-                                                                 rt = iSpec1_feed()$rt[1]),
+                                                                 rt = iSpec1_feed()$rt[1])}else{NULL},
                                                       data = NULL,
                                                       mz = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]}),
                                           layout = list(lw = 1,
@@ -289,3 +292,10 @@ iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1",
                      }), 
                      keys = reactive({keyin$keyd})
 )
+
+MS2Browser <- callModule(MS2BrowserModule, 'MS2B', tag = "MS2B", 
+                         set = reactive({list(MSData = MSData$data,
+                                query = list(mz = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng,"mz"]},
+                                             rt = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng,"rt"]}
+                                    ))}),
+                         keys = reactive({input$keyd}))

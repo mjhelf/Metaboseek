@@ -24,7 +24,9 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                             cex = 1,
                                                                             controls = F,
                                                                             ppm = 5,
-                                                                            active = T),
+                                                                            active = T,
+                                                                            highlights = NULL,
+                                                                            height = 550),
                                                               msdata = NULL),
                        keys){
   
@@ -35,10 +37,13 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         maxyrange = NULL, #maximum y axis range
                                                         sel = NULL, # selected feature from set() (if used)
                                                         marker = NULL, #selected peak with $mz and $intensity
+                                                        highlights = NULL, #peaks to be highlighted with $mz and $intensity
                                                         hover = NULL, #peak hovered over with $mz and $intensity
                                                         mz = NULL, 
                                                         data = NULL,
-                                                        ymax = 100),
+                                                        ymax = 100,
+                                                        MSmerge = NULL,
+                                                        fullplot = NULL),
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
@@ -46,72 +51,153 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   # observeEvent(set(),{sc()})
   sc <- reactive({
     # observe({
-    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set,set()$spec )){
+    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set, set()$spec )){
+      
+      #select file based on basename rather than full path
+      datasel <- which(basename(set()$spec$sel$File)  %in% basename(names(set()$msdata)))
       
       
-      
-      #get the MS scan
-      if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-      res <- getMsnScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
-      }else{
-        res <- getScan(set()$msdata[[set()$spec$sel$File]], set()$spec$sel$scan)
+      if(length(datasel) > 0){
         
-      }
-      #print("sc")
-      #set the maximum x axis range to cover the spectrum data
-      selections$plots$spec$maxxrange <- c(min(res[,1])-1,
-                                           max(res[,1])+1)
-      
-      #set the actual x-axis view range
-      if(is.null(selections$plots$spec$xrange) || !identical(selections$plots$set,set()$spec )){
-        selections$plots$spec$xrange <- set()$spec$xrange
-      }
-      
-      # if(is.null(selections$plots$spec$yrange)){
-      #selections$plots$spec$yrange <- set()$spec$yrange}
-      
-      
-      #maximum y axis range
-      selections$plots$spec$maxyrange <- c(0, 100)
-      
-      #save the spectrum so it can be accessed without another call to sc()
-      selections$plots$spec$data <- res
-      
-      #find maximum Y axis value (absolute intensity) within visible x- axis range
-      xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
-      selections$plots$spec$ymax <- max(selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
-                                                                             & selections$plots$spec$data[,1]<= max(xr))])
-      
-      if(is.null(selections$plots$spec$marker) || !identical(selections$plots$set,set()$spec )){
-        vispoints <- (selections$plots$spec$data[which(selections$plots$spec$data[,1]>= min(xr) 
-                                                       & selections$plots$spec$data[,1]<= max(xr)),])
-        
-        #set marker to peak closest to requested mz if within set ppm window
-        if(!is.na(set()$spec$mz) && !is.null(set()$spec$mz) && min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
-          selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
-                                                     intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
-          )
-        }else{
-          selections$plots$spec$marker <- NULL
+        if(length(set()$spec$sel$File) == 1){
+          #get the MS scan
+          
+          filesel <- which(basename(names(set()$msdata)) == basename(set()$spec$sel$File[datasel]))
+          
+          #make sure signal to other functions that the spectrum is NOT a merge product
+          selections$plots$spec$MSmerge <- NULL
+          
+          if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+            res <- getMsnScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
+          }else{
+            res <- getScan(set()$msdata[[filesel]], set()$spec$sel$scan[datasel])
+          }
         }
+        #if there is input information on more than one scan, and more than one file matches the input
+        else{
+          
+          fx <- function(MSfile, scan, MS2 = F){
+            # print(MSfile@filepath)
+            tryCatch({
+              if(MS2){
+                return(getMsnScan(MSfile, scan))
+              }else{
+                return(getScan(MSfile, scan))
+              }
+            },
+            error = function(e){NULL})
+            
+          }
+          
+          speclist <- mapply(fx,
+                             MSfile = set()$msdata[match(basename(set()$spec$sel$File[datasel]),basename(names(set()$msdata)))],
+                             scan = set()$spec$sel$scan[datasel],
+                             MoreArgs = list(MS2 = (!is.null(set()$spec$MS2) && set()$spec$MS2)))
+          
+          #remove NULL results (from errors)
+          speclist <- speclist[which(!sapply(speclist, is.null))]
+          
+          #make sure signal to other functions that the spectrum IS a merge product
+          if(length(speclist) > 1){
+            selections$plots$spec$MSmerge <- mergeMS(speclist)
+            
+            res <- selections$plots$spec$MSmerge$merged}
+          else{
+            selections$plots$spec$MSmerge <- NULL
+          }
+          
+        }          
+        #print("sc")
+        #set the maximum x axis range to cover the spectrum data
+        if(!is.null(set()$spec$maxxrange) && !identical(selections$plots$set$maxxrange,set()$spec$maxxrange)){
+          selections$plots$spec$maxxrange <- set()$spec$maxxrange
+        }else{
+          selections$plots$spec$maxxrange <- c(min(res[,1])-1,
+                                               max(res[,1])+1)
+        }
+        #set the actual x-axis view range
+        if(is.null(selections$plots$spec$xrange) || !identical(selections$plots$set,set()$spec )){
+          selections$plots$spec$xrange <- set()$spec$xrange
+        }
+        
+        # if(is.null(selections$plots$spec$yrange)){
+        #selections$plots$spec$yrange <- set()$spec$yrange}
+        
+        
+        #maximum y axis range
+        selections$plots$spec$maxyrange <- c(0, 100)
+        
+        #save the spectrum so it can be accessed without another call to sc()
+        selections$plots$spec$data <- res
+        
+        #find maximum Y axis value (absolute intensity) within visible x- axis range
+        xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
+        selections$plots$spec$ymax <- max(selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
+                                                                               & selections$plots$spec$data[,1]<= max(xr))])
+        
+        if(is.null(selections$plots$spec$marker) || !identical(selections$plots$set,set()$spec )){
+          vispoints <- (selections$plots$spec$data[which(selections$plots$spec$data[,1]>= min(xr) 
+                                                         & selections$plots$spec$data[,1]<= max(xr)),])
+          
+          #set marker to peak closest to requested mz if within set ppm window
+          if(!is.na(set()$spec$mz) && !is.null(set()$spec$mz) && min(abs(vispoints[,1] - set()$spec$mz)) <=  set()$spec$mz*set()$layout$ppm*1e-6 ){
+            selections$plots$spec$marker <- data.frame(mz = vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),1],
+                                                       intensity = (vispoints[which.min(abs(vispoints[,1] - set()$spec$mz)),2]/selections$plots$spec$ymax)*100
+            )
+          }else{
+            selections$plots$spec$marker <- NULL
+          }
+        }
+        #print(identical(selections$plots$set,set()$spec ))
+        # print(selections$plots$spec$marker)
+        
+        if(length(set()$layout$highlights) > 0){
+          selections$plots$spec$highlights <- set()$layout$highlights
+        }else{
+          selections$plots$spec$highlights <- NULL
+          
+        }
+        
+        selections$plots$set <- set()$spec
+        
+        return(res)
       }
-      #print(identical(selections$plots$set,set()$spec ))
-      # print(selections$plots$spec$marker)
-      selections$plots$set <- set()$spec
-      
-      return(res)
+    }
+  })
+  
+  observeEvent(set(),{
+    
+    if(length(set()$layout$highlights) > 0){
+      selections$plots$spec$highlights <- set()$layout$highlights
+    }else{
+      selections$plots$spec$highlights <- NULL
       
     }
+    
   })
   
   output$specinfo <- renderUI({ 
     if(set()$layout$active && !is.null(set()$spec$sel$File)){
       
+      
+      
+      
+      
+      
+      fluidRow(
       p(paste0("Marker on: ", round(as.numeric(selections$plots$spec$marker[1]), 5),
                ", Cursor on: ", round(as.numeric(selections$plots$spec$hover$mz[1]),5),
-               if(length(selections$plots$spec$hover$mz) !=0 && length(selections$plots$spec$marker) != 0){paste0(" (", 
-                                                                                                                  if(as.numeric(selections$plots$spec$hover$mz) > as.numeric(selections$plots$spec$marker$mz)){"+"}else{""},
-                                                                                                                  round(as.numeric(selections$plots$spec$hover$mz[1]) - as.numeric(selections$plots$spec$marker[1]),5), ")")}else{""}  ))
+               if(length(selections$plots$spec$hover$mz) !=0 && length(selections$plots$spec$marker) != 0){
+                 paste0(" (",
+                        if(as.numeric(selections$plots$spec$hover$mz) > as.numeric(selections$plots$spec$marker$mz)){"+"}else{""},
+                          round(as.numeric(selections$plots$spec$hover$mz[1]) - as.numeric(selections$plots$spec$marker[1]),5), ")")}else{""}))
+               
+      # if(length(set()$spec$sel$File) >1){
+      #            p("Scans:", paste(coll, collapse = ", "))
+      # }else{
+      #            a()
+      #          }
+      )     
       
     }
     
@@ -120,26 +206,52 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$specAll <- renderUI({
-    if(!is.null(set()$layout$active) && set()$layout$active){
+    if(length(set()$layout$active) > 0 && set()$layout$active){
+      
+      #if(length(set()$spec$sel$File) >1){
+      #select file based on basename rather than full path
+      filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
+      
+      
+        #get the precursors
+        if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+          acn <- round(mapply("[",lapply(set()$msdata[filesel],slot,"msnAcquisitionNum"),set()$spec$sel$scan),5)
+        }else{
+          acn <- round(mapply("[",lapply(set()$msdata[filesel],slot,"acquisitionNum"),set()$spec$sel$scan),5)
+        }
+        
+        coll <- character(0)
+        for(i in unique(basename(names(set()$msdata))[filesel])){
+          coll <- c(coll, paste0(i,"#",paste(acn[which(basename(names(set()$msdata))[filesel] == i)], collapse = "/")))
+        }
+        coll <- sort(coll)
+     # }
+      
+      
+      
       fluidPage(
         fluidRow(
+          tags$div(title = paste("Scans:", paste(coll, collapse = ", ")),
           plotOutput(ns("Mspec"),
-                     click = ns("Mspec_click"),
+                     click = clickOpts(ns("Mspec_click"), clip = T),
                      hover = hoverOpts(id = ns("Mspec_hover"),
                                        delay = 150),
-                     dblclick = ns("Mspec_dblclick"),
+                     dblclick = dblclickOpts(id = ns("Mspec_dblclick"),clip = F, delay = 400),
                      brush = brushOpts(
                        id = ns("Mspec_brush"),
                        #direction = "x",
                        resetOnNew = TRUE),
-                     height = "550px"
-          ),
+                     height = if(is.null(set()$layout$height)){"550px"}else{paste0(set()$layout$height,"px")}
+          )
+          )),
           htmlOutput(ns("specinfo"))
           
-        )
+        
       )
     }
   })
+  
+  
   
   
   output$Mspec <- renderPlot({
@@ -152,23 +264,65 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       yinview <- selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
                                                       & selections$plots$spec$data[,1]<= max(xr))]
       
+      #select file based on basename rather than full path
+      filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
+      
+      #get the precursors
+      prec <- round(mapply("[",lapply(set()$msdata[filesel],slot,"msnPrecursorMz"),set()$spec$sel$scan),5)
+      
+      
+      label <- if(length(set()$spec$sel$File) >0){
+        if(length(set()$spec$sel$File) == 1){
+        paste0(basename(set()$spec$sel$File), "#", 
+               if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+                 set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
+               }
+               else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]},
+               " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)",
+               if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+                 paste0("\nParent m/z: ", prec)}else{""},
+                 collapse = " ")}
+        
+              #more than one scan:
+        else{
+        if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+          paste0(
+             "Average of ",
+            length(set()$spec$sel$rt), " MS2 spectra (RT: ",
+            min(round(as.numeric(set()$spec$sel$rt)/60,2)),
+            " - ",
+            max(round(as.numeric(set()$spec$sel$rt)/60,2)),
+            " min)",
+            "\nParent m/z: ", min(prec), " - ", max(prec) )
+            
+      }else{
+          
+        paste0(
+          "Average of ",
+          length(set()$spec$sel$rt), " MS spectra (RT: ",
+          min(round(as.numeric(set()$spec$sel$rt)/60,2)),
+          " - ",
+          max(round(as.numeric(set()$spec$sel$rt)/60,2)),
+          " min)"
+        )
+        }
+        }
+        }else{""}
+      
+      
+      
       specplot(x=selections$plots$spec$data[,1],
                y=selections$plots$spec$data[,2],
                norm=selections$plots$spec$ymax/100,
                cx=set()$layout$cex/1.5,
                k = 20,
-               fileName = paste0(basename(set()$spec$sel$File), "#", 
-                                 if(!is.null(set()$spec$MS2) && set()$spec$MS2){
-                                   set()$msdata[[set()$spec$sel$File]]@msnAcquisitionNum[set()$spec$sel$scan]
-                                 }
-                                 else{set()$msdata[[set()$spec$sel$File]]@acquisitionNum[set()$spec$sel$scan]},
-                                 " (", round(as.numeric(set()$spec$sel$rt)/60,3), " min / ", round(as.numeric(set()$spec$sel$rt),1), " sec)"),
+               fileName = label,
                yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
                xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
                maxi = selections$plots$spec$ymax
       ) 
       
-      
+      par(xpd = FALSE)
       if(!is.null(selections$plots$spec$hover)){
         
         points(selections$plots$spec$hover$mz,
@@ -187,8 +341,18 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       
       
+      if(!is.null(selections$plots$spec$highlights)){
+        
+        points(selections$plots$spec$highlights$mz,
+               selections$plots$spec$highlights$intensity/(selections$plots$spec$ymax/100),
+               bty = "n", type = "h", lwd = 5, col = "#6A88C380")
+        
+      }
+      
+      selections$plots$spec$fullplot <- recordPlot()
+      
     }
-  }, height = 550)
+  })#, height = if(is.null(set()$layout$height)){550}else{set()$layout$height})
   
   
   
@@ -197,7 +361,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   # })  
   
   observeEvent(input$Mspec_click,{
-    if (keys() == 16) {
+   #print("click!")
+    if (length(keys()) >0 && keys() == 16) {
       #print("MSmarker")
       selections$plots$spec$click <- input$Mspec_click
       
@@ -216,11 +381,54 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       #selections$lastChangedEIC <- "spec1"
     }
+    
+    ###TEMPORARY FIX FOR BROKEN DOUBLECLICK, Ctrl + click
+    if (length(keys()) >0 && keys() == 17) {
+    selections$plots$spec$dblclick <- input$Mspec_dblclick
+    
+    ymax_old <- selections$plots$spec$ymax
+    
+    if (!is.null(input$Mspec_brush)) {
+      
+      #print(input$Mspec_brush)
+      
+      
+      selections$plots$spec$xrange <- c(input$Mspec_brush$xmin, input$Mspec_brush$xmax)
+      
+      #intensity values in the current x-axis range view 
+      xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
+      
+      #intensity values in the current x-axis range view - avoiding div by 0
+      selections$plots$spec$ymax <- max(c(1,selections$plots$spec$data[,2][which(selections$plots$spec$data[,1]>= min(xr) 
+                                                                                 & selections$plots$spec$data[,1]<= max(xr))]))
+      
+      
+      
+      selections$plots$spec$yrange <- c(0, min(c(100,input$Mspec_brush$ymax*(ymax_old/selections$plots$spec$ymax))))
+      if(!is.null(selections$plots$spec$marker)){
+        selections$plots$spec$marker$intensity <-min(c(100,selections$plots$spec$marker$intensity*(ymax_old/selections$plots$spec$ymax)))
+      }
+    } else {
+      selections$plots$spec$xrange <- selections$plots$spec$maxxrange
+      selections$plots$spec$yrange <- selections$plots$spec$maxyrange
+      
+      #intensity values in the current x-axis range view - avoiding div by 0
+      selections$plots$spec$ymax <- max(c(1,selections$plots$spec$data[,2]))
+      
+      if(!is.null(selections$plots$spec$marker)){
+        selections$plots$spec$marker$intensity <-min(c(100,selections$plots$spec$marker$intensity*(ymax_old/selections$plots$spec$ymax)))
+      }
+    
+    }
+    }
+    
+    
   })
   
   
   
   observeEvent(input$Mspec_hover,{
+    #print("hover!")
     if(is.null(input$Mspec_brush)){
       #print(input$Mspec_hover)
       temp <- as.data.frame(selections$plots$spec$data)
@@ -240,14 +448,14 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   })
   
   observeEvent(input$Mspec_dblclick, {
-    
+   # print("doubleclick!")
     selections$plots$spec$dblclick <- input$Mspec_dblclick
     
     ymax_old <- selections$plots$spec$ymax
     
     if (!is.null(input$Mspec_brush)) {
       
-      
+      #print(input$Mspec_brush)
       
       
       selections$plots$spec$xrange <- c(input$Mspec_brush$xmin, input$Mspec_brush$xmax)
@@ -643,6 +851,40 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
         #initiate sc()
         #sc()
       }
+      
+      
+      ###TEMPORARY FIX FOR BROKEN DOUBLECLICK, Ctrl + click
+
+      if (keys() == 17) {
+      if (!is.null(input$plainplot_brush)) {
+        
+        
+        selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
+        
+        if(input$EicTic){
+          ymax <- max(sEICsDF()$tic[which(sEICsDF()$rt <= input$plainplot_brush$xmax
+                                          & sEICsDF()$rt >= input$plainplot_brush$xmin)])
+        }else{
+          ymax <- max(sEICsDF()$intensity[which(sEICsDF()$rt <= input$plainplot_brush$xmax
+                                                & sEICsDF()$rt >= input$plainplot_brush$xmin)])
+        }
+        
+        selectionsEIC$plots[['chrom1']]$yrange <- c(input$plainplot_brush$ymin, min(ymax,input$plainplot_brush$ymax))
+        
+      } else {
+        # print("dblcklick")
+        
+        selectionsEIC$plots[['chrom1']]$xrange <- selectionsEIC$plots[['chrom1']]$maxxrange
+        selectionsEIC$plots[['chrom1']]$yrange <- selectionsEIC$plots[['chrom1']]$maxyrange
+      }
+      }
+      
+      
+      
+      
+      
+      
+      
     }
   })
   
@@ -661,8 +903,10 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
   
   observeEvent(input$plainplot_dblclick, {
     if(set()$active){
+      
       if (!is.null(input$plainplot_brush)) {
-        #print(sEICsDF())
+        
+        
         selectionsEIC$plots[['chrom1']]$xrange <- c(input$plainplot_brush$xmin, input$plainplot_brush$xmax)
         
         if(input$EicTic){
@@ -727,4 +971,467 @@ EICmoduleUI <- function(id){
   ns <- NS(id)
   htmlOutput(ns('EICout'))
   
+}
+
+#' MultiSpecmodule
+#' 
+#' 
+#' server module for multiple interactive mass spectrum views
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param tag id to be used in ns()
+#' @param set Import data from the shiny session
+#' 
+#' @export 
+MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(xrange = NULL,
+                                                                               yrange = NULL,
+                                                                               maxxrange = NULL,
+                                                                               maxyrange = NULL,
+                                                                               sel = NULL,
+                                                                               mz = NULL,
+                                                                               data = NULL,
+                                                                               MS2 = T),
+                                                                   layout = list(lw = 1,
+                                                                                 cex = 1,
+                                                                                 controls = F,
+                                                                                 ppm = 5,
+                                                                                 active = T,
+                                                                                 height = 350),
+                                                                   msdata = NULL),
+                            keys,
+                            static = list(title = "MS spectra")){
+  
+  ns <- NS(tag)
+  
+  defaultSet <- list(spec = list(xrange = NULL,
+                                 yrange = NULL,
+                                 maxxrange = NULL,
+                                 maxyrange = NULL,
+                                 sel = NULL,
+                                 mz = NULL,
+                                 data = NULL,
+                                 MS2 = T),
+                     layout = list(lw = 1,
+                                   cex = 1,
+                                   controls = F,
+                                   ppm = 5,
+                                   active = F,
+                                   highlights = NULL,
+                                   height = 550),
+                     msdata = NULL)
+  
+  selections <- reactiveValues(plots = list(spec = list(keep = logical(5),
+                                                        compare = !logical(5),
+                                                        delete = logical(5),
+                                                        active = logical(5)),
+                                            sets = list("Spec1" = defaultSet,
+                                                        "Spec2" = defaultSet,
+                                                        "Spec3" = defaultSet,
+                                                        "Spec4" = defaultSet,
+                                                        "Spec5" = defaultSet),
+                                            global = list(xranges = NULL,
+                                                          yranges = NULL,
+                                                          maxxrange = NULL,
+                                                          maxyranges = NULL,
+                                                          height = 550,
+                                                          compare = T)#copies of set() to check if set() has changed
+  )
+  )
+  
+  observeEvent(set(),{
+    if(set()$layout$active && !is.null(set()$spec$sel$File) 
+       #&& !identical(selections$plots$set,set()$spec )
+    ){
+      selSpec <- which(!selections$plots$spec$keep)
+      
+      if(length(selSpec) > 0 ){
+        selections$plots$sets[[selSpec[1]]]$spec <- set()$spec
+        selections$plots$sets[[selSpec[1]]]$layout <- set()$layout
+        selections$plots$sets[[selSpec[1]]]$msdata <- set()$msdata
+        
+        selections$plots$sets[[selSpec[1]]]$spec$maxxrange <- selections$plots$global$maxxrange
+      }
+      
+      #print(selections$plots$sets[[1]]$spec)
+    }
+    
+  })
+  #unlist(sapply(setstest,"[[","layout")["active",])
+  
+  observeEvent(selections$plots$spec$delete,{
+    if(any(selections$plots$spec$delete)){
+      selections$plots$spec$active <- unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[", "active"))
+      
+      delnum <- which(selections$plots$spec$delete)
+      activenum <- which(selections$plots$spec$active)
+      
+      #move spectra up if the deleted one is not the last one
+      if(delnum != max(activenum)){
+        for(i in activenum[which(activenum > delnum)]){
+          selections$plots$sets[[i-1]] <- selections$plots$sets[[i]]
+          
+        }
+      }
+      
+      #inactivate the deleted spectrum or the last spectrum in list if spectra were moved up
+      selections$plots$sets[[max(activenum)]]$layout$active <- FALSE
+      
+      
+      #reset deletion trigger
+      isolate(selections$plots$spec$delete[delnum] <- FALSE)
+    }
+  })
+  
+  observeEvent(c(Spec1()$spec$data,Spec2()$spec$data,Spec3()$spec$data,Spec4()$spec$data,Spec5()$spec$data,
+                 selections$plots$global$compare, selections$plots$spec$compare),{
+                   #print(sapply(selections$plots$sets,"[[","layout"))
+                   if(any(unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[", "active")))
+                   ){
+                     
+                     #list all spectra
+                     
+                     complist <- list()
+                     rangelist <- list()
+                     for (i in seq(length(selections$plots$sets))){
+                       if (selections$plots$sets[[i]]$layout$active && selections$plots$spec$compare[i]){
+                         out <- eval(call(paste0("Spec",i)))
+                         #print(out)
+                         if(!is.null(out$spec$data)){
+                           complist[[paste0("Spec",i)]] <- out$spec$data
+                           rangelist[[paste0("Spec",i)]] <- out$spec$xrange
+                         }
+                       }
+                     }
+                     
+                     
+                     
+                     
+                     
+                     if(length(complist) >0){
+                       comp <- mergeMS(complist)
+                       
+                       selections$plots$global$maxxrange <- range(comp$merged[,1]) + c(-1,1)
+                       
+                       #harmonize maxxrange
+                       for (i in names(complist)){
+                         #print(dfr)
+                         if(!all(selections$plots$sets[[i]]$spec$maxxrange == selections$plots$global$maxxrange)){
+                           selections$plots$sets[[i]]$spec$maxxrange <- selections$plots$global$maxxrange
+                         }
+                         
+                       }
+                       
+                       #find spectrum that has a new xrange
+                       newrange <- sapply(rangelist,identical,selections$plots$global$xrange)
+                       
+                       if(any(!newrange)){
+                         
+                         newxr <- rangelist[[which(!newrange)[1]]]
+                         
+                         if(identical(newxr,selections$plots$global$maxxrange)){
+                           
+                           selections$plots$global$xrange <- NULL
+                           
+                           for(i in names(newrange)){
+                             selections$plots$sets[[i]]$spec$xrange <- selections$plots$global$xrange
+                           }
+                           
+                         }else{
+                           #set global xrange to that new range
+                           selections$plots$global$xrange <- rangelist[[which(!newrange)[1]]]
+                           selections$plots$global$xrangeCache <- rangelist[[which(!newrange)[1]]]
+                           
+                           
+                           #set all old/ different xranges to this range
+                           if(length(newrange >1)){
+                             for(i in names(newrange)#[which(newrange)]
+                             ){
+                               selections$plots$sets[[i]]$spec$xrange <- selections$plots$global$xrange
+                             }
+                           }
+                         }
+                       }
+                       
+                       #set comparison highlights
+                       if(selections$plots$global$compare){
+                         #print(comp)
+                         #print(comp$intensity)
+                         
+                         sel <- which(comp$counts > 1)
+                         if(length(sel > 0)){
+                           for (i in colnames(comp$mz)){
+                             
+                             dfr <- data.frame(mz = na.omit(comp$mz[sel,i]),
+                                               intensity = na.omit(comp$intensity[sel,i]))
+                             #print(dfr)
+                             if(nrow(dfr)>0){
+                               selections$plots$sets[[i]]$layout$highlights <- dfr
+                             }
+                             
+                           }
+                         } 
+                       }
+                     }
+                     if(!is.null(input$checkCompare)){
+                       selections$plots$global$compare <- input$checkCompare
+                     }
+                     
+                     for(i in seq(length(selections$plots$sets))){
+                       # print(selections$plots$global$compare)
+                       if(!selections$plots$global$compare 
+                          || !selections$plots$spec$compare[i] #remove highlights in spectra that are not in comparison
+                          || length(complist) == 1) #this is 0 if there is no peak in the comparison that is in more than one spectrum (e.g. if only one spectrum loaded)
+                       {
+                         selections$plots$sets[[i]]$layout$highlights <- NULL
+                       }
+                     }
+                   }
+                   #print(selections$plots$sets[[1]]$layout)
+                 })
+  
+  output$pdfButton <- downloadHandler(filename= function(){
+    titleout <- "spectrum"
+    
+    return(paste0(titleout,".pdf"))}, 
+    content = function(file){
+      
+      pdf(file,
+          14,6
+      )
+      
+      if(any(unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[","active")))){
+        for (i in seq(length(selections$plots$sets))){
+          
+          if (selections$plots$sets[[i]]$layout$active){
+            out <- eval(call(paste0("Spec",i)))
+            if(!is.null(out$spec$fullplot)){
+              replayPlot(out$spec$fullplot)
+            }
+          }
+        }
+      }
+      #replayPlot(selections$plots$spec$fullplot)
+      dev.off()
+      
+    },
+    
+    
+    
+    contentType = "application/pdf")
+  
+  
+  Spec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"),
+                      set = reactive({selections$plots$sets[[1]]}),
+                      keys = reactive({keys()})
+  )
+  
+  Spec2 <- callModule(Specmodule,"Spec2", tag = ns("Spec2"),
+                      set = reactive({selections$plots$sets[[2]]}),
+                      keys = reactive({keys()})
+  )
+  
+  Spec3 <- callModule(Specmodule,"Spec3", tag = ns("Spec3"),
+                      set = reactive({selections$plots$sets[[3]]}),
+                      keys = reactive({keys()})
+  )
+  
+  Spec4 <- callModule(Specmodule,"Spec4", tag = ns("Spec4"),
+                      set = reactive({selections$plots$sets[[4]]}),
+                      keys = reactive({keys()})
+  )
+  
+  Spec5 <- callModule(Specmodule,"Spec5", tag = ns("Spec5"),
+                      set = reactive({selections$plots$sets[[5]]}),
+                      keys = reactive({keys()})
+  )
+  
+  output$multiOut <-renderUI({
+    
+    actives <- unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[","active"))
+    
+    fluidPage(
+      fluidRow(
+        column(3,
+               h4(static$title)),
+        column(3,
+               downloadButton(ns('pdfButton'), "Download spectra")),
+        column(3,
+               checkboxInput(ns('checkCompare'), "allow comparisons", value = selections$plots$global$compare)
+        )
+        
+      ),
+      
+      
+      if(actives[1]){
+        fluidRow(
+          column(3,
+                 actionButton(ns('removespec1'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep1'), "Keep", value = selections$plots$spec$keep[1])
+          ),
+          column(3,
+                 checkboxInput(ns('checkcompare1'), "Compare", value = selections$plots$spec$compare[1])
+                 
+          )
+        )}else{NULL}
+      ,
+      if(actives[1]){
+        fluidRow(
+          SpecmoduleUI(ns('Spec1'))
+        )}else{NULL}
+      ,
+      if(actives[2]){
+        fluidRow(
+          column(3,
+                 actionButton(ns('removespec2'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep2'), "Keep", value = selections$plots$spec$keep[2])),
+          column(3,
+                 checkboxInput(ns('checkcompare2'), "Compare", value = selections$plots$spec$compare[2])
+                 
+          )
+          
+        )}else{NULL}
+      ,
+      if(actives[2]){
+        fluidRow(
+          SpecmoduleUI(ns('Spec2'))
+        )}else{NULL}
+      ,
+      if(actives[3]){
+        fluidRow(
+          column(3,
+                 actionButton(ns('removespec3'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep3'), "Keep", value = selections$plots$spec$keep[3])),
+          column(3,
+                 checkboxInput(ns('checkcompare3'), "Compare", value = selections$plots$spec$compare[3])
+                 
+          )
+          
+        )}else{NULL}
+      ,
+      if(actives[3]){
+        fluidRow(
+          SpecmoduleUI(ns('Spec3'))
+        )}else{NULL}
+      ,
+      if(actives[4]){
+        fluidRow(
+          column(3,
+                 actionButton(ns('removespec4'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep4'), "Keep", value = selections$plots$spec$keep[4])),
+          column(3,
+                 checkboxInput(ns('checkcompare4'), "Compare", value = selections$plots$spec$compare[4])
+                 
+          )
+          
+        )}else{NULL}
+      ,
+      if(actives[4]){
+        fluidRow(
+          SpecmoduleUI(ns('Spec4'))
+        )}else{NULL}
+      ,
+      if(actives[5]){
+        fluidRow(
+          column(3,
+                 actionButton(ns('removespec5'), "Remove")),
+          column(3,
+                 checkboxInput(ns('checkkeep5'), "Keep", value = selections$plots$spec$keep[5])),
+          column(3,
+                 checkboxInput(ns('checkcompare5'), "Compare", value = selections$plots$spec$compare[5])
+                 
+          )
+          
+        )}else{NULL}
+      ,
+      if(actives[5]){
+        fluidRow(
+          SpecmoduleUI(ns('Spec5'))
+        )}else{NULL}
+      
+      
+    )
+  })
+  
+  observeEvent(input$checkkeep1,{
+    selections$plots$spec$keep[1] <- input$checkkeep1
+    #selections$plots$sets[[1]]$spec$layout$active <- input$checkkeep1
+    
+  })
+  
+  observeEvent(input$checkkeep2,{
+    selections$plots$spec$keep[2] <- input$checkkeep2
+    
+  })
+  
+  observeEvent(input$checkkeep3,{
+    selections$plots$spec$keep[3] <- input$checkkeep3
+    
+  })
+  
+  observeEvent(input$checkkeep4,{
+    selections$plots$spec$keep[4] <- input$checkkeep4
+    
+  })
+  
+  observeEvent(input$checkkeep5,{
+    selections$plots$spec$keep[5] <- input$checkkeep5
+    
+  })
+  
+  
+  #####Compare toggle
+  observeEvent(input$checkcompare1,{
+    selections$plots$spec$compare[1] <- input$checkcompare1
+  })
+  
+  observeEvent(input$checkcompare2,{
+    selections$plots$spec$compare[2] <- input$checkcompare2
+  })
+  
+  observeEvent(input$checkcompare3,{
+    selections$plots$spec$compare[3] <- input$checkcompare3
+  })
+  
+  observeEvent(input$checkcompare4,{
+    selections$plots$spec$compare[4] <- input$checkcompare4
+  })
+  
+  observeEvent(input$checkcompare5,{
+    selections$plots$spec$compare[5] <- input$checkcompare5
+  })
+  
+  
+  observeEvent(input$removespec1,{
+    selections$plots$spec$delete[1] <- TRUE
+  })
+  observeEvent(input$removespec2,{
+    selections$plots$spec$delete[2] <- TRUE
+  })
+  observeEvent(input$removespec3,{
+    selections$plots$spec$delete[3] <- TRUE
+  })
+  observeEvent(input$removespec4,{
+    selections$plots$spec$delete[4] <- TRUE
+  })
+  observeEvent(input$removespec5,{
+    selections$plots$spec$delete[5] <- TRUE
+  })
+}
+#' MultiSpecmoduleUI
+#' 
+#' 
+#' UI module for interactive view of multiple spectra
+#' 
+#' @param id id to be used in ns()
+#' 
+#' @export
+MultiSpecmoduleUI <-  function(id){
+  ns <- NS(id)
+  htmlOutput(ns("multiOut"))
 }

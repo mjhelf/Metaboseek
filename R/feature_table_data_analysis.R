@@ -144,7 +144,7 @@ foldChange <- function(mx,
         out[[paste0(barename,"__minFoldOver_")]] <- rmins[,i]/rmaxes[,which(colnames(rmaxes)!=i)]
       }else{
         out[[paste0(barename,"__foldOverRest")]] <- if(length(colnames(rmeans)) >2){
-          unname(rowMeans(removeNaNs(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)])))
+          unname(removeNaNs(rmeans[,i]/rowMeans(rmeans[,which(colnames(rmeans)!=i)])))
         }else{
           unname(rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)])
         }

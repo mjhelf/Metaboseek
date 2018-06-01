@@ -39,6 +39,12 @@ observeEvent(input$xcms_settingsLoad$datapath,{
   }
   xcmsSettings$wd <- get_common_dir(xcmsSettings$params$filegroups$File)
   
+  #if an old outputs.csv file is loaded, replace it with the new default.
+  if(ncol(xcmsSettings$params$outputs) < 5) {
+    xcmsSettings$params$outputs <- read.csv(system.file("MosaicApp", "xcmsRunner","defaults", "outputs.csv",package = "Mosaic"),
+                                   row.names = 1,
+                                   stringsAsFactors = F)
+  }
 })
 
 
@@ -143,7 +149,7 @@ observeEvent(input$xcms_start,{
     
     #fo <- "C:/Users/mjh43/OneDrive - Cornell University/"
     runner <- system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic")
-    rpath <- file.path(R.home(component = "bin"), "Rscript ")
+    rpath <- file.path(R.home(component = "bin"), "Rscript")
                        #  file.path(getwd(),
                         #"scripts",
                         #"xcms_runner_i.R") 
@@ -152,7 +158,9 @@ observeEvent(input$xcms_start,{
     #                    "scripts",
     #                   "tester.R") 
     
-    system(paste0(rpath,
+    system(paste0( '"',
+                   rpath,
+                   '" ',
                   '"',
                   runner,
                   '" "',
@@ -188,6 +196,7 @@ output$xcms_settingstab <- renderRHandsontable({
                           row.names = row.names(xcmsSettings$params[[xcmsSettings$active]]))
   colnames(showme) <- colnames(xcmsSettings$params[[xcmsSettings$active]])[which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")]
   
+ #special readOnly for some fields in outputs
   rhandsontable(showme,
                 readOnly = F,
                 contextMenu = T,
@@ -199,19 +208,11 @@ output$xcms_settingstab <- renderRHandsontable({
                 digits = 8,
                 highlightCol = TRUE,
                 highlightRow = TRUE,
-                rowHeaderWidth = 200)# %>%
-  #hot_col("Value", readOnly = FALSE)%>%
-  #hot_col("Group", readOnly = FALSE)%>%
-  #hot_col("MOSAIC_intensities", readOnly = FALSE)%>%
-  # hot_cols(columnSorting = FALSE,format="0.000000")%>%
-  #hot_cols(fixedColumnsLeft = 3)%>%
-  #  hot_cols(columnSorting = TRUE)%>%
-  #hot_col("em",format="0.000000")%>%
-  #hot_cols(renderer = "
-  #        function(instance, td, row, col, prop, value, cellProperties) {
-  #       Handsontable.TextCell.renderer.apply(this, arguments);
-  #      td.style.color = 'black';
-  #     }")
+                rowHeaderWidth = 200) %>%
+  hot_cell(1,"MOSAIC_intensities", readOnly = T)%>%
+    hot_cell(1,"xcms_peakfilling", readOnly = T)%>%
+    hot_cell(1,"CAMERA_analysis", readOnly = T)
+  
 })
 
 
