@@ -58,6 +58,8 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
         modalDialog(
           p(strong("WARNING: This will shut down the current MOSAiC session and unsaved work will be lost!")),
           p("Mosaic will shut down, and a terminal window will appear with information on the update progress."),
+          p("The terminal Window may not show up on Linux or macOS systems. In that case, check after a few minutes if the update has worked."),
+          
           actionButton(ns('startUpdate'), 'Start Update Now!'),
           title = paste0('Update to latest "',input$branch,'" branch of Mosaic?'),
           easyClose = T,
@@ -73,7 +75,22 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                    rpath <- file.path(R.home(component = "bin"), "Rscript")
                    
                    
-               system(paste0(
+                   
+                   tryCatch({
+                     system(paste0(
+                       "xterm -e ",
+                       '"',
+                       rpath,
+                       '"  --verbose ',
+                       '"',
+                       runner,
+                       '" ',
+                       input$branch
+                     ),
+                     intern = F, wait = F, invisible = FALSE)
+                   },
+                   error = function(e){
+                     system(paste0(
                                  '"',
                                  rpath,
                                  '"  --verbose ',
@@ -83,6 +100,9 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
                                  input$branch
                                  ),
                           intern = F, wait = F, invisible = FALSE)
+                                        })
+                   
+               
         
         q(save = "no")
                   
