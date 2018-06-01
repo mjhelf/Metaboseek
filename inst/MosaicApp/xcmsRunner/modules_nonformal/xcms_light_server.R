@@ -115,8 +115,6 @@ output$xcms_selectTab <- renderUI({selectizeInput('xcms_selectTab',"Change setti
 )})
 
 observeEvent(input$xcms_selectTab,{
-  #print(xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")])
-  #print(input$xcms_settingstab)
   if(!is.null(input$xcms_settingstab) && nrow(hot_to_r(input$xcms_settingstab)) != 0){
     xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
   }  
@@ -137,7 +135,7 @@ observeEvent(input$xcms_start,{
     
     write.csv(data.frame(X=1,Time=0,Status="",Details="",elapsed_time=0), file = file.path(fo,"status.csv"))
     xcmsSettings$jobs <- c(xcmsSettings$jobs, fo)
-    file.copy(system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic"),fo)
+    file.copy(system.file("MosaicApp", "main","scripts", "xcms_runner_i.R",package = "Mosaic"),fo)
     
     for(i in 1:length(xcmsSettings$params)){
       write.csv(xcmsSettings$params[[i]], file = file.path(fo,paste0(names(xcmsSettings$params)[i],".csv")), row.names = T)
@@ -145,19 +143,10 @@ observeEvent(input$xcms_start,{
     
     
     zip(file.path(fo,"settings.zip"), file.path(fo, c(paste0(names(xcmsSettings$params),".csv"))), flags = "-j")
-    #file.remove(file.path(fo,names(xcmsSettings$params))) #note: better delete files from the runner if necessary
-    
-    #fo <- "C:/Users/mjh43/OneDrive - Cornell University/"
-    runner <- system.file("MosaicApp", "xcmsRunner","scripts", "xcms_runner_i.R",package = "Mosaic")
+
+    runner <- system.file("MosaicApp", "main","scripts", "xcms_runner_i.R",package = "Mosaic")
     rpath <- file.path(R.home(component = "bin"), "Rscript")
-                       #  file.path(getwd(),
-                        #"scripts",
-                        #"xcms_runner_i.R") 
-    
-    # runner <- file.path("C:/Users/mjh43/OneDrive - Cornell University/R scripts new/Mosaic/xcms standalone",
-    #                    "scripts",
-    #                   "tester.R") 
-    
+
     system(paste0( '"',
                    rpath,
                    '" ',
@@ -165,8 +154,6 @@ observeEvent(input$xcms_start,{
                   runner,
                   '" "',
                   fo,
-                  #'" "',
-                  #getwd(),
                   '"'),
            wait = F)
   
@@ -180,16 +167,13 @@ observeEvent(input$xcms_start,{
 })
 
 output$xcms_settingstab <- renderRHandsontable({
- # if(!is.null(xcmsSettings$params[[xcmsSettings$active]])) & xcmsSettings$active != "filegroups"){
   MAT_comments <- matrix(ncol = length(which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")),
                          nrow = nrow(xcmsSettings$params[[xcmsSettings$active]]))
    if(!is.null(xcmsSettings$params[[xcmsSettings$active]]) & xcmsSettings$active != "filegroups"){
   MAT_comments[, 1] <- xcmsSettings$params[[xcmsSettings$active]]$Description
    }
-  #MAT_comments[2, 2] = "Another test comment"
-  
- # print(MAT_comments)
-  
+
+
   #necessary to handle case when only one column != Description
   showme <- as.data.frame(xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")],
                           stringsAsFactors = F,
@@ -201,9 +185,6 @@ output$xcms_settingstab <- renderRHandsontable({
                 readOnly = F,
                 contextMenu = T,
                 selectCallback = TRUE,
-                #height = rheight,
-                # width = 1000,
-                #allowComments = (!is.null(xcmsSettings$params[[xcmsSettings$active]]) & xcmsSettings$active != "filegroups"),
                 comments = MAT_comments,
                 digits = 8,
                 highlightCol = TRUE,
@@ -250,20 +231,7 @@ output$xcms_statustab <- renderRHandsontable({if(!is.null(xcmsSettings$jobs)){
                 digits=8,
                 highlightCol = TRUE,
                 highlightRow = TRUE,
-                rowHeaderWidth = 200)# %>%
-    #hot_cell(1, 1, "Test comment")
-  #hot_col("Value", readOnly = FALSE)%>%
-  #hot_col("Group", readOnly = FALSE)%>%
-  #hot_col("MOSAIC_intensities", readOnly = FALSE)%>%
-  # hot_cols(columnSorting = FALSE,format="0.000000")%>%
-  #hot_cols(fixedColumnsLeft = 3)%>%
-  #  hot_cols(columnSorting = TRUE)%>%
-  #hot_col("em",format="0.000000")%>%
-  # hot_cols(renderer = "
-  #          function(instance, td, row, col, prop, value, cellProperties) {
-  #          Handsontable.TextCell.renderer.apply(this, arguments);
-  #          td.style.color = 'black';
-  #          }")
+                rowHeaderWidth = 200)
   }
 })
 
