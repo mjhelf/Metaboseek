@@ -71,7 +71,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
   
   observeEvent(input$startUpdate,{
     
-                   runner <- system.file("MosaicApp", "main","scripts", "update_script.R",package = "Mosaic")
+                   runner <- system.file("scripts", "update_script.R",package = "Mosaic")
                    rpath <- file.path(R.home(component = "bin"), "Rscript")
                    
                    
