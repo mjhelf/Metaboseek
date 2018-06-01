@@ -87,18 +87,25 @@ densplotModule <- function(input, output, session, mx, heading = "Default"){
 #' @export
 featurePlotModuleUI <- function(id){
   ns <- NS(id)
-  tagList(
-    selectizeInput(ns('gtype'), "Plot type", choices = c("by group", "by sample"), selected = "by group"),
-    selectizeInput(ns('ptype'), "Plot type", choices = c("none", "boxplot", "barplot", "violinplot"), selected = "barplot"),
-    selectizeInput(ns('errorbar'), "Error bar", choices = c("none", "Standard Deviation", "95% Confidence Interval"), selected = "none"),
-    selectizeInput(ns('mark'), "Plot additional value", choices = c("none", "mean", "median"), selected = "none"),
-    checkboxInput(ns('usenorm'),'use normalized data', value = F),
-    checkboxInput(ns('pdots'),'Plot sample values', value = T),
-    checkboxInput(ns('rot'),'rotate axis labels', value = F),
-    checkboxInput(ns('multidata'),'Combine data from all filtered features', value = F),
-    checkboxInput(ns('log10'),'log10 scale', value = F),
-    plotOutput(ns('fplot')),
-    verbatimTextOutput(ns('info'))
+  fluidPage(
+    fluidRow(
+      column(3,
+             selectizeInput(ns('gtype'), "Plot type", choices = c("by group", "by sample"), selected = "by group"),
+             selectizeInput(ns('ptype'), "Plot type", choices = c("none", "boxplot", "barplot", "violinplot"), selected = "barplot")),
+      column(3,
+             selectizeInput(ns('errorbar'), "Error bar", choices = c("none", "Standard Deviation", "95% Confidence Interval"), selected = "none"),
+             selectizeInput(ns('mark'), "Plot additional value", choices = c("none", "mean", "median"), selected = "none")),
+      column(3,
+             checkboxInput(ns('usenorm'),'use normalized data', value = F),
+             checkboxInput(ns('pdots'),'Plot sample values', value = T),
+             checkboxInput(ns('rot'),'rotate axis labels', value = F),
+             checkboxInput(ns('multidata'),'Combine data from all filtered features', value = F),
+             checkboxInput(ns('log10'),'log10 scale', value = F)),
+      column(3,
+             verbatimTextOutput(ns('info')))),
+    fluidRow(
+      plotOutput(ns('fplot'), height = "550px"))
+    
   )
   
 }
@@ -112,10 +119,11 @@ featurePlotModuleUI <- function(id){
 #' @param session 
 #' @param FT Mosaic Feature Table object
 #' @param rname row names of rows in FT selected for plotting
-#' @param heading
+#' 
+#' @import ggplot2
 #' 
 #' @export
-featurePlotModule <- function(input, output, session, FT, rname, heading = "Default"){
+featurePlotModule <- function(input, output, session, FT, rname){
   
   sam <- character(0)
   group <- character(0)
@@ -167,7 +175,15 @@ featurePlotModule <- function(input, output, session, FT, rname, heading = "Defa
                 mark = input$mark,
                 errorbar = input$errorbar,
                 rotate = input$rot)
-    if(input$log10){ p <- p + ggplot2::scale_y_continuous(na.value = 0, trans = "log10")}
+      p <- p + 
+        ggplot2::ggtitle(paste0("m/z: ",
+                                round(FT()$df[rname(),"mz"],5),
+                                " @",round(FT()$df[rname(),"rt"],1),
+                                "sec (", round(FT()$df[rname(),"rt"]/60,2)," min)")) +
+        ggplot2::theme(plot.title = element_text(size=22, hjust = 0.5))
+    
+      
+      if(input$log10){ p <- p + ggplot2::scale_y_continuous(na.value = 0, trans = "log10")}
     p
     
   }

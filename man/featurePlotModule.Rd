@@ -4,7 +4,7 @@
 \alias{featurePlotModule}
 \title{featurePlotModule}
 \usage{
-featurePlotModule(input, output, session, FT, rname, heading = "Default")
+featurePlotModule(input, output, session, FT, rname)
 }
 \arguments{
 \item{input}{}
@@ -16,8 +16,6 @@ featurePlotModule(input, output, session, FT, rname, heading = "Default")
 \item{FT}{Mosaic Feature Table object}
 
 \item{rname}{row names of rows in FT selected for plotting}
-
-\item{heading}{}
 }
 \description{
 Quickplots (ggplot-based plots of feature properties)
