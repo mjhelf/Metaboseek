@@ -1,9 +1,3 @@
-#testtable <- data.frame(s1 = c(0, rnorm(10, mean = 1000000, sd = 100000)), s2 = c(rnorm(10, mean = 1000000, sd = 100000), 10), s3 = c(rnorm(7, mean = 1000000, sd = 100000), 0,0,0,0))
-#mx <- as.matrix(testtable)
-#featureTableNormalize(mx)
-
-library(Biobase)
-
 #' featureTableNormalize
 #' 
 #' Function to normalize data in a matrix.
@@ -15,6 +9,8 @@ library(Biobase)
 #' @param normalize if not NULL, column values will be normalized by column averages
 #' @param threshold numeric(1). 
 #' @param thresholdMethod if not NULL, removes all rows in mx in which no value is above threshold
+#' 
+#' @import Biobase
 #' 
 #' @export
 featureTableNormalize <- function (mx,
@@ -62,6 +58,8 @@ featureTableNormalize <- function (mx,
 #' @param df a feature table data.frame with a column "mz"
 #' @param massdef if true, calculate the mass defect for each entry in df from their mz values
 #' 
+#' 
+#' 
 #' @export
 featureCalcs <- function(df,
                          massdef = T# calculate mass defect for each feature
@@ -90,7 +88,9 @@ featureCalcs <- function(df,
 #' @param maxFold if TRUE, make a column with maximum fold change between any two groups for each feature
 #' @param foldMaxK if not NULL, make column with fold change of highest group value over foldMaxK largest group value.
 #' @param foldmode if "complex", gives ratios between all groups
-#'  
+#' 
+#' @import Biobase
+#'    
 #' @export
 foldChange <- function(mx,
                        groups, #
@@ -203,6 +203,8 @@ foldChange <- function(mx,
 #' @param groups named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MosaicFT objects)
 #' @param ttest if TRUE, ttest will be calculated
 #' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
+#'  
+#' @import Biobase
 #'  
 #' @export
 multittest <- function (df = as.data.frame(mx),
