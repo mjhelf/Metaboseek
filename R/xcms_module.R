@@ -1,4 +1,41 @@
-xcmsSettings <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1)),
+#' Specmodule
+#' 
+#' 
+#' server module for interactive mass spectrum view
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param tag id to be used in ns()
+#' @param reactives import reactive data from the shiny session
+#' @param values import reactiveValues from the shiny session
+#' @param static import static values
+#' @param load data to load from previous session (not implemented)
+#' 
+#' @import shiny
+#' @import shinydashboard
+#' @import shinyjs
+#' @import shinyBS
+#' @import shinyFiles
+#' @import rhandsontable
+#' 
+#' @export 
+xcmsModule <- function(input,output, session, tag,
+                   
+                   reactives = reactive({(list())}),
+                   values = reactiveValues(),
+                   static = list(servermode = F),
+                   load = reactive({list()})
+){
+  
+
+  internalStatic <- c(list(Mversion =  1),
+                      static)
+  
+  ns <- NS(tag)
+
+
+internalValues <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1), stringsAsFactors = F),
                                              centWave = read.csv(system.file("config", "xcms_defaults", "centWave.csv",package = "Mosaic"),
                                                                  row.names = 1,
                                                                  stringsAsFactors = F),
@@ -23,6 +60,11 @@ active = "centWave",
 jobs = NULL,
 viewjob = NULL)
 
+observeEvent(reactives(),{
+  if(length(reactives()$filegroups) >0 &&  is(reactives()$filegroups,"data.frame") && identical(internalValues$params$filegroups$File,character(1))){
+    internalValues$params$filegroups <- reactives()$filegroups
+  }
+})
 
 observeEvent(input$xcms_settingsLoad$datapath,{
   
@@ -33,15 +75,15 @@ observeEvent(input$xcms_settingsLoad$datapath,{
   newfiles <- list.files(exfolder, pattern=".csv", recursive = TRUE, full.names=T)
   
   for( i in newfiles){
-    xcmsSettings$params[[gsub("\\.[^.]*$","",basename(i))]] <- read.csv(i,
+    internalValues$params[[gsub("\\.[^.]*$","",basename(i))]] <- read.csv(i,
                                                                         row.names = 1,
                                                                         stringsAsFactors = F)
   }
-  xcmsSettings$wd <- get_common_dir(xcmsSettings$params$filegroups$File)
+  internalValues$wd <- get_common_dir(internalValues$params$filegroups$File)
   
   #if an old outputs.csv file is loaded, replace it with the new default.
-  if(ncol(xcmsSettings$params$outputs) < 5) {
-    xcmsSettings$params$outputs <- read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "Mosaic"),
+  if(ncol(internalValues$params$outputs) < 5) {
+    internalValues$params$outputs <- read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "Mosaic"),
                                             row.names = 1,
                                             stringsAsFactors = F)
   }
@@ -52,9 +94,9 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
                                           content = function(file){
                                             
                                             
-                                            flist = paste0(names(xcmsSettings$params),".csv")
-                                            for(i in 1:length(xcmsSettings$params)){
-                                              write.csv(xcmsSettings$params[[i]], file = flist[i], row.names = T)
+                                            flist = paste0(names(internalValues$params),".csv")
+                                            for(i in 1:length(internalValues$params)){
+                                              write.csv(internalValues$params[[i]], file = flist[i], row.names = T)
                                             }
                                             
                                             zip(file, flist, flags = "-j")
@@ -63,28 +105,28 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
                                           contentType = "application/zip")
 
 
-toggle(id = "xcms_loadfolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
-toggle(id = "xcms_loadfolder", condition = ((servermode) || (!servermode && Sys.info()['sysname'] != "Windows")))
+toggle(id ="xcms_loadfolderOffline", condition = (!internalStatic$servermode && Sys.info()['sysname'] == "Windows"))
+toggle(id = "xcms_loadfolder", condition = ((internalStatic$servermode) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
 
 observe({
-  toggleState(id = "xcms_loadfolder", condition = ((servermode && activateXCMS) || (!servermode && Sys.info()['sysname'] != "Windows")))
-  toggleState(id = "xcms_start", condition = (length(xcmsSettings$wd)>0 && (!servermode || (servermode && activateXCMS))))
+  toggleState(id = "xcms_loadfolder", condition = ((internalStatic$servermode && internalStatic$activateXCMS) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
+  toggleState(id = "xcms_start", condition = (length(internalValues$wd)>0 && (!internalStatic$servermode || (internalStatic$servermode && internalStatic$activateXCMS))))
 })
 
-shinyDirChoose(input, 'xcms_loadfolder', session = session, roots=rootpath)
+shinyDirChoose(input, ns('xcms_loadfolder'), session = session, roots=internalStatic$rootpath)
 
 
 observeEvent(input$xcms_loadfolder,{
-  fol <-  parseDirPath(roots=rootpath, input$xcms_loadfolder)
+  fol <-  parseDirPath(roots=internalStatic$rootpath, input$xcms_loadfolder)
   if(length(fol)>0){
     #taken from xcms package
     filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
                      "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     flist = list.files(fol, pattern=filepattern, recursive = TRUE, full.names=T)
-    xcmsSettings$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
-    xcmsSettings$wd <- fol
-    xcmsSettings$active <- "filegroups"
+    internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
+    internalValues$wd <- fol
+    internalValues$active <- "filegroups"
   }
 })
 
@@ -96,14 +138,14 @@ observeEvent(input$xcms_loadfolderOffline,{
                      "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     flist = list.files(fol, pattern=filepattern, recursive = TRUE, full.names=T)
-    xcmsSettings$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
-    xcmsSettings$wd <- fol
-    xcmsSettings$active <- "filegroups"
+    internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
+    internalValues$wd <- fol
+    internalValues$active <- "filegroups"
   }
   
 })
 
-output$xcms_selectTab <- renderUI({selectizeInput('xcms_selectTab',"Change settings for...", 
+output$xcms_selectTab <- renderUI({selectizeInput(ns('xcms_selectTab'),"Change settings for...", 
                                                   choices = list("File Grouping" = "filegroups",
                                                                  "Peak Detection" = "centWave",
                                                                  "Peak filling" = "peakfilling",
@@ -111,14 +153,14 @@ output$xcms_selectTab <- renderUI({selectizeInput('xcms_selectTab',"Change setti
                                                                  "CAMERA settings" = "camera",
                                                                  "RT correction" = "retcor",
                                                                  "Output Files" = "outputs"),
-                                                  selected = xcmsSettings$active
+                                                  selected = internalValues$active
 )})
 
 observeEvent(input$xcms_selectTab,{
   if(!is.null(input$xcms_settingstab) && nrow(hot_to_r(input$xcms_settingstab)) != 0){
-    xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
+    internalValues$params[[internalValues$active]][,which(colnames(internalValues$params[[internalValues$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
   }  
-  xcmsSettings$active <- input$xcms_selectTab
+  internalValues$active <- input$xcms_selectTab
   
 })
 
@@ -127,26 +169,26 @@ observeEvent(input$xcms_selectTab,{
 
 observeEvent(input$xcms_start,{
   if(!is.null(input$xcms_settingstab) && nrow(hot_to_r(input$xcms_settingstab)) != 0){
-    xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
+    internalValues$params[[internalValues$active]][,which(colnames(internalValues$params[[internalValues$active]]) != "Description")] <- hot_to_r(input$xcms_settingstab)
   }
   
-  fo <- file.path(xcmsSettings$wd, paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),"_", input$xcms_name))
+  fo <- file.path(internalValues$wd, paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),"_", input$xcms_name))
   dir.create(fo)
   
   write.csv(data.frame(X=1,Time=0,Status="",Details="",elapsed_time=0), file = file.path(fo,"status.csv"))
-  xcmsSettings$jobs <- c(xcmsSettings$jobs, fo)
+  internalValues$jobs <- c(internalValues$jobs, fo)
   file.copy(system.file("scripts", "xcms_runner_i.R",package = "Mosaic"),fo)
   
-  for(i in 1:length(xcmsSettings$params)){
-    write.csv(xcmsSettings$params[[i]], file = file.path(fo,paste0(names(xcmsSettings$params)[i],".csv")), row.names = T)
+  for(i in 1:length(internalValues$params)){
+    write.csv(internalValues$params[[i]], file = file.path(fo,paste0(names(internalValues$params)[i],".csv")), row.names = T)
   }
   
   
-  zip(file.path(fo,"settings.zip"), file.path(fo, c(paste0(names(xcmsSettings$params),".csv"))), flags = "-j")
-
+  zip(file.path(fo,"settings.zip"), file.path(fo, c(paste0(names(internalValues$params),".csv"))), flags = "-j")
+  
   runner <- system.file("scripts", "xcms_runner_i.R",package = "Mosaic")
   rpath <- file.path(R.home(component = "bin"), "Rscript")
- 
+  
   
   system(paste0( '"',
                  rpath,
@@ -168,16 +210,16 @@ observeEvent(input$xcms_start,{
 })
 
 output$xcms_settingstab <- renderRHandsontable({
-  MAT_comments <- matrix(ncol = length(which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")),
-                         nrow = nrow(xcmsSettings$params[[xcmsSettings$active]]))
-  if(!is.null(xcmsSettings$params[[xcmsSettings$active]]) & xcmsSettings$active != "filegroups"){
-    MAT_comments[, 1] <- xcmsSettings$params[[xcmsSettings$active]]$Description
+  MAT_comments <- matrix(ncol = length(which(colnames(internalValues$params[[internalValues$active]]) != "Description")),
+                         nrow = nrow(internalValues$params[[internalValues$active]]))
+  if(!is.null(internalValues$params[[internalValues$active]]) & internalValues$active != "filegroups"){
+    MAT_comments[, 1] <- internalValues$params[[internalValues$active]]$Description
   }
- 
-  showme <- as.data.frame(xcmsSettings$params[[xcmsSettings$active]][,which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")],
+  
+  showme <- as.data.frame(internalValues$params[[internalValues$active]][,which(colnames(internalValues$params[[internalValues$active]]) != "Description")],
                           stringsAsFactors = F,
-                          row.names = row.names(xcmsSettings$params[[xcmsSettings$active]]))
-  colnames(showme) <- colnames(xcmsSettings$params[[xcmsSettings$active]])[which(colnames(xcmsSettings$params[[xcmsSettings$active]]) != "Description")]
+                          row.names = row.names(internalValues$params[[internalValues$active]]))
+  colnames(showme) <- colnames(internalValues$params[[internalValues$active]])[which(colnames(internalValues$params[[internalValues$active]]) != "Description")]
   
   rhandsontable(showme,
                 readOnly = F,
@@ -196,11 +238,6 @@ output$xcms_settingstab <- renderRHandsontable({
 
 
 
-
-
-
-
-
 observeEvent(input$xcms_statustab,{
   if(!is.null(input$xcms_statustab) && !is.na(hot_to_r(input$xcms_statustab)$Status[1]) && hot_to_r(input$xcms_statustab)$Status[1] == "Finished"){
     showNotification(paste("XCMS analysis finished"), duration = 0)
@@ -213,11 +250,11 @@ observeEvent(input$xcms_statustab,{
 
 
 
-output$xcms_statustab <- renderRHandsontable({if(!is.null(xcmsSettings$jobs)){
+output$xcms_statustab <- renderRHandsontable({if(!is.null(internalValues$jobs)){
   
   rhandsontable(reactiveFileReader(1500,
                                    NULL,
-                                   file.path(xcmsSettings$jobs[1],"status.csv"),
+                                   file.path(internalValues$jobs[1],"status.csv"),
                                    read.csv,
                                    stringsAsFactors = F, 
                                    row.names = 1)(),
@@ -237,3 +274,92 @@ output$summary <- renderPrint({
   print(gsub("\\\\","/", input$xcms_folder))
 })
 
+
+
+moduleOutput <- reactive({
+  
+  outp <- list(
+    reactives = list(),
+    values = internalValues,
+    static = internalStatic,
+    save = list()
+  )
+  class(outp) <- "xcmsModuleOutput"
+  return(outp)
+})
+
+
+return(moduleOutput)
+
+}
+
+
+#' xcmsModuleUI
+#' 
+#' 
+#' UI module for xcms Module
+#' 
+#' @param id id to be used in ns()
+#' 
+#' @import shiny
+#' @import shinydashboard
+#' @import shinyjs
+#' @import shinyBS
+#' @import shinyFiles
+#' @import rhandsontable
+#' 
+#' @export 
+xcmsModuleUI <-  function(id){
+  ns <- NS(id)
+  useShinyjs()
+fluidPage(
+  fluidRow(
+    box(title = "Run XCMS analysis", width = 12, status= "danger",
+        
+        p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
+        
+        p(strong("Not on by default in Server mode!")," Currently only one xcms job per MOSAiC session (concurrent job monitoring coming later)."),
+        fluidRow(
+          column(6,
+                 actionButton(ns('xcms_loadfolderOffline'), "load MS file folder"),
+                 shinyDirButton(ns('xcms_loadfolder'), "load MS file folder", title = "select a folder with MS data files"),
+                 
+                 
+                 textInput(ns('xcms_name'), "Title of this analysis", "xcms_run"),
+                 actionButton(ns('xcms_start'),"Start analysis!", style="color: #fff; background-color: #C41230; border-color: #595959")),
+          
+          column(6,
+                 fileInput(ns('xcms_settingsLoad'),"Load settings", accept = "application/zip"),
+                 
+                 downloadButton(ns("xcms_settingsDL"), "Download settings")
+          ))
+        
+    )),
+  
+  fluidRow(
+    tabBox(title = "XCMS Settings",
+           id = "xcms_settingsBox",
+           width = 12, side = "right", selected = "XCMS Settings",
+           
+           tabPanel("_"),
+           
+           
+           
+           tabPanel("XCMS Settings",
+                    
+                    
+                    htmlOutput(ns('xcms_selectTab')),
+                    
+                    
+                    rHandsontableOutput(ns('xcms_settingstab'))
+                    
+                    
+           ))),
+  fluidRow(
+    box(title = "Job status", width = 12, status= "danger",
+        p("View status of a running XCMS job here"),
+        rHandsontableOutput(ns('xcms_statustab'))
+    ))
+  
+)
+}
