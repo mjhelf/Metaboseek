@@ -59,8 +59,8 @@ function(input, output, session) {
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
 xcmsOut <- callModule(xcmsModule, "xcmsMod", tag = "xcmsMod",
-                      reactives = reactive({(list(filegroups = MSData$layouts[[MSData$active]]$grouping))}),
-                      values = NULL,
+                      reactives = NULL,
+                      values = list(MSData = MSData),
                       static = list(servermode = servermode,
                                     activateXCMS = activateXCMS,
                                     rootpath = rootpath),

@@ -58,11 +58,22 @@ internalValues <- reactiveValues(params = list(filegroups = data.frame(File = ch
 wd = character(),
 active = "centWave",
 jobs = NULL,
-viewjob = NULL)
+viewjob = NULL,
+xcmsModule_loaded = F)
 
-observeEvent(reactives(),{
-  if(length(reactives()$filegroups) >0 &&  is(reactives()$filegroups,"data.frame") && identical(internalValues$params$filegroups$File,character(1))){
-    internalValues$params$filegroups <- reactives()$filegroups
+observeEvent(values$MSData$layouts[[values$MSData$active]]$rawgrouptable,{
+  
+  #if raw files are loaded into the MS viewer, load them in here as well
+  if(length(values$MSData$layouts[[values$MSData$active]]$rawgrouptable) >0 
+     &&  is(values$MSData$layouts[[values$MSData$active]]$rawgrouptable,"data.frame") 
+     && !internalValues$xcmsModule_loaded #only do this if loadFolder button in xcms module hasnt been used yet
+     ){
+    internalValues$params$filegroups <- values$MSData$layouts[[values$MSData$active]]$rawgrouptable[,c("File", "Group")]
+    internalValues$params$filegroups$File <- as.character(internalValues$params$filegroups$File)
+    internalValues$params$filegroups$Group <- as.character(internalValues$params$filegroups$Group)
+    internalValues$wd <- get_common_dir(internalValues$params$filegroups$File)
+    internalValues$active <- "filegroups"
+    
   }
 })
 
@@ -80,6 +91,8 @@ observeEvent(input$xcms_settingsLoad$datapath,{
                                                                         stringsAsFactors = F)
   }
   internalValues$wd <- get_common_dir(internalValues$params$filegroups$File)
+  
+  internalValues$xcmsModule_loaded <- T
   
   #if an old outputs.csv file is loaded, replace it with the new default.
   if(ncol(internalValues$params$outputs) < 5) {
@@ -127,6 +140,7 @@ observeEvent(input$xcms_loadfolder,{
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
     internalValues$wd <- fol
     internalValues$active <- "filegroups"
+    internalValues$xcmsModule_loaded <- T
   }
 })
 
@@ -141,6 +155,7 @@ observeEvent(input$xcms_loadfolderOffline,{
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
     internalValues$wd <- fol
     internalValues$active <- "filegroups"
+    internalValues$xcmsModule_loaded <- T
   }
   
 })
