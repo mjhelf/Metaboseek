@@ -13,7 +13,7 @@
 #' 
 #' @import shiny
 #' @import shinydashboard
-#' @import shinyjs
+#' @importFrom shinyjs show toggle toggleState
 #' @import shinyBS
 #' @import shinyFiles
 #' @import rhandsontable
@@ -318,7 +318,7 @@ return(moduleOutput)
 #' 
 #' @import shiny
 #' @import shinydashboard
-#' @import shinyjs
+#' @importFrom shinyjs useShinyjs
 #' @import shinyBS
 #' @import shinyFiles
 #' @import rhandsontable
