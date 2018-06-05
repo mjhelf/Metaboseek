@@ -24,7 +24,8 @@ xcmsModule <- function(input,output, session, tag,
                    
                    reactives = reactive({(list())}),
                    values = reactiveValues(),
-                   static = list(servermode = F),
+                   static = list(servermode = F,
+                                 rootpath = "/"),
                    load = reactive({list()})
 ){
   
@@ -126,7 +127,7 @@ observe({
   toggleState(id = "xcms_start", condition = (length(internalValues$wd)>0 && (!internalStatic$servermode || (internalStatic$servermode && internalStatic$activateXCMS))))
 })
 
-shinyDirChoose(input, ns('xcms_loadfolder'), session = session, roots=internalStatic$rootpath)
+shinyDirChoose(input, 'xcms_loadfolder', session = session, roots=internalStatic$rootpath)
 
 
 observeEvent(input$xcms_loadfolder,{
