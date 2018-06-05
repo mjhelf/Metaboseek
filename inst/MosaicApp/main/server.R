@@ -58,7 +58,7 @@ function(input, output, session) {
     
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
-xcmsOut <- callModule(xcmsModule, "xcmsMod", tag = "xcmsMod",
+xcmsOut <- callModule(xcmsModule, "xcmsMod",
                       reactives = NULL,
                       values = list(MSData = MSData),
                       static = list(servermode = servermode,

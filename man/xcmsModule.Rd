@@ -4,8 +4,8 @@
 \alias{xcmsModule}
 \title{Specmodule}
 \usage{
-xcmsModule(input, output, session, tag, reactives = reactive({     (list())
-  }), values = reactiveValues(), static = list(servermode = F),
+xcmsModule(input, output, session, reactives = reactive({     (list()) }),
+  values = reactiveValues(), static = list(servermode = F, rootpath = "/"),
   load = reactive({     list() }))
 }
 \arguments{
@@ -14,8 +14,6 @@ xcmsModule(input, output, session, tag, reactives = reactive({     (list())
 \item{output}{}
 
 \item{session}{}
-
-\item{tag}{id to be used in ns()}
 
 \item{reactives}{import reactive data from the shiny session}
 
