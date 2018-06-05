@@ -6,7 +6,6 @@
 #' @param input 
 #' @param output 
 #' @param session 
-#' @param tag id to be used in ns()
 #' @param reactives import reactive data from the shiny session
 #' @param values import reactiveValues from the shiny session
 #' @param static import static values
@@ -20,7 +19,7 @@
 #' @import rhandsontable
 #' 
 #' @export 
-xcmsModule <- function(input,output, session, tag,
+xcmsModule <- function(input,output, session,
                    
                    reactives = reactive({(list())}),
                    values = reactiveValues(),
@@ -33,7 +32,7 @@ xcmsModule <- function(input,output, session, tag,
   internalStatic <- c(list(Mversion =  1),
                       static)
   
-  ns <- NS(tag)
+  ns <- NS(session$ns(NULL))
 
 
 internalValues <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1), stringsAsFactors = F),
