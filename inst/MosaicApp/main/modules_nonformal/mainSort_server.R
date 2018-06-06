@@ -1,6 +1,6 @@
 
 output$mainSort <- renderUI({selectizeInput('mainSort', 'Sort by',
-                                            choices = selectedCols(),
+                                            choices = ColSel$selectedCols,
                                             selected = featureTables$tables[[featureTables$active]]$sortBy,
                                             multiple = F)})
 observeEvent(input$mainSort,{
@@ -102,21 +102,12 @@ F1out <-    reactive({
 })
 
 output$FilterUI <- renderUI({
-#tagList(
+
     FilterModuleUI("Filter1")
-#) 
-    #   output_list <- lapply(names(featureTables$tables[[featureTables$active]]$filters$filters), function (i){
-  #      FilterModuleUI(i)
-   # })
-    #return(do.call(tagList, output_list))
+
 })
 
 
-#observeEvent(input$updateFilter,{
-
-
-#})
- 
 allFiltersPre <- eventReactive(c(input$mainSort,input$updateFilter),{#1:nrow(featureTables$tables[[featureTables$active]]$df)
   
   if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
@@ -127,9 +118,7 @@ allFiltersPre <- eventReactive(c(input$mainSort,input$updateFilter),{#1:nrow(fea
     }
   }
   
-  return(F1out())#$Filter1$selected
-    #actives <- lapply(featureTables$tables[[featureTables$active]]$filters$filters,"[[","active")
-  #featureTables$tables[[featureTables$active]]$filters$sele
+  return(F1out())
   
   })
 

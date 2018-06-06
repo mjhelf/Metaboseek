@@ -67,7 +67,6 @@ xcmsOut <- callModule(xcmsModule, "xcmsMod",
                       load = NULL
     )
     
-    #source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_server.R",package = "Mosaic"), local = TRUE)$value
-    
+
     
 }

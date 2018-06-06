@@ -1,0 +1,137 @@
+#' columnSelModule
+#' 
+#' 
+#' server module for selection of columns to show in main Table
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param reactives import reactive data from the shiny session
+#' @param values import reactiveValues from the shiny session
+#' @param static import static values
+#' @param load data to load from previous session (not implemented)
+#' 
+#' @import shiny
+#' 
+#' @export 
+columnSelModule <- function(input,output, session,
+                       
+                       reactives = reactive({(list())}),
+                       values = reactiveValues(),
+                       static = list(servermode = F,
+                                     rootpath = "/"),
+                       load = reactive({list()})
+){
+  ns <- NS(session$ns(NULL))
+  
+  internalStatic <- c(list(Mversion =  1),
+                      static)
+  
+  
+  internalValues <- reactiveValues(featureTables = NULL)
+  
+observeEvent(c(values$featureTables$active,
+               colnames(values$featureTables$df)),{
+                 internalValues$featureTables <- values$featureTables
+                 })
+  
+  ###Column Selection
+  
+  output$mainSelGroup <- renderUI({selectizeInput(ns('mainSelGroup'), 'Group of interest',
+                                                  choices = internalValues$featureTables$tables[[internalValues$featureTables$active]]$gNames,
+                                                  selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup,
+                                                  multiple = F,
+                                                  width = '100%')})
+  
+  output$mainSelgProps <- renderUI({selectizeInput(ns('mainSelgProps'), 'Group properties', 
+                                                   choices = internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps,
+                                                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]],
+                                                   multiple = T,
+                                                   width = '100%')
+  })
+  
+  output$mainSelsProps <- renderUI({selectizeInput(ns('mainSelsProps'), 'Sample properties', 
+                                                   choices = internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps,
+                                                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]],
+                                                   multiple = T,
+                                                   width = '100%')})
+  
+  output$mainSelIntensities <- renderUI({
+    intShowAs <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames
+    singlegroups <- which(sapply(intShowAs,length) == 1)
+    for (i in singlegroups){
+      names(intShowAs[[i]]) <- intShowAs[[i]]
+    }
+    intNormShowAs <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames_norm
+    singlegroups <- which(sapply(intNormShowAs,length) == 1)
+    for (i in singlegroups){
+      names(intNormShowAs[[i]]) <- intNormShowAs[[i]]
+    }
+    
+    selectizeInput(ns('mainSelIntensities'), 'Sample intensities', 
+                   choices = list(Intensities = intShowAs,
+                                  "Normalized Intensities" = intNormShowAs),
+                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]],
+                   multiple = T,
+                   width = '100%')})
+  
+  
+  
+  output$mainSelOthers <- renderUI({
+    baseStats <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$summaryStats
+    names(baseStats) <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$summaryStats
+    Others <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$others
+    names(Others) <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$others
+    
+    
+    selectizeInput(ns('mainSelOthers'), 'other columns', 
+                   choices = list("Basic Stats" = baseStats,
+                                  "Others" = Others),
+                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$summaryStats, 
+                   multiple = T,
+                   width = '100%'
+    )})
+  
+  
+  observe({internalValues$selectedCols <- unique(unname(c(internalValues$featureTables$tables[[internalValues$featureTables$active]]$core,
+                                                          internalValues$featureTables$tables[[internalValues$featureTables$active]]$comments,
+                                                          input$mainSelgProps,
+                                                          input$mainSelsProps,
+                                                          input$mainSelIntensities,
+                                                          input$mainSelOthers)))
+  })
+  
+  observeEvent(c(input$mainSelGroup),
+               {internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup <- input$mainSelGroup })
+  
+  observeEvent(c(input$mainSelOthers),
+               {internalValues$featureTables$tables[[internalValues$featureTables$active]]$summaryStats <- input$mainSelOthers })
+  
+  return(internalValues)
+  
+}
+
+
+#' xcmsModuleUI
+#' 
+#' 
+#' UI module for xcms Module
+#' 
+#' @param id id to be used in ns()
+#' 
+#' @import shiny
+#' 
+#' @export 
+columnSelModuleUI <-  function(id){
+ns <- NS(id)
+
+fluidPage(
+  htmlOutput(ns('selnormdata')),
+  htmlOutput(ns('mainSelGroup')),
+  htmlOutput(ns('mainSelgProps')),
+  htmlOutput(ns('mainSelsProps')),
+  htmlOutput(ns('mainSelIntensities')),
+  htmlOutput(ns('mainSelOthers'))
+)
+
+}
