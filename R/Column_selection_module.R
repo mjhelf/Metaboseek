@@ -28,11 +28,26 @@ columnSelModule <- function(input,output, session,
                       static)
   
   
-  internalValues <- reactiveValues(featureTables = NULL)
+  internalValues <- reactiveValues(featureTables = NULL,
+                                   selectedCols = NULL,
+                                   gPropsSelected = NULL,
+                                   sPropsSelected = NULL,
+                                   intensitiesSelected = NULL
+  )
   
-observeEvent(c(values$featureTables$active,
-               colnames(values$featureTables$df)),{
+observeEvent(c(#values$featureTables$active,
+               colnames(values$featureTables$tables[[values$featureTables$active]]$df)
+               ),{
+                 
+                 if( !identical(internalValues$colnames, colnames(values$featureTables$tables[[values$featureTables$active]]$df))){
+                 internalValues$colnames <- colnames(values$featureTables$tables[[values$featureTables$active]]$df)
+                 
+                 print(colnames(values$featureTables$tables[[values$featureTables$active]]$df))
                  internalValues$featureTables <- values$featureTables
+                 internalValues$gPropsSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
+                 internalValues$sPropsSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
+                 internalValues$intensitiesSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
+                 }
                  })
   
   ###Column Selection
@@ -45,16 +60,23 @@ observeEvent(c(values$featureTables$active,
   
   output$mainSelgProps <- renderUI({selectizeInput(ns('mainSelgProps'), 'Group properties', 
                                                    choices = internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps,
-                                                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]],
+                                                   selected = internalValues$gPropsSelected,
                                                    multiple = T,
                                                    width = '100%')
   })
   
+  observeEvent(c(input$mainSelgProps),
+               {internalValues$gPropsSelected <- input$mainSelgProps })
+  
+  
   output$mainSelsProps <- renderUI({selectizeInput(ns('mainSelsProps'), 'Sample properties', 
                                                    choices = internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps,
-                                                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]],
+                                                   selected = internalValues$sPropsSelected,
                                                    multiple = T,
                                                    width = '100%')})
+  
+  observeEvent(c(input$mainSelsProps),
+               {internalValues$sPropsSelected <- input$mainSelsProps })
   
   output$mainSelIntensities <- renderUI({
     intShowAs <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames
@@ -71,10 +93,12 @@ observeEvent(c(values$featureTables$active,
     selectizeInput(ns('mainSelIntensities'), 'Sample intensities', 
                    choices = list(Intensities = intShowAs,
                                   "Normalized Intensities" = intNormShowAs),
-                   selected = internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]],
+                   selected = internalValues$intensitiesSelected,
                    multiple = T,
                    width = '100%')})
   
+  observeEvent(c(input$mainSelIntensities),
+               {internalValues$intensitiesSelected <- input$mainSelIntensities })
   
   
   output$mainSelOthers <- renderUI({
@@ -102,7 +126,13 @@ observeEvent(c(values$featureTables$active,
   })
   
   observeEvent(c(input$mainSelGroup),
-               {internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup <- input$mainSelGroup })
+               {
+               if(!is.null(input$mainSelGroup)){
+               internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup <- input$mainSelGroup
+               }
+               internalValues$gPropsSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
+               internalValues$sPropsSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
+               internalValues$intensitiesSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$anagroupnames[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]})
   
   observeEvent(c(input$mainSelOthers),
                {internalValues$featureTables$tables[[internalValues$featureTables$active]]$summaryStats <- input$mainSelOthers })
