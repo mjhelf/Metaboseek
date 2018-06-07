@@ -42,7 +42,6 @@ observeEvent(c(#values$featureTables$active,
                  if( !identical(internalValues$colnames, colnames(values$featureTables$tables[[values$featureTables$active]]$df))){
                  internalValues$colnames <- colnames(values$featureTables$tables[[values$featureTables$active]]$df)
                  
-                 print(colnames(values$featureTables$tables[[values$featureTables$active]]$df))
                  internalValues$featureTables <- values$featureTables
                  internalValues$gPropsSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$gProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
                  internalValues$sPropsSelected <- internalValues$featureTables$tables[[internalValues$featureTables$active]]$sProps[[internalValues$featureTables$tables[[internalValues$featureTables$active]]$selectedGroup]]
