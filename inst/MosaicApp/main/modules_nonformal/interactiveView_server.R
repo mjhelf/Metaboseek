@@ -33,21 +33,19 @@ iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = "Spec2",
                      set = reactive({
                        
                        
-                       print(iEIC2()$chrom1)
-                       
-                       list(spec = list(xrange = if(length(iEIC2()$chrom1$mz) < 1 || is.na(iEIC2()$chrom1$mz) || is.null(iEIC2()$chrom1$mz)){
+                       list(spec = list(xrange = if(length(iEIC2$plots$chrom1$mz) < 1 || is.na(iEIC2$plots$chrom1$mz) || is.null(iEIC2$plots$chrom1$mz)){
                          NULL}
-                         else{c(iEIC2()$chrom1$mz-10,iEIC2()$chrom1$mz+10)},
+                         else{c(iEIC2$plots$chrom1$mz-10,iEIC2$plots$chrom1$mz+10)},
                          yrange = NULL,
                          maxxrange = NULL,
                          maxyrange = NULL,
-                         sel = if(length(iEIC2()$chrom1$marker$File) < 1 || is.na(iEIC2()$chrom1$marker$File) || is.null(iEIC2()$chrom1$marker$File)){
+                         sel = if(length(iEIC2$plots$chrom1$marker$File) < 1 || is.na(iEIC2$plots$chrom1$marker$File) || is.null(iEIC2$plots$chrom1$marker$File)){
                            NULL}
-                         else{list(File = iEIC2()$chrom1$marker$File,
-                                   scan = iEIC2()$chrom1$marker$scan,
-                                   rt = iEIC2()$chrom1$marker$rt*60)},
+                         else{list(File = iEIC2$plots$chrom1$marker$File,
+                                   scan = iEIC2$plots$chrom1$marker$scan,
+                                   rt = iEIC2$plots$chrom1$marker$rt*60)},
                          data = NULL,
-                         mz = iEIC2()$chrom1$mz,
+                         mz = iEIC2$plots$chrom1$mz,
                          MS2 = F),
                          layout = list(lw = 1,
                                        cex = 1.5,
