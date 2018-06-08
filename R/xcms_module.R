@@ -1,12 +1,11 @@
-#' Specmodule
+#' xcmsModule
 #' 
 #' 
-#' server module for interactive mass spectrum view
+#' server module for accessing the xcms data analysis workflow
 #' 
 #' @param input 
 #' @param output 
 #' @param session 
-#' @param tag id to be used in ns()
 #' @param reactives import reactive data from the shiny session
 #' @param values import reactiveValues from the shiny session
 #' @param static import static values
@@ -14,27 +13,27 @@
 #' 
 #' @import shiny
 #' @import shinydashboard
-#' @import shinyjs
+#' @importFrom shinyjs show toggle toggleState
 #' @import shinyBS
 #' @import shinyFiles
 #' @import rhandsontable
 #' 
 #' @export 
-xcmsModule <- function(input,output, session, tag,
+xcmsModule <- function(input,output, session,
                    
                    reactives = reactive({(list())}),
                    values = reactiveValues(),
-                   static = list(servermode = F),
+                   static = list(servermode = F,
+                                 rootpath = "/"),
                    load = reactive({list()})
 ){
   
-
-  internalStatic <- c(list(Mversion =  1),
+ ns <- NS(session$ns(NULL))
+ 
+ internalStatic <- c(list(Mversion =  1),
                       static)
   
-  ns <- NS(tag)
-
-
+ 
 internalValues <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1), stringsAsFactors = F),
                                              centWave = read.csv(system.file("config", "xcms_defaults", "centWave.csv",package = "Mosaic"),
                                                                  row.names = 1,
@@ -58,11 +57,22 @@ internalValues <- reactiveValues(params = list(filegroups = data.frame(File = ch
 wd = character(),
 active = "centWave",
 jobs = NULL,
-viewjob = NULL)
+viewjob = NULL,
+xcmsModule_loaded = F)
 
-observeEvent(reactives(),{
-  if(length(reactives()$filegroups) >0 &&  is(reactives()$filegroups,"data.frame") && identical(internalValues$params$filegroups$File,character(1))){
-    internalValues$params$filegroups <- reactives()$filegroups
+observeEvent(values$MSData$layouts[[values$MSData$active]]$rawgrouptable,{
+  
+  #if raw files are loaded into the MS viewer, load them in here as well
+  if(length(values$MSData$layouts[[values$MSData$active]]$rawgrouptable) >0 
+     &&  is(values$MSData$layouts[[values$MSData$active]]$rawgrouptable,"data.frame") 
+     && !internalValues$xcmsModule_loaded #only do this if loadFolder button in xcms module hasnt been used yet
+     ){
+    internalValues$params$filegroups <- values$MSData$layouts[[values$MSData$active]]$rawgrouptable[,c("File", "Group")]
+    internalValues$params$filegroups$File <- as.character(internalValues$params$filegroups$File)
+    internalValues$params$filegroups$Group <- as.character(internalValues$params$filegroups$Group)
+    internalValues$wd <- get_common_dir(internalValues$params$filegroups$File)
+    internalValues$active <- "filegroups"
+    
   }
 })
 
@@ -80,6 +90,8 @@ observeEvent(input$xcms_settingsLoad$datapath,{
                                                                         stringsAsFactors = F)
   }
   internalValues$wd <- get_common_dir(internalValues$params$filegroups$File)
+  
+  internalValues$xcmsModule_loaded <- T
   
   #if an old outputs.csv file is loaded, replace it with the new default.
   if(ncol(internalValues$params$outputs) < 5) {
@@ -113,7 +125,7 @@ observe({
   toggleState(id = "xcms_start", condition = (length(internalValues$wd)>0 && (!internalStatic$servermode || (internalStatic$servermode && internalStatic$activateXCMS))))
 })
 
-shinyDirChoose(input, ns('xcms_loadfolder'), session = session, roots=internalStatic$rootpath)
+shinyDirChoose(input, 'xcms_loadfolder', session = session, roots=internalStatic$rootpath)
 
 
 observeEvent(input$xcms_loadfolder,{
@@ -127,6 +139,7 @@ observeEvent(input$xcms_loadfolder,{
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
     internalValues$wd <- fol
     internalValues$active <- "filegroups"
+    internalValues$xcmsModule_loaded <- T
   }
 })
 
@@ -141,6 +154,7 @@ observeEvent(input$xcms_loadfolderOffline,{
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
     internalValues$wd <- fol
     internalValues$active <- "filegroups"
+    internalValues$xcmsModule_loaded <- T
   }
   
 })
@@ -276,20 +290,7 @@ output$summary <- renderPrint({
 
 
 
-moduleOutput <- reactive({
-  
-  outp <- list(
-    reactives = list(),
-    values = internalValues,
-    static = internalStatic,
-    save = list()
-  )
-  class(outp) <- "xcmsModuleOutput"
-  return(outp)
-})
-
-
-return(moduleOutput)
+return(internalValues)
 
 }
 
@@ -303,7 +304,7 @@ return(moduleOutput)
 #' 
 #' @import shiny
 #' @import shinydashboard
-#' @import shinyjs
+#' @importFrom shinyjs useShinyjs
 #' @import shinyBS
 #' @import shinyFiles
 #' @import rhandsontable

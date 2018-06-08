@@ -2,10 +2,10 @@
 % Please edit documentation in R/xcms_module.R
 \name{xcmsModule}
 \alias{xcmsModule}
-\title{Specmodule}
+\title{xcmsModule}
 \usage{
-xcmsModule(input, output, session, tag, reactives = reactive({     (list())
-  }), values = reactiveValues(), static = list(servermode = F),
+xcmsModule(input, output, session, reactives = reactive({     (list()) }),
+  values = reactiveValues(), static = list(servermode = F, rootpath = "/"),
   load = reactive({     list() }))
 }
 \arguments{
@@ -14,8 +14,6 @@ xcmsModule(input, output, session, tag, reactives = reactive({     (list())
 \item{output}{}
 
 \item{session}{}
-
-\item{tag}{id to be used in ns()}
 
 \item{reactives}{import reactive data from the shiny session}
 
@@ -26,5 +24,5 @@ xcmsModule(input, output, session, tag, reactives = reactive({     (list())
 \item{load}{data to load from previous session (not implemented)}
 }
 \description{
-server module for interactive mass spectrum view
+server module for accessing the xcms data analysis workflow
 }

@@ -10,7 +10,7 @@
 #' @param threshold numeric(1). 
 #' @param thresholdMethod if not NULL, removes all rows in mx in which no value is above threshold
 #' 
-#' @import Biobase
+#' @importFrom Biobase rowMax
 #' 
 #' @export
 featureTableNormalize <- function (mx,
@@ -42,7 +42,7 @@ featureTableNormalize <- function (mx,
     }
     
     if(!is.null(threshold) & !is.null(thresholdMethod)){
-        mx <- mx[which(Biobase::rowMax(mx)>threshold),]
+        mx <- mx[which(rowMax(mx)>threshold),]
     }
     return(mx)
     
@@ -89,7 +89,7 @@ featureCalcs <- function(df,
 #' @param foldMaxK if not NULL, make column with fold change of highest group value over foldMaxK largest group value.
 #' @param foldmode if "complex", gives ratios between all groups
 #' 
-#' @import Biobase
+#' @importFrom Biobase rowMax rowMin rowQ
 #'    
 #' @export
 foldChange <- function(mx,
@@ -204,7 +204,7 @@ foldChange <- function(mx,
 #' @param ttest if TRUE, ttest will be calculated
 #' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
 #'  
-#' @import Biobase
+#' @importFrom stats p.adjust
 #'  
 #' @export
 multittest <- function (df = as.data.frame(mx),
@@ -281,6 +281,8 @@ mttest <- function (x,y){
 #'  
 #' @param out what to return if there is an error in the call to t.test, defaults to NA
 #' @param ... arguments passed on to stats::t.test
+#' 
+#' @importFrom stats t.test
 #'  
 #' @export
 sttest <- function(out=NA,...){
@@ -296,6 +298,8 @@ sttest <- function(out=NA,...){
 #' @param ltail TRUE or FALSE, passed on as lower.tail to stats::pt
 #' @param over indexes of values in x to be used as population
 #' @param calc indexes of values in x representing the hypothesized upper bond of population mean
+#' 
+#' @importFrom stats sd
 #'  
 #' @export
 ttestx <- function(x=c(1,2,2,3,3,3,4,4,4,4,4,5,5,5,6,6,7) #input vector
