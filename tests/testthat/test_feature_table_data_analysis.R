@@ -9,6 +9,36 @@ df1 <- data.frame(mz = c(101:105),
                   file4__XIC = c(1000,0,500,100,1000)
 )
 
+##some simple matrices
+mx1 <- matrix(0:15, 4,4)
+
+test_that("feature tables are returned as matrices after normalization", {
+  expect_that(featureTableNormalize(mx1), is_a("matrix"))
+  }
+)
+
+##a data.frame for testing mass deffect function
+dfdef <- data.frame(mz = c(101.11111, 102.22222, 103.33333, 104.44444, 105.55555),
+                    rt = c(201:205)
+)  
+  
+test_that("raiseZeros arg works after normalization", {
+  #mxt is a test matrix and should only exists within the test
+  mxt <- featureTableNormalize(mx1, raiseZeros = 20) 
+  expect_that(mxt[1,1], equals(20))
+})
+
+test_that("log arg works after normalization", {
+  mxt <- featureTableNormalize(mx1, log = 1)
+  expect_that(mxt[2,1], equals(0))
+})
+
+test_that("normalization arg works after normalization",{
+  mxt <- featureTableNormalize(mx1, normalize = 1)
+  expect_that(mxt[2,1], equals (5))
+})
+
+
 
 test_that("foldChanges are calculated correctly",{
   
@@ -45,3 +75,10 @@ test_that("foldChanges are calculated correctly",{
   
   
 })
+
+
+test_that("mass defect is correctly calculated",{
+  dfdeft <- featureCalcs(dfdef, massdef = T)
+  expect_equal(dfdeft[[1]][[1]], 1098.890122)
+}
+)
