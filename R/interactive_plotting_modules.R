@@ -206,13 +206,15 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$specAll <- renderUI({
-    if(length(set()$layout$active) > 0 && set()$layout$active){
+    if(length(set()$layout$active) > 0 
+       && set()$layout$active
+       && length(set()$spec$sel) >1
+       ){
       
-      #if(length(set()$spec$sel$File) >1){
+      
       #select file based on basename rather than full path
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
-      
-      
+
         #get the precursors
         if(!is.null(set()$spec$MS2) && set()$spec$MS2){
           acn <- round(mapply("[",lapply(set()$msdata[filesel],slot,"msnAcquisitionNum"),set()$spec$sel$scan),5)
@@ -245,7 +247,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
           )
           )),
           htmlOutput(ns("specinfo"))
-          
+      
         
       )
     }
@@ -928,13 +930,8 @@ EICmodule <- function(input, output, session, tag, set = list(layouts = MSData$l
   }
   )
   
-  return(reactive({
-    
-    selectionsEIC$plots
-    
-    
-  })
-  
+  return(
+    selectionsEIC
   )
 }
 
@@ -1422,6 +1419,9 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
   observeEvent(input$removespec5,{
     selections$plots$spec$delete[5] <- TRUE
   })
+  
+  return(selections)
+  
 }
 #' MultiSpecmoduleUI
 #' 

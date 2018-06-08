@@ -29,28 +29,35 @@ iEIC2 <- callModule(EICmodule,"EIC2", tag = "EIC2", set= reactive({
 )}),
 keys = reactive({keyin$keyd}))
 
-iSpec2 <- callModule(Specmodule,"Spec2", tag = "Spec2", 
+iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = "Spec2", 
                      set = reactive({
                        
+                       
+                       print(iEIC2()$chrom1)
+                       
                        list(spec = list(xrange = if(length(iEIC2()$chrom1$mz) < 1 || is.na(iEIC2()$chrom1$mz) || is.null(iEIC2()$chrom1$mz)){
-                       NULL}
-                       else{c(iEIC2()$chrom1$mz-10,iEIC2()$chrom1$mz+10)},
-                                                      yrange = NULL,
-                                                      maxxrange = NULL,
-                                                      maxyrange = NULL,
-                                                      sel = if(length(iEIC2()$chrom1$mz) < 1 || is.na(iEIC2()$chrom1$mz) || is.null(iEIC2()$chrom1$mz)){
-                                                        NULL}
-                                                        else{list(File = iEIC2()$chrom1$marker$File[1],
-                                                                 scan = iEIC2()$chrom1$marker$scan[1],
-                                                                 rt = iEIC2()$chrom1$marker$rt[1]*60)},
-                                                      data = NULL,
-                                                      mz = iEIC2()$chrom1$mz),
-                                          layout = list(lw = 1,
-                                                        cex = 1.5,
-                                                        controls = F,
-                                                        ppm = MSData$layouts[[MSData$active]]$settings$ppm,
-                                                        active =T),
-                                          msdata = MSData$data)
+                         NULL}
+                         else{c(iEIC2()$chrom1$mz-10,iEIC2()$chrom1$mz+10)},
+                         yrange = NULL,
+                         maxxrange = NULL,
+                         maxyrange = NULL,
+                         sel = if(length(iEIC2()$chrom1$marker$File) < 1 || is.na(iEIC2()$chrom1$marker$File) || is.null(iEIC2()$chrom1$marker$File)){
+                           NULL}
+                         else{list(File = iEIC2()$chrom1$marker$File,
+                                   scan = iEIC2()$chrom1$marker$scan,
+                                   rt = iEIC2()$chrom1$marker$rt*60)},
+                         data = NULL,
+                         mz = iEIC2()$chrom1$mz,
+                         MS2 = F),
+                         layout = list(lw = 1,
+                                       cex = 1.5,
+                                       controls = F,
+                                       ppm = MSData$layouts[[MSData$active]]$settings$ppm,
+                                       active =T,
+                                       highlights = NULL,
+                                       height = 350),
+                         msdata = MSData$data)
                      }), 
-                     keys = reactive({keyin$keyd})
+                     keys = reactive({keyin$keyd}),
+                     static = list(title = "MS spectra")
 )
