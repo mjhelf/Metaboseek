@@ -4,15 +4,6 @@
 
 precombino <- reactive({
     
-    
-  #  if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
-   #     if(featureTables$tables[[featureTables$active]]$editable){
-    #        featureTables$tables[[featureTables$active]]$df[c(row.names(hot_to_r(input$maintable))),c(colnames(hot_to_r(input$maintable)))] <- hot_to_r(input$maintable)[c(row.names(hot_to_r(input$maintable))),c(colnames(hot_to_r(input$maintable)))]
-     #   }else{
-      #      featureTables$tables[[featureTables$active]]$df[c(row.names(hot_to_r(input$maintable))),"comments"] <- hot_to_r(input$maintable)[c(row.names(hot_to_r(input$maintable))),"comments"] 
-  #      }
-   # }
-    
     selrows <- if(!is.null(allFilters())){featureTables$tables[[featureTables$active]]$df[allFilters(),]}else{featureTables$tables[[featureTables$active]]$df}
     
     if(length(input$mainSortToggle) !=0 && input$mainSortToggle){
@@ -26,7 +17,7 @@ precombino <- reactive({
 
 combino <- reactive({
 
-    combino <- precombino()[,selectedCols()]
+    combino <- precombino()[,ColSel$selectedCols]
 
     return(combino)
     
@@ -78,14 +69,6 @@ output$tableInfo <- renderText({paste0(nrow(combino()),
                                              else{paste0(ceiling(nrow(combino())/fppage),"page(s))")}
                                         )
 })
-
-#output$tableInfo <- renderUI(
- #                             {textOutput("tableInfo",
-  #                                        paste0(nrow(combino()),
-   #                                        " items (",
-    #                                      if(featureTables$tables[[featureTables$active]]$editable){"1 page, editable)"}
-     #                                    else{paste0(ceiling(nrow(combino())/50),"page(s))")}))
-#})
 
 output$tbButton <- downloadHandler(filename= function(){
   titleout <- filenamemaker(projectData$projectName,featureTables)
@@ -181,14 +164,7 @@ output$maintable <- renderRHandsontable({if(!is.null(combino())){
                  highlightCol = TRUE, highlightRow = TRUE) %>%
         hot_col("comments", readOnly = FALSE)%>%
         hot_cols(columnSorting = FALSE,format="0.000000")%>%
-      hot_cols(fixedColumnsLeft = 3)#%>%
-    #  hot_cols(columnSorting = TRUE)%>%
-        #hot_col("em",format="0.000000")%>%
-       # hot_cols(renderer = "
-        #         function(instance, td, row, col, prop, value, cellProperties) {
-         #        Handsontable.TextCell.renderer.apply(this, arguments);
-          #       td.style.color = 'black';
-           #      }")
+      hot_cols(fixedColumnsLeft = 3)
     
     
     

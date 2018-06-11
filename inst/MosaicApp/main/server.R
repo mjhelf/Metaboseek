@@ -10,7 +10,7 @@ function(input, output, session) {
     
     selectedTabs <- reactiveValues(FeatureTable = "View Table"    )
     
-    MSData <- reactiveValues(layouts = NULL, #List of rawfile paths (unsorted)
+    MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
                              rawgrouptable = NULL,
                              index = NULL,
                              rootfolder = rootpath,
@@ -67,7 +67,6 @@ xcmsOut <- callModule(xcmsModule, "xcmsMod",
                       load = NULL
     )
     
-    #source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_server.R",package = "Mosaic"), local = TRUE)$value
-    
+
     
 }

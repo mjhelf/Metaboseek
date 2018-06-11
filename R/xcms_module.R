@@ -1,7 +1,7 @@
-#' Specmodule
+#' xcmsModule
 #' 
 #' 
-#' server module for interactive mass spectrum view
+#' server module for accessing the xcms data analysis workflow
 #' 
 #' @param input 
 #' @param output 
@@ -28,13 +28,12 @@ xcmsModule <- function(input,output, session,
                    load = reactive({list()})
 ){
   
-
-  internalStatic <- c(list(Mversion =  1),
+ ns <- NS(session$ns(NULL))
+ 
+ internalStatic <- c(list(Mversion =  1),
                       static)
   
-  ns <- NS(session$ns(NULL))
-
-
+ 
 internalValues <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1), stringsAsFactors = F),
                                              centWave = read.csv(system.file("config", "xcms_defaults", "centWave.csv",package = "Mosaic"),
                                                                  row.names = 1,
@@ -291,20 +290,7 @@ output$summary <- renderPrint({
 
 
 
-moduleOutput <- reactive({
-  
-  outp <- list(
-    reactives = list(),
-    values = internalValues,
-    static = internalStatic,
-    save = list()
-  )
-  class(outp) <- "xcmsModuleOutput"
-  return(outp)
-})
-
-
-return(moduleOutput)
+return(internalValues)
 
 }
 
