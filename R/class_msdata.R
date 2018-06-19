@@ -53,6 +53,9 @@ updateRawLayout <- function(MSD, new.stem=NULL){
 #' @param workers How many cores to use (cf. BiocParallel and SnowParam, argument only used if more than 10 files are loaded).
 #' @param rnames names of the xcmsRaw objects in the list returned, defaults to the filepaths of the source files.
 #' 
+#' @importFrom BiocParallel SnowParam bplapply
+#' @importFrom xcms xcmsRaw
+#' 
 #' @export
 ##Parallel enabled version for larger number of files
 ##NOTE: not equivalent to xcms function loadRaw

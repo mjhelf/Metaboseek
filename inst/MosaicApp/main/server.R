@@ -1,6 +1,10 @@
 function(input, output, session) {
     options(shiny.maxRequestSize=10*1024*1024^2) #10 GB
     #   session$onSessionEnded(stopApp)
+  
+  keyin <- reactiveValues(keyd = "NO")
+  
+  observeEvent(input$keyd,{keyin$keyd <- input$keyd})
     
     #initialize feature tables
     featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
@@ -8,7 +12,7 @@ function(input, output, session) {
                                     active = "table0"
     )
     
-    selectedTabs <- reactiveValues(FeatureTable = "View Table"    )
+    selectedTabs <- reactiveValues(FeatureTable = "View Table")
     
     MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
                              rawgrouptable = NULL,
@@ -18,7 +22,8 @@ function(input, output, session) {
                              RTcorr = NULL,
                              active = NULL,
                              filelist = NULL,
-                             data = NULL) #rawfs
+                             data = NULL,
+                             selectedFeats = NULL) #rawfs
     
     projectData <- reactiveValues(filegroupfiles =NULL,
                                   csvfiles = NULL,
@@ -47,8 +52,7 @@ function(input, output, session) {
     
     source(file.path("modules_nonformal", "logo_server.R"), local = TRUE)$value 
     source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
-    source(file.path("modules_nonformal", "background_server.R"), local = TRUE)$value
-    
+
     source(file.path("modules_nonformal", "help_server.R"), local = TRUE)$value 
     
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
@@ -59,12 +63,10 @@ function(input, output, session) {
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
 xcmsOut <- callModule(xcmsModule, "xcmsMod",
-                      reactives = NULL,
                       values = list(MSData = MSData),
                       static = list(servermode = servermode,
                                     activateXCMS = activateXCMS,
-                                    rootpath = rootpath),
-                      load = NULL
+                                    rootpath = rootpath)
     )
     
 

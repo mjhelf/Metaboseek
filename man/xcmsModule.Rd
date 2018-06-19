@@ -4,9 +4,8 @@
 \alias{xcmsModule}
 \title{xcmsModule}
 \usage{
-xcmsModule(input, output, session, reactives = reactive({     (list()) }),
-  values = reactiveValues(), static = list(servermode = F, rootpath = "/"),
-  load = reactive({     list() }))
+xcmsModule(input, output, session, values = reactiveValues(),
+  static = list(servermode = F, rootpath = "/"))
 }
 \arguments{
 \item{input}{}
@@ -15,13 +14,9 @@ xcmsModule(input, output, session, reactives = reactive({     (list()) }),
 
 \item{session}{}
 
-\item{reactives}{import reactive data from the shiny session}
-
 \item{values}{import reactiveValues from the shiny session}
 
 \item{static}{import static values}
-
-\item{load}{data to load from previous session (not implemented)}
 }
 \description{
 server module for accessing the xcms data analysis workflow

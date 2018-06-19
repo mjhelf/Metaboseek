@@ -19,6 +19,8 @@ Specmodule(input, output, session, tag, set = list(spec = list(xrange = NULL,
 \item{tag}{id to be used in ns()}
 
 \item{set}{Import data from the shiny session}
+
+\item{keys}{registered keystrokes}
 }
 \description{
 server module for interactive mass spectrum view

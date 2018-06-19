@@ -6,10 +6,8 @@
 #' @param input 
 #' @param output 
 #' @param session 
-#' @param reactives import reactive data from the shiny session
 #' @param values import reactiveValues from the shiny session
 #' @param static import static values
-#' @param load data to load from previous session (not implemented)
 #' 
 #' @import shiny
 #' @import shinydashboard
@@ -20,12 +18,9 @@
 #' 
 #' @export 
 xcmsModule <- function(input,output, session,
-                   
-                   reactives = reactive({(list())}),
                    values = reactiveValues(),
                    static = list(servermode = F,
-                                 rootpath = "/"),
-                   load = reactive({list()})
+                                 rootpath = "/")
 ){
   
  ns <- NS(session$ns(NULL))
