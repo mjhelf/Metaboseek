@@ -65,11 +65,23 @@ TableModule2 <- function(input,output, session,
   observeEvent(c(internalValues$page,
                  internalValues$decreasing,
                  internalValues$sortBy,
-                 internalValues$sortCheck
+                 internalValues$sortCheck,
+                 input$maintable$changes
                  ),{
                    if(!is.null(internalValues$df) && length(internalValues$df) > 0){
                       
                     # print(internalValues$updating)
+                     
+                     if(!is.null(input$maintable$changes$event) && input$maintable$changes$event == "afterRemoveRow"){
+                       
+                       internalValues$df <- internalValues$df[- internalValues$inpage[(input$maintable$changes$ind + 1) : (input$maintable$changes$ind + input$maintable$changes$ct)] ,]
+                     }
+                     
+                     if(!is.null(input$maintable$changes$event) && input$maintable$changes$event == "afterCreateRow"){
+                       
+                       internalValues$df[(nrow(internalValues$df) + 1):(nrow(internalValues$df) + input$maintable$changes$ct),] <- NA
+                     }
+                     
 
                        #update the df with any possible changes before changing anything else
                      if(!is.null(input$maintable)
