@@ -184,3 +184,11 @@ maintabsel <- reactive({
     )}
   else{return(NULL)}
         })
+
+observeEvent(input$maintable_select$select,{
+  
+  if(!is.null(input$maintable_select$select)){
+    MSData$selectedFeats <- data.frame(mz = hot_to_r(input$maintable)[as.integer(input$maintable_select$select$r):as.integer(input$maintable_select$select$r2),"mz"],
+                                      rt = hot_to_r(input$maintable)[as.integer(input$maintable_select$select$r):as.integer(input$maintable_select$select$r2),"rt"])
+    }
+})

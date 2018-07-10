@@ -61,7 +61,7 @@ fluidRow(
 )
 )
 ),
-tabPanel("Interactive View (beta)",
+tabPanel("MS Browser",
         # p("temp")
          source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
          ),

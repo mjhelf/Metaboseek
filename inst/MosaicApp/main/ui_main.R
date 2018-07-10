@@ -1,31 +1,41 @@
 dashboardPage(skin = "black",
               dashboardHeader(title = "MOSAiC",
                               dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
-                                                            icon = shiny::icon("fullscreen", lib = "glyphicon"), 
-                                                            href = NULL),
+                                                       icon = shiny::icon("fullscreen", lib = "glyphicon"), 
+                                                       href = NULL),
                                            type = c("messages"),
                                            badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL)
-                              ),
+              ),
               dashboardSidebar(
                 
                 sidebarMenu(
                   useShinyjs(),
-                  source(file.path("modules_nonformal", "background_ui.R"), local = TRUE)$value,
-                     
-
+                  ##DETECT KEYBOARD ACTIONS
+                  ##key being held down
+                  tags$script('
+                              $(document).on("keydown", function (e) {
+                              Shiny.onInputChange("keyd", e.which);
+                              });
+                              $(document).on("keyup", function (e) {
+                              Shiny.onInputChange("keyd", "NO");
+                              });
+                              '),
+                  
+                  
+                  
                   menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
                   menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
                   
                   menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
-                            menuSubItem("Coming soon", tabName = "workflow1")),
-                                    menuItem("Update / Help", tabName = "help", icon = icon("question-circle-o")),
-                 
+                           menuSubItem("Coming soon", tabName = "workflow1")),
+                  menuItem("Update / Help", tabName = "help", icon = icon("question-circle-o")),
+                  
                   #bookmarkButton(label ="Bookmark this session"),
                   htmlOutput("activeTable"),
                   hr(),
                   h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
-                     href="https://github.com/mjhelf/Mosaic", target="_blank"), align = "center")
-
+                       href="https://github.com/mjhelf/Mosaic", target="_blank"), align = "center")
+                  
                 )
                 
                 
@@ -133,30 +143,23 @@ margin-bottom: 0px;
 
 
                                           '))),
-            tabItems(
-                tabItem(tabName = "help",
-                        source(file.path("modules_nonformal", "help_ui.R"), local = TRUE)$value
-                ),
+                tabItems(
+                  tabItem(tabName = "help",
+                          source(file.path("modules_nonformal", "help_ui.R"), local = TRUE)$value
+                  ),
+                  
+                  tabItem(tabName = "XCMSrunpanel",
+                          xcmsModuleUI("xcmsMod")
+                  ),
+                  tabItem(tabName = "exploredata",
+                          source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
+                  ),
+                  tabItem(tabName = "workflow1",
+                          p("In the making")
+                  )
+                )
                 
-               # tabItem(tabName = "loadtables",
-                #        source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value
-                 #       ),
-              #  tabItem(tabName = "rawfiles",
-               #         source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value
-                #),
-                tabItem(tabName = "XCMSrunpanel",
-                        xcmsModuleUI("xcmsMod")
-                        #source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_ui.R",package = "Mosaic"), local = TRUE)$value
-                ),
-                tabItem(tabName = "exploredata",
-                        source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
-                ),
-              tabItem(tabName = "workflow1",
-                      p("In the making")
+                
+                
               )
-            )
-
-
-    
-        )
-        )
+)
