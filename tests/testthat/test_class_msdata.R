@@ -1,26 +1,23 @@
 context("Class MSData")
 
 #A simple list from files in the trimmed example
-mutfile <-  c(system.file("trimmed", "mut","AA03.mzXML", package = "Mosaic"),
-            system.file("trimmed", "mut", "AA05.mzXML", package = "Mosaic"),
-            system.file("trimmed", "mut", "AA07.mzXML", package = "Mosaic"))
+mutfile <-  list.files(system.file("data", "mut", package = "Mosaic"), full.names = T, pattern = ".mzXML")
 
-wtfile <-  c(system.file("trimmed", "wt", "AA10.mzXML", package = "Mosaic"),
-             system.file("trimmed", "wt", "AA12.mzXML", package = "Mosaic"),
-             system.file("trimmed", "wt", "AA14.mzXML", package = "Mosaic"),
-             system.file("trimmed", "wt", "AA16.mzXML", package = "Mosaic"))
-z <- list(mutfile, wtfile)
-x <- list(mutfile, wtfile)
-names(x) = c("MUT", "WT")
+wtfile <-  list.files(system.file("data", "wt", package = "Mosaic"), full.names = T, pattern = ".mzXML")
+
+rgt <- data.frame(File = c(mutfile,wtfile),
+                  Group = c(rep("mut",length(mutfile)), rep("wt",length(wtfile))),
+                  stringsAsFactors = F)
+xt <- constructRawLayout(rgt)
+y <- loadRawM(filelist = xt$filelist, MSn = T, workers =1)
 
 #Tests for the constructRawLayout function#
 
 test_that("rawgrouptable in the constructRawLayout function works",{
-  xt <- constructRawLayout(x)
-  expect_equal(xt$rawgrouptable[[1]][1], system.file("trimmed", "mut","AA03.mzXML", package = "Mosaic"))})
+  expect_equal(xt$rawgrouptable[[1]][1], system.file("data", "mut","AA03.mzXML", package = "Mosaic"))})
 
 test_that("groups in rawgrouptable in the constructRawLayout function are correct",{
-  expect_equal(names(xt$rawgrouptable), c("MUT", "WT"))})
+  expect_equal(names(xt$grouping), c("mut", "wt"))})
 
 test_that("the class of rawgrouptable is rawLayout",{
           expect_equal(class(xt), "rawLayout")})
@@ -47,7 +44,7 @@ test_that("alpha in settings of rawgrouptable are correct",{
 
 #Several Tests for the loadRawM function#
 test_that("loadRawMfunction works",{
-y <- print(loadRawM(filelist = xt$rawgrouptable[[1]], MSn = T, workers =1))
+
   expect_equal(length(y[[1]]@tic), 570)
   expect_equal(y[[1]]@scantime[1], 200.267)
   expect_equal(y[[1]]@scanindex[1], 0)
@@ -86,24 +83,4 @@ test_that("getgauss function works",{
 #Tests for exIntensities
 ##help, tb is required as an object(only appears once in the script)
 
-
-
-
-
-
-
-
-loadRawM(y)
-
-updateRawLayout(y)
-
-rawGrouping(y)
-xt
-xt$rawgrouptable
-xt$filelist
-xt$Grouping
-xt$settings$rtw
-class(xt)
-x$Group
-x
-##Why are x$filelist and x$group empty lists????
+#remove default values for pcame_mini (in bestgauss), and tb (in exIntensities)

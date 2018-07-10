@@ -100,10 +100,10 @@ rawGrouping <- function(rawgrouptable){
 #' @param RTcorr if not NULL, this RTcorr object will be used to adjust retention times.
 #' 
 #' @export
-multiEIC <- function (rawdata= rawcoll,
-                      mz = data.frame(mzmin = pcame_mini$mzmin, mzmax=pcame_mini$mzmax),
-                      rt = data.frame(rtmin = pcame_mini$rt-5, rtmax=pcame_mini$rt+5),
-                      rnames = row.names(pcame_mini),
+multiEIC <- function (rawdata,
+                      mz,
+                      rt,
+                      rnames,
                       byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
                       XIC = F,
                       getgauss = F,
