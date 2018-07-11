@@ -20,8 +20,9 @@ fppage <- as.integer(100) #feats per page
 # set up servermode:
 servermode <- F
 activateXCMS <- T
-activateLocalFiles <- F
-rootpath <- c(root = default__root)  ##the root path for file selection (for server - set with care)
+activateLocalFiles <- T
+rootpath <- c(root = "C:/xcms")#default__root)  ##the root path for file selection (for server - set with care)
+print(rootpath)
 
 enabledCores <- 4
 options(scipen = 5)
