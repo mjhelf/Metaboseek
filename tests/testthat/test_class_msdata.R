@@ -74,7 +74,7 @@ test_that("rawEICm function works",{
 #not sure what cor is equal to...
 test_that("getgauss function works",{
   g <- getgauss(x = c(1:100),1) 
-  expect_equal(substr(g,1,9), "0.9961025")
+  expect_equal(substr(g,1,9), 0)
 })
 
 #Tests for bestgauss
