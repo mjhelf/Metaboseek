@@ -1,9 +1,9 @@
 context("Class MSData")
 
 #A simple list from files in the trimmed example
-mutfile <-  list.files(system.file("data", "mut", package = "Mosaic"), full.names = T, pattern = ".mzXML")
+mutfile <-  list.files(system.file("data", "ms1", "mut", package = "Mosaic"), full.names = T, pattern = ".mzXML")
 
-wtfile <-  list.files(system.file("data", "wt", package = "Mosaic"), full.names = T, pattern = ".mzXML")
+wtfile <-  list.files(system.file("data", "ms1", "wt", package = "Mosaic"), full.names = T, pattern = ".mzXML")
 
 rgt <- data.frame(File = c(mutfile,wtfile),
                   Group = c(rep("mut",length(mutfile)), rep("wt",length(wtfile))),

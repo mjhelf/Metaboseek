@@ -7,12 +7,11 @@ function(input, output, session) {
   observeEvent(input$keyd,{keyin$keyd <- input$keyd})
     
     #initialize feature tables
-    featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
+    featureTables <- reactiveValues(tables = list(table0 = 9 ),
                                     index = c("Custom Table" = "table0"),
                                     active = "table0"
     )
     
-    selectedTabs <- reactiveValues(FeatureTable = "View Table")
     
     MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
                              rawgrouptable = NULL,
@@ -30,7 +29,8 @@ function(input, output, session) {
                                   filegroups = NULL,
                                   projectName = paste0("MOSAiC_session_",timeStamp))
     
-    
+    selectedTabs <- reactiveValues(FeatureTable = "View Table")
+
     output$activeTable <- renderUI({
         selectizeInput('activeTable', 'Active Table', selected = featureTables$active, choices = featureTables$index, multiple = FALSE)
     })  
