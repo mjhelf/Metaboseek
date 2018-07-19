@@ -4,7 +4,7 @@
 \alias{MosaicMinimalUi}
 \title{MosaicMinimalUi}
 \usage{
-MosaicMinimalUi(...)
+MosaicMinimalUi(..., diagnostics = T)
 }
 \description{
 A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes

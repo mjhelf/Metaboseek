@@ -14,7 +14,7 @@ y <- loadRawM(filelist = xt$filelist, MSn = T, workers =1)
 #Tests for the constructRawLayout function#
 
 test_that("rawgrouptable in the constructRawLayout function works",{
-  expect_equal(xt$rawgrouptable[[1]][1], system.file("data", "mut","AA03.mzXML", package = "Mosaic"))})
+  expect_equal(xt$rawgrouptable[[1]][1], system.file("data", "ms1", "mut","AA03.mzXML", package = "Mosaic"))})
 
 test_that("groups in rawgrouptable in the constructRawLayout function are correct",{
   expect_equal(names(xt$grouping), c("mut", "wt"))})

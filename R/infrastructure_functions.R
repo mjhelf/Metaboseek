@@ -75,9 +75,9 @@ MosaicExamplePreload <- function(){
 #'
 #' A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes
 #'
-#' @import shiny shinyjs
+#' @importFrom shinyjs runcodeUI 
 #' @export
-MosaicMinimalUi <- function(...){
+MosaicMinimalUi <- function(..., diagnostics = T){
   fluidPage(
     tags$script('
                 $(document).on("keydown", function (e) {
@@ -87,21 +87,26 @@ MosaicMinimalUi <- function(...){
                 Shiny.onInputChange("keyd", "NO");
                 });
                 '),
-    runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
+    if(diagnostics){
+    fluidPage(...,
+              runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
               height = NULL, includeShinyjs = FALSE),
-    verbatimTextOutput('diag'),
-    ...
+    verbatimTextOutput('diag'))}
+    else{
+     ... 
+    }
     )}
 
 #' MosaicMinimalServer
 #'
 #' A minimal server logic for Mosaic. Function has to be called in a shiny server function context. Will load example data if it is not present in the parent environment.
-#' Save time by providing the parent environment with objects \code{tab1}, `tab2` and `MSD` by calling MosaicExamplePreload()
+#' Save time by providing the parent environment with objects \code{tab1}, \code{tab2} and \code{MSD} by calling MosaicExamplePreload()
 #'
-#' @import shiny shinyjs
+#' @importFrom shinyjs runcodeServer 
 #' @export
 MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
   eval.parent(quote({
+    options(shiny.maxRequestSize=10*1024*1024^2) 
     keyin <- reactiveValues(keyd = "NO")
     
     observeEvent(input$keyd,{keyin$keyd <- input$keyd})
@@ -115,10 +120,7 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
     eval.parent(quote({
       runcodeServer()
       
-      output$diag <- renderPrint({
-        print(input[['Testtab-maintable']]$changes$changes)
-        
-      })
+     
     }))
   }
   if(exampleData){
@@ -153,7 +155,7 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
   }else{
     eval.parent(quote({
       
-      featureTables <- reactiveValues(tables = list(table0 = 9 ),
+      featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
                                       index = c("Custom Table" = "table0"),
                                       active = "table0"
       )
@@ -161,7 +163,7 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
       MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
                                rawgrouptable = NULL,
                                index = NULL,
-                               rootfolder = rootpath,
+                               rootfolder = c(root = default__root),
                                localfolders = character(0),
                                RTcorr = NULL,
                                active = NULL,

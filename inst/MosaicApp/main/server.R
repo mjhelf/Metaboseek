@@ -1,34 +1,7 @@
 function(input, output, session) {
-    options(shiny.maxRequestSize=10*1024*1024^2) #10 GB
-    #   session$onSessionEnded(stopApp)
   
-  keyin <- reactiveValues(keyd = "NO")
+  MosaicMinimalServer(diagnostics = devel__mode, exampleData = F)
   
-  observeEvent(input$keyd,{keyin$keyd <- input$keyd})
-    
-    #initialize feature tables
-    featureTables <- reactiveValues(tables = list(table0 = 9 ),
-                                    index = c("Custom Table" = "table0"),
-                                    active = "table0"
-    )
-    
-    
-    MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
-                             rawgrouptable = NULL,
-                             index = NULL,
-                             rootfolder = rootpath,
-                             localfolders = character(0),
-                             RTcorr = NULL,
-                             active = NULL,
-                             filelist = NULL,
-                             data = NULL,
-                             selectedFeats = NULL) #rawfs
-    
-    projectData <- reactiveValues(filegroupfiles =NULL,
-                                  csvfiles = NULL,
-                                  filegroups = NULL,
-                                  projectName = paste0("MOSAiC_session_",timeStamp))
-    
     selectedTabs <- reactiveValues(FeatureTable = "View Table")
 
     output$activeTable <- renderUI({
@@ -50,7 +23,7 @@ function(input, output, session) {
    # source(file.path("modules_nonformal", "bookmarking_server.R"), local = TRUE)$value 
     #source(file.path("modules_nonformal", "logo_server.R"), local = TRUE)$value 
     
-    source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
+    #source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
 
     callModule(updaterModule, 'update', tag = 'update', set =list(package = "Mosaic",
                                                                   refs = c("master", "devel", "devel_raw"),
