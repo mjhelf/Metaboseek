@@ -132,8 +132,8 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
       
       
       featureTables <- reactiveValues(tables = reactiveValues(table0 = constructFeatureTable(),
-                                                              table1 = ListToReactiveValues(tab1),
-                                                              table2 = ListToReactiveValues(tab2)),
+                                                              table1 = tab1,
+                                                              table2 = tab2),
                                       index = c("Custom Table" = "table0",
                                                 "mini_example_features.csv" = "table1",
                                                 "large_example_features.csv" = "table2"),

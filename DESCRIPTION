@@ -31,5 +31,6 @@ Imports: xcms (>= 2.99),
 Suggests: knitr,
     rmarkdown,
     covr,
-    testthat
+    testthat,
+    shinytest
 VignetteBuilder: knitr

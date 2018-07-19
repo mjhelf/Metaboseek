@@ -327,6 +327,9 @@ rawEICm <- function(object,
 #' 
 #' @param x numeric() to fit the curve
 #' 
+#' @importFrom xcms SSgauss
+#' @importFrom stats fitted nls
+#' 
 #' @export
 getgauss <- function (x, pval = 1){
     
