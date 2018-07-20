@@ -1,5 +1,5 @@
 function(input, output, session) {
-    options(shiny.maxRequestSize=1024*1024^2)
+    options(shiny.maxRequestSize=10*1024*1024^2) #10 GB
     #   session$onSessionEnded(stopApp)
     
     #initialize feature tables
@@ -10,7 +10,7 @@ function(input, output, session) {
     
     selectedTabs <- reactiveValues(FeatureTable = "View Table"    )
     
-    MSData <- reactiveValues(layouts = NULL, #List of rawfile paths (unsorted)
+    MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
                              rawgrouptable = NULL,
                              index = NULL,
                              rootfolder = rootpath,
@@ -58,7 +58,15 @@ function(input, output, session) {
     
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
-    source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_server.R",package = "Mosaic"), local = TRUE)$value
+xcmsOut <- callModule(xcmsModule, "xcmsMod",
+                      reactives = NULL,
+                      values = list(MSData = MSData),
+                      static = list(servermode = servermode,
+                                    activateXCMS = activateXCMS,
+                                    rootpath = rootpath),
+                      load = NULL
+    )
     
+
     
 }

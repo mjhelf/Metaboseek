@@ -97,7 +97,7 @@ observeEvent(input$analyzebutton,{
                         [,featureTables$tables[[featureTables$active]]$intensities])) #using sqrt here to condense data values which may contain 0s
       }
     
-      inp <- MosCluster(x = mx / rowMeans(mx),
+      inp <- MosCluster(x = mx / Biobase::rowMeans(mx),
                         k = input$kclusternum,
                         samples = 100)
     

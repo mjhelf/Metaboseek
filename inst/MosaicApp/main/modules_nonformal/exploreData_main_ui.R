@@ -18,7 +18,8 @@ fluidPage(
     htmlOutput('mainSelgProps'),
     htmlOutput('mainSelsProps'),
     htmlOutput('mainSelIntensities'),
-    htmlOutput('mainSelOthers')
+    htmlOutput('mainSelOthers'),
+    columnSelModuleUI('ColSelMod')
         ),
     column(6,
            source(file.path("modules_nonformal", "mainSort_ui.R"), local = TRUE)$value

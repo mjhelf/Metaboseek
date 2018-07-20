@@ -145,7 +145,8 @@ margin-bottom: 0px;
                #         source(file.path("modules_nonformal", "loadMSdata_ui.R"), local = TRUE)$value
                 #),
                 tabItem(tabName = "XCMSrunpanel",
-                        source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_ui.R",package = "Mosaic"), local = TRUE)$value
+                        xcmsModuleUI("xcmsMod")
+                        #source(system.file("MosaicApp", "xcmsRunner","modules_nonformal", "xcms_light_ui.R",package = "Mosaic"), local = TRUE)$value
                 ),
                 tabItem(tabName = "exploredata",
                         source(file.path("modules_nonformal", "exploreData_main_ui.R"), local = TRUE)$value
