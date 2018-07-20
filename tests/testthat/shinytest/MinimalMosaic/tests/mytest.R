@@ -1,4 +1,4 @@
-app <- ShinyDriver$new("../")
+app <- ShinyDriver$new("../", loadTimeout = 120000)
 app$snapshotInit("mytest")
 
 # Input 'keyd' was set, but doesn't have an input binding.
