@@ -1,7 +1,7 @@
 {
   "input": {
-    "runcode_expr": "print(\"test\")",
-    "runcode_run": 1
+    "runcode_expr": "",
+    "runcode_run": 0
   },
   "output": {
     "diag": "$df\n  mz rt comments fragments\n1  0  0                   \n2  0  0                   \n3  0  0                   \n\n$tablename\n[1] \"Custom Table\"\n\n$editable\n[1] TRUE\n\n$core\n[1] \"mz\" \"rt\"\n\n$mz\n[1] \"mz\"\n\n$rt\n[1] \"rt\"\n\n$comments\n[1] \"comments\"\n\n$fragments\n[1] \"fragments\"\n\n$summaryStats\ncharacter(0)\n\n$others\n[1] \"comments\"  \"fragments\"\n\n$sele\n[1] 3\n\n$sortBy\n[1] \"mz\"\n\n$sortByDecreasing\n[1] FALSE\n\n$order\n[1] 3\n\n$filters\n$filters$page\n[1] 1\n\n$filters$inpage\n[1] 1\n\n$filters$filters\n$filters$filters$Filter1\n$filters$filters$Filter1$selected\n[1] 1 2 3\n\n$filters$filters$Filter1$column\n[1] \"mz\"\n\n$filters$filters$Filter1$minSel\nNULL\n\n$filters$filters$Filter1$maxSel\nNULL\n\n$filters$filters$Filter1$modeSel\nNULL\n\n$filters$filters$Filter1$txtSel\n[1] \"\"\n\n$filters$filters$Filter1$active\n[1] FALSE\n\n\n\n$filters$sele\n[1] 1 2 3\n\n$filters$sortBy\n[1] \"mz\"\n\n$filters$sortByDecreasing\n[1] FALSE\n\n$filters$order\n[1] 1 2 3\n\n\n$selectedCols\n$selectedCols$core\n[1] \"mz\" \"rt\"\n\n$selectedCols$comments\n[1] \"comments\"\n\n$selectedCols$gProps\nNULL\n\n$selectedCols$sProps\nNULL\n\n$selectedCols$intensities\nNULL\n\n$selectedCols$others\ncharacter(0)\n\n\n$useNorm\n[1] FALSE\n\nattr(,\"class\")\n[1] \"MosaicFT\""

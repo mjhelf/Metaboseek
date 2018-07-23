@@ -28,9 +28,13 @@ ListToReactiveValues <- function(ls){
 #'
 #' Loads example data into the parent environment for testing and development purposes
 #'
+#' @param tables load example tables?
+#' @param data load example MS data?
+#' 
 #' @import shiny
 #' @export
-MosaicExamplePreload <- function(){
+MosaicExamplePreload <- function(tables = T, data = T){
+  if(tables){
   eval.parent(quote({
     tab1 <- constructFeatureTable (df= read.csv(system.file("data", "tables", "mini_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
                                    mzcol= "mz", #
@@ -51,7 +55,10 @@ MosaicExamplePreload <- function(){
                                    anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
                                    tablename = "Custom Table",
                                    editable = T)
+  }))}
     
+  if(data){
+    eval.parent(quote({
     rawgroups <- read.csv(system.file("data", "tables", "filegroups_all.csv", package = "Mosaic"), stringsAsFactors = F)
     rawgroups$File <- file.path(system.file("data", package = "Mosaic"), rawgroups$File)
     
@@ -65,6 +72,7 @@ MosaicExamplePreload <- function(){
                 filelist = rawgroups$File,
                 data = loadRawM(rawgroups$File))
   }))
+  }
 }
 
 
@@ -102,9 +110,13 @@ MosaicMinimalUi <- function(..., diagnostics = T){
 #' A minimal server logic for Mosaic. Function has to be called in a shiny server function context. Will load example data if it is not present in the parent environment.
 #' Save time by providing the parent environment with objects \code{tab1}, \code{tab2} and \code{MSD} by calling MosaicExamplePreload()
 #'
+#' @param data load example MS data?
+#' @param tables load example tables?
+#' @param diagnostics run diagnostics (shinyjs::runcodeServer()) code?
+#'   
 #' @importFrom shinyjs runcodeServer 
 #' @export
-MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
+MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
   eval.parent(quote({
     options(shiny.maxRequestSize=10*1024*1024^2) 
     keyin <- reactiveValues(keyd = "NO")
@@ -123,24 +135,12 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
      
     }))
   }
-  if(exampleData){
+  if(data){
     eval.parent(quote({
-      if(!(exists("tab1") && exists("tab2") && exists("MSD")
-           && class(tab1) == class(tab2) && class(tab2) == "MosaicFT"
+      if(!(exists("MSD")
            && class(MSD) == "list" && class(MSD$layouts$Group1) == "rawLayout")){
-        MosaicExamplePreload()}
-      
-      
-      featureTables <- reactiveValues(tables = reactiveValues(table0 = constructFeatureTable(),
-                                                              table1 = tab1,
-                                                              table2 = tab2),
-                                      index = c("Custom Table" = "table0",
-                                                "mini_example_features.csv" = "table1",
-                                                "large_example_features.csv" = "table2"),
-                                      active = "table1",
-                                      activerow = 1)
-      
-      
+        MosaicExamplePreload(data = T, tables = F)}
+
       MSData <- reactiveValues(layouts = list(Group1 = MSD$layouts$Group1), #List of rawfile paths (unsorted)
                                rawgrouptable = MSD$rawgrouptable,
                                index = NULL,
@@ -154,12 +154,6 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
     }))
   }else{
     eval.parent(quote({
-      
-      featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
-                                      index = c("Custom Table" = "table0"),
-                                      active = "table0"
-      )
-      
       MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
                                rawgrouptable = NULL,
                                index = NULL,
@@ -170,6 +164,29 @@ MosaicMinimalServer <- function(exampleData = T, diagnostics = T){
                                filelist = NULL,
                                data = NULL,
                                selectedFeats = NULL) #rawfs
+    }))
+  }
+  if(tables){
+  eval.parent(quote({
+    if(!(exists("tab1") && exists("tab2")
+         && class(tab1) == class(tab2) && class(tab2) == "MosaicFT")){
+      MosaicExamplePreload(tables = T, data = F)}
+    
+    featureTables <- reactiveValues(tables = reactiveValues(table0 = constructFeatureTable(),
+                                                            table1 = tab1,
+                                                            table2 = tab2),
+                                    index = c("Custom Table" = "table0",
+                                              "mini_example_features.csv" = "table1",
+                                              "large_example_features.csv" = "table2"),
+                                    active = "table1",
+                                    activerow = 1)
+  }))
+  }else{
+    eval.parent(quote({
+      featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
+                                      index = c("Custom Table" = "table0"),
+                                      active = "table0"
+      )
     }))
   }
 }

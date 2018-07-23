@@ -1,9 +1,14 @@
 
 context("Shiny tests")
 
-test_that("Application works", {
+test_that("Application initialization works", {
   expect_pass(testApp("MinimalMosaic", "mytest.R", compareImages = FALSE, quiet = T))
   expect_pass(testApp("MinimalMosaicExampleData", "mytest.R", compareImages = FALSE, quiet = T))
+})
+
+test_that("Application modules work", {
+  expect_pass(testApp("TableModule2", "mytest.R", compareImages = FALSE, quiet = T))
+  
 })
 
 #' NOTES:
