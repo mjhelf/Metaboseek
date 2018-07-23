@@ -11,6 +11,11 @@ test_that("Application modules work", {
   
 })
 
+test_that("Mosaic does not crash when loaded", {
+  expect_pass(testApp(system.file("MosaicApp", "main", package = "Mosaic"), "mytest.R", compareImages = FALSE, quiet = T))
+  
+})
+
 #' NOTES:
 #' in "MinimalMosaicExampleData", 1714942.5 is rounded down to 1714942 in Linux, but rounded up to 1714943 in Windows.
 #' Expected example output is the linux value
