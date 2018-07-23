@@ -1,3 +1,3 @@
 fluidPage(
-  EICmoduleUI("EIC2"),
+  MultiEICmoduleUI("MultiE"),
 MultiSpecmoduleUI("Spec2"))

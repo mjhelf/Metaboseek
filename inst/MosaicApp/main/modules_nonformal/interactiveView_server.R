@@ -1,51 +1,24 @@
-selections <- reactiveValues(plots = list(chrom1 = list(xrange = NULL,
-                                                        yrange = NULL,
-                                                        maxxrange = NULL,
-                                                        maxyrange = NULL,
-                                                        marker = NULL,
-                                                        mz = NULL,
-                                                        tic = T),
-                                          spec1 = list(xrange = NULL,
-                                                       yrange = NULL,
-                                                       maxxrange = NULL,
-                                                       maxyrange = NULL,
-                                                       marker = NULL,
-                                                       data = NULL)
-),
-index = c("chrom1", "spec1"),
-lastChangedEIC = "chrom1"
-)
 
-iEIC2 <- callModule(EICmodule,"EIC2", tag = "EIC2", set= reactive({ 
-                                                                        list(layouts = MSData$layouts, #List of rawfile paths (unsorted)
-                                                                        RTcorr = MSData$RTcorr,
-                                                                        activeGroup = MSData$active,
-                                                                        filelist = MSData$filelist,
-                                                                        data = MSData$data,
-                                                                        mz = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]},
-                                                                        rtr = if(is.null(maintabsel())){NULL}else{c((hot_to_r(input$maintable)[maintabsel()$rrng[1],"rt"]-MSData$layouts[[MSData$active]]$settings$rtw)/60,
-                                                                                                                    (hot_to_r(input$maintable)[maintabsel()$rrng[1],"rt"]+MSData$layouts[[MSData$active]]$settings$rtw)/60)},
-                                                                        active = if(length(MSData$data) ==0){F}else{T}
-)}),
+MultiEICout <- callModule(MultiEICmodule,"MultiE", values = reactiveValues(MSData = MSData),
 keys = reactive({keyin$keyd}))
 
 iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = "Spec2", 
                      set = reactive({
                        
                        
-                       list(spec = list(xrange = if(length(iEIC2$plots$chrom1$mz) < 1 || is.na(iEIC2$plots$chrom1$mz) || is.null(iEIC2$plots$chrom1$mz)){
+                       list(spec = list(xrange = if(length(MultiEICout$currentView$controls$mz) < 1 || is.na(MultiEICout$currentView$controls$mz)){
                          NULL}
-                         else{c(iEIC2$plots$chrom1$mz-10,iEIC2$plots$chrom1$mz+10)},
+                         else{c(MultiEICout$currentView$controls$mz-10,MultiEICout$currentView$controls$mz+10)},
                          yrange = NULL,
                          maxxrange = NULL,
                          maxyrange = NULL,
-                         sel = if(length(iEIC2$plots$chrom1$marker$File) < 1 || is.na(iEIC2$plots$chrom1$marker$File) || is.null(iEIC2$plots$chrom1$marker$File)){
+                         sel = if(length(MultiEICout$currentView$controls$marker$file) < 1 || is.na(MultiEICout$currentView$controls$marker$file) ){
                            NULL}
-                         else{list(File = iEIC2$plots$chrom1$marker$File,
-                                   scan = iEIC2$plots$chrom1$marker$scan,
-                                   rt = iEIC2$plots$chrom1$marker$rt*60)},
+                         else{list(File = MultiEICout$currentView$controls$marker$file,
+                                   scan = MultiEICout$currentView$controls$marker$scan,
+                                   rt = MultiEICout$currentView$controls$marker$rt*60)},
                          data = NULL,
-                         mz = iEIC2$plots$chrom1$mz,
+                         mz = MultiEICout$currentView$controls$mz,
                          MS2 = F),
                          layout = list(lw = 1,
                                        cex = 1.5,

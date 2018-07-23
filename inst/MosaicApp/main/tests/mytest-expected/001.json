@@ -1,0 +1,1728 @@
+{
+  "input": {
+    "activeTable": "table0",
+    "addFilter": 0,
+    "anagroupswitch": true,
+    "analyzebutton": 0,
+    "changeRoot": 0,
+    "colorscheme": "mosaic.colors",
+    "ColSelMod-mainSelgProps": null,
+    "ColSelMod-mainSelGroup": "",
+    "ColSelMod-mainSelIntensities": null,
+    "ColSelMod-mainSelOthers": null,
+    "ColSelMod-mainSelsProps": null,
+    "confgroups": 0,
+    "confrgroups": 0,
+    "EICplots": "MS2 Browser",
+    "file1": null,
+    "Filter1-colSel": "mz",
+    "Filter1-toggler": false,
+    "groupingActiveSelect": "",
+    "groupingEditSelect": "__NEW",
+    "groupingName": "Grouping0",
+    "header": true,
+    "intcols": 0,
+    "loadgroups": null,
+    "loadmassShift": null,
+    "loadRawFolder": 0,
+    "loadRawFolderOffline": 0,
+    "loadrgroups": null,
+    "mainSort": "mz",
+    "mainSortDecreasing": false,
+    "mainSortToggle": false,
+    "maintable": {
+      "data": [
+        [
+          0,
+          0,
+          ""
+        ],
+        [
+          0,
+          0,
+          ""
+        ],
+        [
+          0,
+          0,
+          ""
+        ]
+      ],
+      "changes": {
+        "event": "afterChange",
+        "changes": null
+      },
+      "params": {
+        "data": [
+          [
+            0,
+            0,
+            ""
+          ],
+          [
+            0,
+            0,
+            ""
+          ],
+          [
+            0,
+            0,
+            ""
+          ]
+        ],
+        "rClass": "data.frame",
+        "rColClasses": {
+          "mz": "numeric",
+          "rt": "numeric",
+          "comments": "character"
+        },
+        "rColnames": [
+          "mz",
+          "rt",
+          "comments"
+        ],
+        "rColHeaders": [
+          "mz",
+          "rt",
+          "comments"
+        ],
+        "rRowHeaders": [
+          "1",
+          "2",
+          "3"
+        ],
+        "rDataDim": [
+          3,
+          3
+        ],
+        "selectCallback": true,
+        "colHeaders": [
+          "mz",
+          "rt",
+          "comments"
+        ],
+        "rowHeaders": [
+          "1",
+          "2",
+          "3"
+        ],
+        "columns": [
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.000000"
+            },
+            "readOnly": false,
+            "default": null
+          },
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.000000"
+            },
+            "readOnly": false,
+            "default": null
+          },
+          {
+            "type": "text",
+            "readOnly": false,
+            "default": null,
+            "numericFormat": {
+              "pattern": "0.000000"
+            }
+          }
+        ],
+        "width": null,
+        "height": null,
+        "debug": 0,
+        "search": false,
+        "stretchH": "none",
+        "comments": false,
+        "ishighlight": true,
+        "currentRowClassName": "currentRow",
+        "currentColClassName": "currentCol",
+        "contextMenu": {
+          "items": {
+            "row_above": [
+
+            ],
+            "row_below": [
+
+            ],
+            "remove_row": [
+
+            ],
+            "hsep3": {
+              "name": "---------",
+              "key": "hsep3"
+            },
+            "undo": [
+
+            ],
+            "redo": [
+
+            ],
+            "hsep4": {
+              "name": "---------",
+              "key": "hsep4"
+            },
+            "alignment": [
+
+            ]
+          }
+        },
+        "columnSorting": false,
+        "fixedColumnsLeft": 3
+      }
+    },
+    "massShiftTab": {
+      "data": [
+        [
+          true,
+          "unmodified",
+          "",
+          1,
+          0
+        ],
+        [
+          false,
+          "-H2O",
+          "",
+          1,
+          -18.010564684
+        ],
+        [
+          false,
+          "+13C iso",
+          "",
+          1,
+          1.003355
+        ],
+        [
+          false,
+          "",
+          "",
+          1,
+          0
+        ],
+        [
+          false,
+          "",
+          "",
+          1,
+          0
+        ],
+        [
+          false,
+          "",
+          "",
+          1,
+          0
+        ]
+      ],
+      "changes": {
+        "event": "afterChange",
+        "changes": null
+      },
+      "params": {
+        "data": [
+          [
+            true,
+            "unmodified",
+            "",
+            1,
+            0
+          ],
+          [
+            false,
+            "-H2O",
+            "",
+            1,
+            -18.010564684
+          ],
+          [
+            false,
+            "+13C iso",
+            "",
+            1,
+            1.003355
+          ],
+          [
+            false,
+            "",
+            "",
+            1,
+            0
+          ],
+          [
+            false,
+            "",
+            "",
+            1,
+            0
+          ],
+          [
+            false,
+            "",
+            "",
+            1,
+            0
+          ]
+        ],
+        "rClass": "data.frame",
+        "rColClasses": {
+          "use": "logical",
+          "Name": "character",
+          "Mol_formula": "character",
+          "charge": "numeric",
+          "mz_shift": "numeric"
+        },
+        "rColnames": [
+          "use",
+          "Name",
+          "Mol_formula",
+          "charge",
+          "mz_shift"
+        ],
+        "rColHeaders": [
+          "use",
+          "Name",
+          "Mol_formula",
+          "charge",
+          "mz_shift"
+        ],
+        "rRowHeaders": null,
+        "rDataDim": [
+          6,
+          5
+        ],
+        "selectCallback": false,
+        "colHeaders": [
+          "use",
+          "Name",
+          "Mol_formula",
+          "charge",
+          "mz_shift"
+        ],
+        "rowHeaders": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "columns": [
+          {
+            "type": "checkbox",
+            "default": null
+          },
+          {
+            "type": "text",
+            "default": null
+          },
+          {
+            "type": "text",
+            "default": null
+          },
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.00"
+            },
+            "default": null
+          },
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.000000"
+            },
+            "default": null
+          }
+        ],
+        "width": null,
+        "height": null,
+        "debug": 0,
+        "search": false,
+        "stretchH": "none",
+        "comments": false,
+        "contextMenu": {
+          "items": {
+            "row_above": [
+
+            ],
+            "row_below": [
+
+            ],
+            "remove_row": [
+
+            ],
+            "hsep3": {
+              "name": "---------",
+              "key": "hsep3"
+            },
+            "undo": [
+
+            ],
+            "redo": [
+
+            ],
+            "hsep4": {
+              "name": "---------",
+              "key": "hsep4"
+            },
+            "alignment": [
+
+            ]
+          }
+        }
+      }
+    },
+    "MLtoggle": true,
+    "MS2B-ppmSearch": 5,
+    "MS2B-rtSearch": 60,
+    "MS2B-showNet": false,
+    "MS2B-Spec2-checkCompare": true,
+    "MultiE-addOne": 0,
+    "MultiE-EIC1-EicTic": false,
+    "MultiE-EIC1-hotl": true,
+    "MultiE-EIC1-interactiveRTcorr": false,
+    "MultiE-EIC1-removeMe": 0,
+    "MultiE-EIC1-selEICs": null,
+    "MultiE-EIC1-selMZ": null,
+    "mz1-autoCalc": false,
+    "mz1-integUnsat": false,
+    "mz1-maxUnsat": 40,
+    "mz1-minUnsat": 0,
+    "mz1-mzButton": 0,
+    "mz1-mzcharge": 1,
+    "mz1-mzppm": 5,
+    "mz1-mzquery": "0",
+    "mz1-mzspace": "C0-100H0-202N0-15O0-20",
+    "mz1-source": "feature table",
+    "newTable": 0,
+    "normbutton": 0,
+    "plotCols": 1,
+    "plotCx": 1.5,
+    "plotLw": 1,
+    "PlotOpts": "Molecular formula prediction",
+    "plotYzoom": 1,
+    "PPMwindow": 5,
+    "quickplots-errorbar": "none",
+    "quickplots-gtype": "by group",
+    "quickplots-log10": false,
+    "quickplots-mark": "none",
+    "quickplots-multidata": false,
+    "quickplots-pdots": true,
+    "quickplots-ptype": "barplot",
+    "quickplots-rot": false,
+    "quickplots-usenorm": false,
+    "quote": "\"",
+    "rfileload": null,
+    "rnamelvl": 1,
+    "RtCorrActive": false,
+    "RtCorrLoad": null,
+    "RTtoggle": false,
+    "RTwindow": 30,
+    "selAna": "Basic analysis",
+    "selctrl": null,
+    "sep": ",",
+    "ShowSpec": false,
+    "sidebarCollapsed": false,
+    "sidebarItemExpanded": null,
+    "Spec2-checkCompare": true,
+    "TableBox": "View Table",
+    "tablePage": 1,
+    "TICtoggle": false,
+    "toggleTabOpts": false,
+    "updateFilter": 0,
+    "updateshifts": 0,
+    "usenormdata": false,
+    "xcms_settingsBox": "XCMS Settings",
+    "xcmsMod-xcms_loadfolder": 0,
+    "xcmsMod-xcms_loadfolderOffline": 0,
+    "xcmsMod-xcms_name": "xcms_run",
+    "xcmsMod-xcms_settingsLoad": null,
+    "xcmsMod-xcms_start": 0
+  },
+  "output": {
+    "activeTable": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"activeTable\">Active Table<\/label>\n  <div>\n    <select id=\"activeTable\" class=\"form-control\"><option value=\"table0\" selected>Custom Table<\/option><\/select>\n    <script type=\"application/json\" data-for=\"activeTable\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "adductPlot": null,
+    "anagrouping": {
+      "x": null,
+      "evals": [
+
+      ],
+      "jsHooks": null,
+      "deps": [
+
+      ]
+    },
+    "colorscheme": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"colorscheme\">Color palette: <\/label>\n  <div>\n    <select id=\"colorscheme\" class=\"form-control\"><option value=\"mosaic.colors\" selected>mosaic.colors<\/option>\n<option value=\"topo.colors\">topo.colors<\/option>\n<option value=\"rainbow\">rainbow<\/option>\n<option value=\"heat.colors\">heat.colors<\/option>\n<option value=\"terrain.colors\">terrain.colors<\/option>\n<option value=\"cm.colors\">cm.colors<\/option><\/select>\n    <script type=\"application/json\" data-for=\"colorscheme\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "ColSelMod-mainSelgProps": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"ColSelMod-mainSelgProps\">Group properties<\/label>\n  <div>\n    <select id=\"ColSelMod-mainSelgProps\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"ColSelMod-mainSelgProps\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "ColSelMod-mainSelGroup": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"ColSelMod-mainSelGroup\">Group of interest<\/label>\n  <div>\n    <select id=\"ColSelMod-mainSelGroup\" class=\"form-control\"><\/select>\n    <script type=\"application/json\" data-for=\"ColSelMod-mainSelGroup\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "ColSelMod-mainSelIntensities": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"ColSelMod-mainSelIntensities\">Sample intensities<\/label>\n  <div>\n    <select id=\"ColSelMod-mainSelIntensities\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Intensities\">\n\n<\/optgroup>\n<optgroup label=\"Normalized Intensities\">\n\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"ColSelMod-mainSelIntensities\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "ColSelMod-mainSelOthers": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"ColSelMod-mainSelOthers\">other columns<\/label>\n  <div>\n    <select id=\"ColSelMod-mainSelOthers\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Basic Stats\">\n\n<\/optgroup>\n<optgroup label=\"Others\">\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"ColSelMod-mainSelOthers\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "ColSelMod-mainSelsProps": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"ColSelMod-mainSelsProps\">Sample properties<\/label>\n  <div>\n    <select id=\"ColSelMod-mainSelsProps\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"ColSelMod-mainSelsProps\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Filter1-colSel": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Filter1-colSel\">Filter<\/label>\n  <div>\n    <select id=\"Filter1-colSel\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Filter1-colSel\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Filter1-insider": "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n      0       0       0       0       0       0 ",
+    "Filter1-maxSel": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 120px;\">\n  <label for=\"Filter1-maxSel\">max.<\/label>\n  <input id=\"Filter1-maxSel\" type=\"number\" class=\"form-control\" value=\"0\" min=\"0\" max=\"0\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Filter1-minSel": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 120px;\">\n  <label for=\"Filter1-minSel\">min.<\/label>\n  <input id=\"Filter1-minSel\" type=\"number\" class=\"form-control\" value=\"0\" min=\"0\" max=\"0\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Filter1-modeSel": null,
+    "Filter1-toggler": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Filter1-toggler\" type=\"checkbox\"/>\n      <span>activate<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Filter1-txtSel": null,
+    "groupingActiveSelect": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"groupingActiveSelect\">Select Grouping scheme:<\/label>\n  <div>\n    <select id=\"groupingActiveSelect\" class=\"form-control\"><\/select>\n    <script type=\"application/json\" data-for=\"groupingActiveSelect\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "groupingEditSelect": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"groupingEditSelect\">Edit Grouping:<\/label>\n  <div>\n    <select id=\"groupingEditSelect\" class=\"form-control\"><option value=\"__NEW\" selected>__NEW<\/option><\/select>\n    <script type=\"application/json\" data-for=\"groupingEditSelect\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "groupingName": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"groupingName\">Grouping Name:<\/label>\n  <input id=\"groupingName\" type=\"text\" class=\"form-control\" value=\"Grouping0\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "mainPlotEICs": {
+      "html": "<div id=\"mainPlotPlaceholder2\" class=\"shiny-plot-output\" style=\"width: 100% ; height: 600px\"><\/div>",
+      "deps": [
+
+      ]
+    },
+    "mainPlotPlaceholder2": {
+      "src": "[image data sha1: 07d3eba073c6e72d29dd1385355275f6d7fbc629]",
+      "width": 712,
+      "height": 600,
+      "coordmap": [
+        {
+          "domain": {
+            "left": 0.0166666666666667,
+            "right": 1.8,
+            "bottom": 0,
+            "top": 99
+          },
+          "range": {
+            "left": 64.6052459016393,
+            "right": 680.485245901639,
+            "bottom": 553.442477876106,
+            "top": 64.3097345132743
+          },
+          "log": {
+            "x": null,
+            "y": null
+          },
+          "mapping": {
+
+          }
+        }
+      ]
+    },
+    "mainSort": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"mainSort\">Sort by<\/label>\n  <div>\n    <select id=\"mainSort\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"mainSort\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "mainSortDecreasing": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"mainSortDecreasing\" type=\"checkbox\"/>\n      <span>Decreasing<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "mainSortToggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"mainSortToggle\" type=\"checkbox\"/>\n      <span>activate<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "maintable": {
+      "x": {
+        "data": [
+          {
+            "mz": 0,
+            "rt": 0,
+            "comments": ""
+          },
+          {
+            "mz": 0,
+            "rt": 0,
+            "comments": ""
+          },
+          {
+            "mz": 0,
+            "rt": 0,
+            "comments": ""
+          }
+        ],
+        "rClass": "data.frame",
+        "rColClasses": {
+          "mz": "numeric",
+          "rt": "numeric",
+          "comments": "character"
+        },
+        "rColnames": [
+          "mz",
+          "rt",
+          "comments"
+        ],
+        "rColHeaders": [
+          "mz",
+          "rt",
+          "comments"
+        ],
+        "rRowHeaders": [
+          "1",
+          "2",
+          "3"
+        ],
+        "rDataDim": [
+          3,
+          3
+        ],
+        "selectCallback": true,
+        "colHeaders": [
+          "mz",
+          "rt",
+          "comments"
+        ],
+        "rowHeaders": [
+          "1",
+          "2",
+          "3"
+        ],
+        "columns": [
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.000000"
+            },
+            "readOnly": false,
+            "renderer": "customRenderer",
+            "default": null
+          },
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.000000"
+            },
+            "readOnly": false,
+            "renderer": "customRenderer",
+            "default": null
+          },
+          {
+            "type": "text",
+            "readOnly": false,
+            "renderer": "customRenderer",
+            "default": null,
+            "numericFormat": {
+              "pattern": "0.000000"
+            }
+          }
+        ],
+        "width": null,
+        "height": null,
+        "debug": 0,
+        "search": false,
+        "stretchH": "none",
+        "comments": false,
+        "ishighlight": true,
+        "currentRowClassName": "currentRow",
+        "currentColClassName": "currentCol",
+        "contextMenu": {
+          "items": {
+            "row_above": [
+
+            ],
+            "row_below": [
+
+            ],
+            "remove_row": [
+
+            ],
+            "hsep3": {
+              "name": "---------"
+            },
+            "undo": [
+
+            ],
+            "redo": [
+
+            ],
+            "hsep4": {
+              "name": "---------"
+            },
+            "alignment": [
+
+            ]
+          }
+        },
+        "columnSorting": false,
+        "fixedColumnsLeft": 3
+      },
+      "evals": [
+        "columns.0.renderer",
+        "columns.1.renderer",
+        "columns.2.renderer"
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+
+      ]
+    },
+    "massShiftTab": {
+      "x": {
+        "data": [
+          {
+            "use": true,
+            "Name": "unmodified",
+            "Mol_formula": "",
+            "charge": 1,
+            "mz_shift": 0
+          },
+          {
+            "use": false,
+            "Name": "-H2O",
+            "Mol_formula": "",
+            "charge": 1,
+            "mz_shift": -18.010564684
+          },
+          {
+            "use": false,
+            "Name": "+13C iso",
+            "Mol_formula": "",
+            "charge": 1,
+            "mz_shift": 1.003355
+          },
+          {
+            "use": false,
+            "Name": "",
+            "Mol_formula": "",
+            "charge": 1,
+            "mz_shift": 0
+          },
+          {
+            "use": false,
+            "Name": "",
+            "Mol_formula": "",
+            "charge": 1,
+            "mz_shift": 0
+          },
+          {
+            "use": false,
+            "Name": "",
+            "Mol_formula": "",
+            "charge": 1,
+            "mz_shift": 0
+          }
+        ],
+        "rClass": "data.frame",
+        "rColClasses": {
+          "use": "logical",
+          "Name": "character",
+          "Mol_formula": "character",
+          "charge": "numeric",
+          "mz_shift": "numeric"
+        },
+        "rColnames": [
+          "use",
+          "Name",
+          "Mol_formula",
+          "charge",
+          "mz_shift"
+        ],
+        "rColHeaders": [
+          "use",
+          "Name",
+          "Mol_formula",
+          "charge",
+          "mz_shift"
+        ],
+        "rRowHeaders": null,
+        "rDataDim": [
+          6,
+          5
+        ],
+        "selectCallback": false,
+        "colHeaders": [
+          "use",
+          "Name",
+          "Mol_formula",
+          "charge",
+          "mz_shift"
+        ],
+        "rowHeaders": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "columns": [
+          {
+            "type": "checkbox",
+            "renderer": "customRenderer",
+            "default": null
+          },
+          {
+            "type": "text",
+            "renderer": "customRenderer",
+            "default": null
+          },
+          {
+            "type": "text",
+            "renderer": "customRenderer",
+            "default": null
+          },
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.00"
+            },
+            "renderer": "customRenderer",
+            "default": null
+          },
+          {
+            "type": "numeric",
+            "numericFormat": {
+              "pattern": "0.000000"
+            },
+            "renderer": "customRenderer",
+            "default": null
+          }
+        ],
+        "width": null,
+        "height": null,
+        "debug": 0,
+        "search": false,
+        "stretchH": "none",
+        "comments": false,
+        "contextMenu": {
+          "items": {
+            "row_above": [
+
+            ],
+            "row_below": [
+
+            ],
+            "remove_row": [
+
+            ],
+            "hsep3": {
+              "name": "---------"
+            },
+            "undo": [
+
+            ],
+            "redo": [
+
+            ],
+            "hsep4": {
+              "name": "---------"
+            },
+            "alignment": [
+
+            ]
+          }
+        }
+      },
+      "evals": [
+        "columns.0.renderer",
+        "columns.1.renderer",
+        "columns.2.renderer",
+        "columns.3.renderer",
+        "columns.4.renderer"
+      ],
+      "jsHooks": [
+
+      ],
+      "deps": [
+
+      ]
+    },
+    "MLtoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"MLtoggle\" type=\"checkbox\" checked=\"checked\"/>\n      <span>Mark feature RT<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MS2B-scantab-maintable": {
+      "x": null,
+      "evals": [
+
+      ],
+      "jsHooks": null,
+      "deps": [
+
+      ]
+    },
+    "MS2B-scantab-tabCtrls": null,
+    "MS2B-scantab-tabUI": {
+      "html": "<div class=\"row\">\n  <div id=\"MS2B-scantab-maintable\" style=\"width:100%; height:100%; \" class=\"rhandsontable html-widget html-widget-output\"><\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "htmlwidgets",
+          "version": "1.2",
+          "src": {
+            "href": "htmlwidgets-1.2"
+          },
+          "meta": null,
+          "script": "htmlwidgets.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "handsontable",
+          "version": "0.35.0",
+          "src": {
+            "href": "handsontable-0.35.0"
+          },
+          "meta": null,
+          "script": "handsontable.full.min.js",
+          "stylesheet": "handsontable.full.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "numbro.languages",
+          "version": "1.11.1",
+          "src": {
+            "href": "numbro.languages-1.11.1"
+          },
+          "meta": null,
+          "script": "languages.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "chroma",
+          "version": "1.3.3",
+          "src": {
+            "href": "chroma-1.3.3"
+          },
+          "meta": null,
+          "script": "chroma.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "jquery",
+          "version": "3.2.1",
+          "src": {
+            "href": "jquery-3.2.1"
+          },
+          "meta": null,
+          "script": "jquery.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "sparkline",
+          "version": "2.1.2",
+          "src": {
+            "href": "sparkline-2.1.2"
+          },
+          "meta": null,
+          "script": "jquery.sparkline.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "rhandsontable",
+          "version": "0.3.6",
+          "src": {
+            "href": "rhandsontable-0.3.6"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "rhandsontable.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "rhandsontable-binding",
+          "version": "0.3.6",
+          "src": {
+            "href": "rhandsontable-binding-0.3.6"
+          },
+          "meta": null,
+          "script": "rhandsontable.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "MS2B-showNet": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-3\">\n    <h4>Parent m/z search options:<\/h4>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div class=\"form-group shiny-input-container\">\n      <label for=\"MS2B-ppmSearch\">m/z tolerance (ppm)<\/label>\n      <input id=\"MS2B-ppmSearch\" type=\"number\" class=\"form-control\" value=\"5\"/>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div class=\"form-group shiny-input-container\">\n      <label for=\"MS2B-rtSearch\">RT tolerance (seconds)<\/label>\n      <input id=\"MS2B-rtSearch\" type=\"number\" class=\"form-control\" value=\"60\"/>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div class=\"form-group shiny-input-container\">\n      <div class=\"checkbox\">\n        <label>\n          <input id=\"MS2B-showNet\" type=\"checkbox\"/>\n          <span>Show network options<\/span>\n        <\/label>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MS2B-Spec2-multiOut": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-3\">\n      <h4>MS2 spectra<\/h4>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <a id=\"MS2B-Spec2-pdfButton\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n        <i class=\"fa fa-download\"><\/i>\n        Download spectra\n      <\/a>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <div class=\"form-group shiny-input-container\">\n        <div class=\"checkbox\">\n          <label>\n            <input id=\"MS2B-Spec2-checkCompare\" type=\"checkbox\" checked=\"checked\"/>\n            <span>allow comparisons<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "4.7.0",
+          "src": {
+            "href": "shared/font-awesome"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/font-awesome.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "MultiE-adder": {
+      "html": "<button id=\"MultiE-addOne\" type=\"button\" class=\"btn btn-default action-button\">Add EIC<\/button>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-chrominfo": {
+      "html": "<p>\n  \n  \n<\/p>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-controls": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-1\">\n    <div id=\"MultiE-EIC1-remover\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-2\">\n    <div id=\"MultiE-EIC1-rtcorr\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-1\">\n    <div id=\"MultiE-EIC1-tic\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-2\">\n    <div id=\"MultiE-EIC1-hotlink\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div id=\"MultiE-EIC1-mzin\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div id=\"MultiE-EIC1-EICsel\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-EICout": {
+      "html": "<div class=\"container-fluid\">\n  <div id=\"MultiE-EIC1-controls\" class=\"shiny-html-output\"><\/div>\n  <div class=\"row\">\n    <div id=\"MultiE-EIC1-plainplot\" class=\"shiny-plot-output\" style=\"width: 100% ; height: 400px\" data-click-id=\"MultiE-EIC1-plainplot_click\" data-click-clip=\"TRUE\" data-dblclick-id=\"MultiE-EIC1-plainplot_dblclick\" data-dblclick-clip=\"TRUE\" data-hover-id=\"MultiE-EIC1-plainplot_hover\" data-hover-delay=\"50\" data-hover-delay-type=\"debounce\" data-hover-clip=\"TRUE\" data-hover-null-outside=\"TRUE\" data-brush-id=\"MultiE-EIC1-plainplot_brush\" data-brush-fill=\"#9cf\" data-brush-stroke=\"#036\" data-brush-opacity=\"0.25\" data-brush-delay=\"300\" data-brush-delay-type=\"debounce\" data-brush-clip=\"TRUE\" data-brush-direction=\"xy\" data-brush-reset-on-new=\"TRUE\"><\/div>\n  <\/div>\n  <div class=\"row\">\n    <div id=\"MultiE-EIC1-chrominfo\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "MultiE-EIC1-EICsel": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"MultiE-EIC1-selEICs\">select files<\/label>\n  <div>\n    <select id=\"MultiE-EIC1-selEICs\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"MultiE-EIC1-selEICs\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "MultiE-EIC1-hotlink": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"MultiE-EIC1-hotl\" type=\"checkbox\" checked=\"checked\"/>\n      <span>Hotlink mz and rt ranges<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-mzin": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"MultiE-EIC1-selMZ\">m/z<\/label>\n  <input id=\"MultiE-EIC1-selMZ\" type=\"number\" class=\"form-control\" min=\"0\" step=\"0.01\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-plainplot": {
+      "src": "[image data sha1: 2aa5d9667fbb4458f8507d8a69fd75771e0e9638]",
+      "width": 682,
+      "height": 400,
+      "coordmap": [
+        {
+          "domain": {
+            "left": -0.04,
+            "right": 1.04,
+            "bottom": -0.04,
+            "top": 1.04
+          },
+          "range": {
+            "left": 0,
+            "right": 682,
+            "bottom": 399,
+            "top": -1
+          },
+          "log": {
+            "x": null,
+            "y": null
+          },
+          "mapping": {
+
+          }
+        }
+      ]
+    },
+    "MultiE-EIC1-remover": {
+      "html": "<button id=\"MultiE-EIC1-removeMe\" type=\"button\" class=\"btn btn-default action-button\">Remove<\/button>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-rtcorr": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"MultiE-EIC1-interactiveRTcorr\" type=\"checkbox\"/>\n      <span>RT correction<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC1-tic": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"MultiE-EIC1-EicTic\" type=\"checkbox\"/>\n      <span>TIC<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "MultiE-EIC2-EICout": null,
+    "MultiE-EIC3-EICout": null,
+    "MultiE-EIC4-EICout": null,
+    "MultiE-EIC5-EICout": null,
+    "MultiE-EIC6-EICout": null,
+    "mz1-hot1": {
+      "message": "",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "mz1-mzInfo": {
+      "html": "<p>Calculate sum formulas for m/z <\/p>",
+      "deps": [
+
+      ]
+    },
+    "mz1-mzInfo2": {
+      "message": "",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "mz1-mzUI": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <h3>Molecular formula prediction<\/h3>\n    <div class=\"col-sm-4\">\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <div class=\"form-group shiny-input-container\">\n            <label for=\"mz1-mzspace\">Select elements:<\/label>\n            <input id=\"mz1-mzspace\" type=\"text\" class=\"form-control\" value=\"C0-100H0-202N0-15O0-20\"/>\n          <\/div>\n        <\/div>\n        <div class=\"col-sm-6\">\n          <div class=\"form-group shiny-input-container\">\n            <div class=\"checkbox\">\n              <label>\n                <input id=\"mz1-integUnsat\" type=\"checkbox\"/>\n                <span>only integer unsaturation<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <div class=\"form-group shiny-input-container\">\n            <label for=\"mz1-mzcharge\">Charge<\/label>\n            <input id=\"mz1-mzcharge\" type=\"number\" class=\"form-control\" value=\"1\" step=\"1\"/>\n          <\/div>\n        <\/div>\n        <div class=\"col-sm-6\">\n          <div class=\"form-group shiny-input-container\">\n            <label for=\"mz1-mzppm\">ppm<\/label>\n            <input id=\"mz1-mzppm\" type=\"number\" class=\"form-control\" value=\"5\" step=\"0.1\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <div class=\"form-group shiny-input-container\">\n            <label for=\"mz1-minUnsat\">min. unsaturation<\/label>\n            <input id=\"mz1-minUnsat\" type=\"number\" class=\"form-control\" value=\"0\" step=\"1\"/>\n          <\/div>\n        <\/div>\n        <div class=\"col-sm-6\">\n          <div class=\"form-group shiny-input-container\">\n            <label for=\"mz1-maxUnsat\">max. unsaturation<\/label>\n            <input id=\"mz1-maxUnsat\" type=\"number\" class=\"form-control\" value=\"40\" step=\"1\"/>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <div class=\"form-group shiny-input-container\">\n        <label class=\"control-label\" for=\"mz1-source\">source<\/label>\n        <div>\n          <select id=\"mz1-source\" class=\"form-control\"><option value=\"feature table\" selected>feature table<\/option>\n<option value=\"spectrum\">spectrum<\/option>\n<option value=\"custom\">custom<\/option><\/select>\n          <script type=\"application/json\" data-for=\"mz1-source\">{}<\/script>\n        <\/div>\n      <\/div>\n      <div class=\"form-group shiny-input-container\">\n        <label for=\"mz1-mzquery\">custom m/z:<\/label>\n        <input id=\"mz1-mzquery\" type=\"text\" class=\"form-control\" value=\"0\"/>\n      <\/div>\n      <div id=\"mz1-mzInfo\" class=\"shiny-html-output\"><\/div>\n      <div class=\"row\">\n        <div class=\"col-sm-4\">\n          <button id=\"mz1-mzButton\" type=\"button\" class=\"btn btn-default action-button\">calculate<\/button>\n        <\/div>\n        <div class=\"col-sm-8\">\n          <div class=\"form-group shiny-input-container\">\n            <div class=\"checkbox\">\n              <label>\n                <input id=\"mz1-autoCalc\" type=\"checkbox\"/>\n                <span>Calculate automatically<\/span>\n              <\/label>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-5\">\n      <div id=\"mz1-hot1\" style=\"width:100%; height:100%; \" class=\"rhandsontable html-widget html-widget-output\"><\/div>\n      <div id=\"mz1-mzInfo2\" class=\"shiny-html-output\"><\/div>\n      <a href=\"http://www.chemcalc.org/\" target=\"_blank\">Search uses the chemcalc web service<\/a>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "htmlwidgets",
+          "version": "1.2",
+          "src": {
+            "href": "htmlwidgets-1.2"
+          },
+          "meta": null,
+          "script": "htmlwidgets.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "handsontable",
+          "version": "0.35.0",
+          "src": {
+            "href": "handsontable-0.35.0"
+          },
+          "meta": null,
+          "script": "handsontable.full.min.js",
+          "stylesheet": "handsontable.full.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "numbro.languages",
+          "version": "1.11.1",
+          "src": {
+            "href": "numbro.languages-1.11.1"
+          },
+          "meta": null,
+          "script": "languages.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "chroma",
+          "version": "1.3.3",
+          "src": {
+            "href": "chroma-1.3.3"
+          },
+          "meta": null,
+          "script": "chroma.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "jquery",
+          "version": "3.2.1",
+          "src": {
+            "href": "jquery-3.2.1"
+          },
+          "meta": null,
+          "script": "jquery.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "sparkline",
+          "version": "2.1.2",
+          "src": {
+            "href": "sparkline-2.1.2"
+          },
+          "meta": null,
+          "script": "jquery.sparkline.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "rhandsontable",
+          "version": "0.3.6",
+          "src": {
+            "href": "rhandsontable-0.3.6"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "rhandsontable.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "rhandsontable-binding",
+          "version": "0.3.6",
+          "src": {
+            "href": "rhandsontable-binding-0.3.6"
+          },
+          "meta": null,
+          "script": "rhandsontable.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "plotCols": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"plotCols\">Plots per row: <\/label>\n  <input id=\"plotCols\" type=\"number\" class=\"form-control\" value=\"1\" min=\"1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "plotCx": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"plotCx\">Font size: <\/label>\n  <input id=\"plotCx\" type=\"number\" class=\"form-control\" value=\"1.5\" min=\"0.1\" step=\"0.1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "plotLw": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"plotLw\">Line width: <\/label>\n  <input id=\"plotLw\" type=\"number\" class=\"form-control\" value=\"1\" min=\"1\" step=\"1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "plotYzoom": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"plotYzoom\">Y-axis zoom: <\/label>\n  <input id=\"plotYzoom\" type=\"number\" class=\"form-control\" value=\"1\" min=\"0.1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "PPMwindow": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"PPMwindow\">Mass tol (ppm): <\/label>\n  <input id=\"PPMwindow\" type=\"number\" class=\"form-control\" value=\"5\" min=\"0\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "preview": {
+      "x": null,
+      "evals": [
+
+      ],
+      "jsHooks": null,
+      "deps": [
+
+      ]
+    },
+    "quickplots-fplot": {
+      "message": "second argument must be a list",
+      "call": "do.call(toR, ...)",
+      "type": null
+    },
+    "quickplots-info": {
+      "message": "second argument must be a list",
+      "call": "do.call(toR, ...)",
+      "type": null
+    },
+    "rawgrouping": {
+      "x": null,
+      "evals": [
+
+      ],
+      "jsHooks": null,
+      "deps": [
+
+      ]
+    },
+    "rtcorr": {
+      "src": "[image data sha1: bb4978bf42efd2e1d3139cabd10914fabf8dff31]",
+      "width": 465,
+      "height": 400,
+      "coordmap": [
+        {
+          "domain": {
+            "left": -0.04,
+            "right": 1.04,
+            "bottom": -0.04,
+            "top": 1.04
+          },
+          "range": {
+            "left": 0,
+            "right": 465,
+            "bottom": 399,
+            "top": -1
+          },
+          "log": {
+            "x": null,
+            "y": null
+          },
+          "mapping": {
+
+          }
+        }
+      ]
+    },
+    "RTtoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"RTtoggle\" type=\"checkbox\"/>\n      <span>Full RT range<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "selAna": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"selAna\">Select analyses<\/label>\n  <div>\n    <select id=\"selAna\" class=\"form-control\" multiple=\"multiple\"><option value=\"Basic analysis\" selected>Basic analysis<\/option>\n<option value=\"clara_cluster\">clara_cluster<\/option>\n<option value=\"p-values\">p-values<\/option>\n<option value=\"Peak shapes\">Peak shapes<\/option><\/select>\n    <script type=\"application/json\" data-for=\"selAna\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "selctrl": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"selctrl\">Select control group(s)<\/label>\n  <div>\n    <select id=\"selctrl\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"selctrl\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Spec1-specAll": {
+      "message": "",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "Spec2-multiOut": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-3\">\n      <h4>MS spectra<\/h4>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <a id=\"Spec2-pdfButton\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n        <i class=\"fa fa-download\"><\/i>\n        Download spectra\n      <\/a>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <div class=\"form-group shiny-input-container\">\n        <div class=\"checkbox\">\n          <label>\n            <input id=\"Spec2-checkCompare\" type=\"checkbox\" checked=\"checked\"/>\n            <span>allow comparisons<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "4.7.0",
+          "src": {
+            "href": "shared/font-awesome"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/font-awesome.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "tableInfo": "3 items (1 page, editable)",
+    "tablePage": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"tablePage\">Page:<\/label>\n  <input id=\"tablePage\" type=\"number\" class=\"form-control\" value=\"1\" min=\"1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "TICtoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"TICtoggle\" type=\"checkbox\"/>\n      <span>TIC<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "usenormdata": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"usenormdata\" type=\"checkbox\"/>\n      <span>Use normalized data<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    }
+  },
+  "export": {
+
+  }
+}
