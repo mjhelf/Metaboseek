@@ -4,7 +4,14 @@
 \alias{MosaicMinimalServer}
 \title{MosaicMinimalServer}
 \usage{
-MosaicMinimalServer(exampleData = T, diagnostics = T)
+MosaicMinimalServer(data = T, tables = T, diagnostics = T)
+}
+\arguments{
+\item{data}{load example MS data?}
+
+\item{tables}{load example tables?}
+
+\item{diagnostics}{run diagnostics (shinyjs::runcodeServer()) code?}
 }
 \description{
 A minimal server logic for Mosaic. Function has to be called in a shiny server function context. Will load example data if it is not present in the parent environment.

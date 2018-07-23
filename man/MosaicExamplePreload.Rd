@@ -4,7 +4,12 @@
 \alias{MosaicExamplePreload}
 \title{MosaicExamplePreload}
 \usage{
-MosaicExamplePreload()
+MosaicExamplePreload(tables = T, data = T)
+}
+\arguments{
+\item{tables}{load example tables?}
+
+\item{data}{load example MS data?}
 }
 \description{
 Loads example data into the parent environment for testing and development purposes
