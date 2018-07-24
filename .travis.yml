@@ -6,6 +6,8 @@ cache: packages
 dist: trusty
 r:
 
+- release
+- bioc-release
 - bioc-devel
 
 warnings_are_errors: false
