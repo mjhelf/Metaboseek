@@ -1,31 +1,9 @@
 function(input, output, session) {
-    options(shiny.maxRequestSize=10*1024*1024^2) #10 GB
-    #   session$onSessionEnded(stopApp)
-    
-    #initialize feature tables
-    featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
-                                    index = c("Custom Table" = "table0"),
-                                    active = "table0"
-    )
-    
-    selectedTabs <- reactiveValues(FeatureTable = "View Table"    )
-    
-    MSData <- reactiveValues(layouts = NULL, #List of rawLayouts (unsorted)
-                             rawgrouptable = NULL,
-                             index = NULL,
-                             rootfolder = rootpath,
-                             localfolders = character(0),
-                             RTcorr = NULL,
-                             active = NULL,
-                             filelist = NULL,
-                             data = NULL) #rawfs
-    
-    projectData <- reactiveValues(filegroupfiles =NULL,
-                                  csvfiles = NULL,
-                                  filegroups = NULL,
-                                  projectName = paste0("MOSAiC_session_",timeStamp))
-    
-    
+  
+  MosaicMinimalServer(diagnostics = devel__mode, data = F, tables = F)
+  
+    selectedTabs <- reactiveValues(FeatureTable = "View Table")
+
     output$activeTable <- renderUI({
         selectizeInput('activeTable', 'Active Table', selected = featureTables$active, choices = featureTables$index, multiple = FALSE)
     })  
@@ -42,14 +20,16 @@ function(input, output, session) {
         
         featureTables$active <- input$activeTable})
     
-    source(file.path("modules_nonformal", "bookmarking_server.R"), local = TRUE)$value 
+   # source(file.path("modules_nonformal", "bookmarking_server.R"), local = TRUE)$value 
+    #source(file.path("modules_nonformal", "logo_server.R"), local = TRUE)$value 
     
+    #source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
+
+    callModule(updaterModule, 'update', tag = 'update', set =list(package = "Mosaic",
+                                                                  refs = c("master", "devel", "devel_raw"),
+                                                                  active = !servermode))
     
-    source(file.path("modules_nonformal", "logo_server.R"), local = TRUE)$value 
-    source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
-    source(file.path("modules_nonformal", "background_server.R"), local = TRUE)$value
-    
-    source(file.path("modules_nonformal", "help_server.R"), local = TRUE)$value 
+    #source(file.path("modules_nonformal", "help_server.R"), local = TRUE)$value 
     
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
     source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value
@@ -59,12 +39,10 @@ function(input, output, session) {
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
 xcmsOut <- callModule(xcmsModule, "xcmsMod",
-                      reactives = NULL,
                       values = list(MSData = MSData),
                       static = list(servermode = servermode,
                                     activateXCMS = activateXCMS,
-                                    rootpath = rootpath),
-                      load = NULL
+                                    rootpath = rootpath)
     )
     
 

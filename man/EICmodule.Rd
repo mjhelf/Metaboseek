@@ -4,9 +4,8 @@
 \alias{EICmodule}
 \title{EICmodule}
 \usage{
-EICmodule(input, output, session, tag, set = list(layouts = MSData$layouts,
-  RTcorr = NULL, activeGroup = "Group1", filelist = MSData$filelist, data =
-  MSData$data, mz = 542.32405482, rtr = NULL, active = T), keys)
+EICmodule(input, output, session, values = reactiveValues(MSData = MSData),
+  keys)
 }
 \arguments{
 \item{input}{}
@@ -15,9 +14,7 @@ EICmodule(input, output, session, tag, set = list(layouts = MSData$layouts,
 
 \item{session}{}
 
-\item{tag}{id to be used in ns()}
-
-\item{set}{Import data from the shiny session}
+\item{values}{Import data from the shiny session}
 }
 \description{
 server module for interactive EIC view

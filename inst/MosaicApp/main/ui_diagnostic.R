@@ -9,6 +9,6 @@ fluidPage(
   fluidRow(
     plotOutput("tester",
                click = "tester_click",
-               dblclick = "tester_dblclick")
+               dblclick = "tester_dblclick") 
   )
 )    
