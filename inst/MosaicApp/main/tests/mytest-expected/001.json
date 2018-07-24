@@ -16,6 +16,8 @@
     "EICplots": "MS2 Browser",
     "file1": null,
     "Filter1-colSel": "mz",
+    "Filter1-maxSel": 0,
+    "Filter1-minSel": 0,
     "Filter1-toggler": false,
     "groupingActiveSelect": "",
     "groupingEditSelect": "__NEW",
