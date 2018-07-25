@@ -172,7 +172,7 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
          && class(tab1) == class(tab2) && class(tab2) == "MosaicFT")){
       MosaicExamplePreload(tables = T, data = F)}
     
-    featureTables <- reactiveValues(tables = reactiveValues(table0 = constructFeatureTable(),
+    featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable(),
                                                             table1 = tab1,
                                                             table2 = tab2),
                                     index = c("Custom Table" = "table0",
