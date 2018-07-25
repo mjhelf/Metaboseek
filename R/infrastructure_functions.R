@@ -190,3 +190,24 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
     }))
   }
 }
+
+
+#' checkFolders
+#'
+#' Looks for folders 
+#' 
+#' @param query character vector with folders to search for, by default looks for drives in Windows file system
+#'
+#' @export
+checkFolders <- function(query = paste0(LETTERS,":/")){
+  
+  out <- character(0)
+  
+  for(i in query){
+    if(file.exists(i)){
+      out[[gsub(":/","",i)]] = i
+    }
+  }
+  
+  return(out)
+}
