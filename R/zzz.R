@@ -11,6 +11,9 @@
 
 .onLoad <- function(libname, pkgname) {
   
-  options("MosaicSettings" = list("MosaicDefaultRoot" = if(Sys.info()['sysname'] == "Windows"){getwd()}else{"/"},
-                                  "MosaicDevelMode" = FALSE))
+  options(scipen = 5)
+
+  loadOptions()
+  
+  
 }
