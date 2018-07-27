@@ -70,7 +70,7 @@ onRestored(function(state) {
     #get groups in alphabetic order
 
     #make xcmsRaws (time consuming)
-    #MSData$data <- loadRaw(MSData$filelist, workers = enabledCores)
+    #MSData$data <- loadRaw(MSData$filelist, workers = .MosaicOptions$enabledCores)
 
     MSData$rawgrouptable <- state$values$MSData$rawgrouptable
     MSData$RTcorr <- state$values$MSData$RTcorr

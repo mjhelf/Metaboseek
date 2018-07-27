@@ -9,10 +9,10 @@ observeEvent(input$rfileload$datapath,{
 unzip(input$rfileload$datapath, exdir = exfolder )
 
 incProgress(0.5, detail = "loading MS data")
-newfiles <- list.files(exfolder, pattern=filepattern, recursive = TRUE, full.names=T)
+newfiles <- list.files(exfolder, pattern=.MosaicOptions$filePattern, recursive = TRUE, full.names=T)
 newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
 MSData$filelist <- unique(c(MSData$filelist, newfiles))
-MSData$data <- loadRawM(newfiles, workers = enabledCores)
+MSData$data <- loadRawM(newfiles, workers = .MosaicOptions$enabledCores)
 temp_rawgrouptable <- data.frame(File = gsub(dirname(input$rfileload$datapath),"",MSData$filelist, ignore.case = T), Group = rep("All_Files", length(MSData$filelist)))
 if(is.null(input$rfileload$datapath)){
     MSData$filelist <- unique(c(MSData$filelist, list.files(exfolder, pattern=".mzXML", recursive = TRUE, full.names=T))) ## for local execution, doesnt work yet need Folder selection
@@ -28,18 +28,18 @@ MSData$active = "default"
 
 ##load rawfiles from folder directly on local windows machines
 observe({
-  toggleState(id = "loadRawFolder", condition = ((servermode && activateLocalFiles) || (!servermode && Sys.info()['sysname'] != "Windows")))
+  toggleState(id = "loadRawFolder", condition = ((.MosaicOptions$serverMode && .MosaicOptions$activateLocalFiles) || (!.MosaicOptions$serverMode && Sys.info()['sysname'] != "Windows")))
 })
 
-toggle(id = "loadRawFolderOffline", condition = (!servermode && Sys.info()['sysname'] == "Windows"))
-toggle(id = "loadRawFolder", condition = (servermode || (!servermode && Sys.info()['sysname'] != "Windows")))
+toggle(id = "loadRawFolderOffline", condition = (!.MosaicOptions$serverMode && Sys.info()['sysname'] == "Windows"))
+toggle(id = "loadRawFolder", condition = (.MosaicOptions$serverMode || (!.MosaicOptions$serverMode && Sys.info()['sysname'] != "Windows")))
 
 
-shinyDirChoose(input, 'loadRawFolder', session = session, roots=rootpath)
+shinyDirChoose(input, 'loadRawFolder', session = session, roots=.MosaicOptions$filePaths)
 
 
 observeEvent(input$loadRawFolder,{
-  check <-  parseDirPath(roots=rootpath, input$loadRawFolder)
+  check <-  parseDirPath(roots=.MosaicOptions$filePaths, input$loadRawFolder)
   if(length(check)>0){
     
   MSData$localfolders <- c(gsub("\\\\","/",check), MSData$localfolders)
@@ -97,7 +97,7 @@ incProgress(0.5, detail = "loading MS data")
 newfiles <- projectData$filegroups$File
 newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
 MSData$filelist <- unique(c(MSData$filelist, newfiles))
-MSData$data <- c(MSData$data,loadRawM(newfiles, workers = enabledCores))
+MSData$data <- c(MSData$data,loadRawM(newfiles, workers = .MosaicOptions$enabledCores))
 temp_rawgrouptable <- projectData$filegroups
 MSData$layouts[[projectData$projectName]] <- constructRawLayout(temp_rawgrouptable, stem = "")
 MSData$index = unique(c(projectData$projectName,MSData$index))
@@ -157,10 +157,10 @@ observeEvent(MSData$localfolders,{
     incProgress(0.5, detail = "loading MS data")
       
       
-    newfiles <- list.files(MSData$localfolders[1], pattern=filepattern, recursive = TRUE, full.names=T)
+    newfiles <- list.files(MSData$localfolders[1], pattern=.MosaicOptions$filePattern, recursive = TRUE, full.names=T)
     newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
     MSData$filelist <- unique(c(MSData$filelist, newfiles))
-    MSData$data <- c(MSData$data,loadRawM(newfiles, workers = enabledCores))
+    MSData$data <- c(MSData$data,loadRawM(newfiles, workers = .MosaicOptions$enabledCores))
     temp_rawgrouptable <- data.frame(File = MSData$filelist, Group = rep("All_Files", length(MSData$filelist)))
     MSData$layouts[["default"]] <- constructRawLayout(temp_rawgrouptable, stem = "")
     MSData$index = unique(c("default",MSData$index))
@@ -225,7 +225,7 @@ if(is.null(input$rfileload$datapath)){
 MSData$layouts[[input$groupingName]] <- constructRawLayout(MSData$rawgrouptable, stem = dirname(input$rfileload$datapath))
 }
 newfiles <- newfiles[which(!newfiles %in% MSData$filelist)]
-MSData$data <- c(MSData$data, loadRawM(newfiles, workers = enabledCores))
+MSData$data <- c(MSData$data, loadRawM(newfiles, workers = .MosaicOptions$enabledCores))
 MSData$index <- c(MSData$index,input$groupingName)
 MSData$active <- input$groupingName
 })

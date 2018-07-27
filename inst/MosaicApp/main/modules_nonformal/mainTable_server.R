@@ -54,10 +54,10 @@ observeEvent(input$tablePage,{
     featureTables$tables[[featureTables$active]]$filters$page <- 1
   }else{
   
-    if(input$tablePage <= if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/fppage)}){
+    if(input$tablePage <= if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/.MosaicOptions$perPage)}){
     featureTables$tables[[featureTables$active]]$filters$page <- input$tablePage
     }else{
-        featureTables$tables[[featureTables$active]]$filters$page <- if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/fppage)}
+        featureTables$tables[[featureTables$active]]$filters$page <- if(featureTables$tables[[featureTables$active]]$editable){1}else{ceiling(nrow(combino())/.MosaicOptions$perPage)}
     }
   }
 })
@@ -66,7 +66,7 @@ observeEvent(input$tablePage,{
 output$tableInfo <- renderText({paste0(nrow(combino()),
                                              " items (",
                                              if(featureTables$tables[[featureTables$active]]$editable){"1 page, editable)"}
-                                             else{paste0(ceiling(nrow(combino())/fppage),"page(s))")}
+                                             else{paste0(ceiling(nrow(combino())/.MosaicOptions$perPage),"page(s))")}
                                         )
 })
 
@@ -138,8 +138,8 @@ observeEvent(input$tablePage,{
                         pagenum <- input$tablePage
                       }
     featureTables$tables[[featureTables$active]]$filters$inpage       <-     if(featureTables$tables[[featureTables$active]]$editable){c(1:nrow(combino()))}
-                           else if(pagenum == ceiling(nrow(combino())/fppage)){c((featureTables$tables[[featureTables$active]]$filters$page*fppage-(fppage-1)):(nrow(combino())))}#-((input$tablePage-1)*50)))}
-                           else{c((pagenum*fppage-(fppage-1)):(pagenum*fppage))}
+                           else if(pagenum == ceiling(nrow(combino())/.MosaicOptions$perPage)){c((featureTables$tables[[featureTables$active]]$filters$page*.MosaicOptions$perPage-(.MosaicOptions$perPage-1)):(nrow(combino())))}#-((input$tablePage-1)*50)))}
+                           else{c((pagenum*.MosaicOptions$perPage-(.MosaicOptions$perPage-1)):(pagenum*.MosaicOptions$perPage))}
                                
                                })
 
@@ -148,8 +148,8 @@ output$maintable <- renderRHandsontable({if(!is.null(combino())){
   
     inpage <- reactive({
               if(featureTables$tables[[featureTables$active]]$editable){c(1:nrow(combino()))}
-              else if(featureTables$tables[[featureTables$active]]$filters$page == ceiling(nrow(combino())/fppage)){c((featureTables$tables[[featureTables$active]]$filters$page*fppage-(fppage-1)):(nrow(combino())))}#c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(nrow(combino())-((featureTables$tables[[featureTables$active]]$filters$page-1)*50)))}
-              else{c((featureTables$tables[[featureTables$active]]$filters$page*fppage-(fppage-1)):(featureTables$tables[[featureTables$active]]$filters$page*fppage))}
+              else if(featureTables$tables[[featureTables$active]]$filters$page == ceiling(nrow(combino())/.MosaicOptions$perPage)){c((featureTables$tables[[featureTables$active]]$filters$page*.MosaicOptions$perPage-(.MosaicOptions$perPage-1)):(nrow(combino())))}#c((featureTables$tables[[featureTables$active]]$filters$page*50-49):(nrow(combino())-((featureTables$tables[[featureTables$active]]$filters$page-1)*50)))}
+              else{c((featureTables$tables[[featureTables$active]]$filters$page*.MosaicOptions$perPage-(.MosaicOptions$perPage-1)):(featureTables$tables[[featureTables$active]]$filters$page*.MosaicOptions$perPage))}
     })
     
   rheight <- if(nrow(combino()[inpage(),])<40){NULL}else{500}

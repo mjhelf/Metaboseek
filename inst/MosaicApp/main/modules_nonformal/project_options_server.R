@@ -7,13 +7,13 @@ output$projectName <- renderUI({
 
 
 output$rootfol <- renderUI({
-  if(!servermode){
+  if(!.MosaicOptions$serverMode){
   textInput('rootfol', 'Root folder', value = "")
 }
     })
 
 observeEvent(input$changeRoot,{
-  if(input$rootfol != "" & !servermode){
+  if(input$rootfol != "" & !.MosaicOptions$serverMode){
     
     MSData$rootfolder <- gsub("\\\\","/",input$rootfol)
     
@@ -22,4 +22,4 @@ observeEvent(input$changeRoot,{
   
 })
 
-toggle('changeRoot', condition = !servermode)
+toggle('changeRoot', condition = !.MosaicOptions$serverMode)

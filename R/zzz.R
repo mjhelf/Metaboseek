@@ -13,7 +13,7 @@
   
   options(scipen = 5)
 
-  loadOptions()
+  MosaicOptions()
   
   
 }

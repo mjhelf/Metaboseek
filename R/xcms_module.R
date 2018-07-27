@@ -20,7 +20,9 @@
 xcmsModule <- function(input,output, session,
                    values = reactiveValues(),
                    static = list(servermode = F,
-                                 rootpath = "/")
+                                 rootpath = .MosaicOptions$filePaths,
+                                 activateXCMS = T,
+                                 filePattern = .MosaicOptions$filePattern)
 ){
   
  ns <- NS(session$ns(NULL))
@@ -127,10 +129,8 @@ observeEvent(input$xcms_loadfolder,{
   fol <-  parseDirPath(roots=internalStatic$rootpath, input$xcms_loadfolder)
   if(length(fol)>0){
     #taken from xcms package
-    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
-                     "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
-    filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
-    flist = list.files(fol, pattern=filepattern, recursive = TRUE, full.names=T)
+    
+    flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
     internalValues$wd <- fol
     internalValues$active <- "filegroups"
@@ -142,10 +142,7 @@ observeEvent(input$xcms_loadfolderOffline,{
   fol <- gsub("\\\\","/",choose.dir())
   if(length(fol)>0){
     #taken from xcms package
-    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
-                     "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
-    filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
-    flist = list.files(fol, pattern=filepattern, recursive = TRUE, full.names=T)
+    flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
     internalValues$wd <- fol
     internalValues$active <- "filegroups"
