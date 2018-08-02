@@ -73,8 +73,8 @@ test_that("rawEICm function works",{
 #Tests for getgauss
 #not sure what cor is equal to...
 test_that("getgauss function works",{
-  g <- getgauss(x = c(1:100),1) 
-  expect_equivalent(g, 0.9961026, tolerance = 0.0000001)
+  g <- getgauss(y = c(1:10,10:1),1) 
+  expect_equivalent(g, 0.9959037, tolerance = 0.000001)
 })
 
 #Tests for bestgauss

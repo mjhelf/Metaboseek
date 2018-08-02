@@ -325,49 +325,55 @@ rawEICm <- function(object,
 #' 
 #' fit a gauss curve into a curve (numeric vector). Note that results will be skewed if scanrate is low or heterogeneous (e.g. ddMS2 experiments).
 #' 
-#' @param x numeric() to fit the curve
+#' @param y numeric() to fit the curve
 #' 
-#' @importFrom xcms SSgauss
-#' @importFrom stats fitted nls
+#' @importFrom stats fitted nls cor.test
 #' 
 #' @export
-getgauss <- function (x, pval = 1){
-    
-    
-    #substract "baseline"
-    summe <- x - min(x)
-    
-    #normalize intensities to 1
-    
-    summe <- if(max(x)>0){x/max(x)}else{x}
-    
-    #here starts the gaussian test, cf. http://www.metabolomics-forum.com/index.php?topic=1031.0 (Krista Longnecker/Tony Larson)
-    #fit gauss and let failures to fit through as corr=1
-    
-    fit <- try(nls(y ~ SSgauss(x, mu, sigma, h), data.frame(x =
-                                                                1:length(summe), y = summe)),silent=T)
-    gauss <-  if(class(fit) == "try-error")
+getgauss <- function (y, pval = 1){
+  
+  
+  #substract "baseline"
+  y <- y - min(y)
+  x <- seq_along(y)
+  
+  #normalize intensities to 1
+  
+  y <- if(max(y)>0){y/max(y)}else{y}
+  
+  #here starts the gaussian test, cf. http://www.metabolomics-forum.com/index.php?topic=1031.0 (Krista Longnecker/Tony Larson)
+  #fit gauss and let failures to fit through as corr=1
+  ## new approach without xcms functions adapted from here: https://stats.stackexchange.com/questions/70153/linear-regression-best-polynomial-or-better-approach-to-use/70184#70184
+  
+  
+  f <- function(x, theta)  { 
+    m <- theta[1]; s <- theta[2]; a <- theta[3]; b <- theta[4];
+    a*exp(-0.5*((x-m)/s)^2) + b
+  }
+  #
+  # Estimate some starting values.
+  # Do the fit.  (It takes no time at all.)
+  fit <- try(nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/4, a= max(y), b=0)), silent = T)
+  
+  gauss <-  if(class(fit) == "try-error")
+  {
+    NA
+  } else
+  {
+    #calculate correlation of summe$intensity against gaussian fit
+    if(length(which(!is.na(y-fitted(fit)))) > 4 &&
+       length(!is.na(unique(y)))>4 && length(!is.na(unique(fitted(fit))))>4)
     {
-        0
-    } else
-    {
-        #calculate correlation of summe$intensity against gaussian fit
-        if(length(which(!is.na(summe-fitted(fit)))) > 4 &&
-           length(!is.na(unique(summe)))>4 && length(!is.na(unique(fitted(fit))))>4)
-        {
-            cor <- NULL
-            options(show.error.messages = FALSE)
-            cor <- try(cor.test(summe,fitted(fit),method="pearson",use="complete"))
-            options(show.error.messages = TRUE)
-            if (!is.null(cor))
-            {
-                if(cor$p.value <= pval) cor$estimate else 0
-            } else 0
-        } else 0
-        
-    }
-    return(gauss)}
-
+      cor <- NULL
+      cor <- try(cor.test(y,fitted(fit),method="pearson",use="complete"), silent = T)
+      if(class(fit) != "try-error")
+      {
+        if(cor$p.value <= pval) cor$estimate else 0
+      } else NA
+    } else NA
+    
+  }
+  return(gauss)}
 
 
 #' bestgauss
