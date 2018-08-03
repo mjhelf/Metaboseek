@@ -1,0 +1,215 @@
+#' TableAnalysisModule
+#' 
+#' 
+#' server module for interactive mass spectrum view
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param reactives Import data from the shiny session
+#' @param values Import data from the shiny session
+#' @param static Import data from the shiny session
+#' 
+#' @import shiny
+#' @importFrom shinyjs toggle
+#' 
+#' @export 
+TableAnalysisModule <- function(input,output, session,
+                                reactives = reactive({list()}),
+                                values = reactiveValues(fileGrouping = NULL,
+                                                        featureTables = featureTables,
+                                                        MSData = MSData),
+                                static = list()
+){
+  #### Initialization ####
+  
+  ns <- NS(session$ns(NULL))
+  
+  internalValues <- reactiveValues(normalize = TRUE,
+                                   useNormalized = TRUE,
+                                   controlGroups = NULL,
+                                   analysesAvailable = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes"),
+                                   analysesSelected = "Basic analysis",
+                                   numClusters = 2
+  )
+  
+  
+  
+  output$normDataCheck <- renderUI({
+    div(title= "Apply normalization factor based on mean intensities for each column, and replace values of 0 by the lowest non-zero value in each column.",
+        checkboxInput(ns('makenormdata'), 'Normalize data', value = internalValues$normalize))
+  })
+  
+  observeEvent(input$makenormdata,{
+    internalValues$normalize <- input$makenormdata
+  })
+  
+  output$normDataUseCheck <- renderUI({
+    div(title= "Use normalized data for subsequent analysis. Requires normalized data in table and will generate it if not present.",
+        checkboxInput(ns('usenormdata'), 'Use normalized data', value = internalValues$useNormalized))
+  })
+  
+  observeEvent(input$usenormdata,{
+    internalValues$useNormalized <- input$usenormdata
+  })
+  
+  output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
+                                                choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{values$fileGrouping$Group},
+                                                selected = if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups},
+                                                multiple = T)})
+  observeEvent(input$selctrl,{
+    if(!is.null(values$featureTables)){
+      values$featureTables$tables[[values$featureTables$active]]$ctrlGroups <- input$selctrl}
+    
+    internalValues$controlGroups <- input$selctrl
+  })
+  
+  
+  output$analysisSelect <- renderUI({selectizeInput(ns('selAna'), 'Select analyses',
+                                                    choices = internalValues$analysesAvailable,
+                                                    selected = internalValues$analysesSelected,
+                                                    multiple = T)})
+  
+  observeEvent(input$selAna,{
+    internalValues$analysesSelected <- input$selAna
+  })
+  
+  output$claraClusters <- renderUI({ 
+    #if("clara_cluster" %in% internalValues$analysesSelected){
+    div(title = "Number of clusters in which to group features based on their intensities across samples by k-medoids (clara).",
+        numericInput('kclusternum',
+                     "Number of clara clusters:",
+                     value = internalValues$numClusters,
+                     min = 2, step = 1))
+    # }
+  })
+  
+  observeEvent(input$kclusternum,{
+    internalValues$numClusters <- input$kclusternum
+  })
+  
+  observeEvent(input$analyzeButton,{
+    
+    tryCatch({
+      withProgress(message = 'Please wait!', detail = "analyzing feature table", value = 0.5, {
+        
+        res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
+                            intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
+                            groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
+                            analyze = internalValues$analysesSelected, 
+                            normalize = internalValues$normalize,
+                            useNormalized = internalValues$useNormalized,
+                            MSData = values$MSData$data,
+                            ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
+                            controlGroup = internalValues$controlGroups,
+                            numClusters = internalValues$numClusters)
+        
+        values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
+        
+        if(length(res$errmsg) >0){
+          
+          showModal(
+            modalDialog(
+              p(strong("A problem has oocured!")),
+              hr(),
+              p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "\n" )),
+              hr(),
+              p("Other analyses completed without error."),
+              title = "Warning",
+              easyClose = T,
+              footer = modalButton("Ok")
+            ))
+          
+        }else{
+          
+          showNotification(paste("Feature table analysis completed."), duration = 0, type = "message")
+          
+          
+        }
+      })
+    },
+    error = function(e){
+      showModal(
+        modalDialog(
+          p(strong("An error has oocured!")),
+          p("The analysis was not successful. Error message:"),
+          hr(),
+          p(paste(e)),
+          hr(),
+          title = "ERROR",
+          easyClose = T,
+          footer = modalButton("Ok")
+          
+        ))
+    })
+    
+    
+  })
+  
+  observe({
+    
+    toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
+    toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
+    
+  })
+  
+  
+  
+  
+  return(internalValues)
+  
+}
+
+#' TableAnalysisModuleUI
+#' 
+#' @param id id of the shiny module
+#' 
+#' @export
+TableAnalysisModuleUI <- function(id){
+  ns <- NS(id)
+  fluidPage(
+    
+    fluidRow(
+      h4("Prepare data"),
+      column(4,
+             htmlOutput(ns('normDataCheck'))
+      ),
+      column(4,
+             htmlOutput(ns('normDataUseCheck'))
+      )),
+    fluidRow(
+      h4("Basic analysis"),
+      column(4,
+             htmlOutput(ns('analysisSelect'))
+      ),
+      column(4,
+             htmlOutput(ns('ctrlSelect'))
+      ),
+      column(4,
+             htmlOutput(ns('claraClusters'))
+      )
+      
+    ),
+    fluidRow(
+      actionButton(ns('analyzeButton'),"Analyze data",style="color: #fff; background-color: #C41230; border-color: #595959")
+    )
+    # hr(),
+    # h3("Step 2: Advanced feature analysis"),
+    # hr(),
+    # h3("Step 3: Sample group analysis")
+    
+    
+    #,
+    # fluidRow(
+    #    column(6,
+    #densplotModuleUI("nonNormalizedPlot")
+    #    ),
+    #   column(6,
+    #densplotModuleUI("NormalizedPlot")
+    #   )
+    #)
+    
+  )
+  
+  
+}
