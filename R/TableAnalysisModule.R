@@ -28,7 +28,7 @@ TableAnalysisModule <- function(input,output, session,
   internalValues <- reactiveValues(normalize = TRUE,
                                    useNormalized = TRUE,
                                    controlGroups = NULL,
-                                   analysesAvailable = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes"),
+                                   analysesAvailable = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes", "PCA features", "PCA samples"),
                                    analysesSelected = "Basic analysis",
                                    numClusters = 2
   )
@@ -105,7 +105,9 @@ TableAnalysisModule <- function(input,output, session,
                             numClusters = internalValues$numClusters)
         
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
+        values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,res$dfvalues$featureTables$tables[[values$featureTables$active]]$anagrouptable)
         
+
         if(length(res$errmsg) >0){
           
           showModal(

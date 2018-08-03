@@ -13,10 +13,11 @@
 #' @param controlGroup control group for foldChange (part of Basic analysis) analysis (optional) 
 #' @param numClusters number of clusters for clara_clusters analysis
 #'
+#' @importFrom stats prcomp 
 #'
 analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
                          groups = tab1$anagroupnames,
-                         analyze = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes"), 
+                         analyze = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes", "PCA features", "PCA samples"), 
                          normalize = T, useNormalized = T, MSData = NULL, ppm = 5, controlGroup = NULL, numClusters = 2){
   out <- list(errmsg = list())
   
@@ -32,7 +33,7 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
     #make copy of normalized intensities in active table df
     mx <- as.data.frame(mx)
     colnames(mx) <- paste0(colnames(mx),"__norm")
-    df <- updateDF (df,mx)
+    df <- updateDF (mx,df)
     
   }
   
@@ -55,12 +56,13 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
         rnames = row.names(df)
       )
       
-      df <- updateDF (df,inp)
+      df <- updateDF (inp, df)
       
     }}
   
   if("Basic analysis" %in% analyze){
-    df <- updateDF(df,featureCalcs(df))
+    df <- updateDF(featureCalcs(df),
+                   df)
     
     # if(is.null(groups)){
     #   out$errmsg[["Basic analysis"]] <- "Fold change analysis was not performed because no grouping information is loaded."
@@ -68,17 +70,19 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
     # }else if (length(groups) == 1){
     #   out$errmsg[["Basic analysis"]] <- "Fold change analysis was not performed because there is only one sample group."
     # }else{
-    df <- updateDF(df,foldChange(as.matrix(df[,intensities]),
-                                 groups, ctrl = controlGroup))
+    df <- updateDF(foldChange(as.matrix(df[,intensities]),
+                                 groups, ctrl = controlGroup),
+                   df)
     # }
   }
   
   if("p-values" %in% analyze){
     
-    df <- updateDF(df,multittest(df = df[,intensities],
+    df <- updateDF(multittest(df = df[,intensities],
                                  groups,
                                  ttest = T,
-                                 adjmethod = "bonferroni"))
+                                 adjmethod = "bonferroni"),
+                   df)
     
   }
   
@@ -92,10 +96,37 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
       mx <- sqrt(as.matrix(df[,intensities])) #using sqrt here to condense data values which may contain 0s
       
       
-      df <- updateDF(df,MosCluster(x = mx / rowMeans(mx),
+      df <- updateDF(MosCluster(x = mx / rowMeans(mx),
                                    k = numClusters,
-                                   samples = 100))
+                                   samples = 100), 
+                     df)
     }
+    
+  }
+  
+  if("PCA features" %in% analyze){
+    pcamemx <- as.matrix(df[,intensities])
+    
+    pcamemx <- scale(pcamemx, center = T, scale = T)
+    
+    #PCA to separate features
+    prin_comp <- prcomp(pcamemx)
+    
+    
+    df <-updateDF(as.data.frame(prin_comp$x[,1:min(ncol(prin_comp$x),15)]), df)
+    
+  }
+  
+  if("PCA samples" %in% analyze){
+    pcamemx <- t(as.matrix(df[,intensities]))
+    
+    pcamemx <- scale(pcamemx, center = T, scale = T)
+    
+    #PCA to separate features
+    prin_comp <- prcomp(pcamemx)
+    
+    
+    out$PCA_samples <- as.data.frame(prin_comp$x[,1:min(ncol(prin_comp$x), 15)])
     
   }
   
