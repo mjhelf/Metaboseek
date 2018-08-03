@@ -105,7 +105,8 @@ TableAnalysisModule <- function(input,output, session,
                             numClusters = internalValues$numClusters)
         
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
-        values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,res$dfvalues$featureTables$tables[[values$featureTables$active]]$anagrouptable)
+        values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,
+                                                                                             values$featureTables$tables[[values$featureTables$active]]$anagrouptable)
         
 
         if(length(res$errmsg) >0){

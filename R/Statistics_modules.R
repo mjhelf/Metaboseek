@@ -1,37 +1,37 @@
-#' NormalizeModuleUI
+#' #' NormalizeModuleUI
+#' #' 
+#' #' Normalize a matrix (UI single button)
+#' #' 
+#' #' @param id 
+#' #' 
+#' #' @export
+#' NormalizeModuleUI <- function(id){
+#'     ns <- NS(id)
+#'     
+#'    actionButton(ns('normbutton'),"Normalize data") 
+#'     
+#' }
 #' 
-#' Normalize a matrix (UI single button)
 #' 
-#' @param id 
+#' #' NormalizeModule
+#' #' 
+#' #' Normalize a matrix
+#' #' 
+#' #' @param input 
+#' #' @param output 
+#' #' @param session 
+#' #' @param mx 
+#' #' 
+#' #' @export 
+#' NormalizeModule <- function(input, output, session, mx){
 #' 
-#' @export
-NormalizeModuleUI <- function(id){
-    ns <- NS(id)
-    
-   actionButton(ns('normbutton'),"Normalize data") 
-    
-}
-
-
-#' NormalizeModule
+#'     observeEvent(input$normbutton,{
+#'         norm_mx <- featureTableNormalize(mx())
+#'         return(norm_mx)
+#'     })
+#' }
 #' 
-#' Normalize a matrix
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param mx 
-#' 
-#' @export 
-NormalizeModule <- function(input, output, session, mx){
-
-    observeEvent(input$normbutton,{
-        norm_mx <- featureTableNormalize(mx())
-        return(norm_mx)
-    })
-}
-
-
 
 
 #' densplotModuleUI

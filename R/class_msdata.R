@@ -391,7 +391,7 @@ bestgauss <- function(...){
     res <- multiEIC(..., byFile = T, getgauss = T)
     
     return(
-      data.frame(maxgauss = suppressWarnings({
+      data.frame(best_peakshape = suppressWarnings({
         
         apply(matrix(unlist(res),ncol = length(res)),1,max, na.rm = T)  
         
