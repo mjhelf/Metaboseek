@@ -12,7 +12,8 @@ tabBox(title = "Feature table",
                 source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value),
        
        tabPanel("Analyze Table",
-                source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
+                TableAnalysisModuleUI("TabAnalysis")
+                #source(file.path("modules_nonformal", "processTableData_ui.R"), local = TRUE)$value
        ),
        
        tabPanel("View Table",

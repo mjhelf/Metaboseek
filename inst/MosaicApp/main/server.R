@@ -34,7 +34,13 @@ function(input, output, session) {
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
     source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value
     
-    source(file.path("modules_nonformal", "processTableData_server.R"), local = TRUE)$value
+    
+    tAnalysis <- callModule(TableAnalysisModule, "TabAnalysis",
+                             reactives = reactive({list()}),
+                             values = reactiveValues(fileGrouping = NULL,
+                                                     featureTables = featureTables,
+                                                     MSData= MSData))
+    #source(file.path("modules_nonformal", "processTableData_server.R"), local = TRUE)$value
     
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
