@@ -3,7 +3,6 @@
     "activeTable": "table0",
     "addFilter": 0,
     "anagroupswitch": true,
-    "analyzebutton": 0,
     "changeRoot": 0,
     "colorscheme": "mosaic.colors",
     "ColSelMod-mainSelgProps": null,
@@ -403,7 +402,6 @@
     "mz1-mzspace": "C0-100H0-202N0-15O0-20",
     "mz1-source": "feature table",
     "newTable": 0,
-    "normbutton": 0,
     "plotCols": 1,
     "plotCx": 1.5,
     "plotLw": 1,
@@ -426,20 +424,22 @@
     "RtCorrLoad": null,
     "RTtoggle": false,
     "RTwindow": 30,
-    "selAna": "Basic analysis",
-    "selctrl": null,
     "sep": ",",
     "ShowSpec": false,
     "sidebarCollapsed": false,
     "sidebarItemExpanded": null,
     "Spec2-checkCompare": true,
+    "TabAnalysis-analyzeButton": 0,
+    "TabAnalysis-makenormdata": true,
+    "TabAnalysis-selAna": "Basic analysis",
+    "TabAnalysis-selctrl": null,
+    "TabAnalysis-usenormdata": true,
     "TableBox": "View Table",
     "tablePage": 1,
     "TICtoggle": false,
     "toggleTabOpts": false,
     "updateFilter": 0,
     "updateshifts": 0,
-    "usenormdata": false,
     "xcms_settingsBox": "XCMS Settings",
     "xcmsMod-xcms_loadfolder": 0,
     "xcmsMod-xcms_loadfolderOffline": 0,
@@ -1619,44 +1619,6 @@
 
       ]
     },
-    "selAna": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"selAna\">Select analyses<\/label>\n  <div>\n    <select id=\"selAna\" class=\"form-control\" multiple=\"multiple\"><option value=\"Basic analysis\" selected>Basic analysis<\/option>\n<option value=\"clara_cluster\">clara_cluster<\/option>\n<option value=\"p-values\">p-values<\/option>\n<option value=\"Peak shapes\">Peak shapes<\/option><\/select>\n    <script type=\"application/json\" data-for=\"selAna\">{}<\/script>\n  <\/div>\n<\/div>",
-      "deps": [
-        {
-          "name": "selectize",
-          "version": "0.11.2",
-          "src": {
-            "href": "shared/selectize"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "css/selectize.bootstrap3.css",
-          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
-    "selctrl": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"selctrl\">Select control group(s)<\/label>\n  <div>\n    <select id=\"selctrl\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"selctrl\">{}<\/script>\n  <\/div>\n<\/div>",
-      "deps": [
-        {
-          "name": "selectize",
-          "version": "0.11.2",
-          "src": {
-            "href": "shared/selectize"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "css/selectize.bootstrap3.css",
-          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
     "Spec1-specAll": {
       "message": "",
       "call": "NULL",
@@ -1704,6 +1666,56 @@
         }
       ]
     },
+    "TabAnalysis-analysisSelect": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"TabAnalysis-selAna\">Select analyses<\/label>\n  <div>\n    <select id=\"TabAnalysis-selAna\" class=\"form-control\" multiple=\"multiple\"><option value=\"Basic analysis\" selected>Basic analysis<\/option>\n<option value=\"clara_cluster\">clara_cluster<\/option>\n<option value=\"p-values\">p-values<\/option>\n<option value=\"Peak shapes\">Peak shapes<\/option><\/select>\n    <script type=\"application/json\" data-for=\"TabAnalysis-selAna\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "TabAnalysis-ctrlSelect": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"TabAnalysis-selctrl\">Select control group(s)<\/label>\n  <div>\n    <select id=\"TabAnalysis-selctrl\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"TabAnalysis-selctrl\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "TabAnalysis-normDataCheck": {
+      "html": "<div title=\"Apply normalization factor based on mean intensities for each column, and replace values of 0 by the lowest non-zero value in each column.\">\n  <div class=\"form-group shiny-input-container\">\n    <div class=\"checkbox\">\n      <label>\n        <input id=\"TabAnalysis-makenormdata\" type=\"checkbox\" checked=\"checked\"/>\n        <span>Normalize data<\/span>\n      <\/label>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "TabAnalysis-normDataUseCheck": {
+      "html": "<div title=\"Use normalized data for subsequent analysis. Requires normalized data in table and will generate it if not present.\">\n  <div class=\"form-group shiny-input-container\">\n    <div class=\"checkbox\">\n      <label>\n        <input id=\"TabAnalysis-usenormdata\" type=\"checkbox\" checked=\"checked\"/>\n        <span>Use normalized data<\/span>\n      <\/label>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
     "tableInfo": "3 items (1 page, editable)",
     "tablePage": {
       "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"tablePage\">Page:<\/label>\n  <input id=\"tablePage\" type=\"number\" class=\"form-control\" value=\"1\" min=\"1\"/>\n<\/div>",
@@ -1713,12 +1725,6 @@
     },
     "TICtoggle": {
       "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"TICtoggle\" type=\"checkbox\"/>\n      <span>TIC<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "usenormdata": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"usenormdata\" type=\"checkbox\"/>\n      <span>Use normalized data<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]

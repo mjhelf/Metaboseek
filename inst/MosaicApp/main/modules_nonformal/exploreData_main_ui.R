@@ -13,12 +13,12 @@ fluidPage(
       box(title = "Filter and Sort", status = "danger", collapsible = T, width = 12,
           fluidRow(
         column(6,
-    htmlOutput('selnormdata'),
-    htmlOutput('mainSelGroup'),
-    htmlOutput('mainSelgProps'),
-    htmlOutput('mainSelsProps'),
-    htmlOutput('mainSelIntensities'),
-    htmlOutput('mainSelOthers'),
+    # htmlOutput('selnormdata'),
+    # htmlOutput('mainSelGroup'),
+    # htmlOutput('mainSelgProps'),
+    # htmlOutput('mainSelsProps'),
+    # htmlOutput('mainSelIntensities'),
+    # htmlOutput('mainSelOthers'),
     columnSelModuleUI('ColSelMod')
         ),
     column(6,

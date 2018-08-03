@@ -4,7 +4,7 @@ library(shinyjs)
 
 #MosaicExamplePreload()
 
-ui <- MosaicMinimalUi(diagnostics = T)
+ui <- MosaicMinimalUI(diagnostics = T)
 
 server <- function(input, output) {
   MosaicMinimalServer(diagnostics = T, data = F, tables = F)

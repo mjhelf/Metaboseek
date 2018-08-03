@@ -63,7 +63,9 @@ loadRawM <- function (filelist= mzxml_pos, MSn = T, workers=10, rnames = filelis
 
     if (length(filelist)<=10){workers<-1}
     param <- SnowParam(workers = workers)
+    suppressWarnings({
     rawcoll <- bplapply(filelist,xcmsRaw,  profstep=0, includeMSn = MSn, BPPARAM= param)
+    })
     names(rawcoll)<- rnames
     
     return(rawcoll)}

@@ -62,11 +62,13 @@ fluidRow(
 )
 ),
 tabPanel("MS Browser",
-        # p("temp")
-         source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
+         fluidPage(
+           MultiEICmoduleUI("MultiE"),
+           MultiSpecmoduleUI("Spec2"))
+         #source(file.path("modules_nonformal", "interactiveView_ui.R"), local = TRUE)$value
          ),
 tabPanel("Quickplots",
-         source(file.path("modules_nonformal", "quickPlots_ui.R"), local = TRUE)$value
+         featurePlotModuleUI("quickplots")
 ),
 tabPanel("MS2 Browser",
          MS2BrowserModuleUI('MS2B')

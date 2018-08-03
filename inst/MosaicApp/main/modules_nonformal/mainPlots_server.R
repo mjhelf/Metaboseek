@@ -1,6 +1,4 @@
 source(file.path("modules_nonformal", "mainPlots_options_server.R"), local = TRUE)$value 
-source(file.path("modules_nonformal", "interactiveView_server.R"), local = TRUE)$value 
-source(file.path("modules_nonformal", "quickPlots_server.R"), local = TRUE)$value 
 
 
 output$groupingActiveSelect <- renderUI({
@@ -293,9 +291,52 @@ iSpec1 <- callModule(Specmodule,"Spec1", tag = "Spec1",
                      keys = reactive({keyin$keyd})
 )
 
+#### MS2Browsewr #####
+
 MS2Browser <- callModule(MS2BrowserModule, 'MS2B', tag = "MS2B", 
                          set = reactive({list(MSData = MSData$data,
                                 query = list(mz = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng,"mz"]},
                                              rt = if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng,"rt"]}
                                     ))}),
                          keys = reactive({input$keyd}))
+
+#### Quickplots #####
+callModule(featurePlotModule, "quickplots",
+           FT = reactive({featureTables$tables[[featureTables$active]]}),
+           rname = reactive({row.names(hot_to_r(input$maintable))[maintabsel()$rrng[1]]})
+)
+
+#### interactiveView #####
+MultiEICout <- callModule(MultiEICmodule,"MultiE", values = reactiveValues(MSData = MSData),
+                          keys = reactive({keyin$keyd}))
+
+iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = "Spec2", 
+                     set = reactive({
+                       
+                       
+                       list(spec = list(xrange = if(length(MultiEICout$currentView$controls$mz) < 1 || is.na(MultiEICout$currentView$controls$mz)){
+                         NULL}
+                         else{c(MultiEICout$currentView$controls$mz-10,MultiEICout$currentView$controls$mz+10)},
+                         yrange = NULL,
+                         maxxrange = NULL,
+                         maxyrange = NULL,
+                         sel = if(length(MultiEICout$currentView$controls$marker$file) < 1 || is.na(MultiEICout$currentView$controls$marker$file) ){
+                           NULL}
+                         else{list(File = MultiEICout$currentView$controls$marker$file,
+                                   scan = MultiEICout$currentView$controls$marker$scan,
+                                   rt = MultiEICout$currentView$controls$marker$rt*60)},
+                         data = NULL,
+                         mz = MultiEICout$currentView$controls$mz,
+                         MS2 = F),
+                         layout = list(lw = 1,
+                                       cex = 1.5,
+                                       controls = F,
+                                       ppm = MSData$layouts[[MSData$active]]$settings$ppm,
+                                       active =T,
+                                       highlights = NULL,
+                                       height = 350),
+                         msdata = MSData$data)
+                     }), 
+                     keys = reactive({keyin$keyd}),
+                     static = list(title = "MS spectra")
+)

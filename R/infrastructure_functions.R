@@ -85,7 +85,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
 #'
 #' @importFrom shinyjs runcodeUI 
 #' @export
-MosaicMinimalUi <- function(..., diagnostics = T){
+MosaicMinimalUI <- function(..., diagnostics = T){
   fluidPage(
     tags$script('
                 $(document).on("keydown", function (e) {
