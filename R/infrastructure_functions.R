@@ -85,7 +85,9 @@ MosaicExamplePreload <- function(tables = T, data = T){
 #'
 #' @importFrom shinyjs runcodeUI 
 #' @export
-MosaicMinimalUI <- function(..., diagnostics = T){
+MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
+  
+    if(!dashboard){
   fluidPage(
     tags$script('
                 $(document).on("keydown", function (e) {
@@ -96,14 +98,30 @@ MosaicMinimalUI <- function(..., diagnostics = T){
                 });
                 '),
     if(diagnostics){
-    fluidPage(...,
+    fluidPage(
+           ...,
               runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
               height = NULL, includeShinyjs = FALSE),
     verbatimTextOutput('diag'))}
     else{
      ... 
     }
-    )}
+  )}
+  else{
+  if(diagnostics){
+    fluidPage(
+      dashboardPage(...),
+      runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
+                height = NULL, includeShinyjs = FALSE),
+      verbatimTextOutput('diag')
+      )
+    }
+  else{
+    dashboardPage(...) 
+  }
+  }
+  
+  }
 
 #' MosaicMinimalServer
 #'
