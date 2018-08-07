@@ -4,8 +4,8 @@
 \alias{TableAnalysisModule}
 \title{TableAnalysisModule}
 \usage{
-TableAnalysisModule(input, output, session, reactives = reactive({     list()
-  }), values = reactiveValues(fileGrouping = NULL, featureTables =
+TableAnalysisModule(input, output, session, reactives = reactive({    
+  list(fileGrouping = NULL) }), values = reactiveValues(featureTables =
   featureTables, MSData = MSData), static = list())
 }
 \arguments{

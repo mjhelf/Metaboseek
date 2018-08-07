@@ -20,17 +20,11 @@ function(input, output, session) {
         
         featureTables$active <- input$activeTable})
     
-   # source(file.path("modules_nonformal", "bookmarking_server.R"), local = TRUE)$value 
-    #source(file.path("modules_nonformal", "logo_server.R"), local = TRUE)$value 
-    
-    #source(file.path("modules_nonformal", "diagnostics_server.R"), local = TRUE)$value    
-
-    callModule(updaterModule, 'update', tag = 'update', set =list(package = "Mosaic",
+     callModule(updaterModule, 'update', tag = 'update', set =list(package = "Mosaic",
                                                                   refs = c("master", "devel", "devel_raw"),
                                                                   active = !.MosaicOptions$serverMode))
     
-    #source(file.path("modules_nonformal", "help_server.R"), local = TRUE)$value 
-    
+
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
     source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value
     
@@ -40,8 +34,7 @@ function(input, output, session) {
                              values = reactiveValues(fileGrouping = NULL,
                                                      featureTables = featureTables,
                                                      MSData= MSData))
-    #source(file.path("modules_nonformal", "processTableData_server.R"), local = TRUE)$value
-    
+
     source(file.path("modules_nonformal", "exploreData_main_server.R"), local = TRUE)$value 
     
 xcmsOut <- callModule(xcmsModule, "xcmsMod",

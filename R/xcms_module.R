@@ -280,7 +280,16 @@ output$summary <- renderPrint({
   print(gsub("\\\\","/", input$xcms_folder))
 })
 
-
+tAnalysisX <- callModule(TableAnalysisModule, "TabAnalysisXcms",
+                        reactives = reactive({list(fileGrouping = if(internalValues$active == "filegroups"){
+                          hot_to_r(input$xcms_settingstab)}
+                          else{internalValues$params$filegroups})
+                          }),
+                        values = reactiveValues(featureTables = NULL,
+                                                MSData= NULL))
+observeEvent(tAnalysisX,{
+  tAnalysisX$analysesSelected <- tAnalysisX$analysesAvailable
+}, once = T)
 
 return(internalValues)
 
@@ -340,12 +349,20 @@ fluidPage(
            
            tabPanel("XCMS Settings",
                     
-                    
-                    htmlOutput(ns('xcms_selectTab')),
-                    
-                    
+                  fluidPage(
+                    fluidRow(
+                    htmlOutput(ns('xcms_selectTab'))
+                    ),
+                    fluidRow(
                     rHandsontableOutput(ns('xcms_settingstab'))
-                    
+                    ),
+                    fluidRow(
+                      h3("Automatic post-processing of MS data"),
+                      p("Basic analysis and p-value calculation require more than one group set in File Grouping.")
+                    ),
+                    fluidRow(
+                      TableAnalysisModuleUI(ns("TabAnalysisXcms"))
+                    )
                     
            ))),
   fluidRow(
@@ -354,5 +371,6 @@ fluidPage(
         rHandsontableOutput(ns('xcms_statustab'))
     ))
   
+)
 )
 }

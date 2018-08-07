@@ -15,9 +15,8 @@
 #' 
 #' @export 
 TableAnalysisModule <- function(input,output, session,
-                                reactives = reactive({list()}),
-                                values = reactiveValues(fileGrouping = NULL,
-                                                        featureTables = featureTables,
+                                reactives = reactive({list(fileGrouping = NULL)}),
+                                values = reactiveValues(featureTables = featureTables,
                                                         MSData = MSData),
                                 static = list()
 ){
@@ -54,7 +53,7 @@ TableAnalysisModule <- function(input,output, session,
   })
   
   output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
-                                                choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{values$fileGrouping$Group},
+                                                choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{reactives()$fileGrouping$Group},
                                                 selected = if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups},
                                                 multiple = T)})
   observeEvent(input$selctrl,{

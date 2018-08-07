@@ -261,7 +261,6 @@ MosaicOptions <- function(..., defaults = F){
                              perPage = as.integer(100),
                              serverMode = F)
     
-    write(serializeJSON(.MosaicOptions, pretty = T), file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json"))
   }
   else{
     .MosaicOptions <<- unserializeJSON(readChar(system.file("config", "MosaicOptions.json", package = "Mosaic"), file.info(system.file("config", "MosaicOptions.json", package = "Mosaic"))$size))
@@ -280,7 +279,8 @@ MosaicOptions <- function(..., defaults = F){
     
   }
   
+  if(gsub("/Mosaic","",system.file(package = "Mosaic")) %in% .libPaths()){
   write(jsonlite::serializeJSON(.MosaicOptions, pretty = T), file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json"))
-  
+  }
   
 }
