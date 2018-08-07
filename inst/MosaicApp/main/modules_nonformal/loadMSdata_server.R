@@ -73,6 +73,11 @@ inputTable$tablename <- input$projectTables
  ColumnNames <- gsub("-",".",paste0(basename(projectData$filegroups$File),"__XIC"))
   ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
 
+  if(file.exists(file.path(MSData$localfolders[1], "analysis_groups.csv"))){
+    inputTable$anagroupraw <- read.csv(file.path(MSData$localfolders[1], "analysis_groups.csv"), stringsAsFactors = F, header = T)
+    
+  }else{
+  
 #if the expected column names with __XIC do not occur, find them without __XIC  
 if(length(which(colnames(inputTable$df) %in% ColumnNames))==0){
   #check if the colum name exists without leading X (difference in  Linux vs Windows)
@@ -91,7 +96,7 @@ inputTable$anagroupraw <- data.frame(Column=sort(colnames(inputTable$df)[inputTa
                                      Group = projectData$filegroups$Group[order(ColumnNames)],
                                      stringsAsFactors = F)
 #print(inputTable$anagroupraw)
-
+}
 }
 incProgress(0.5, detail = "loading MS data")
 newfiles <- projectData$filegroups$File
@@ -188,11 +193,15 @@ observeEvent(c(MSData$filelist,input$rnamelvl),{
     
     stem <- if(!is.null(input$rfileload$datapath)) {dirname(input$rfileload$datapath)}else{""}
     if (!is.null(MSData$filelist)) {
+     
         File = gsub(stem,"",MSData$filelist, ignore.case = T)
         Group = if(input$rnamelvl ==1){as.character(unname(sapply(sapply(File,strsplit,split = "/"),tail,input$rnamelvl)))}else{
     as.character(unname(apply(sapply(sapply(File,strsplit,split = "/"),tail,input$rnamelvl),2,"[",1)))}
 MSData$rawgrouptable <- data.frame(File, Group, stringsAsFactors = F)
-}})
+      }
+    
+    
+    })
 ##### Render the current rgrouping table
 output$rawgrouping <- renderRHandsontable({if(!is.null(MSData$rawgrouptable)){
     rhandsontable(MSData$rawgrouptable)

@@ -80,71 +80,72 @@ PlotBrowserModule <- function(input,output, session,
   #                internalValues$color,
   #                reactives()$PCAtable,
   #                reactives()$active),
-               observe({
-                   
-                   if(!is.null(reactives()$PCAtable) && reactives()$active){
-                     
-                     
-                     internalValues$axisChoices <- grep(static$patterns$axis,colnames(reactives()$PCAtable), value = T)
-                     internalValues$colorChoices <- grep(static$patterns$color,colnames(reactives()$PCAtable), value = T)
-                     internalValues$textChoices <- grep(static$patterns$hover,colnames(reactives()$PCAtable), value = T)
-                     
-                     
-                     
-                     if(((is.null(internalValues$x) || internalValues$x == "")
-                         ||(is.null(internalValues$y) || internalValues$y == ""))
-                        && length(internalValues$axisChoices) >0){
-                       internalValues$x <- internalValues$axisChoices[1]
-                       internalValues$y <- internalValues$axisChoices[2]
-                     }
-                     
-                     
-                     if((is.null(internalValues$text) || internalValues$text == "")
-                        && length(internalValues$textChoices) >0){
-                       internalValues$text <- internalValues$textChoices[1]
-                     }
-                     
-                     if((is.null(internalValues$color) || internalValues$color == "")
-                        && length(internalValues$colorChoices) >0){
-                       internalValues$color <- internalValues$colorChoices[1]
-                     }
-                     
-                     if(length(internalValues$axisChoices != 0)
-                        && !is.null(internalValues$x) 
-                        && !is.null(internalValues$y)
-                        && internalValues$x != ""
-                        && internalValues$y != ""){
-                       # print(plotlyTextFormatter(reactives()$PCAtable, internalValues$text))
-                       #  print(length(internalValues$x))
-                       # print(internalValues$y)
-                       txtmake <- "data"
-                       if(internalValues$interactive && !is.null(internalValues$text) && internalValues$text != ""){
-                         txtmake <- plotlyTextFormatter(reactives()$PCAtable, internalValues$text)
-                       }
-                       colvec <- reactives()$PCAtable[[internalValues$color]]
-
-                       internalValues$plot <- ggplot(reactives()$PCAtable,
-                                                     aes_string(x=internalValues$x,
-                                                                y=internalValues$y)) + 
-                         geom_point(aes_string(col = internalValues$color,
-                                               #shape = 1,
-                                               text = as.factor(txtmake) 
-                         )) +
-                         if(is.factor(colvec) || is.character(colvec)){
-                           scale_color_hue()
-                         }
-                       else{
-                         scale_color_gradientn(colours=rainbow(4))}
-                       
-                     }else{
-                       internalValues$plot <- NULL
-                     }
-                     toggleElement(id = 'Text', condition = !is.null(internalValues$interactive) && internalValues$interactive)
-                   }
-                 
-                 toggleElement(id = 'PlotBrowserAll', condition = reactives()$active)
-                 
-                 })
+  observe({
+    
+    if(!is.null(reactives()$PCAtable) && reactives()$active){
+      
+      
+      internalValues$axisChoices <- grep(static$patterns$axis,colnames(reactives()$PCAtable), value = T)
+      internalValues$colorChoices <- grep(static$patterns$color,colnames(reactives()$PCAtable), value = T)
+      internalValues$textChoices <- grep(static$patterns$hover,colnames(reactives()$PCAtable), value = T)
+      
+      
+      
+      if(((is.null(internalValues$x) || internalValues$x == "")
+          ||(is.null(internalValues$y) || internalValues$y == ""))
+         && length(internalValues$axisChoices) >0){
+        internalValues$x <- internalValues$axisChoices[1]
+        internalValues$y <- internalValues$axisChoices[2]
+      }
+      
+      
+      if((is.null(internalValues$text) || internalValues$text == "")
+         && length(internalValues$textChoices) >0){
+        internalValues$text <- internalValues$textChoices[1]
+      }
+      
+      if((is.null(internalValues$color) || internalValues$color == "")
+         && length(internalValues$colorChoices) >0){
+        internalValues$color <- internalValues$colorChoices[1]
+      }
+      
+      if(length(internalValues$axisChoices != 0)
+         && !is.null(internalValues$x) 
+         && !is.null(internalValues$y)
+         && internalValues$x != ""
+         && internalValues$y != ""){
+       
+        txtmake <- "data"
+        if(internalValues$interactive && !is.null(internalValues$text) && internalValues$text != ""){
+          txtmake <- plotlyTextFormatter(reactives()$PCAtable, internalValues$text)
+        }
+        colvec <- reactives()$PCAtable[[internalValues$color]]
+        suppressWarnings({
+          
+          internalValues$plot <- ggplot(reactives()$PCAtable,
+                                        aes_string(x=internalValues$x,
+                                                   y=internalValues$y)) + 
+            geom_point(aes_string(col = internalValues$color,
+                                  #shape = 1,
+                                  text = as.factor(txtmake) 
+            )) +
+            if(is.factor(colvec) || is.character(colvec)){
+              scale_color_hue()
+            }
+          else{
+            scale_color_gradientn(colours=rainbow(4))}
+          
+        })
+        
+      }else{
+        internalValues$plot <- NULL
+      }
+      toggleElement(id = 'Text', condition = !is.null(internalValues$interactive) && internalValues$interactive)
+    }
+    
+    toggleElement(id = 'PlotBrowserAll', condition = reactives()$active)
+    
+  })
   
   output$interactiveCheck <- renderUI({
     div(title= "Use interactive plot. Will automatically be disabled for plots with more than 1000 data points due to performance issues. Filter your data to decrease number of data points.",
