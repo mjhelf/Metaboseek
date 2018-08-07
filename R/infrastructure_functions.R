@@ -84,6 +84,10 @@ MosaicExamplePreload <- function(tables = T, data = T){
 #' A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes
 #'
 #' @importFrom shinyjs runcodeUI 
+#' @importFrom shinydashboard dashboardPage 
+#' @importFrom shiny fluidPage verbatimTextOutput
+
+#' 
 #' @export
 MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
   

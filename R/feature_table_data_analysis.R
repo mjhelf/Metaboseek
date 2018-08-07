@@ -112,7 +112,11 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
     #PCA to separate features
     prin_comp <- prcomp(pcamemx)
     
+    f <- function(x){sqrt(sum(x^2))}
+    
+    dists <- apply(prin_comp$x,1,f)
     prin_comp <- as.data.frame(prin_comp$x[,1:min(ncol(prin_comp$x),15)])
+    prin_comp$vlength <- dists
     colnames(prin_comp) <- paste0("PCA__", colnames(prin_comp))
     
     df <-updateDF(prin_comp, df)
@@ -126,7 +130,13 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
     
     #PCA to separate features
     prin_comp <- prcomp(pcamemx)
+    
+    f <- function(x){sqrt(sum(x^2))}
+    
+    dists <- apply(prin_comp$x,1,f)
+    
     prin_comp <- as.data.frame(prin_comp$x[,1:min(ncol(prin_comp$x),15)])
+    prin_comp$vlength <- dists
     colnames(prin_comp) <- paste0("PCA__", colnames(prin_comp))
     
     out$PCA_samples <- prin_comp
