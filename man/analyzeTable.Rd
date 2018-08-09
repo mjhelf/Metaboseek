@@ -6,7 +6,7 @@
 \usage{
 analyzeTable(df = tab1$df, intensities = tab1$intensities,
   groups = tab1$anagroupnames, analyze = c("Basic analysis",
-  "clara_cluster", "p-values", "Peak shapes", "PCA features", "PCA samples"),
+  "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"),
   normalize = T, useNormalized = T, MSData = NULL, ppm = 5,
   controlGroup = NULL, numClusters = 2)
 }
@@ -17,7 +17,7 @@ analyzeTable(df = tab1$df, intensities = tab1$intensities,
 
 \item{groups}{named list of non-normalized intensity columns listed by group (as supplied by $anagroupnames of MosaicFT objects), will be automatically renamed if useNormalized.}
 
-\item{analyze}{character vector to select the analyses to be run: "Basic analysis", "clara_cluster", "p-values", "Peak shapes"}
+\item{analyze}{character vector to select the analyses to be run: "Basic analysis", "clara_cluster", "t-test", "Peak shapes"}
 
 \item{normalize}{normalze intensity columns}
 

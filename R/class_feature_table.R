@@ -233,7 +233,7 @@ updateFTIndex <- function(tables){
 #' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
 #' 
 #' @export
-tableGrouping <- function(df, anagrouptable){
+tableGrouping <- function(df=NULL, anagrouptable){
     ## Make list object of grouped column names                                        
     colme <- list()
     for (l in unique(anagrouptable$Group)){
@@ -241,6 +241,7 @@ tableGrouping <- function(df, anagrouptable){
     }
     anagroupnames <- colme
     ### Get column numbers from column names
+    if(!is.null(df)){
     colnu <- integer(0)
     for (i in anagrouptable$Column){
         colnu<- c(colnu,which(colnames(df) == i))
@@ -251,7 +252,10 @@ tableGrouping <- function(df, anagrouptable){
         colme[[l]] <- as.integer(colnu[which(anagrouptable$Group==l)])
     }
     anagroupnums <- colme
-    return(list(anagroupnames = anagroupnames,anagroupnums = anagroupnums))
+    return(list(anagroupnames = anagroupnames,anagroupnums = anagroupnums))}
+    else{
+      return(list(anagroupnames = anagroupnames,anagroupnums = NULL))
+    }
 }
 
 

@@ -55,7 +55,9 @@ wd = character(),
 active = "centWave",
 jobs = NULL,
 viewjob = NULL,
-xcmsModule_loaded = F)
+xcmsModule_loaded = F,
+noRtCorrAnaCheck = T,
+rtCorrAnaCheck = T)
 
 observeEvent(values$MSData$layouts[[values$MSData$active]]$rawgrouptable,{
   
@@ -86,6 +88,21 @@ observeEvent(input$xcms_settingsLoad$datapath,{
                                                                         row.names = 1,
                                                                         stringsAsFactors = F)
   }
+  
+  if(file.exists(file.path(exfolder, "postProcessingSettings.json"))){
+  ppOptions <- jsonlite::unserializeJSON(readChar(file.path(exfolder, "postProcessingSettings.json"),
+                                     file.info(file.path(exfolder, "postProcessingSettings.json"))$size))
+  
+  for(i in names(ppOptions)){
+    if(i %in% c("rtCorrAnaCheck", "noRtCorrAnaCheck")){
+      internalValues[[i]] <- ppOptions[[i]]
+    }else{
+      tAnalysisX[[i]] <- ppOptions[[i]]
+    }
+    
+  }
+  }
+  
   internalValues$wd <- get_common_dir(internalValues$params$filegroups$File)
   
   internalValues$xcmsModule_loaded <- T
@@ -108,6 +125,14 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
                                               write.csv(internalValues$params[[i]], file = flist[i], row.names = T)
                                             }
                                             
+                                            posSettings <- reactiveValuesToList(tAnalysisX)
+                                            posSettings$rtCorrAnaCheck <- internalValues$rtCorrAnaCheck
+                                            posSettings$noRtCorrAnaCheck <- internalValues$noRtCorrAnaCheck
+                                            
+                                            write(jsonlite::serializeJSON(posSettings, pretty = T), "postProcessingSettings.json")
+                                            flist <- c(flist,"postProcessingSettings.json")
+                                            
+
                                             zip(file, flist, flags = "-j")
                                             if(file.exists(paste0(file, ".zip"))) {file.rename(paste0(fname, ".zip"), fname)}
                                           },
@@ -189,8 +214,14 @@ observeEvent(input$xcms_start,{
     write.csv(internalValues$params[[i]], file = file.path(fo,paste0(names(internalValues$params)[i],".csv")), row.names = T)
   }
   
+  posSettings <- reactiveValuesToList(tAnalysisX)
+  posSettings$rtCorrAnaCheck <- internalValues$rtCorrAnaCheck
+  posSettings$noRtCorrAnaCheck <- internalValues$noRtCorrAnaCheck
   
-  zip(file.path(fo,"settings.zip"), file.path(fo, c(paste0(names(internalValues$params),".csv"))), flags = "-j")
+  write(jsonlite::serializeJSON(posSettings, pretty = T), file.path(fo, "postProcessingSettings.json"))
+  
+  
+  zip(file.path(fo,"settings.zip"), grep(list.files(fo, full.names = T), pattern = "status.csv", inv = T, value = T), flags = "-j")
   
   runner <- system.file("scripts", "xcms_runner_i.R",package = "Mosaic")
   rpath <- file.path(R.home(component = "bin"), "Rscript")
@@ -280,6 +311,24 @@ output$summary <- renderPrint({
   print(gsub("\\\\","/", input$xcms_folder))
 })
 
+output$noRtCorrCheck <- renderUI({
+  div(title= "Acivate post-processing for non-retention time corrected data.",
+      checkboxInput(ns('nortcorrcheck'), 'Before retention time correction', value = internalValues$noRtCorrAnaCheck))
+})
+
+observeEvent(input$nortcorrcheck,{
+  internalValues$noRtCorrAnaCheck <- input$nortcorrcheck
+})
+
+output$rtCorrCheck <- renderUI({
+  div(title= "Acivate post-processing for retention time corrected data.",
+      checkboxInput(ns('rtcorrcheck'), 'After retention time correction', value = internalValues$rtCorrAnaCheck))
+})
+
+observeEvent(input$rtcorrcheck,{
+  internalValues$rtCorrAnaCheck <- input$rtcorrcheck
+})
+
 tAnalysisX <- callModule(TableAnalysisModule, "TabAnalysisXcms",
                         reactives = reactive({list(fileGrouping = if(internalValues$active == "filegroups"){
                           hot_to_r(input$xcms_settingstab)}
@@ -358,7 +407,10 @@ fluidPage(
                     ),
                     fluidRow(
                       h3("Automatic post-processing of MS data"),
-                      p("Basic analysis and p-value calculation require more than one group set in File Grouping.")
+                      p("Basic analysis and p-value calculation require more than one group set in File Grouping.")),
+                    fluidRow(
+                      column(3,htmlOutput(ns("noRtCorrCheck"))),
+                      column(3, htmlOutput(ns("rtCorrCheck")))
                     ),
                     fluidRow(
                       TableAnalysisModuleUI(ns("TabAnalysisXcms"))

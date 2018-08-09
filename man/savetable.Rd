@@ -7,7 +7,7 @@
 savetable(xset, status = NULL, fill = FillChromPeaksParam(expandMz = 0.005,
   expandRt = 5, ppm = 3), nonfill = F, filename = "tableoutxx.csv",
   bparams = SnowParam(workers = 1), intensities = list(ppm = 5, rtw = 5,
-  rtrange = T), rawdata = NULL, saveR = T)
+  rtrange = T), rawdata = NULL, saveR = T, postProc = NULL)
 }
 \arguments{
 \item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from which to extract the peaklist}

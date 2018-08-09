@@ -27,12 +27,16 @@ TableAnalysisModule <- function(input,output, session,
   internalValues <- reactiveValues(normalize = TRUE,
                                    useNormalized = TRUE,
                                    controlGroups = NULL,
-                                   analysesAvailable = c("Basic analysis", "clara_cluster", "p-values", "Peak shapes", "PCA features", "PCA samples"),
+                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"),
                                    analysesSelected = "Basic analysis",
                                    numClusters = 2
   )
   
-  
+  observeEvent(reactives()$fileGrouping,{
+    if(!is.null(reactives()$fileGrouping)){
+    internalValues$fileGrouping <- tableGrouping(anagrouptable = reactives()$fileGrouping)$anagroupnames
+    }
+  })
   
   output$normDataCheck <- renderUI({
     div(title= "Apply normalization factor based on mean intensities for each column, and replace values of 0 by the lowest non-zero value in each column.",
