@@ -242,6 +242,14 @@ tableGrouping <- function(df=NULL, anagrouptable){
     anagroupnames <- colme
     ### Get column numbers from column names
     if(!is.null(df)){
+      
+      if(is.null(anagrouptable$Column)){
+      ColumnNames <- gsub("-",".",paste0(basename(anagrouptable$File),"__XIC"))
+      ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
+      anagrouptable$Column <- ColumnNames
+      }
+      
+      
     colnu <- integer(0)
     for (i in anagrouptable$Column){
         colnu<- c(colnu,which(colnames(df) == i))

@@ -59,7 +59,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
     
   if(data){
     eval.parent(quote({
-    rawgroups <- read.csv(system.file("data", "tables", "filegroups_all.csv", package = "Mosaic"), stringsAsFactors = F)
+    rawgroups <- read.csv(system.file("data", "tables", "filegroups.csv", package = "Mosaic"), stringsAsFactors = F)
 
     MSD <- list(layouts = list(Group1 = constructRawLayout(rawgrouptable = rawgroups)), #List of rawfile paths (unsorted)
                 rawgrouptable = NULL,

@@ -100,7 +100,9 @@ savetable <- function(xset,
   
   if(is.null(fill) & !nonfill){return(status)}
   
-  
+  if(is.null(intensities)){
+    postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
+  }
   
   
   
@@ -153,6 +155,8 @@ savetable <- function(xset,
                                                                )
       }
  intens <- intens[,which(colnames(intens) != "pholder")]
+ 
+ 
     }
   if(nonfill){
     
@@ -163,11 +167,12 @@ savetable <- function(xset,
   if(!is.null(status)){
       status <- writeStatus (previous = status,
                              message = list(Status = paste0("Post-Processing", filename),
-                                            Details = paste("selected analyses:", postProc$analysesSelected, collapse = " ")))
+                                            Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
   }
       
       res <- analyzeTable(df = tb,
-                          intensities = colnames(intens),
+                          intensities = if(!is.null(intens)){
+                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
                           groups = postProc$fileGrouping,
                           analyze = postProc$analysesSelected, 
                           normalize = postProc$normalize,
@@ -177,7 +182,7 @@ savetable <- function(xset,
                           controlGroup = postProc$controlGroups,
                           numClusters = postProc$numClusters)
       
-       tb <- res$tb
+       tb <- res$df
     
     
     if(!is.null(status)){
@@ -235,11 +240,12 @@ savetable <- function(xset,
       if(!is.null(status)){
         status <- writeStatus (previous = status,
                                message = list(Status = paste0("Post-Processing", filename),
-                                              Details = paste("selected analyses:", postProc$analysesSelected, collapse = " ")))
+                                              Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
       }
       
       res <- analyzeTable(df = tb,
-                          intensities = colnames(intens),
+                          intensities = if(!is.null(intens)){
+                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
                           groups = postProc$fileGrouping,
                           analyze = postProc$analysesSelected, 
                           normalize = postProc$normalize,
@@ -249,7 +255,7 @@ savetable <- function(xset,
                           controlGroup = postProc$controlGroups,
                           numClusters = postProc$numClusters)
       
-      tb <- res$tb
+      tb <- res$df
       
       
       if(!is.null(status)){
