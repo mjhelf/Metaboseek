@@ -234,36 +234,35 @@ updateFTIndex <- function(tables){
 #' 
 #' @export
 tableGrouping <- function(df=NULL, anagrouptable){
-    ## Make list object of grouped column names                                        
-    colme <- list()
-    for (l in unique(anagrouptable$Group)){
-        colme[[l]] <- as.character(anagrouptable$Column[which(anagrouptable$Group==l)])
-    }
-    anagroupnames <- colme
-    ### Get column numbers from column names
-    if(!is.null(df)){
-      
-      if(is.null(anagrouptable$Column)){
-      ColumnNames <- gsub("-",".",paste0(basename(anagrouptable$File),"__XIC"))
-      ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
-      anagrouptable$Column <- ColumnNames
-      }
-      
-      
+  ## Make list object of grouped column names
+  if(is.null(anagrouptable$Column)){
+    ColumnNames <- gsub("-",".",paste0(basename(anagrouptable$File),"__XIC"))
+    ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames[which(substring(ColumnNames,1,1) %in% as.character(0:9))])
+    anagrouptable$Column <- ColumnNames
+  }
+  
+  colme <- list()
+  for (l in unique(anagrouptable$Group)){
+    colme[[l]] <- as.character(anagrouptable$Column[which(anagrouptable$Group==l)])
+  }
+  anagroupnames <- colme
+  ### Get column numbers from column names
+  if(!is.null(df)){
+    
     colnu <- integer(0)
     for (i in anagrouptable$Column){
-        colnu<- c(colnu,which(colnames(df) == i))
+      colnu<- c(colnu,which(colnames(df) == i))
     }
     ## Make list object of grouped column numbers
     colme <- list()
     for (l in unique(anagrouptable$Group)){
-        colme[[l]] <- as.integer(colnu[which(anagrouptable$Group==l)])
+      colme[[l]] <- as.integer(colnu[which(anagrouptable$Group==l)])
     }
     anagroupnums <- colme
     return(list(anagroupnames = anagroupnames,anagroupnums = anagroupnums))}
-    else{
-      return(list(anagroupnames = anagroupnames,anagroupnums = NULL))
-    }
+  else{
+    return(list(anagroupnames = anagroupnames,anagroupnums = NULL))
+  }
 }
 
 

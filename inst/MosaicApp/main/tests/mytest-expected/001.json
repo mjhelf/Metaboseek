@@ -409,6 +409,11 @@
     "plotYzoom": 1,
     "PPMwindow": 5,
     "quickplots-errorbar": "none",
+    "quickplots-freeview-color": "mz",
+    "quickplots-freeview-interactivecheck": false,
+    "quickplots-freeview-text": "mz",
+    "quickplots-freeview-xselect": "mz",
+    "quickplots-freeview-yselect": "rt",
     "quickplots-gtype": "by group",
     "quickplots-log10": false,
     "quickplots-mark": "none",
@@ -441,6 +446,7 @@
     "updateFilter": 0,
     "updateshifts": 0,
     "xcms_settingsBox": "XCMS Settings",
+    "xcmsMod-TabAnalysisXcms-analyzeButton": 0,
     "xcmsMod-xcms_loadfolder": 0,
     "xcmsMod-xcms_loadfolderOffline": 0,
     "xcmsMod-xcms_name": "xcms_run",
@@ -1570,6 +1576,188 @@
       "call": "do.call(toR, ...)",
       "type": null
     },
+    "quickplots-freeview-Color": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"quickplots-freeview-color\">Color by<\/label>\n  <div>\n    <select id=\"quickplots-freeview-color\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"quickplots-freeview-color\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "quickplots-freeview-interactiveCheck": {
+      "html": "<div title=\"Use interactive plot. Will automatically be disabled for plots with more than 1000 data points due to performance issues. Filter your data to decrease number of data points.\">\n  <div class=\"form-group shiny-input-container\">\n    <div class=\"checkbox\">\n      <label>\n        <input id=\"quickplots-freeview-interactivecheck\" type=\"checkbox\"/>\n        <span>interactive<\/span>\n      <\/label>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "quickplots-freeview-Plot1-fplot": {
+      "src": "[image data sha1: 87351adc7896c2e763c8a79fc6e44d7fa1c1f0bb]",
+      "width": 311,
+      "height": 550,
+      "coordmap": [
+        {
+          "panel": 1,
+          "row": 1,
+          "col": 1,
+          "panel_vars": {
+
+          },
+          "log": {
+            "x": null,
+            "y": null
+          },
+          "domain": {
+            "left": -0.5,
+            "right": 0.5,
+            "bottom": -0.5,
+            "top": 0.5
+          },
+          "mapping": {
+            "colour": "mz",
+            "text": "structure(1L, .Label = \"data\", class = \"factor\")",
+            "x": "mz",
+            "y": "rt"
+          },
+          "range": {
+            "left": 44.1506849315068,
+            "right": 255.843287671233,
+            "bottom": 516.849315068493,
+            "top": 5.47945205479452
+          }
+        }
+      ]
+    },
+    "quickplots-freeview-Plot1-iplot": {
+      "x": null,
+      "evals": [
+
+      ],
+      "jsHooks": null,
+      "deps": [
+
+      ]
+    },
+    "quickplots-freeview-PlotBrowserAll": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-1\">\n      <div id=\"quickplots-freeview-interactiveCheck\" class=\"shiny-html-output\"><\/div>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <div id=\"quickplots-freeview-xSelect\" class=\"shiny-html-output\"><\/div>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <div id=\"quickplots-freeview-ySelect\" class=\"shiny-html-output\"><\/div>\n    <\/div>\n    <div class=\"col-sm-3\">\n      <div id=\"quickplots-freeview-Color\" class=\"shiny-html-output\"><\/div>\n    <\/div>\n    <div class=\"col-sm-2\">\n      <div id=\"quickplots-freeview-Text\" class=\"shiny-html-output\"><\/div>\n    <\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"container-fluid\">\n      <div class=\"row\">\n        <div id=\"quickplots-freeview-Plot1-fplot\" class=\"shiny-plot-output\" style=\"width: 100% ; height: 550px\"><\/div>\n        <div id=\"quickplots-freeview-Plot1-iplot\" style=\"width:100%; height:550px; \" class=\"plotly html-widget html-widget-output shiny-report-size\"><\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "htmlwidgets",
+          "version": "1.2",
+          "src": {
+            "href": "htmlwidgets-1.2"
+          },
+          "meta": null,
+          "script": "htmlwidgets.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "plotly-binding",
+          "version": "4.8.0",
+          "src": {
+            "href": "plotly-binding-4.8.0"
+          },
+          "meta": null,
+          "script": "plotly.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "quickplots-freeview-Text": {
+      "html": "<div id=\"quickplots-freeview-hoverTextDiv\" title=\"Show info on these fields when hovering over a data point in interactive mode.\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"quickplots-freeview-text\">hover info<\/label>\n    <div>\n      <select id=\"quickplots-freeview-text\" class=\"form-control\" multiple=\"multiple\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n      <script type=\"application/json\" data-for=\"quickplots-freeview-text\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "quickplots-freeview-xSelect": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"quickplots-freeview-xselect\">Select x axis value<\/label>\n  <div>\n    <select id=\"quickplots-freeview-xselect\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"quickplots-freeview-xselect\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "quickplots-freeview-ySelect": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"quickplots-freeview-yselect\">Select y axis value<\/label>\n  <div>\n    <select id=\"quickplots-freeview-yselect\" class=\"form-control\"><option value=\"mz\">mz<\/option>\n<option value=\"rt\" selected>rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"quickplots-freeview-yselect\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
     "quickplots-info": {
       "message": "second argument must be a list",
       "call": "do.call(toR, ...)",
@@ -1667,7 +1855,7 @@
       ]
     },
     "TabAnalysis-analysisSelect": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"TabAnalysis-selAna\">Select analyses<\/label>\n  <div>\n    <select id=\"TabAnalysis-selAna\" class=\"form-control\" multiple=\"multiple\"><option value=\"Basic analysis\" selected>Basic analysis<\/option>\n<option value=\"clara_cluster\">clara_cluster<\/option>\n<option value=\"p-values\">p-values<\/option>\n<option value=\"Peak shapes\">Peak shapes<\/option><\/select>\n    <script type=\"application/json\" data-for=\"TabAnalysis-selAna\">{}<\/script>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"TabAnalysis-selAna\">Select analyses<\/label>\n  <div>\n    <select id=\"TabAnalysis-selAna\" class=\"form-control\" multiple=\"multiple\"><option value=\"Basic analysis\" selected>Basic analysis<\/option>\n<option value=\"clara_cluster\">clara_cluster<\/option>\n<option value=\"t-test\">t-test<\/option>\n<option value=\"Peak shapes\">Peak shapes<\/option>\n<option value=\"PCA features\">PCA features<\/option>\n<option value=\"PCA samples\">PCA samples<\/option><\/select>\n    <script type=\"application/json\" data-for=\"TabAnalysis-selAna\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",

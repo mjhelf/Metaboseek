@@ -1,17 +1,17 @@
 
 context("Shiny tests")
 
-test_that("Application initialization works", {
-  expect_pass(testApp("MinimalMosaic", "mytest.R", compareImages = FALSE, quiet = T))
-  expect_pass(testApp("MinimalMosaicExampleData", "mytest.R", compareImages = FALSE, quiet = T))
-})
+# test_that("Application initialization works", {
+#   expect_pass(testApp("MinimalMosaic", "mytest.R", compareImages = FALSE, quiet = T))
+#   expect_pass(testApp("MinimalMosaicExampleData", "mytest.R", compareImages = FALSE, quiet = T))
+# })
+# 
+# test_that("Application modules work", {
+#   expect_pass(testApp("TableModule2", "mytest.R", compareImages = FALSE, quiet = T))
+#   
+# })
 
-test_that("Application modules work", {
-  expect_pass(testApp("TableModule2", "mytest.R", compareImages = FALSE, quiet = T))
-  
-})
-
-test_that("Mosaic does not crash when loaded", {
+test_that("Mosaic app does not crash", {
   expect_pass(testApp(system.file("MosaicApp", "main", package = "Mosaic"), "mytest.R", compareImages = FALSE, quiet = T))
   
 })
