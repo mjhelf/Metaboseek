@@ -120,29 +120,26 @@ for (i in seq(ncol(outputs) - 1)){
 
 #############################
 
+ppOptions <- jsonlite::unserializeJSON(readChar("postProcessingSettings.json",
+                                                file.info("postProcessingSettings.json")$size))
+
+##########
 
 history <- writeStatus (previous = history,
                         message = list(Status = "Starting analysis",
                                        Details = "loading files"))
 
 #xcmsRaw object list for Mosaic intensity method
-if(any(na.omit(as.logical(outputs$MOSAIC_intensities)))){
+if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) ||  "Peak shapes" %in%  ppOptions$analysesSelected){
 rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
 }
 
-if(packageVersion("xcms") < 2.99){
-  fileaccess <- readMSData2(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),
-                            msLevel. = 1,
-                            centroided. = T,
-                            smoothed. = NA)#,
-  #mode = "onDisk")
-}else{
   fileaccess <- readMSData(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),
                            msLevel. = 1,
                            centroided. = T,
                            smoothed. = NA,
                            mode = "onDisk")
-}
+
 
 ###########
 history <- writeStatus (previous = history,
@@ -152,13 +149,11 @@ history <- writeStatus (previous = history,
 xset <- findChromPeaks(fileaccess, cparam,
                                BPPARAM = bparam, return.type = "XCMSnExp")
 
-if(outputs["peaktable_all",1]){
   history <- writeStatus (previous = history,
                           message = list(Status = "Exporting data",
                                          Details = "peaktable_all.csv"))
   
    write.csv(chromPeaks(xset),file = "peaktable_all_unfilled.csv")
-}
 
 #only run this if anything other than the peaktable_all is requested
 if(any(outputs[-1,1])){
@@ -182,7 +177,8 @@ xset <- groupChromPeaks(xset,
                         filename = "peaktable_grouped.csv",
                         bparams = bparam,
                         intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
-                        rawdata = rfiles)  
+                        rawdata = rfiles,
+                        postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
 
   if(outputs["peaktable_grouped", "CAMERA_analysis"]){
     
@@ -223,7 +219,8 @@ xset <- groupChromPeaks(xset,
                           filename = "peaktable_noRTcorr_CAMERA.csv",
                           bparams = bparam,
                           intensities = if(outputs["peaktable_grouped", "MOSAIC_intensities"]){mos_fparam}else{NULL},
-                          rawdata = rfiles)  
+                          rawdata = rfiles,
+                          postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
     cleanParallel(an)
     
   }
@@ -278,7 +275,8 @@ history  <- savetable(xset,
                       filename = "peaktable_grouped_Rtcorr.csv",
                       bparams = bparam,
                       intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
-                      rawdata = rfiles)  
+                      rawdata = rfiles,
+                      postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
 
 
 if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
@@ -320,7 +318,8 @@ if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
                         filename = "peaktable_RTcorr_CAMERA.csv",
                         bparams = bparam,
                         intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
-                        rawdata = rfiles)  
+                        rawdata = rfiles,
+                        postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
   cleanParallel(an)
   
 }

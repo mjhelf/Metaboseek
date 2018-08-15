@@ -24,3 +24,8 @@ source(file.path("modules_nonformal", "mainPlots_server.R"), local = TRUE)$value
 
 ##The Main Data Table
 source(file.path("modules_nonformal", "mainTable_server.R"), local = TRUE)$value 
+
+###PCA viewer
+PcaViewFeatures <- callModule(PcaViewModule, "pcaviewfeatures",
+                              values = reactiveValues(featureTables = featureTables)
+)

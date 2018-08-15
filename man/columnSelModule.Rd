@@ -5,8 +5,8 @@
 \title{columnSelModule}
 \usage{
 columnSelModule(input, output, session, reactives = reactive({     (list())
-  }), values = reactiveValues(), static = list(servermode = F, rootpath =
-  "/"), load = reactive({     list() }))
+  }), values = reactiveValues(), static = list(), load = reactive({    
+  list() }))
 }
 \arguments{
 \item{input}{}

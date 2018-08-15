@@ -4,7 +4,7 @@ library(shinyjs)
 
 #MosaicExamplePreload()
 
-ui <- MosaicMinimalUi(
+ui <- MosaicMinimalUI(
   TableModule2UI("Testtab")
   ,diagnostics = T)
 

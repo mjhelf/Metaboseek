@@ -4,7 +4,7 @@
 \alias{tableGrouping}
 \title{tableGrouping}
 \usage{
-tableGrouping(df, anagrouptable)
+tableGrouping(df = NULL, anagrouptable)
 }
 \arguments{
 \item{df}{feature table as data.frame, with intensity values.}

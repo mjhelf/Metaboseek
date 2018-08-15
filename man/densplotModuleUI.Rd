@@ -2,13 +2,22 @@
 % Please edit documentation in R/Statistics_modules.R
 \name{densplotModuleUI}
 \alias{densplotModuleUI}
-\title{densplotModuleUI}
+\title{#' NormalizeModuleUI
+#' 
+#' Normalize a matrix (UI single button)
+#' 
+#' @param id 
+#' 
+#' @export
+NormalizeModuleUI <- function(id){
+    ns <- NS(id)
+    
+   actionButton(ns('normbutton'),"Normalize data") 
+    
+}}
 \usage{
 densplotModuleUI(id)
 }
 \arguments{
 \item{id}{}
-}
-\description{
-Plot density of a vector or matrix (UI)
 }

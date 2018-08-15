@@ -4,10 +4,10 @@
 \alias{getgauss}
 \title{getgauss}
 \usage{
-getgauss(x, pval = 1)
+getgauss(y, pval = 1)
 }
 \arguments{
-\item{x}{numeric() to fit the curve}
+\item{y}{numeric() to fit the curve}
 }
 \description{
 fit a gauss curve into a curve (numeric vector). Note that results will be skewed if scanrate is low or heterogeneous (e.g. ddMS2 experiments).

@@ -1,37 +1,37 @@
-#' NormalizeModuleUI
+#' #' NormalizeModuleUI
+#' #' 
+#' #' Normalize a matrix (UI single button)
+#' #' 
+#' #' @param id 
+#' #' 
+#' #' @export
+#' NormalizeModuleUI <- function(id){
+#'     ns <- NS(id)
+#'     
+#'    actionButton(ns('normbutton'),"Normalize data") 
+#'     
+#' }
 #' 
-#' Normalize a matrix (UI single button)
 #' 
-#' @param id 
+#' #' NormalizeModule
+#' #' 
+#' #' Normalize a matrix
+#' #' 
+#' #' @param input 
+#' #' @param output 
+#' #' @param session 
+#' #' @param mx 
+#' #' 
+#' #' @export 
+#' NormalizeModule <- function(input, output, session, mx){
 #' 
-#' @export
-NormalizeModuleUI <- function(id){
-    ns <- NS(id)
-    
-   actionButton(ns('normbutton'),"Normalize data") 
-    
-}
-
-
-#' NormalizeModule
+#'     observeEvent(input$normbutton,{
+#'         norm_mx <- featureTableNormalize(mx())
+#'         return(norm_mx)
+#'     })
+#' }
 #' 
-#' Normalize a matrix
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param mx 
-#' 
-#' @export 
-NormalizeModule <- function(input, output, session, mx){
-
-    observeEvent(input$normbutton,{
-        norm_mx <- featureTableNormalize(mx())
-        return(norm_mx)
-    })
-}
-
-
 
 
 #' densplotModuleUI
@@ -88,6 +88,7 @@ densplotModule <- function(input, output, session, mx, heading = "Default"){
 featurePlotModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
+    column(6,
     fluidRow(
       column(3,
              selectizeInput(ns('gtype'), "Plot type", choices = c("by group", "by sample"), selected = "by group"),
@@ -104,9 +105,14 @@ featurePlotModuleUI <- function(id){
       column(3,
              verbatimTextOutput(ns('info')))),
     fluidRow(
-      plotOutput(ns('fplot'), height = "550px"))
-    
-  )
+     
+      plotOutput(ns('fplot'), height = "550px"))),
+    column(6,
+           h4("Freestyle data plotting"),
+           p("uses entire feature table"),
+           PlotBrowserModuleUI(ns("freeview"))
+           )
+    )
   
 }
 
@@ -191,4 +197,12 @@ featurePlotModule <- function(input, output, session, FT, rname){
   output$info <- renderPrint({if(!is.null(rname())){
     summary(as.vector(mx2()$values))}   
   })
+  
+  Freeview <- callModule(PlotBrowserModule, "freeview",
+                         reactives = reactive({reactiveValues(PCAtable =FT()$df,
+                                                              active = T)}),
+                         values = NULL,
+                         static = list(patterns = list(axis = "",
+                                                       color = "",
+                                                       hover = "")))
 }

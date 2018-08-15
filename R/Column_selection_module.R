@@ -18,8 +18,7 @@ columnSelModule <- function(input,output, session,
                        
                        reactives = reactive({(list())}),
                        values = reactiveValues(),
-                       static = list(servermode = F,
-                                     rootpath = "/"),
+                       static = list(),
                        load = reactive({list()})
 ){
   ns <- NS(session$ns(NULL))

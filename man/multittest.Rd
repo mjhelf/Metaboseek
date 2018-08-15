@@ -17,6 +17,6 @@ multittest(df = as.data.frame(mx), groups, ttest = T,
 \item{adjmethod}{method to adjust p values (passed on to stats::p.adjust)}
 }
 \description{
-Calculate per-row p-values between grouped columns of a data.frame.
+Calculate per-row t-test between grouped columns of a data.frame.
 Note that for column groups with less than 2 members, a pseudo-ttest will be calculated via Mosaic::ttestx to avoid throwing errors.
 }

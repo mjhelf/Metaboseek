@@ -59,9 +59,8 @@ MosaicExamplePreload <- function(tables = T, data = T){
     
   if(data){
     eval.parent(quote({
-    rawgroups <- read.csv(system.file("data", "tables", "filegroups_all.csv", package = "Mosaic"), stringsAsFactors = F)
-    rawgroups$File <- file.path(system.file("data", package = "Mosaic"), rawgroups$File)
-    
+    rawgroups <- read.csv(system.file("data", "tables", "filegroups.csv", package = "Mosaic"), stringsAsFactors = F)
+
     MSD <- list(layouts = list(Group1 = constructRawLayout(rawgrouptable = rawgroups)), #List of rawfile paths (unsorted)
                 rawgrouptable = NULL,
                 index = NULL,
@@ -84,8 +83,14 @@ MosaicExamplePreload <- function(tables = T, data = T){
 #' A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes
 #'
 #' @importFrom shinyjs runcodeUI 
+#' @importFrom shinydashboard dashboardPage 
+#' @importFrom shiny fluidPage verbatimTextOutput
+
+#' 
 #' @export
-MosaicMinimalUi <- function(..., diagnostics = T){
+MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
+  
+    if(!dashboard){
   fluidPage(
     tags$script('
                 $(document).on("keydown", function (e) {
@@ -96,14 +101,30 @@ MosaicMinimalUi <- function(..., diagnostics = T){
                 });
                 '),
     if(diagnostics){
-    fluidPage(...,
+    fluidPage(
+           ...,
               runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
               height = NULL, includeShinyjs = FALSE),
     verbatimTextOutput('diag'))}
     else{
      ... 
     }
-    )}
+  )}
+  else{
+  if(diagnostics){
+    fluidPage(
+      dashboardPage(...),
+      runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
+                height = NULL, includeShinyjs = FALSE),
+      verbatimTextOutput('diag')
+      )
+    }
+  else{
+    dashboardPage(...) 
+  }
+  }
+  
+  }
 
 #' MosaicMinimalServer
 #'
@@ -115,6 +136,7 @@ MosaicMinimalUi <- function(..., diagnostics = T){
 #' @param diagnostics run diagnostics (shinyjs::runcodeServer()) code?
 #'   
 #' @importFrom shinyjs runcodeServer 
+#' 
 #' @export
 MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
   eval.parent(quote({
@@ -172,7 +194,7 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
          && class(tab1) == class(tab2) && class(tab2) == "MosaicFT")){
       MosaicExamplePreload(tables = T, data = F)}
     
-    featureTables <- reactiveValues(tables = reactiveValues(table0 = constructFeatureTable(),
+    featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable(),
                                                             table1 = tab1,
                                                             table2 = tab2),
                                     index = c("Custom Table" = "table0",
@@ -189,4 +211,76 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
       )
     }))
   }
+}
+
+
+#' checkFolders
+#'
+#' Looks for folders 
+#' 
+#' @param query character vector with folders to search for, by default looks for drives in Windows file system
+#'
+#' @export
+checkFolders <- function(query = paste0(LETTERS,":/")){
+  
+  out <- character(0)
+  
+  for(i in query){
+    if(file.exists(i)){
+      out[[gsub(":/","",i)]] = i
+    }
+  }
+  
+  return(out)
+}
+
+#' MosaicOptions
+#'
+#' Load and/or change .MosaicOptions
+#' 
+#' @param defaults if TRUE, default MosaicOptions are loaded
+#' @param ... parameters to be modified
+#' @importFrom jsonlite serializeJSON unserializeJSON
+#'
+#' @export
+MosaicOptions <- function(..., defaults = F){
+  
+  if(!file.exists(file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json")) || defaults){
+    .MosaicOptions <<- list( activateLocalFiles = T,
+                             activateXCMS = T,
+                             develMode = FALSE,
+                             enabledCores = 4,
+                             filePaths = c(examples = system.file("data", package = "Mosaic"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
+                             filePattern = paste(
+                               paste("\\.", 
+                                     c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
+                                       "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]"),
+                                     "$",
+                                     sep = ""), 
+                               collapse = "|"),
+                             perPage = as.integer(100),
+                             serverMode = F)
+    
+  }
+  else{
+    .MosaicOptions <<- unserializeJSON(readChar(system.file("config", "MosaicOptions.json", package = "Mosaic"), file.info(system.file("config", "MosaicOptions.json", package = "Mosaic"))$size))
+    
+    if(!.MosaicOptions$serverMode && Sys.info()['sysname'] == "Windows"){
+      .MosaicOptions$filePaths <<- c(examples = system.file("data", package = "Mosaic"), checkFolders())
+    }  
+    
+  }
+  
+  newSettings <- list(...)
+  
+  for(i in names(newSettings)){
+    
+    .MosaicOptions[[i]] <<- newSettings[[i]]
+    
+  }
+  
+  if(gsub("/Mosaic","",system.file(package = "Mosaic")) %in% .libPaths()){
+  write(jsonlite::serializeJSON(.MosaicOptions, pretty = T), file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json"))
+  }
+  
 }

@@ -1,8 +1,10 @@
 app <- ShinyDriver$new("../", loadTimeout = 120000)
 app$snapshotInit("mytest")
+Sys.sleep(10)
 
 app$snapshot()
 app$setInputs(`Testtab-sortBy` = "rt")
 app$setInputs(`Testtab-sortCheck` = TRUE)
 app$setInputs(`Testtab-decreasingCheck` = FALSE)
+Sys.sleep(10)
 app$snapshot()

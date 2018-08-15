@@ -95,11 +95,14 @@ savetable <- function(xset,
                                          rtw = 5,
                                          rtrange = T),
                       rawdata = NULL,
-                      saveR = T){
+                      saveR = T,
+                      postProc = NULL){
   
   if(is.null(fill) & !nonfill){return(status)}
   
-  
+  if(is.null(intensities)){
+    postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
+  }
   
   
   
@@ -152,17 +155,54 @@ savetable <- function(xset,
                                                                )
       }
  intens <- intens[,which(colnames(intens) != "pholder")]
+ 
+ 
     }
   if(nonfill){
     
     if(!is.null(intens)){
     tb <- cbind(tb,intens) } 
-
+    
+    if(!is.null(postProc)){
+  if(!is.null(status)){
+      status <- writeStatus (previous = status,
+                             message = list(Status = paste0("Post-Processing", filename),
+                                            Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
+  }
+      
+      res <- analyzeTable(df = tb,
+                          intensities = if(!is.null(intens)){
+                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
+                          groups = postProc$fileGrouping,
+                          analyze = postProc$analysesSelected, 
+                          normalize = postProc$normalize,
+                          useNormalized = postProc$useNormalized,
+                          MSData = rawdata,
+                          ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
+                          controlGroup = postProc$controlGroups,
+                          numClusters = postProc$numClusters)
+      
+       tb <- res$df
+    
+    
+    if(!is.null(status)){
+        status <- writeStatus (previous = status,
+                           message = list(Status = paste0("Post-Processing finished", filename),
+                                          Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
+                                          ))
+  }
+  }
+    
     if(!is.null(status)){
       status <- writeStatus (previous = status,
                               message = list(Status = paste0("Saving table ", filename),
                                              Details = "Writing file"))
     }
+    
+    
+  
+    
+    
     write.csv(tb, file = filename)
     if(saveR){save(xset,file = paste0(filename,".Rdata"))}    
     
@@ -194,6 +234,36 @@ savetable <- function(xset,
     if(length(fn)==1){fn <- paste0(fn,"_filled")}
     else{
     fn <-  paste(paste0(paste(fn[1:(length(fn)-1)], collapse = "."),"_filled"),fn[length(fn)], sep = ".", collapse = NULL)
+    }
+    
+    if(!is.null(postProc)){
+      if(!is.null(status)){
+        status <- writeStatus (previous = status,
+                               message = list(Status = paste0("Post-Processing", filename),
+                                              Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
+      }
+      
+      res <- analyzeTable(df = tb,
+                          intensities = if(!is.null(intens)){
+                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
+                          groups = postProc$fileGrouping,
+                          analyze = postProc$analysesSelected, 
+                          normalize = postProc$normalize,
+                          useNormalized = postProc$useNormalized,
+                          MSData = rawdata,
+                          ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
+                          controlGroup = postProc$controlGroups,
+                          numClusters = postProc$numClusters)
+      
+      tb <- res$df
+      
+      
+      if(!is.null(status)){
+        status <- writeStatus (previous = status,
+                               message = list(Status = paste0("Post-Processing finished", filename),
+                                              Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
+                               ))
+      }
     }
     
     if(!is.null(status)){
