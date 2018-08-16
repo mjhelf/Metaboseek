@@ -63,7 +63,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
 
     MSD <- list(layouts = list(Group1 = constructRawLayout(rawgrouptable = rawgroups)), #List of rawfile paths (unsorted)
                 rawgrouptable = NULL,
-                index = NULL,
+                index = "Group1",
                 rootfolder = getwd(),
                 localfolders = character(0),
                 RTcorr = NULL,
@@ -165,7 +165,7 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
 
       MSData <- reactiveValues(layouts = list(Group1 = MSD$layouts$Group1), #List of rawfile paths (unsorted)
                                rawgrouptable = MSD$rawgrouptable,
-                               index = NULL,
+                               index = "Group1",
                                rootfolder = getwd(),
                                localfolders = character(0),
                                RTcorr = NULL,
@@ -249,6 +249,8 @@ MosaicOptions <- function(..., defaults = F){
     .MosaicOptions <<- list( activateLocalFiles = T,
                              activateXCMS = T,
                              develMode = FALSE,
+                             loadExampleData = FALSE,
+                             loadExampleTable = FALSE,
                              enabledCores = 4,
                              filePaths = c(examples = system.file("data", package = "Mosaic"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
                              filePattern = paste(
