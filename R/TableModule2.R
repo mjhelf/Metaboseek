@@ -10,10 +10,10 @@
 #' 
 #' @export 
 TableModule2 <- function(input,output, session,
-                        reactives = reactive({list()}),
-                        values = reactiveValues(df = NULL,
-                                                rowFilters = NULL,
-                                                colFilters = NULL),
+                        reactives = reactive({list(df = NULL,
+                                                   rowFilters = NULL,
+                                                   colFilters = NULL)}),
+                        values = reactiveValues(),
                         static = list(perpage = 100,
                                       height = 300,
                                       readOnly = T,

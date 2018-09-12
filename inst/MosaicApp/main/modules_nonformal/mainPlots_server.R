@@ -63,7 +63,7 @@ output$mainPlotPlaceholder <- renderImage({
 }, deleteFile = FALSE)
 
 output$mainPlotEICsPre <- renderPlot({
-  if(!is.null(MSData$data)){
+  if(!is.null(MSData$data) && !is.null(MSData$layouts[[MSData$active]]$grouping)){
     
     rtmid <- if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"rt"]}
     mzmid <- if(is.null(maintabsel())){NULL}else{hot_to_r(input$maintable)[maintabsel()$rrng[1],"mz"]}

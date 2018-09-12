@@ -1,6 +1,6 @@
 function(input, output, session) {
   
-  MosaicMinimalServer(diagnostics = .MosaicOptions$develMode, data = F, tables = F)
+  MosaicMinimalServer(diagnostics = .MosaicOptions$develMode, data = .MosaicOptions$loadExampleData, tables = .MosaicOptions$loadExampleTable)
   
     selectedTabs <- reactiveValues(FeatureTable = "View Table")
 
