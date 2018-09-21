@@ -2,12 +2,18 @@ function(request){
   
   MosaicMinimalUI(skin = "black",
                   dashboardHeader(title = "MOSAiC",
-                                  dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
-                                                           icon = shiny::icon("fullscreen", lib = "glyphicon"), 
-                                                           href = NULL),
-                                               type = c("messages"),
-                                               badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL)
-                  ),
+                                  # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
+                                  #                          icon = shiny::icon("fullscreen", lib = "glyphicon"), 
+                                  #                          href = NULL),
+                                  #              type = c("messages"),
+                                  #              badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL),
+                                  tags$li(a(href = 'http://mosaic.bti.cornell.edu/welcome/doc.html',
+                                            icon("question-circle fa-lg"),
+                                            title = "Mosaic online help (opens in new window)",
+                                            target="_blank",
+                                            style="color:#ffffff"),
+                                          class = "dropdown")
+                                  ),
                   dashboardSidebar(
                     
                     sidebarMenu(
@@ -30,7 +36,7 @@ function(request){
                       
                       menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
                                menuSubItem("Coming soon", tabName = "workflow1")),
-                      menuItem("Update / Help", tabName = "help", icon = icon("question-circle-o")),
+                      menuItem("Update", tabName = "updateTab", icon = icon("upload")),
                       
                       #bookmarkButton(label ="Bookmark this session"),
                       htmlOutput("activeTable"),
@@ -46,108 +52,18 @@ function(request){
                   dashboardBody(
                     # Also add some custom CSS to make the title background area the same
                     # color as the rest of the header.
-                    tags$head(tags$style(HTML('
-                                              /* logo */
-                                              .skin-black .main-header .logo {
-                                              background-color: #C41230;
-                                              color: #ffffff;
-                                              }
-                                              
-                                              /* logo when hovered */
-                                              .skin-black .main-header .logo:hover {
-                                              background-color: #C41230;
-                                              }
-                                              
-                                              /* navbar (rest of the header) */
-                                              .skin-black .main-header .navbar {
-                                              background-color: #C41230;
-                                              color: #ffffff;
-                                              }        
-                                              
-                                              /* main sidebar */
-                                              .skin-black .main-sidebar {
-                                              background-color: #595959;
-                                              }
-                                              
-                                              /* background color in main window */
-                                              .content-wrapper, .right-side {
-                                              background-color: #A6A6A6;
-                                              }
-                                              
-                                              /* active selected tab in the sidebarmenu */
-                                              .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
-                                              background-color: #404040;
-                                              color: #ffffff;
-                                              }
-                                              
-                                              /* other links in the sidebarmenu */
-                                              .skin-black .main-sidebar .sidebar .sidebar-menu a{
-                                              background-color: #595959;
-                                              color: #ffffff;
-                                              }
-                                              
-                                              /* other links in the sidebarmenu when hovered */
-                                              .skin-black .main-sidebar .sidebar .sidebar-menu a:hover{
-                                              background-color: #404040;
-                                              }
-                                              
-                                              /* toggle button  */                    
-                                              .skin-black .main-header .navbar .sidebar-toggle{
-                                              background-color: #C41230;
-                                              color: #ffffff;
-                                              }
-                                              
-                                              /* toggle button when hovered  */                    
-                                              .skin-black .main-header .navbar .sidebar-toggle:hover{
-                                              background-color: #595959;
-                                              color: #ffffff;
-                                              }
-                                              
-                                              
-                                              
-                                              
-                                              .skin-black.box.box-solid.box-primary>.box-header {
-                                              color:#FFFFFF;
-                                              background-color:#C41230;}
-                                              
-                                              .skin-black.box.box-solid.box-primary{
-                                              border-bottom-color:#C41230;
-                                              border-left-color:#C41230;
-                                              border-right-color:#C41230;
-                                              border-top-color:#C41230;
-                                              }
-                                              
-                                              /* color of sliver in selected tabs of tabBoxes */
-                                              .nav-tabs-custom .nav-tabs li.active {
-                                              border-top-color: #C41230;
-                                              }
-                                              
-                                              /* removes padding for all column width 12 objects */
-                                              div.col-sm-12 {
-                                              padding: 0px;
-                                              
-                                              }
-                                              
-                                              
-                                              div.col-sm-12 {
-                                              padding: 0px;
-                                              margin-bottom:-15px;
-                                              margin-right: 0px;
-                                              margin-left: 0px;
-                                              }
-                                              
-                                              .box-body {
-                                              padding-bottom: 0px;
-                                              }
-                                              .shiny-plot-output {
-                                              margin-bottom: 0px;
-                                              }
-                                              
-                                              
-                                              '))),
+                    tags$head(tags$style(HTML(
+                      readChar(system.file("config", "Mosaic_styles.css", package = "Mosaic"),
+                               file.info(system.file("config", "Mosaic_styles.css", package = "Mosaic"))$size)))),
                 tabItems(
-                  tabItem(tabName = "help",
-                          source(file.path("modules_nonformal", "help_ui.R"), local = TRUE)$value
+                  tabItem(tabName = "updateTab",
+                          fluidPage(
+                          fluidRow(
+                            box(title = "Update mosaic!", status = "danger", collapsible = T, width = 12,
+                                updaterModuleUI('update')
+                            )
+                          )
+                          )
                   ),
                   
                   tabItem(tabName = "XCMSrunpanel",
@@ -168,10 +84,4 @@ function(request){
                   dashboard = T)
   
   
-  # if(!.MosaicOptions$develMode){
-  # source(file.path("ui_main.R"), local = TRUE)$value
-  # }else{
-  # source(file.path("ui_diagnostic.R"), local = TRUE)$value
-  # }
-    
 }
