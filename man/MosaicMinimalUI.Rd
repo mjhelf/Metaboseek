@@ -2,7 +2,7 @@
 % Please edit documentation in R/infrastructure_functions.R
 \name{MosaicMinimalUI}
 \alias{MosaicMinimalUI}
-\title{MosaicMinimalUi}
+\title{MosaicMinimalUI}
 \usage{
 MosaicMinimalUI(..., diagnostics = T, dashboard = F)
 }

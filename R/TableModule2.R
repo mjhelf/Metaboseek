@@ -32,10 +32,11 @@ TableModule2 <- function(input,output, session,
                                     page = 1,
                                     showTable = NULL,
                                     updating = F,
+                                   liveView = NULL, #makes hot_to_r accessible from outside module
                                     
                                     row_order = NULL,
                                     selected_rows = NULL,
-                                    selected_columns = NULL,
+                                    selected_cols = NULL,
                                     
                                     sortCheck = F,
                                     decreasing = T,
@@ -57,7 +58,7 @@ TableModule2 <- function(input,output, session,
     if(!is.null(reactives()$df)){
             internalValues$row_order <- seq(nrow(reactives()$df))
     }
-      internalValues$showTable <- NULL
+      #internalValues$showTable <- NULL
       internalValues$df <- reactives()$df
       internalValues$updating <- T
   })
@@ -66,7 +67,9 @@ TableModule2 <- function(input,output, session,
                  internalValues$decreasing,
                  internalValues$sortBy,
                  internalValues$sortCheck,
-                 input$maintable$changes
+                 input$maintable$changes,
+                 internalValues$df
+                 #internalValues$updating
                  ),{
                    if(!is.null(internalValues$df) && length(internalValues$df) > 0){
                       
@@ -122,15 +125,23 @@ TableModule2 <- function(input,output, session,
                      else{
                        isolate(internalValues$showTable <- internalValues$df[internalValues$inpage,])
                      }
-                     internalValues$updating <- F
+                     
                    }
+                   internalValues$updating <- F
                  })
   
   
   
   
- 
-  
+  #make hot_to_r accessible from outside module
+  observeEvent(input$maintable,{
+    
+    
+    if(!is.null(input$maintable) && !identical(internalValues$liveView, hot_to_r(input$maintable))){
+      internalValues$liveView <- hot_to_r(input$maintable)
+    }
+    
+  })
   
  
   

@@ -4,8 +4,8 @@
 \alias{TableModule2}
 \title{TableModule}
 \usage{
-TableModule2(input, output, session, reactives = reactive({     list() }),
-  values = reactiveValues(df = NULL, rowFilters = NULL, colFilters = NULL),
+TableModule2(input, output, session, reactives = reactive({     list(df =
+  NULL, rowFilters = NULL, colFilters = NULL) }), values = reactiveValues(),
   static = list(perpage = 100, height = 300, readOnly = T, contextMenu = T,
   fixedColumnsLeft = 1, invertReadOnly = NULL, format = list(col = NULL, format
   = NULL)))

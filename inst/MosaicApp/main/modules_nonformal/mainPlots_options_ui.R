@@ -86,6 +86,9 @@ tabPanel("Molecular formula prediction",
 
 tabPanel("Project options",
          source(file.path("modules_nonformal", "project_options_ui.R"), local = TRUE)$value
+),
+tabPanel("Global options",
+         GlobalOptionsModuleUI("globalopts")
 )
 
 )

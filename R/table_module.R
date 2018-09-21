@@ -33,7 +33,7 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                                     
                                     row_order = NULL,
                                     selected_rows = NULL,
-                                    selected_columns = NULL,
+                                    selected_cols = NULL,
                                     
                                     sortCheck = F,
                                     decreasing = T,

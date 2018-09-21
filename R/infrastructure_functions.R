@@ -78,14 +78,13 @@ MosaicExamplePreload <- function(tables = T, data = T){
 
 
 # Define UI for dataset viewer app ----
-#' MosaicMinimalUi
+#' MosaicMinimalUI
 #'
 #' A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes
 #'
 #' @importFrom shinyjs runcodeUI 
 #' @importFrom shinydashboard dashboardPage 
 #' @importFrom shiny fluidPage verbatimTextOutput
-
 #' 
 #' @export
 MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
@@ -266,12 +265,13 @@ MosaicOptions <- function(..., defaults = F){
   }
   else{
     .MosaicOptions <<- unserializeJSON(readChar(system.file("config", "MosaicOptions.json", package = "Mosaic"), file.info(system.file("config", "MosaicOptions.json", package = "Mosaic"))$size))
-    
+  }
+  
     if(!.MosaicOptions$serverMode && Sys.info()['sysname'] == "Windows"){
-      .MosaicOptions$filePaths <<- c(examples = system.file("data", package = "Mosaic"), checkFolders())
+      .MosaicOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("data", package = "Mosaic"), checkFolders())
     }  
     
-  }
+
   
   newSettings <- list(...)
   
