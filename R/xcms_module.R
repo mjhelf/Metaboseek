@@ -365,7 +365,7 @@ xcmsModuleUI <-  function(id){
   useShinyjs()
 fluidPage(
   fluidRow(
-    box(title = "Run XCMS analysis", width = 12, status= "danger",
+    box(title = "Run XCMS analysis", width = 12, status= "primary",
         
         p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
         
@@ -416,13 +416,14 @@ fluidPage(
                       TableAnalysisModuleUI(ns("TabAnalysisXcms"))
                     )
                     
-           ))),
+           )))
+    ),
   fluidRow(
-    box(title = "Job status", width = 12, status= "danger",
+    box(title = "Job status", width = 12, status= "primary",
         p("View status of a running XCMS job here"),
         rHandsontableOutput(ns('xcms_statustab'))
     ))
   
-)
+
 )
 }

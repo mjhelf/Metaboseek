@@ -105,15 +105,9 @@ background-color: #C41230;
     }
   
   /* removes padding for all column width 12 objects */
-    div.col-sm-12 {
-      padding: 0px;
-      
-    }
-  
-  
-  div.col-sm-12 {
+ .col-sm-12 {
     padding: 0px;
-    margin-bottom:-15px;
+    margin-bottom: 0px;
     margin-right: 0px;
     margin-left: 0px;
   }
@@ -124,3 +118,21 @@ background-color: #C41230;
   .shiny-plot-output {
     margin-bottom: 0px;
   }
+  
+  /* space between boxes */
+  .nav-tabs-custom {
+
+    margin-bottom: 5px;
+  }
+  
+  /* for non-tab boxes */
+  .box{
+    margin-bottom: 5px;
+  }
+  
+    /* for non-tab boxes */
+  .box.box-primary {
+
+    border-top-color: #C41230;
+
+}

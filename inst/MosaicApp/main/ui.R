@@ -79,7 +79,7 @@ function(request){
                   tabItem(tabName = "updateTab",
                           fluidPage(
                           fluidRow(
-                            box(title = "Update mosaic!", status = "danger", collapsible = T, width = 12,
+                            box(title = "Update mosaic!", status = "primary", collapsible = T, width = 12,
                                 updaterModuleUI('update')
                             )
                           )
