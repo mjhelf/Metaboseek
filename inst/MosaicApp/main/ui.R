@@ -7,17 +7,37 @@ function(request){
                                   #                          href = NULL),
                                   #              type = c("messages"),
                                   #              badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL),
-                                  tags$li(a(href = 'http://mosaic.bti.cornell.edu/welcome/doc.html',
-                                            icon("question-circle fa-lg"),
-                                            title = "Mosaic online help (opens in new window)",
-                                            target="_blank",
-                                            style="color:#ffffff"),
-                                          class = "dropdown")
-                                  ),
+                                  tags$li(a(
+                                    icon("fullscreen", lib = "glyphicon"),
+                                    onclick = "shinyjs.toggleFullScreen();",
+                                    style="color:#ffffff",
+                                    title = "Activate/deactivate full-screen mode"),
+                                    class = "dropdown"),
+                                  tags$li(a(
+                                    href = 'http://mosaic.bti.cornell.edu/welcome/doc.html',
+                                    icon("question-circle fa-lg"),
+                                    title = "Mosaic online help (opens in new window)",
+                                    target="_blank",
+                                    style="color:#ffffff"),
+                                    class = "dropdown")
+                  ),
                   dashboardSidebar(
                     
                     sidebarMenu(
                       useShinyjs(),
+                      
+                      extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
+    var element = document.documentElement,
+      enterFS = element.requestFullscreen || element.msRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen,
+      exitFS = document.exitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
+    if (!document.fullscreenElement && !document.msFullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement) {
+      enterFS.call(element);
+    } else {
+      exitFS.call(document);
+    }
+  }', functions = "toggleFullScreen"),
+                      
+                      
                       ##DETECT KEYBOARD ACTIONS
                       ##key being held down
                       tags$script('
@@ -34,8 +54,8 @@ function(request){
                       menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
                       menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
                       
-                      menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
-                               menuSubItem("Coming soon", tabName = "workflow1")),
+                      # menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
+                      #          menuSubItem("Coming soon", tabName = "workflow1")),
                       menuItem("Update", tabName = "updateTab", icon = icon("upload")),
                       
                       #bookmarkButton(label ="Bookmark this session"),
