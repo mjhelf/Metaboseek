@@ -1,6 +1,6 @@
 
 #Project options
-source(file.path("modules_nonformal", "project_options_server.R"), local = TRUE)$value 
+#source(file.path("modules_nonformal", "project_options_server.R"), local = TRUE)$value 
 
 
 ###Column Selection
