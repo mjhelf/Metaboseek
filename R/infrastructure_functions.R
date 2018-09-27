@@ -148,6 +148,10 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                   csvfiles = NULL,
                                   filegroups = NULL,
                                   projectName = paste0("MOSAiC_session_",strftime(Sys.time(),"%Y%m%d_%H%M%S")))
+    
+    GlobalOpts <- callModule(GlobalOptionsModule, "globalopts")
+    
+    
   }))
   if(diagnostics){
     eval.parent(quote({

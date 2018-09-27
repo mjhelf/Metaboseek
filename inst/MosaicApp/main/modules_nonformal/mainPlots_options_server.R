@@ -128,6 +128,5 @@ callModule(MzqueryModule,"mz1", tag = "mz1",
            )})
 )
 
-GlobalOpts <- callModule(GlobalOptionsModule, "globalopts")
 
 
