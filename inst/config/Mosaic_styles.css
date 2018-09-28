@@ -1,3 +1,24 @@
+/* custom classes */
+.bottomHolder {
+      
+      position: absolute;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      bottom: 5px;
+      left: 0;
+      right: 0;
+      
+    }
+
+.centerContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 /* logo */
   .skin-black .main-header .logo {
     background-color: #C41230;
