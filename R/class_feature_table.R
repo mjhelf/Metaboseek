@@ -130,9 +130,9 @@ updateDF <- function(a, b){
 updateFeatureTable <- function(FT, df){
     
     FT$df = updateDF(df,FT$df)
-    if(!is.null(FT$anagrouptable)){
+    #if(!is.null(FT$anagrouptable)){
         FT <- updateFTgrouping(FT,FT$anagrouptable)
-    }
+   # }
     FT$summaryStats = unname(unlist(sapply(c("topgroup","maxfold", "maxfoldover"),
                                            grep,colnames(FT$df),
                                            value = T)))
@@ -163,6 +163,8 @@ updateFeatureTable <- function(FT, df){
 updateFTgrouping <- function(FT,anagrouptable){
     
     FT$anagrouptable = anagrouptable
+    
+    if(!is.null(anagrouptable)){
     newgrouping <- tableGrouping(FT$df,anagrouptable)
     
     FT$anagroupnames = newgrouping$anagroupnames
@@ -205,6 +207,21 @@ updateFTgrouping <- function(FT,anagrouptable){
         if(length(selCols)>0){
             FT$sProps[[i]] <- sort(selCols)}
     }
+    }
+    else{
+      FT$anagroupnames = NULL
+      FT$intensities = NULL
+      FT$anagroupnums = NULL
+      FT$anagroupnames_norm = NULL
+      FT$intensities_norm = NULL
+      FT$gNames = NULL
+      FT$sNames = NULL
+      FT$gProps = NULL
+      FT$sProps = NULL
+      
+    }
+    
+    
     return(FT)
 }
 

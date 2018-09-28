@@ -43,7 +43,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
                                    fragmentcol = "fragments",
                                    rtFormat = "sec", # "sec" or "min" 
                                    anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
-                                   tablename = "Custom Table",
+                                   tablename = "mini_example_features.csv",
                                    editable = T)
     
     tab2 <- constructFeatureTable (df= read.csv(system.file("data", "tables", "large_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
@@ -53,7 +53,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
                                    fragmentcol = "fragments",
                                    rtFormat = "sec", # "sec" or "min" 
                                    anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
-                                   tablename = "Custom Table",
+                                   tablename = "large_example_features.csv",
                                    editable = T)
   }))}
     
@@ -197,9 +197,12 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
          && class(tab1) == class(tab2) && class(tab2) == "MosaicFT")){
       MosaicExamplePreload(tables = T, data = F)}
     
-    featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable(),
+    featureTables <- reactiveValues(tables = #ListToReactiveValues(
+      list(table0 = constructFeatureTable(),
                                                             table1 = tab1,
-                                                            table2 = tab2),
+                                                            table2 = tab2)
+                                                        #    )
+                                    ,
                                     index = c("Custom Table" = "table0",
                                               "mini_example_features.csv" = "table1",
                                               "large_example_features.csv" = "table2"),
