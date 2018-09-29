@@ -1,0 +1,108 @@
+#' SaveTableModule
+#' 
+#' 
+#' server module for saving Tables
+#' 
+#' @param input 
+#' @param output 
+#' @param session 
+#' @param reactives Import data from the shiny session
+#' @param values Import data from the shiny session
+#' @param static Import data from the shiny session
+#' 
+#' @export 
+SaveTableModule <- function(input,output, session,
+                            reactives = reactive({list(df = NULL,
+                                                       filename = "table.csv")}),
+                            values = reactiveValues(projectData = projectData,
+                                                    featureTables = NULL),
+                            static = list(tooltip = "Save",
+                                          label = "Save",
+                                          format = c("tsv", "csv"))
+){
+  ns <- NS(session$ns(NULL))
+  
+  output$saveTableButton <- renderUI({
+    actionButton(ns("savetable"), static$label, icon = icon("floppy-save", lib = "glyphicon"))
+  })
+  
+  observeEvent(input$savetable,{
+    
+    showModal(
+      modalDialog(
+        fluidPage(
+          fluidRow(
+            p(strong("You can save this table in your project folder, or download it through your browser"))
+          ),
+          hr(),
+          fluidRow(
+            column(6, div(title = "Download table through Browser",     downloadButton(ns("modalDownload"),"Download"))),
+            column(6, div( title = "Save directly to current projectFolder (only works if you are working in a project folder)", actionButton(ns("modalProjectFolder"), "Save locally")))
+          )),
+        title = "Save table",
+        easyClose = T,
+        fade = F,
+        size = "s",
+        footer = modalButton("Cancel") 
+      ))
+    
+  })
+  
+  output$modalDownload <- downloadHandler(filename= function(){basename(reactives()$filename)}, 
+                                          content = function(file){write.table(reactives()$df,
+                                                                               file,
+                                                                               sep = if(static$format =="tsv"){"\t"}else{","},
+                                                                               quote = F,
+                                                                               row.names = F
+                                          )
+                                            showNotification(paste("Downloading file: ", basename(reactives()$filename)), duration = 10)
+                                            
+                                            removeModal()
+                                          },
+                                          contentType = if(static$format =="tsv"){"text/tab-separated-values"}else{"text/comma-separated-values"})
+  
+  
+  # observeEvent(output$modalDownload,{
+  #   print(output$modalDownload)
+  # 
+  # })
+  
+  observeEvent(input$modalProjectFolder,{
+    
+    if(!is.null(values$projectData$projectFolder)){
+      
+      if(!dir.exists(dirname(file.path(values$projectData$projectFolder, reactives()$filename)))){
+        dir.create(dirname(file.path(values$projectData$projectFolder, reactives()$filename)), recursive = T)
+      }
+      
+      write.table(reactives()$df,
+                  file.path(values$projectData$projectFolder, reactives()$filename),
+                  sep = if(static$format =="tsv"){"\t"}else{","},
+                  quote = F,
+                  row.names = F
+      )
+      showNotification(paste("Table saved as: ", file.path(values$projectData$projectFolder, reactives()$filename)), duration = 10)
+      removeModal()
+      
+    }
+    else{
+      showNotification(paste("You have to work in a Project Folder to save files this way!"), type = "error", duration = 10)
+    }
+  })
+  
+  
+  
+}
+
+#' simpleTableModuleUI
+#' 
+#' @param id id of the shiny module
+#' 
+#' @export
+SaveTableModuleUI <- function(id)
+{
+  ns <- NS(id)
+  
+  htmlOutput(ns("saveTableButton"))
+  
+}

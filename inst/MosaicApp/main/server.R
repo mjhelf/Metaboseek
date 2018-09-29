@@ -26,6 +26,18 @@ function(input, output, session) {
     
 
     source(file.path("modules_nonformal", "loadtables_server.R"), local = TRUE)$value
+     
+     FTGrouper <- callModule(ChangeFTGroupingModule, "ftgrouper",
+                        reactives = reactive({list()}),
+                        values = reactiveValues(fileGrouping = NULL,
+                                                featureTables = featureTables,
+                                                MSData = MSData,
+                                                projectData = projectData),
+                        static = list()
+     )
+     
+     
+     
     source(file.path("modules_nonformal", "loadMSdata_server.R"), local = TRUE)$value
     
     
