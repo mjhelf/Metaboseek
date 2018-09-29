@@ -8,9 +8,13 @@
 #' @export 
 updaterModuleUI <- function(id){
   ns <- NS(id)
-  
-  htmlOutput(ns('updateUI'))
-  
+  fluidPage(
+    fluidRow(
+      shinydashboard::box(title = "Update mosaic!", status = "primary", collapsible = F, width = 12,
+          htmlOutput(ns('updateUI'))
+      )
+    )
+  )
 }
 
 

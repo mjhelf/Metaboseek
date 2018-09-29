@@ -164,8 +164,8 @@ updateFTgrouping <- function(FT,anagrouptable){
     
     FT$anagrouptable = anagrouptable
     
-    if(!is.null(anagrouptable)){
-    newgrouping <- tableGrouping(FT$df,anagrouptable)
+    if(!is.null(FT$anagrouptable) && nrow(FT$anagrouptable) >0 ){
+    newgrouping <- tableGrouping(FT$df,FT$anagrouptable)
     
     FT$anagroupnames = newgrouping$anagroupnames
     FT$intensities = unname(unlist(FT$anagroupnames))

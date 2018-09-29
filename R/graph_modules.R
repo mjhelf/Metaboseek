@@ -686,18 +686,22 @@ LoadNetworkModule <- function(input,output, session, tag, set = list(allowGNPS =
   )
   
   
-  loadNodeTab <- callModule(LoadTableModule,'loadNodeTab', tag = ns('loadNodeTab'), set = reactive({list(title = "Load node table",
-                                                                                                         filetypes = NULL,
-                                                                                                         format = list(header = T,
-                                                                                                                       stringsAsFactors = T)
-  )})
+  loadNodeTab <- callModule(UploadTableModule,'loadNodeTab',
+  static = list(title =  "Load node table",
+                filetypes = NULL,
+                format = list(header = T,
+                              sep = NULL,#"\t",
+                              quote = '"',
+                              stringsAsFactors = T))
   )
   
-  loadEdgeTab <- callModule(LoadTableModule,'loadEdgeTab', tag = ns('loadEdgeTab'), set = reactive({list(title = "Load edge table",
-                                                                                                         filetypes = NULL,
-                                                                                                         format = list(header = T,
-                                                                                                                       stringsAsFactors = T)
-  )})
+  loadEdgeTab <- callModule(UploadTableModule,'loadEdgeTab', 
+                            static = list(title =  "Load edge table",
+                                          filetypes = NULL,
+                                          format = list(header = T,
+                                                        sep = NULL,#"\t",
+                                                        quote = '"',
+                                                        stringsAsFactors = T))
   )
   
   #load and reformat a gnps network from the zip file
@@ -740,8 +744,8 @@ LoadNetworkModule <- function(input,output, session, tag, set = list(allowGNPS =
                               edges = NULL),
                 graph = NULL)
     
-    res$tables$nodes <- loadNodeTab()$df
-    res$tables$edges <- loadEdgeTab()$df
+    res$tables$nodes <- loadNodeTab$df
+    res$tables$edges <- loadEdgeTab$df
     
     tryCatch({  
       g1 <- graph_from_data_frame(d=res$tables$edges, vertices=res$tables$nodes, directed=F) 
@@ -778,7 +782,7 @@ LoadNetworkModule <- function(input,output, session, tag, set = list(allowGNPS =
   })
   
   observe({
-    shinyjs::toggleState(id = "loadNetwork",condition = (!is.null(loadNodeTab()$df) && !is.null(loadEdgeTab()$df)))
+    shinyjs::toggleState(id = "loadNetwork",condition = (!is.null(loadNodeTab$df) && !is.null(loadEdgeTab$df)))
   })
   
   return(reactive({dataSets}))
@@ -794,9 +798,9 @@ LoadNetworkModuleUI <-  function(id){
   fluidPage(
     fluidRow(
       column(4,
-             LoadTableModuleUI(ns('loadNodeTab'))),
+             UploadTableModuleUI(ns('loadNodeTab'))),
       column(4,
-             LoadTableModuleUI(ns('loadEdgeTab'))),
+             UploadTableModuleUI(ns('loadEdgeTab'))),
       column(4,
              style = "margin-top: 45px;",
              # p("Load with automatic presets"),
