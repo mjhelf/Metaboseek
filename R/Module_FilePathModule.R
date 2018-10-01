@@ -14,6 +14,7 @@
 #' 
 #' @import shiny shinyFiles
 #' 
+#' @export
 FilePathModule <- function(input, output, session,
                            filepaths = reactive({.MosaicOptions$filePaths}),
                            label = "Select Folder", description= "Select Folder",
@@ -85,6 +86,7 @@ FilePathModule <- function(input, output, session,
 #' 
 #' @param id id of the shiny module
 #' 
+#' @export
 FilePathModuleUI <- function(id){
   ns <- NS(id)
   tagList(
