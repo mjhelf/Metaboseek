@@ -1,30 +1,3 @@
-#' FilePathModuleUI
-#' 
-#' 
-#' @param id id of the shiny module
-#' 
-FilePathModuleUI <- function(id){
-  ns <- NS(id)
-  tagList(
-  tags$head(tags$style(HTML('.FolderBox {
- word-wrap: break-word;
-background-color: azure;
-padding: 5px;
-
-} 
-                            .ContextBox {
-background-color: gainsboro;
-padding: 5px;
-
-} 
-                            '))),
-  
-  htmlOutput(ns("folderUI"))
-  )
-}
-
-
-
 #' FilePathModule
 #' 
 #' 
@@ -107,3 +80,30 @@ FilePathModule <- function(input, output, session,
   return(internalValues)
 }
   
+#' FilePathModuleUI
+#' 
+#' 
+#' @param id id of the shiny module
+#' 
+FilePathModuleUI <- function(id){
+  ns <- NS(id)
+  tagList(
+    tags$head(tags$style(HTML('.FolderBox {
+ word-wrap: break-word;
+background-color: azure;
+padding: 5px;
+
+} 
+                            .ContextBox {
+background-color: gainsboro;
+padding: 5px;
+
+} 
+                            '))),
+    
+    htmlOutput(ns("folderUI"))
+  )
+}
+
+
+

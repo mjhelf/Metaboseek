@@ -1,3 +1,51 @@
+# Define UI for dataset viewer app ----
+#' MosaicMinimalUI
+#'
+#' A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes
+#'
+#' @importFrom shinyjs runcodeUI 
+#' @importFrom shinydashboard dashboardPage 
+#' @importFrom shiny fluidPage verbatimTextOutput
+#' 
+#' @export
+MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
+  
+  if(!dashboard){
+    fluidPage(
+      tags$script('
+                $(document).on("keydown", function (e) {
+                Shiny.onInputChange("keyd", e.which);
+                });
+                $(document).on("keyup", function (e) {
+                Shiny.onInputChange("keyd", "NO");
+                });
+                '),
+      if(diagnostics){
+        fluidPage(
+          ...,
+          runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
+                    height = NULL, includeShinyjs = FALSE),
+          verbatimTextOutput('diag'))}
+      else{
+        ... 
+      }
+    )}
+  else{
+    if(diagnostics){
+      fluidPage(
+        dashboardPage(...),
+        runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
+                  height = NULL, includeShinyjs = FALSE),
+        verbatimTextOutput('diag')
+      )
+    }
+    else{
+      dashboardPage(...) 
+    }
+  }
+  
+}
+
 #' MosaicHeader
 #'
 #' generates the dashboardHeader for Mosaic.

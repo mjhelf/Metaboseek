@@ -1,33 +1,3 @@
-#' FilterModuleUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
-#' 
-#' @export
-FilterModuleUI <- function(id){
-    ns <- NS(id)
-    if(!is.null(htmlOutput(ns('colSel')))){
-    tagList(
-        hr(),
-        fluidRow(
-            column(2,
-                   htmlOutput(ns('toggler'))
-#                   checkboxInput(ns('toggler'), 'activate')
-                   ),
-            column(5,    
-                   htmlOutput(ns('colSel'))),
-            column(5,
-                   div(style="display:inline-block",htmlOutput(ns('minSel'))),
-                   div(style="display:inline-block",htmlOutput(ns('maxSel')),
-                       htmlOutput(ns('modeSel'))),
-                   htmlOutput(ns('txtSel')))),
-        
-                verbatimTextOutput(ns('insider'))
-    )
-    }
-}
-
 #' FilterModule
 #' 
 #' Module to apply filters to a featureTable (UI)
@@ -127,4 +97,34 @@ FilterModule <- function(input, output, session, lab = "Filter", tag, df, preset
     
     )
 
+}
+
+#' FilterModuleUI
+#' 
+#' Module to apply filters to a featureTable (UI)
+#' 
+#' @param id
+#' 
+#' @export
+FilterModuleUI <- function(id){
+  ns <- NS(id)
+  if(!is.null(htmlOutput(ns('colSel')))){
+    tagList(
+      hr(),
+      fluidRow(
+        column(2,
+               htmlOutput(ns('toggler'))
+               #                   checkboxInput(ns('toggler'), 'activate')
+        ),
+        column(5,    
+               htmlOutput(ns('colSel'))),
+        column(5,
+               div(style="display:inline-block",htmlOutput(ns('minSel'))),
+               div(style="display:inline-block",htmlOutput(ns('maxSel')),
+                   htmlOutput(ns('modeSel'))),
+               htmlOutput(ns('txtSel')))),
+      
+      verbatimTextOutput(ns('insider'))
+    )
+  }
 }

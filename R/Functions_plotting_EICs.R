@@ -1,22 +1,5 @@
-library(Hmisc)
-#' legendplot
-#' 
-#' Plot a legend in an otherwise empty plot
-#' 
-#' @param ... all arguments passed on to legend
-#'
-#' @export
-legendplot <- function(...){
-  
-  par(mfrow=c(1,1), 
-      mar = c(0.1,0.1,0.1,0.1),
-      oma = c(0,0,0,0)
-  )
-  plot(1, type = "n", axes=FALSE, xlab="", ylab="")
-  legend(...)
-  
-  
-}
+#library(Hmisc)
+
 
 #' EICgeneral
 #' 
@@ -531,208 +514,21 @@ addLines <- function(EIClist = EICsAdducts,
     tmp <-mapply(lines, x= rts, y = int, col = as.list(colr), MoreArgs = list(lty = n, lwd = liwi))}
 }
 
-
-#' PlotWindow
-#'
-#' Initiate a plot and draw axes
-#'
-#' @param cx character expansion factor (font size)
-#' @param ylim numeric(2) of y-axis range
-#' @param xlim numeric(2) of x-axis range
-#' @param heading heading of the plot
-#' @param single if TRUE, this plot is expected to be the only plot in a composite (different margin settings)
-#' @param par if FALSE, par margin settings are not set inside the function and should be set outside
-#' @param xlab x axis label
-#' @param ylab y axis label
-#' @param relto show y axis values relative to relto if not NULL.
-#' @param ysci if TRUE, y axis label numbers are shown in scientific format
-#' @param textadj passed on to mtext adj for orientation of plot description/title text line
+#' legendplot
+#' 
+#' Plot a legend in an otherwise empty plot
+#' 
+#' @param ... all arguments passed on to legend
 #'
 #' @export
-PlotWindow <- function(cx = 1, 
-                       ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
-                       xlim = c(min(unlist(EIClistItem[,'rt'])),
-                                max(unlist(EIClistItem[,'rt'])))/60,
-                       heading = "test",
-                       single = F,
-                       par = T,
-                       relto = NULL,
-                       ylab = "Intensity",
-                       xlab = "RT (min)",
-                       ysci = T,
-                       liwi = 1,
-                       textadj = 0.5
-                       
-){
+legendplot <- function(...){
   
-  if(max(ylim)==0){ylim = c(0,1)}
-  
-  if(par){
-    if(single){
-      par(#mfrow=c(1,2),
-        #oma=c(0,2,0,0),
-        mar = c(5.1,6,4.1,0),#oma causes issues in interactive mode
-        # mai=c(0,0.5,0,0),
-        xpd=FALSE,
-        bg=NA,
-        xaxs = "i", yaxs = "i"
-      )  
-    }else{
-      par(#mfrow=c(1,2),
-        # oma=c(0,2,0,0),
-        # mai=c(0,0.5,0,0),
-        xpd=FALSE,
-        bg=NA,
-        xaxs = "i", yaxs = "i"
-      )
-    }
-  }
-  
-  plot(numeric(),numeric(), type= "n", 
-       ylim = ylim,
-       xlim = xlim,
-       axes=F, ylab="",xlab="")
-  
-  
-  pn <- if(max(ylim)==0){1}else{5}
-  #x axis
-  axis(side=1, lwd=liwi, lwd.ticks = liwi, at = pretty(xlim),
-       labels = format(pretty(xlim), scientific = F),
-       mgp=c(0,0.4*cx,0), cex.axis=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
-  
-  mtext(side=1, text= xlab, line=1.5*(1+(cx-1)/2), cex=par("cex")*cx*1)
-  
-  if(!is.null(relto) && relto != 1 ){
-    axis(side=2,  las=2, at = pretty(ylim, n =pn),
-         labels = format(pretty(ylim, n =pn), scientific = F),
-         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
-    #axis labels
-    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
-  }
-  else{
-    #y axis
-    axis(side=2,  las=2, at = pretty(ylim, n =pn),
-         labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
-         mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
-    #axis labels
-    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
-  }
-  
-  #fix axis to not have gaps at edges
-  abline(v=min(xlim), h=min(ylim), lwd = liwi)
-  
-  Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
-  
-  title(main=heading, line=2, cex.main = cx, adj = textadj)
-}
-
-#' specplot
-#' 
-#' Plot an MS spectrum
-#' 
-#' @param x mz coordinates
-#' @param y intensity coordinates
-#' @param norm normalize by
-#' @param cx font size
-#' @param k top k intensity peaks will be labeled
-#' @param fileName plot title
-#' @param yrange y axis range
-#' @param xrange x axis range
-#' @param maxi max intensity to be plotted on side
-#'
-#' @importFrom TeachingDemos spread.labs
-#' @importFrom Hmisc minor.tick
-#' @export
-specplot <- function (x=sc[,1],
-                      y=sc[,2],
-                      norm=max(y)/100,
-                      cx=1.5,
-                      k = 10,
-                      fileName = "title",
-                      yrange = c(0,100),
-                      xrange = range(x),
-                      maxi = max(y)
-){
-  
-  pd <- data.frame(x=x,y=y/norm)  
-  par(#oma=c(0,2,0,0), 
-      mar = c(4,6,6,2),#changed mar[2] to 6 because oma was removed because of issues with interactive view
-      xpd = FALSE, xaxs = "i", yaxs = "i")
-  PlotWindow(cx, 
-             ylim = yrange, 
-             xlim = xrange,
-             heading = fileName,
-             single = T,
-             par = F,
-             relto = norm,
-             ylab = "Relative Intensity (%)",
-             xlab = "m/z", textadj = 1
+  par(mfrow=c(1,1), 
+      mar = c(0.1,0.1,0.1,0.1),
+      oma = c(0,0,0,0)
   )
-  
-  points(pd$x,pd$y,type="h", bty="n")
-  #, axes=F,lwd=0.8,
-  #     main=fileName, cex.main=0.5*cx, ann=FALSE, ylab="Relative intensity", 
-  #    xlab= expression(italic(m/z)), 
-  #   xaxs="i",yaxs="i",
-  #  xlim=xrange,
-  # ylim=yrange,
-  # ...)
-  
-  
-  currview <- pd[which(pd$y <= max(yrange)
-                       & pd$y >= min(yrange)
-                       & pd$x <= max(xrange) 
-                       & pd$x >= min(xrange)),]
-  
-  if (length(currview$y) >= k){
-    kn <-  sort(currview$y, decreasing = T)[k]
-    labs <- currview[which(currview$y>=kn),]
-  }else{
-    labs <- currview}
-  
-  if(nrow(labs) > 0 ){
-    par(xpd=NA)
-    labs$xcorr <- spread.labs(labs[,1],1.05*strwidth("A"), maxiter=1000, min=min(labs[,1]), max=max(labs[,1]))
-    segments(labs[,1],labs[,2]+0.01*max(yrange),labs$xcorr,labs[,2]+0.05*max(yrange), col="red", lwd=0.8)
-    text(labs$xcorr,labs[,2]+0.055*max(yrange),labels=round(labs[,1],5), col="blue3", srt=90,adj=c(0,0.3), cex=1*cx)
-    text(min(xrange), 1.06*max(yrange),
-         labels = format(maxi*(max(labs$y)/100), scientific = T, digits =4), bty="n",
-         font = 2, cex=cx*1)
-    
-  }
-  
-  # mtext(side=1, text= expression(italic(m/z)), line=0.7, cex=0.5*cx)
-  #  mtext(side=2, text="Relative intensity (%)", line=1.1, cex=0.5*cx)
-  # mtext(side=1, text=fileName, line=1.2, cex=0.5*cx)
-  #mtext(side=3, text=Ptext, line=0.6, cex=0.5, adj=1)
-  #par(cex.axis=0.5*cx, tcl=-0.3)            
-  #axis(side=1, lwd=1, minor.tick(nx=10,ny=5, tick.ratio=0.5), mgp=c(0.5,0,0)) #x-axis mgp[2] controls distance of tick labels to axis
-  #axis(side=2, lwd=1, las=2, mgp=c(0.5,0.4,0)) #y-axis
-}
-
-#' mosaic.colors
-#' 
-#' custom color spectrum using color brewer Set1 colors plus topo.colors; good color discrimination up to n = 13
-#' 
-#' @param n number of colors
-#' @param alpha transparency
-#' 
-#' @export
-mosaic.colors<- function (n, alpha){
-  
-  alphahex <- as.hexmode(as.integer(alpha*255))
-  if(nchar(alphahex) == 1){alphahex <- paste0("0",alphahex)}
-  alphahex <- toupper(alphahex)
-  base <- c("#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00","#FFFF33","#A65628","#F781BF","#999999","#1FFFB4","#000000")
-  
-  
-  
-  if(n<=11){
-    return(paste0(base[1:n],alphahex))
-  }else{
-    add <- topo.colors(n = n-11, alpha = alpha)
-    return(c(paste0(base[1:11],alphahex),add))
-  }
+  plot(1, type = "n", axes=FALSE, xlab="", ylab="")
+  legend(...)
   
   
 }

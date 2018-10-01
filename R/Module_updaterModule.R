@@ -1,23 +1,3 @@
-#' updaterModuleUI
-#' 
-#' 
-#' module to update Mosaic by the click of a button
-#' 
-#' @param id id to be used in ns()
-#' 
-#' @export 
-updaterModuleUI <- function(id){
-  ns <- NS(id)
-  fluidPage(
-    fluidRow(
-      shinydashboard::box(title = "Update mosaic!", status = "primary", collapsible = F, width = 12,
-          htmlOutput(ns('updateUI'))
-      )
-    )
-  )
-}
-
-
 #' updaterModule
 #' 
 #' 
@@ -114,4 +94,24 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
     
  
   
-  }
+}
+
+
+#' updaterModuleUI
+#' 
+#' 
+#' module to update Mosaic by the click of a button
+#' 
+#' @param id id to be used in ns()
+#' 
+#' @export 
+updaterModuleUI <- function(id){
+  ns <- NS(id)
+  fluidPage(
+    fluidRow(
+      shinydashboard::box(title = "Update mosaic!", status = "primary", collapsible = F, width = 12,
+                          htmlOutput(ns('updateUI'))
+      )
+    )
+  )
+}

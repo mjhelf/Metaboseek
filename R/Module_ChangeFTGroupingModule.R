@@ -69,8 +69,7 @@ ChangeFTGroupingModule <- function(input,output, session,
   })
   
   observeEvent(TableLoader$df,{
-    print(TableLoader$df)
-    print(identical(TableLoader$df, GroupingTable$df))
+   
     if(!is.null(TableLoader$df)){
       GroupingTable$df <- TableLoader$df
       GroupingTable$update <- !GroupingTable$update
@@ -242,7 +241,6 @@ ChangeFTGroupingModule <- function(input,output, session,
   })
   
   observeEvent(input$modalOk,{
-    print(input$selectDelete)
     if(input$deleteCheck){
       values$featureTables$tables[[values$featureTables$active]]$df <- values$featureTables$tables[[values$featureTables$active]]$df[,-as.integer(input$selectDelete)]
     }

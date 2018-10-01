@@ -1,96 +1,3 @@
-#' constructRawLayout
-#' 
-#' Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in MOSAiC.
-#' 
-#' @param rawgrouptable a data.frame with columns File and Group , holding file paths and group names, respectively.
-#' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
-#' 
-#' @export
-constructRawLayout <- function(rawgrouptable, stem=NULL){
-    
-    MSD = list()
-    MSD$stem <- stem
-    MSD$rawgrouptable <- rawgrouptable
-    MSD$filelist <- paste0(stem, rawgrouptable$File)
-    MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = rawgrouptable$Group))
-    MSD$settings = list(rtw = 30,
-                        ppm = 5,
-                        cols = 1,
-                        colr = 'mosaic.colors',
-                        alpha = 0.8)
-    
-    class(MSD) <- "rawLayout"
-    return(MSD)
-}
-
-#' updateRawLayout
-#' 
-#' Updates the file path information in a rawLayout object
-#' 
-#' @param MSD a rawLayout object with a defined stem
-#' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
-#' 
-#' @export
-updateRawLayout <- function(MSD, new.stem=NULL){
-    
-    MSD$filelist <- gsub(MSD$stem,new.stem,MSD$filelist)
-    MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = MSD$rawgrouptable$Group))
-    MSD$stem <- new.stem
-    return(MSD)
-}
-
-
-#' loadRawM
-#' 
-#' TIME CONSUMING. This step does not need to be repeated when adjusting other parameters
-#' (e.g. feature list, EIC ppm or RT) Generates an R-readable data structure (a list of xcmsRaw objects) 
-#' in memory from MS data files defined in the file list.
-#' 
-#' Note that there is an xcms function of the same name.
-#' 
-#' @param filelist a list of mzXML or mzML files (character vector)
-#' @param MSn should MSn data be read in? defaults to TRUE
-#' @param workers How many cores to use (cf. BiocParallel and SnowParam, argument only used if more than 10 files are loaded).
-#' @param rnames names of the xcmsRaw objects in the list returned, defaults to the filepaths of the source files.
-#' 
-#' @importFrom BiocParallel SnowParam bplapply
-#' @importFrom xcms xcmsRaw
-#' 
-#' @export
-##Parallel enabled version for larger number of files
-##NOTE: not equivalent to xcms function loadRaw
-loadRawM <- function (filelist= mzxml_pos, MSn = T, workers=10, rnames = filelist){
-
-    if (length(filelist)<=10){workers<-1}
-    param <- SnowParam(workers = workers)
-    suppressWarnings({
-    rawcoll <- bplapply(filelist,xcmsRaw,  profstep=0, includeMSn = MSn, BPPARAM= param)
-    })
-    names(rawcoll)<- rnames
-    
-    return(rawcoll)}
-
-
-
-#' rawGrouping
-#' 
-#' Groups a rawgrouptable into a named list.
-#' 
-#' @param rawgrouptable a data.frame with columns File and Group , holding file paths and group names, respectively.
-#' 
-#' @export
-rawGrouping <- function(rawgrouptable){
-    ## Make list object of grouped column names                                        
-    colme <- list()
-    for (l in unique(rawgrouptable$Group)){
-        colme[[l]] <- as.character(rawgrouptable$File[which(rawgrouptable$Group==l)])
-    }
-    
-    return(colme)
-}
-
-
-
 #' multiEIC
 #' 
 #' Extract EICs from multiple files for multiple features.
@@ -277,50 +184,50 @@ multiEIC <- function (rawdata= rawcoll,
 #' 
 #' @export
 rawEICm <- function(object,
-                                        mzrange = numeric(),
-                                        rtrange =numeric(),
-                                        scanrange = numeric(),
+                    mzrange = numeric(),
+                    rtrange =numeric(),
+                    scanrange = numeric(),
                     viewermode = T)  {
-    #print(paste(mzrange, rtrange))
+  #print(paste(mzrange, rtrange))
   
-    if (length(rtrange) >= 2 ) {
-      
-      if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
-            rtrange <- range(rtrange)
-            
-      #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)
-      if(max(object@scantime) < rtrange[2] ){rtrange[2] <- max(object@scantime)}
-      if(max(object@scantime) < rtrange[1] ){rtrange[1] <- min(object@scantime)}
-            
-      
-        
-        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-        
-        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)) + 1 ) # +1 is a fix to include last scan that meets condition, fixes problem if only one scan meets condition
-        
-        #this is to handle exceptional situations where through retention time correction, the rtmin and rtmax both are between
-        if(!any(scanidx) 
-           & rtrange[2] <= max(object@scantime) 
-           & rtrange[1] >= min(object@scantime)){
-          scanrange <- range(c(which.min(abs(object@scantime - rtrange[1])),
-                                         which.min(abs(object@scantime - rtrange[2]))))}
-        
-    }  else if (length(scanrange) < 2){
-        scanrange <- c(1, length(object@scantime))}
-    else{
-        scanrange <- range(scanrange)}
+  if (length(rtrange) >= 2 ) {
     
-    scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2]) #this should actually avoid the problem..
+    if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
+    rtrange <- range(rtrange)
     
-    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
-    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
-    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
+    #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)
+    if(max(object@scantime) < rtrange[2] ){rtrange[2] <- max(object@scantime)}
+    if(max(object@scantime) < rtrange[1] ){rtrange[1] <- min(object@scantime)}
     
-
-    .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
-
-
+    
+    
+    scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
+    
+    scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)) + 1 ) # +1 is a fix to include last scan that meets condition, fixes problem if only one scan meets condition
+    
+    #this is to handle exceptional situations where through retention time correction, the rtmin and rtmax both are between
+    if(!any(scanidx) 
+       & rtrange[2] <= max(object@scantime) 
+       & rtrange[1] >= min(object@scantime)){
+      scanrange <- range(c(which.min(abs(object@scantime - rtrange[1])),
+                           which.min(abs(object@scantime - rtrange[2]))))}
+    
+  }  else if (length(scanrange) < 2){
+    scanrange <- c(1, length(object@scantime))}
+  else{
+    scanrange <- range(scanrange)}
+  
+  scanrange[1] <- max(1,scanrange[1])
+  scanrange[2] <- min(length(object@scantime),scanrange[2]) #this should actually avoid the problem..
+  
+  if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
+  if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
+  if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
+  
+  
+  .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+  
+  
 }
 
 #' getgauss
@@ -388,16 +295,16 @@ getgauss <- function (y, pval = 1){
 #' 
 #' @export
 bestgauss <- function(...){
-    res <- multiEIC(..., byFile = T, getgauss = T)
-    
-    return(
-      data.frame(best_peakshape = suppressWarnings({
-        
-        apply(matrix(unlist(res),ncol = length(res)),1,max, na.rm = T)  
-        
-      })
-      ) 
-    )
+  res <- multiEIC(..., byFile = T, getgauss = T)
+  
+  return(
+    data.frame(best_peakshape = suppressWarnings({
+      
+      apply(matrix(unlist(res),ncol = length(res)),1,max, na.rm = T)  
+      
+    })
+    ) 
+  )
 }  
 
 #' exIntensities
@@ -416,7 +323,7 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
                            mz = tb$mz,
                            ppm = 5,
                            rtw= data.frame(rta[[1]]$rtmin-5,rta[[1]]$rtmax+5)
-                           ){
+){
   
   #cat(paste0("Reference list with ",length(featuretable[,1])," features, iterating through list, feature #" ))
   
@@ -502,15 +409,15 @@ subsetEICs <- function(EIClist,
   }
   
   for(n in 1:length(EIClist)){
- #   if(length(group)==1){
-  #    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"][[1]]))
-   #   maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"][[1]]))
-      
-  #  }else{
+    #   if(length(group)==1){
+    #    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"][[1]]))
+    #   maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"][[1]]))
+    
+    #  }else{
     maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"]))
     maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"]))
-   # }
-    }
+    # }
+  }
   
   out <- list(EIClist,maxEIC,maxTIC)
   names(out) <- c("EIClist","maxEIC","maxTIC")
@@ -518,220 +425,4 @@ subsetEICs <- function(EIClist,
   return (out)
 }
 
-
-
-#' mergeMS
-#' 
-#' Merge MS spectra by combining peaks that are within a ppm distance
-#' 
-#' NOTE: If multiple peaks inside a spectrum match another spectrum, only the one with higher(?) mz will be retained
-#' 
-#' @param speclist data.frame or matrix containing mz and intensity values of a spectrum (mz in column 1)
-#' @param ppm accuracy
-#' @param mergeOnly if TRUE, only the merged spectrum is returned
-#' 
-#' @export
-mergeMS <- function(speclist,
-                    ppm = 5,
-                    mergeOnly = F){
-  
-  #set up the mergeMS object
-  res <- list(mz = NULL,
-              intensity = NULL,
-              #spectra = speclist,
-              names = names(speclist),
-              counts = NULL,
-              merged = NULL
-  )  
-  
-  res$mz <- data.frame(speclist[[1]][,1])
-  res$intensity <- data.frame(speclist[[1]][,2])
-  class(res) <- "mergeMS"
-  
-  #merge find common peaks across spectra
-  if(length(speclist)>1){
-    for (i in 2:length(speclist)){
-      #prepare the data frame
-      res$mz[,i] <- rep(NA,nrow(res$mz))
-      res$intensity[,i] <- rep(NA,nrow(res$mz))
-      
-      #for first iteration (comparison with spectrum #1), use all mz values
-      rest <- speclist[[i]][,1]
-      rest_i <- speclist[[i]][,2]
-      
-      
-      #commpare with all previously analyzed spectra
-      for (n in seq(i-1)){
-        if(length(rest) > 0){
-          if(length(rest) == 1){
-            dists <- (res$mz[,n] - rest)/rest*1e6
-            pos <- which(abs(dists) < ppm, arr.ind = T)
-            
-            if(length(pos) > 0){
-              res$mz[pos,i] <- rest
-              res$intensity[pos,i] <- rest_i
-              rest <- numeric(0)
-              rest_i <- numeric(0)
-            }
-          }else{
-            dists <- sapply(res$mz[,n], "-", rest)/rest*1e6
-            pos <- which(abs(dists) < ppm, arr.ind = T)
-            res$mz[pos[,2],i] <- rest[pos[,1]]
-            res$intensity[pos[,2],i] <- rest_i[pos[,1]]
-            
-            #keep unmatched entries for next iteration
-            if(length(pos[,1]) > 0){ #this prevents bug if there are no hits
-              rest <- rest[-pos[,1]]
-              rest_i <- rest_i[-pos[,1]]
-            }
-          }
-        }
-        
-      }
-      
-      if(length(rest > 0)){
-        fill <- (nrow(res$mz)+1):(nrow(res$mz)+length(rest))
-        res$mz[fill,] <- NA
-        res$intensity[fill,] <- NA
-        
-        res$mz[fill,i] <- rest
-        res$intensity[fill,i] <- rest_i
-        
-      }
-    }
-    
-    #how many spectra contain each peak?
-    res$counts <- BiocGenerics::ncol(res$mz) - BiocGenerics::rowSums(is.na(res$mz))
-    
-    res$merged <- as.matrix(data.frame(mz = BiocGenerics::rowSums(res$mz*res$intensity, na.rm = T)/BiocGenerics::rowSums(res$intensity, na.rm = T),
-                                       intensity = BiocGenerics::rowSums(res$intensity, na.rm = T)/BiocGenerics::ncol(res$mz)
-    ))
-    
-    #order all data in ascending average mz order:
-    ord <- order(res$merged[,1])
-    
-    
-    res$mz <- res$mz[ord,]
-    res$intensity <- res$intensity[ord,]
-    res$counts <- res$counts[ord]
-    res$merged <- res$merged[ord,]
-    
-    
-  }else{
-    res$counts <- rep(1,length(res$mz[,1]))
-    res$merged <- speclist[[1]]
-  }
-  
-  if(mergeOnly){
-    return(res$merged)
-  }else{
-    
-    if(length(res$names) == length(speclist)){
-      colnames(res$mz) <- basename(res$names)
-      colnames(res$intensity) <- basename(res$names)
-    }
-    
-    return(res)
-  }
-}
-
-
-#' makeScanlist
-#' 
-#' Make a scan list
-#' 
-#' @param splitme character string with format filename:scannumber###filename:scannumber###... as found in gnps networking output tables
-#' @param MSData list of xcmsRaw objects. Only scans from files loaded in this object will be returned
-#' 
-#' @export
-makeScanlist <- function(splitme, MSData = NULL){
-  pounds <- gregexpr('###',splitme)[[1]]
-  pounds <- c(-2,pounds)
-  
-  subs <- character(length(pounds)-1)
-  for(i in seq(length(pounds)-1)){
-    subs[i] <- substr(splitme,pounds[i]+3,pounds[i+1]-1)
-  }
-  
-  scantab <- data.frame(file = character(length(subs)),
-                        acquisition = integer(length(subs)),
-                        scan = integer(length(subs)),
-                        rt = numeric(length(subs)),
-                        parentMz = numeric(length(subs)),
-                        parentIntensity = numeric(length(subs)),
-                        stringsAsFactors = F)
-  
-  for(i in seq(length(subs))){
-    colon <- regexpr(':',subs[i])
-    scantab$file[i] <- substr(subs[i],1,colon-1)
-    scantab$acquisition[i] <- as.integer(substr(subs[i],colon+1,nchar(subs[i])))
-    
-    if(!is.null(MSData) && sum(basename(names(MSData)) == scantab$file[i]) ==1){
-    rawsel <- which(basename(names(MSData)) == scantab$file[i])
-    
-    
-      scantab$file[i] <- basename(names(MSData)[rawsel])
-      
-      
-      scantab$scan[i] <- which(MSData[[rawsel]]@msnAcquisitionNum == scantab$acquisition[i])
-      scantab$rt[i] <- MSData[[rawsel]]@msnRt[scantab$scan[i]]
-      scantab$parentMz[i] <- MSData[[rawsel]]@msnPrecursorMz[scantab$scan[i]]
-      scantab$parentIntensity[i] <- MSData[[rawsel]]@msnPrecursorIntensity[scantab$scan[i]]
-      
-      
-    }
-  }
-  
-  return(scantab)
-  
-}
-
-#' Parentsearch
-#'
-#' Make a list of all MS2 scans with the defined parent masses at a given retention time
-#' 
-#'  @param xcmsRaws list of xcmsRaw objects
-#'  @param mz parent mz values (mumeric vector)
-#'  @param rt parent retention time (in seconds, numeric vector), needs to be same length as mz
-#'  @param ppm parent mz tolerance in ppm
-#'  @param rtw parent rt tolerance in seconds
-#'
-#' @export
-Parentsearch <- function (xcmsRaws,
-                          mz = c(499.11085),
-                          rt = c(366.65),
-                          ppm = 5,
-                          rtw = 200){
-  
-  fx <- function(rfile, mz, rt, ppm, rtw){
-    
-    if(length(rfile@msnPrecursorMz) > 0 ){
-      sel <- which( abs((rfile@msnPrecursorMz - mz)) < ppm*mz*1e-6
-                    &  abs(rfile@msnRt - rt ) < rtw )
-      
-      if(length(sel) >0){
-        scantab <- data.frame(file = rep( basename(rfile@filepath[[1]]) ,length(sel)),
-                              acquisition = rfile@msnAcquisitionNum[sel],
-                              scan = sel,
-                              rt = rfile@msnRt[sel],
-                              parentMz = rfile@msnPrecursorMz[sel],
-                              parentIntensity = rfile@msnPrecursorIntensity[sel],
-                              charge = rfile@msnPrecursorCharge[sel],
-                              ppm = 1e6*(rfile@msnPrecursorMz[sel]-mz)/mz,
-                              stringsAsFactors = F)
-        
-        return(scantab)
-      }
-    }
-    
-    
-    return(NULL)
-  }
-  res <- list()
-  for(i in length(mz)){
-    res <- c(res, lapply(xcmsRaws, fx, mz[i], rt[i], ppm, rtw))
-  }
-  
-  return(data.table::rbindlist(res))
-}
 

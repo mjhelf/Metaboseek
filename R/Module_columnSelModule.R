@@ -140,10 +140,10 @@ observeEvent(c(#values$featureTables$active,
 }
 
 
-#' xcmsModuleUI
+#' columnSelModuleUI
 #' 
 #' 
-#' UI module for xcms Module
+#' UI module for columnsel Module
 #' 
 #' @param id id to be used in ns()
 #' 

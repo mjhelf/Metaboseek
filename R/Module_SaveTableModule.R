@@ -94,7 +94,7 @@ SaveTableModule <- function(input,output, session,
   
 }
 
-#' simpleTableModuleUI
+#' SaveTableModuleUI
 #' 
 #' @param id id of the shiny module
 #' 

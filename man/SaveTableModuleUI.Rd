@@ -2,7 +2,7 @@
 % Please edit documentation in R/Module_SaveTableModule.R
 \name{SaveTableModuleUI}
 \alias{SaveTableModuleUI}
-\title{simpleTableModuleUI}
+\title{SaveTableModuleUI}
 \usage{
 SaveTableModuleUI(id)
 }
@@ -10,5 +10,5 @@ SaveTableModuleUI(id)
 \item{id}{id of the shiny module}
 }
 \description{
-simpleTableModuleUI
+SaveTableModuleUI
 }
