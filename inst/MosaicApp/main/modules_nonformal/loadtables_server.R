@@ -1,4 +1,6 @@
 
+
+
 inputTable <- reactiveValues(df = NULL,
                              colrange = NULL, #columns in tablestuff$tablecut containing intensity values of interest
                              anagroupraw = NULL, #columnnames in tablestuff$tablecut containing intensity values of interest with their respective analysis group (dataframe)

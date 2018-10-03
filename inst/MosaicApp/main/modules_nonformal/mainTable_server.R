@@ -159,6 +159,7 @@ output$maintable <- renderRHandsontable({if(!is.null(combino())){
                   contextMenu = featureTables$tables[[featureTables$active]]$editable,
                   selectCallback = TRUE,
                   height = rheight,
+                  outsideClickDeselects = FALSE,
                  # width = 1000,
                   digits=8,
                  highlightCol = TRUE, highlightRow = TRUE) %>%

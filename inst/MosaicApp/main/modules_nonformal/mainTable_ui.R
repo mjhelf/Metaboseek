@@ -8,6 +8,10 @@ tabBox(title = "Feature table",
        selected = "Load Table",#selectedTabs$FeatureTable,
        
        tabPanel("_"),
+       
+       tabPanel("Regroup Table (NEW)",
+                ChangeFTGroupingModuleUI("ftgrouper")),
+       
        tabPanel("Load Table",
                 source(file.path("modules_nonformal", "loadtables_ui.R"), local = TRUE)$value),
        
