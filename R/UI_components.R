@@ -120,7 +120,8 @@ dashboardSidebar(
     menuItem("Update", tabName = "updateTab", icon = icon("upload")),
     ...,
     #bookmarkButton(label ="Bookmark this session"),
-    SelectActiveTableModuleUI("selectactivetable"),
+    htmlOutput("activeTable"),
+    #SelectActiveTableModuleUI("selectactivetable"),
     hr(),
     h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
          href="https://github.com/mjhelf/Mosaic", target="_blank"), align = "center")
