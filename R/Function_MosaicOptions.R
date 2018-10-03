@@ -25,7 +25,17 @@ MosaicOptions <- function(..., defaults = F){
                                      sep = ""), 
                                collapse = "|"),
                              perPage = as.integer(100),
-                             serverMode = F)
+                             serverMode = F,
+                             PPMwindow = 5,
+                             RTtoggle = T,
+                             plotYzoom = 1,
+                             plotCols = 1,
+                             plotLw = 1,
+                             MLtoggle = T,
+                             RTwindow = 30,
+                             plotCx = 1,
+                             tICtoggle = F,
+                             colorscheme = "mosaic.colors")
     
   }
   else{
