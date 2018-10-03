@@ -18,14 +18,21 @@
 FilePathModule <- function(input, output, session,
                            filepaths = reactive({.MosaicOptions$filePaths}),
                            label = "Select Folder", description= "Select Folder",
-                           displayFolder = F
+                           displayFolder = F,
+                           selectFile = F,
+                           pattern = ""
                            ){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(dir = NULL)
   
   observe({
-  shinyDirChoose(input, 'folder', session = session, roots=filepaths())
+    if(selectFile){
+      shinyFileChoose(input, 'sfile', session = session, roots=filepaths(), pattern = pattern)
+    }else{
+          shinyDirChoose(input, 'folder', session = session, roots=filepaths())
+    }
+    
   })
   
   observeEvent(input$folder,{
@@ -33,18 +40,35 @@ FilePathModule <- function(input, output, session,
     internalValues$dir <-  parseDirPath(roots=filepaths(), input$folder)
   })
   
+  observeEvent(input$sfile,{
+    
+    internalValues$files <-  parseFilePaths(roots=filepaths(), input$sfile)
+  })
+  
   output$folderButton <- renderUI({
+    if(!selectFile){
      div(id = ns("div"), title = description,
         shinyDirButton(ns('folder'), label, title = description)
     )
-    
+    }
+  })
+  
+  output$fileButton <- renderUI({
+    if(selectFile){
+      div(id = ns("div"), title = description,
+          shinyFilesButton(ns('sfile'), label, title = description, multiple = T)
+      )
+    }
   })
   
   output$msfoldertag <- renderUI({
-    
-    
+
     HTML('<div class="FolderBox">',
-         ifelse(length(internalValues$dir) == 0 || is.na(internalValues$dir), "No Folder selected", internalValues$dir),
+         if(!selectFile){
+         ifelse(length(internalValues$dir) == 0 || is.na(internalValues$dir), "No folder selected", internalValues$dir)}
+         else{
+           ifelse(class(internalValues$files) != "data.frame" || nrow(internalValues$files) == 0, "No files selected",  paste(basename(internalValues$files$datapath), collapse = ", "))
+         },
          '
  
    </div> ')
@@ -59,6 +83,7 @@ FilePathModule <- function(input, output, session,
        HTML('<div class="ContextBox">'),
    fluidPage(
       fluidRow(
+        htmlOutput(ns("fileButton")),
         
         htmlOutput(ns("folderButton")),
       fluidRow(

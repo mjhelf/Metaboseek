@@ -32,12 +32,13 @@ LoadTableModule <- function(input,output, session,
   })
   
   Uploader <- callModule(UploadTableModule, "modalUpload",
+                         values = reactiveValues(featureTables = values$featureTables),
                          static = list(title =  NULL,
                                        filetypes = NULL,
-                                       format = list(header = T,
-                                                     sep = "\t",
-                                                     quote = '"',
-                                                     stringsAsFactors = F))
+                                       format = list(header = static$format$header,
+                                                     sep = static$format$sep,
+                                                     quote = static$format$quote,
+                                                     stringsAsFactors = static$format$stringsAsFactors))
   )
   
   observeEvent(input$loadtable,{
@@ -45,8 +46,6 @@ LoadTableModule <- function(input,output, session,
     if(!is.null(values$projectData$projectFolder)){
       
       temp <-  list.files(values$projectData$projectFolder, pattern = static$pattern, recursive =  T, full.names = T)
-      
-      print(temp)
       
       tl <- list()
       
@@ -107,8 +106,63 @@ LoadTableModule <- function(input,output, session,
   })
   
   observeEvent(input$modalProjectFolder,{
+    tryCatch({   
+      if(!is.null(input$modalSelect)){
+
+    if(!is.null(values$featureTables)){
+      
+      withProgress(message = 'Please wait!', detail = "Importing Feature Table", value = 0.6, {
+        
+        tabid <- paste0("table",length(values$featureTables$tables))
+        
+        feats <- as.data.frame(data.table::fread(input$modalSelect,
+                                                 header = static$format$header,
+                                                 stringsAsFactors = static$format$stringsAsFactors,
+                                                 quote = static$format$quote,
+                                                 sep = ","),
+                               stringsAsFactors = static$format$stringsAsFactors)
+        
+        intColRange <- grep("__XIC$",colnames(feats))
+        #look for a .tGrouping file in same folder as table and load it
+         if(file.exists(gsub("\\.csv$",".tGrouping",input$modalSelect))){
+           anagroup <-read.delim(gsub("\\.csv$",".tGrouping",input$modalSelect), stringsAsFactors = F, header = T, sep = "\t")
+         }
+        #look for a .tGrouping file for this table in the entire project folder and load the first match
+        else if(length(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)) > 0){
+          anagroup <- read.delim(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)[1], stringsAsFactors = F, header = T, sep = "\t")
+        }
+        #no __XIC columns? No automatic grouping suggestion
+        else if(length(intColRange)==0){
+          
+          anagroup <- NULL
+        
+        }
+        
+        else{
+          
+          anagroup <- data.frame(Column=colnames(feats)[intColRange],
+                                 Group = rep("G1",(length(intColRange))),
+                                 stringsAsFactors = F)
+        }
+        incProgress(0.3, detail = "Formatting Feature Table")
+        
+        values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
+                                                                      mzcol= "mz", #column in df with mz values (columnname)
+                                                                      rtcol= "rt", #column in df with mz values (columnname)
+                                                                      commentcol = "comments",
+                                                                      fragmentcol = "fragments",
+                                                                      rtFormat = "sec", # "sec" or "min" 
+                                                                      anagrouptable = anagroup,
+                                                                      tablename = basename(input$modalSelect),
+                                                                      editable = F)
+        values$featureTables$index <- updateFTIndex(values$featureTables$tables)
+        values$featureTables$active <- tabid
+      })
+      removeModal()
+    }
+    #loading other Tables (expected to be smaller files)
+    else{
     
-    if(!is.null(input$modalSelect)){
       withProgress({
         
         internalValues$df <- read.delim(input$modalSelect,
@@ -125,9 +179,18 @@ LoadTableModule <- function(input,output, session,
       
       
     }
+
+    } 
     else{
-      showNotification(paste("Something went wrong!"), type = "error", duration = 10)
+      showNotification(paste("No Table selected!"), type = "error", duration = 10)
     }
+    },
+    error = function(e){
+      showNotification(paste("ERROR: Make sure you selected the correct Table Options (tab or comma separated?) for your input table."), type = "error", duration = 10)
+      
+    })
+    
+    
   })
   
   return(internalValues)

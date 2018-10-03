@@ -4,7 +4,8 @@
 \alias{UploadTableModule}
 \title{UploadTableModule}
 \usage{
-UploadTableModule(input, output, session, static = list(title = NULL,
+UploadTableModule(input, output, session,
+  values = reactiveValues(featureTables = NULL), static = list(title = NULL,
   filetypes = NULL, format = list(header = T, sep = "\\t", quote = "\\"",
   stringsAsFactors = F)))
 }

@@ -41,7 +41,7 @@ ChangeFTGroupingModule <- function(input,output, session,
   
   callModule(SaveTableModule, "saveGrouping",
              reactives = reactive({list(df = GroupingTable$liveView,
-                                        filename = file.path("Table_groupingssdf","sdf",paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),"_",values$featureTables$tables[[values$featureTables$active]]$tablename,"_table.tGrouping")))}),
+                                        filename = file.path("Table_grouping", paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),"_",gsub("\\.csv$",".tGrouping",values$featureTables$tables[[values$featureTables$active]]$tablename))))}),
              values = reactiveValues(projectData = values$projectData),
              static = list(tooltip = "Save Grouping Table",
                            label = "Save",

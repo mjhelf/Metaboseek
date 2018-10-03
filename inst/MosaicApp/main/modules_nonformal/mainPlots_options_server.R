@@ -129,4 +129,12 @@ callModule(MzqueryModule,"mz1", tag = "mz1",
 )
 
 
+##### Load data ####
+Maindataload <- callModule(LoadDataModule, "maindataload",
+           values = reactiveValues(projectData = projectData,
+                                   featureTables = featureTables,
+                                   MSData = MSData,
+                                   GlobalOpts = GlobalOpts)
+)
+
 

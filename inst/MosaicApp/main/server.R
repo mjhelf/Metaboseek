@@ -4,21 +4,10 @@ function(input, output, session) {
   
     selectedTabs <- reactiveValues(FeatureTable = "View Table")
 
-    output$activeTable <- renderUI({
-        selectizeInput('activeTable', 'Active Table', selected = featureTables$active, choices = featureTables$index, multiple = FALSE)
-    })  
+
+    callModule(SelectActiveTableModule, "selectactivetable",
+                            values = reactiveValues(featureTables = featureTables))
     
-    observeEvent(input$activeTable, { 
-        
-        if(!is.null(featureTables$tables[[featureTables$active]]$editable) & !is.null(input$maintable)){
-            if(featureTables$tables[[featureTables$active]]$editable){
-                featureTables$tables[[featureTables$active]]$df[c(row.names(hot_to_r(input$maintable))),c(colnames(hot_to_r(input$maintable)))] <- hot_to_r(input$maintable)[c(row.names(hot_to_r(input$maintable))),c(colnames(hot_to_r(input$maintable)))]
-            }else{
-                featureTables$tables[[featureTables$active]]$df[c(row.names(hot_to_r(input$maintable))),"comments"] <- hot_to_r(input$maintable)[c(row.names(hot_to_r(input$maintable))),"comments"] 
-            }
-        }
-        
-        featureTables$active <- input$activeTable})
     
      callModule(updaterModule, 'update', tag = 'update', set =list(package = "Mosaic",
                                                                   refs = c("master", "devel", "devel_raw"),

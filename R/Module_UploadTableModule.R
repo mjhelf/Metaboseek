@@ -10,6 +10,7 @@
 #' 
 #' @export 
 UploadTableModule <- function(input,output, session,
+                              values = reactiveValues(featureTables = NULL),
                               static = list(title =  NULL,
                                             filetypes = NULL,
                                             format = list(header = T,
@@ -28,6 +29,55 @@ UploadTableModule <- function(input,output, session,
   observeEvent(input$file1$datapath,
                {
                  tryCatch({
+                   
+                   #handling loading of a featureTable
+                   if(!is.null(values$featureTables)){
+                     
+                     withProgress(message = 'Please wait!', detail = "Importing Feature Table", value = 0.6, {
+                     
+                     values$featureTables$tables[[values$featureTables$active]] <- updateFTgrouping(values$featureTables$tables[[values$featureTables$active]],
+                                                                                                    NULL)
+                                          tabid <- paste0("table",length(values$featureTables$tables))
+                                          
+                                          feats <- as.data.frame(data.table::fread(input$file1$datapath,
+                                                                     header = static$format$header,
+                                                                     stringsAsFactors = static$format$stringsAsFactors,
+                                                                     quote = static$format$quote,
+                                                                     sep = if(!is.null(static$format$sep)){static$format$sep}else{input$sep}),
+                                                                 stringsAsFactors = static$format$stringsAsFactors)
+                                          
+                                          intColRange <- grep("__XIC$",colnames(feats))
+                                          
+                                          if(length(intColRange)==0){
+                                            
+                                            anagroup <- NULL
+                                            
+                                            
+                                          }else{
+                                            
+                                            anagroup <- data.frame(Column=colnames(feats)[intColRange],
+                                                                   Group = rep("G1",(length(intColRange))),
+                                                                   stringsAsFactors = F)
+                                          }
+                                          incProgress(0.3, detail = "Formatting Feature Table")
+                                          
+                     values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
+                                                                            mzcol= "mz", #column in df with mz values (columnname)
+                                                                            rtcol= "rt", #column in df with mz values (columnname)
+                                                                            commentcol = "comments",
+                                                                            fragmentcol = "fragments",
+                                                                            rtFormat = "sec", # "sec" or "min" 
+                                                                            anagrouptable = anagroup,
+                                                                            tablename = input$file1$name,
+                                                                            editable = F)
+                     values$featureTables$index <- updateFTIndex(values$featureTables$tables)
+                     values$featureTables$active <- tabid
+                     })
+                     removeModal()
+                   }
+                   #loading other Tables (expected to be smaller files)
+                   else{
+                   
                    internalValues$df <- read.delim(input$file1$datapath,
                                                    header = if(is.null(static$format$header)){input$header}else{static$format$header},
                                                    sep = if(is.null(static$format$sep)){input$sep}else{static$format$sep}, 
@@ -35,6 +85,7 @@ UploadTableModule <- function(input,output, session,
                                                    stringsAsFactors = if(is.null(static$format$stringsAsFactors)){F}else{static$format$stringsAsFactors})
                    
                    internalValues$filename <- input$file1$name #gsub("\\.[^.]*$","",input$file1$name)
+                   }
                  },
                  error = function(e){
                    showNotification(paste("ERROR: Make sure you selected the correct Table Options (tab or comma separated?) for your input table."), type = "error", duration = 10)
