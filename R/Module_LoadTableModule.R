@@ -122,6 +122,10 @@ LoadTableModule <- function(input,output, session,
                                                  sep = ","),
                                stringsAsFactors = static$format$stringsAsFactors)
         
+        if("comments" %in% colnames(feats)){
+          feats$comments <- as.character(feats$comments)
+        }
+        
         intColRange <- grep("__XIC$",colnames(feats))
         #look for a .tGrouping file in same folder as table and load it
          if(file.exists(gsub("\\.csv$",".tGrouping",input$modalSelect))){
