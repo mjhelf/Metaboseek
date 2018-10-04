@@ -137,4 +137,6 @@ Maindataload <- callModule(LoadDataModule, "maindataload",
                                    GlobalOpts = GlobalOpts)
 )
 
+callModule(EICOptionsModule, "EICopts", values = reactiveValues(GlobalOpts = GlobalOpts))
+
 

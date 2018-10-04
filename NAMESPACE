@@ -2,6 +2,8 @@
 
 export(ChangeFTGroupingModule)
 export(ChangeFTGroupingModuleUI)
+export(EICOptionsModule)
+export(EICOptionsModuleUI)
 export(EICgeneral)
 export(EICmodule)
 export(EICmoduleUI)

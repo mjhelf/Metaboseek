@@ -137,7 +137,7 @@ EICOptionsModule <- function(input,output, session,
 #' @param id id of the module
 #' 
 #' @export 
-EICOptionModuleUI <- function(id){
+EICOptionsModuleUI <- function(id){
   ns <- NS(id)
   
   fluidPage(
