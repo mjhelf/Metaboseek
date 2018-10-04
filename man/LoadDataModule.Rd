@@ -4,9 +4,9 @@
 \alias{LoadDataModule}
 \title{LoadDataModule}
 \usage{
-LoadDataModule(input, output, session, values = reactiveValues(projectData =
-  projectData, featureTables = featureTables, MSData = MSData, GlobalOpts =
-  GlobalOpts))
+LoadDataModule(input, output, session,
+  values = reactiveValues(projectData = projectData, featureTables =
+  featureTables, MSData = MSData, GlobalOpts = GlobalOpts))
 }
 \arguments{
 \item{input}{}

@@ -11,9 +11,10 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   transparency = MSData$layouts[[MSData$active]]$settings$alpha,
   RTall = input$RTtoggle, TICall = input$TICtoggle,
   rtw = MSData$layouts[[MSData$active]]$settings$rtw,
-  ppm = MSData$layouts[[MSData$active]]$settings$ppm, rdata = MSData$data,
-  pdfFile = file, leadingTIC = T, lw = 1, adducts = c(0), cx = 1,
-  midline = T, yzoom = 1, RTcorrect = NULL, importEIC = NULL)
+  ppm = MSData$layouts[[MSData$active]]$settings$ppm,
+  rdata = MSData$data, pdfFile = file, leadingTIC = T, lw = 1,
+  adducts = c(0), cx = 1, midline = T, yzoom = 1,
+  RTcorrect = NULL, importEIC = NULL)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}

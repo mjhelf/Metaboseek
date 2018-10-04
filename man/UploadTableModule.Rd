@@ -5,9 +5,9 @@
 \title{UploadTableModule}
 \usage{
 UploadTableModule(input, output, session,
-  values = reactiveValues(featureTables = NULL), static = list(title = NULL,
-  filetypes = NULL, format = list(header = T, sep = "\\t", quote = "\\"",
-  stringsAsFactors = F)))
+  values = reactiveValues(featureTables = NULL), static = list(title =
+  NULL, filetypes = NULL, format = list(header = T, sep = "\\t", quote =
+  "\\"", stringsAsFactors = F)))
 }
 \arguments{
 \item{input}{}

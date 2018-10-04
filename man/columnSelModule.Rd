@@ -4,9 +4,9 @@
 \alias{columnSelModule}
 \title{columnSelModule}
 \usage{
-columnSelModule(input, output, session, reactives = reactive({     (list())
-  }), values = reactiveValues(), static = list(), load = reactive({    
-  list() }))
+columnSelModule(input, output, session, reactives = reactive({    
+  (list()) }), values = reactiveValues(), static = list(),
+  load = reactive({     list() }))
 }
 \arguments{
 \item{input}{}

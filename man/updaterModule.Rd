@@ -4,8 +4,8 @@
 \alias{updaterModule}
 \title{updaterModule}
 \usage{
-updaterModule(input, output, session, tag, set = list(package = "Mosaic", refs
-  = c("master", "devel", "devel_raw"), active = T))
+updaterModule(input, output, session, tag, set = list(package = "Mosaic",
+  refs = c("master", "devel", "devel_raw"), active = T))
 }
 \arguments{
 \item{input}{}

@@ -4,7 +4,8 @@
 \alias{loadRawM}
 \title{loadRawM}
 \usage{
-loadRawM(filelist = mzxml_pos, MSn = T, workers = 10, rnames = filelist)
+loadRawM(filelist = mzxml_pos, MSn = T, workers = 10,
+  rnames = filelist)
 }
 \arguments{
 \item{filelist}{a list of mzXML or mzML files (character vector)}

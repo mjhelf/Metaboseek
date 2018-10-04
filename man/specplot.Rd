@@ -5,8 +5,8 @@
 \title{specplot}
 \usage{
 specplot(x = sc[, 1], y = sc[, 2], norm = max(y)/100, cx = 1.5,
-  k = 10, fileName = "title", yrange = c(0, 100), xrange = range(x),
-  maxi = max(y))
+  k = 10, fileName = "title", yrange = c(0, 100),
+  xrange = range(x), maxi = max(y))
 }
 \arguments{
 \item{x}{mz coordinates}

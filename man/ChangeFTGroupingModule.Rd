@@ -5,8 +5,8 @@
 \title{ChangeFTGroupingModule}
 \usage{
 ChangeFTGroupingModule(input, output, session, reactives = reactive({    
-  list() }), values = reactiveValues(featureTables = featureTables, MSData =
-  MSData, projectData = projectData), static = list())
+  list() }), values = reactiveValues(featureTables = featureTables,
+  MSData = MSData, projectData = projectData), static = list())
 }
 \arguments{
 \item{input}{}

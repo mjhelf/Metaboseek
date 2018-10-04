@@ -4,8 +4,8 @@
 \alias{EICOptionsModule}
 \title{EICOptionsModule}
 \usage{
-EICOptionsModule(input, output, session, values = reactiveValues(GlobalOpts =
-  GlobalOpts))
+EICOptionsModule(input, output, session,
+  values = reactiveValues(GlobalOpts = GlobalOpts))
 }
 \arguments{
 \item{input}{}
