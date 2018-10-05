@@ -116,6 +116,10 @@ SelectProjectFolderModule <- function(input,output, session,
                                                quote = '"',
                                                sep = ","),
                              stringsAsFactors = F)
+      
+      if("comments" %in% colnames(feats)){
+        feats$comments <- as.character(feats$comments)
+      }
      
       ColumnNames <- gsub("-",".",paste0(basename(internalValues$filegroups$File),"__XIC"))
       

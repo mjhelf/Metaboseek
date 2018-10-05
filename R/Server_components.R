@@ -112,7 +112,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
                                      rtFormat = "sec", # "sec" or "min" 
                                      anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
                                      tablename = "mini_example_features.csv",
-                                     editable = T)
+                                     editable = F)
       
       tab2 <- constructFeatureTable (df= read.csv(system.file("data", "tables", "large_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
@@ -122,7 +122,7 @@ MosaicExamplePreload <- function(tables = T, data = T){
                                      rtFormat = "sec", # "sec" or "min" 
                                      anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
                                      tablename = "large_example_features.csv",
-                                     editable = T)
+                                     editable = F)
     }))}
   
   if(data){

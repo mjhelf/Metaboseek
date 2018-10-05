@@ -262,24 +262,29 @@ getgauss <- function (y, pval = 1){
   #
   # Estimate some starting values.
   # Do the fit.  (It takes no time at all.)
-  fit <- try(nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/4, a= max(y), b=0)), silent = T)
+  fit <- tryCatch({
+    nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/10, a= max(y), b=0))
+  },
+  error = function(e){
+    try(nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/4, a= max(y), b=0)), silent = T)
+  }, silent = T)
   
   gauss <-  if(class(fit) == "try-error")
   {
-    NA
+    0
   } else
   {
     #calculate correlation of summe$intensity against gaussian fit
-    if(length(which(!is.na(y-fitted(fit)))) > 4 &&
-       length(!is.na(unique(y)))>4 && length(!is.na(unique(fitted(fit))))>4)
+    if(length(which(!is.na(y-fitted(fit)))) > 2 &&
+       length(!is.na(unique(y)))>2 && length(!is.na(unique(fitted(fit))))>2)
     {
       cor <- NULL
       cor <- try(cor.test(y,fitted(fit),method="pearson",use="complete"), silent = T)
       if(class(fit) != "try-error")
       {
         if(cor$p.value <= pval) cor$estimate else 0
-      } else NA
-    } else NA
+      } else 0
+    } else 0
     
   }
   return(gauss)}
@@ -298,7 +303,7 @@ bestgauss <- function(...){
   res <- multiEIC(..., byFile = T, getgauss = T)
   
   return(
-    data.frame(best_peakshape = suppressWarnings({
+    data.frame(Peak_Quality = suppressWarnings({
       
       apply(matrix(unlist(res),ncol = length(res)),1,max, na.rm = T)  
       

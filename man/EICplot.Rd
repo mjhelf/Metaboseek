@@ -4,13 +4,14 @@
 \alias{EICplot}
 \title{EICplot}
 \usage{
-EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0, max(unlist(EIClistItem[,
-  "tic"]))), xlim = c(min(unlist(EIClistItem[, "rt"])),
-  max(unlist(EIClistItem[, "rt"])))/60, legendtext = paste(sub("^([^.]*).*",
-  "\\\\1", basename(row.names(sEICs$EIClist[[1]])))),
-  colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha = 1), heading = "test",
-  relto = NULL, TIC = F, single = F, midline = 100, lw = 1,
-  yzoom = 1)
+EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0,
+  max(unlist(EIClistItem[, "tic"]))), xlim = c(min(unlist(EIClistItem[,
+  "rt"])), max(unlist(EIClistItem[, "rt"])))/60,
+  legendtext = paste(sub("^([^.]*).*", "\\\\1",
+  basename(row.names(sEICs$EIClist[[1]])))),
+  colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha = 1),
+  heading = "test", relto = NULL, TIC = F, single = F,
+  midline = 100, lw = 1, yzoom = 1)
 }
 \arguments{
 \item{ylim}{numeric(2) min and max visible rt value (in seconds)}

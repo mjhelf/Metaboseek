@@ -4,8 +4,8 @@
 \alias{MzqueryModule}
 \title{MzqueryModule}
 \usage{
-MzqueryModule(input, output, session, tag, set = list(search = list(elements =
-  NULL, mz = NULL, data = NULL)))
+MzqueryModule(input, output, session, tag, set = list(search =
+  list(elements = NULL, mz = NULL, data = NULL)))
 }
 \arguments{
 \item{input}{}

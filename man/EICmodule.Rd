@@ -4,8 +4,8 @@
 \alias{EICmodule}
 \title{EICmodule}
 \usage{
-EICmodule(input, output, session, values = reactiveValues(MSData = MSData),
-  keys)
+EICmodule(input, output, session, values = reactiveValues(MSData =
+  MSData), keys)
 }
 \arguments{
 \item{input}{}

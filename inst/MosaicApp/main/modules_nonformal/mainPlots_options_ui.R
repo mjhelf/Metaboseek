@@ -6,6 +6,9 @@ tabBox(title = "Options",
        tabPanel("Load Data (NEW)",
                 LoadDataModuleUI("maindataload")
        ),
+       tabPanel("EIC options (NEW)",
+                EICOptionsModuleUI("EICopts")
+       ),
        
        tabPanel("EIC options",
               fluidRow(

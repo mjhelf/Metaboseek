@@ -4,8 +4,8 @@
 \alias{featureTableNormalize}
 \title{featureTableNormalize}
 \usage{
-featureTableNormalize(mx, raiseZeros = NULL, log = NULL, normalize = NULL,
-  threshold = NULL, thresholdMethod = NULL)
+featureTableNormalize(mx, raiseZeros = NULL, log = NULL,
+  normalize = NULL, threshold = NULL, thresholdMethod = NULL)
 }
 \arguments{
 \item{mx}{a matrix of numeric (intensity) values}
