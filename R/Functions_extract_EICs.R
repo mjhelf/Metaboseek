@@ -66,7 +66,8 @@ multiEIC <- function (rawdata= rawcoll,
       if(gauss){
         middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
         smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
-        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate)$cor$estimate)
+        #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
+        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)
       }
       return(ls)
     }
@@ -132,7 +133,8 @@ multiEIC <- function (rawdata= rawcoll,
       if(gauss){
         middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
         smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
-        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate)$cor$estimate)      }
+        #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
+        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)}
       return(ls)
     }
     
@@ -258,7 +260,7 @@ peakFunction <- function(x, theta)  {
 #' @importFrom stats fitted nls cor.test
 #' 
 #' @export
-peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate = 0){
+peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate = 0, allowWorseScore = F){
   
   if(!is.list(best_estimate)){
     best_estimate <- list(depth = startdepth,
@@ -281,6 +283,11 @@ peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate =
                               cor = cor)
             return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
       }else{
+        
+        if(allowWorseScore){
+          return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate, allowWorseScore = T))
+        }
+        
         return(best_estimate)
       }
       
