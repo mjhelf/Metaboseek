@@ -64,7 +64,9 @@ multiEIC <- function (rawdata= rawcoll,
       ls$intsum <- sum(ls$intensity)
       ls$intmean <- mean(ls$intensity)
       if(gauss){
-        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5)$cor$estimate)
+        middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
+        smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
+        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate)$cor$estimate)
       }
       return(ls)
     }
@@ -128,8 +130,9 @@ multiEIC <- function (rawdata= rawcoll,
       ls$intsum <- sum(ls$intensity)
       ls$intmean <- mean(ls$intensity)
       if(gauss){
-        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5)$cor$estimate)
-      }
+        middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
+        smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
+        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate)$cor$estimate)      }
       return(ls)
     }
     
