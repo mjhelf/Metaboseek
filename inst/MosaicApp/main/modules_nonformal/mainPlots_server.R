@@ -131,7 +131,9 @@ output$mainPlotEICsPre <- renderPlot({
 
 
 output$mainPlotPlaceholder2 <- renderPlot({
-  if(is.null(MSData$data)){
+  if(FALSE
+    #is.null(MSData$data)
+    ){
   #Placeholder:
     
     PH <- list()
@@ -202,7 +204,7 @@ output$mainPlotEICs <- renderUI({
     
     
     plotOutput("mainPlotPlaceholder2",
-                height ="600px"
+                height ="1px"
                 )}
     
     

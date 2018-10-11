@@ -29,3 +29,7 @@ source(file.path("modules_nonformal", "mainTable_server.R"), local = TRUE)$value
 PcaViewFeatures <- callModule(PcaViewModule, "pcaviewfeatures",
                               values = reactiveValues(featureTables = featureTables)
 )
+
+##News
+callModule(WelcomePageModule, "welcome", values = reactiveValues(MSData = MSData))
+ 

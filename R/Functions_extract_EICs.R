@@ -64,7 +64,7 @@ multiEIC <- function (rawdata= rawcoll,
       ls$intsum <- sum(ls$intensity)
       ls$intmean <- mean(ls$intensity)
       if(gauss){
-        return(getgauss(ls$intensity))
+        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5)$cor$estimate)
       }
       return(ls)
     }
@@ -128,7 +128,7 @@ multiEIC <- function (rawdata= rawcoll,
       ls$intsum <- sum(ls$intensity)
       ls$intmean <- mean(ls$intensity)
       if(gauss){
-        return(getgauss(ls$intensity))
+        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5)$cor$estimate)
       }
       return(ls)
     }
@@ -229,6 +229,74 @@ rawEICm <- function(object,
   
   
 }
+
+
+#' peakFunction
+#' 
+#' Function to represent a peak in peakFitter
+#' 
+peakFunction <- function(x, theta)  { 
+  m <- theta[1]; s <- theta[2]; a <- theta[3]; b <- theta[4];
+  a*exp(-0.5*((x-m)/s)^2) + b
+}
+
+
+#' peakFitter
+#' 
+#' fit a curve into a numeric vector. Will recursively try different starting values for the optimizer.
+#' 
+#' @param x numeric vector to use as inout for fit function (typically series of scan numbers or retention time values)
+#' @param y numeric vector to fit the curve, same length as x
+#' @param m numeric value of the expected/initial position of the peak apex (in range of x)
+#' @param s numeric value of the expected/initial peak width. Should not be 0!
+#' @param startdepth defaults to 1, part of limiting the recursion
+#' @param maxdepth limits recursion to trying to fit curve \code{maxdepth} times with increasing \code{s} values 
+#' 
+#' @importFrom stats fitted nls cor.test
+#' 
+#' @export
+peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate = 0){
+  
+  if(!is.list(best_estimate)){
+    best_estimate <- list(depth = startdepth,
+                          fit = integer(length(x)),
+                          cor = list(estimate = best_estimate,
+                                     p.value = 1))
+  }
+  
+  if(startdepth < maxdepth && best_estimate$cor$estimate < 0.999){
+    tryCatch({
+      fit <- nls(y ~ peakFunction(x,c(m,s,a,b)), data.frame(x,y), start=list(m=m, s=s, a= max(y), b=0))
+      fittedFit <- fitted(fit)
+      cor <- cor.test(y,fittedFit,method="pearson",use="complete")
+      
+      
+      
+      if(cor$estimate > best_estimate$cor$estimate){
+        best_estimate <- list(depth = startdepth,
+                              fit = fittedFit,
+                              cor = cor)
+            return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
+      }else{
+        return(best_estimate)
+      }
+      
+      
+    },
+    error = function(e){
+      return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
+    },
+    silent = T)
+    
+  }else{
+    return(
+      best_estimate
+    )
+  }
+}
+
+
+
 
 #' getgauss
 #' 

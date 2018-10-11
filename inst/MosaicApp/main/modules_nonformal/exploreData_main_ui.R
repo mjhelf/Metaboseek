@@ -3,6 +3,9 @@ fluidPage(
     source(file.path("modules_nonformal", "mainPlots_options_ui.R"), local = TRUE)$value
   ),
   fluidRow(
+    WelcomePageModuleUI("welcome")
+  ),
+  fluidRow(
     source(file.path("modules_nonformal", "mainPlots_ui.R"), local = TRUE)$value
   ),
   fluidRow(
