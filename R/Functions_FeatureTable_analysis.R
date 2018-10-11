@@ -62,7 +62,7 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
       inp <- bestgauss(
         rawdata= MSData,
         mz = data.frame(mzmin = df$mz-ppm*1e-6*df$mz, mzmax=df$mz+ppm*1e-6*df$mz),
-        rt = data.frame(rtmin = df$rt-5, rtmax=df$rt+5),
+        rt = data.frame(rtmin = df$rt-10, rtmax=df$rt+10),
         rnames = row.names(df)
       )
       
