@@ -5,7 +5,7 @@
 \title{peakFitter}
 \usage{
 peakFitter(x, y, m, s, startdepth = 1, maxdepth = 5,
-  best_estimate = 0)
+  best_estimate = 0, allowWorseScore = F)
 }
 \arguments{
 \item{x}{numeric vector to use as inout for fit function (typically series of scan numbers or retention time values)}
