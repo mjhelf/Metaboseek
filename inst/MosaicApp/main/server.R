@@ -61,6 +61,7 @@ xcmsOut <- callModule(xcmsModule, "xcmsMod",
                                     filePattern = .MosaicOptions$filePattern)
     )
     
+callModule(GlobalOptionsModule, "globalopts", values = reactiveValues(GlobalOpts = GlobalOpts))
 
     
 }

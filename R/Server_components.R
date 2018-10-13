@@ -22,7 +22,7 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                   filegroups = NULL,
                                   projectName = paste0("MOSAiC_session_",strftime(Sys.time(),"%Y%m%d_%H%M%S")))
     
-    GlobalOpts <- callModule(GlobalOptionsModule, "globalopts")
+    GlobalOpts <- ListToReactiveValues(.MosaicOptions)
     
     
   }))

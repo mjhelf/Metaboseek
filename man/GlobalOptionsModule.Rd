@@ -4,7 +4,8 @@
 \alias{GlobalOptionsModule}
 \title{GlobalOptionsModule}
 \usage{
-GlobalOptionsModule(input, output, session)
+GlobalOptionsModule(input, output, session,
+  values = reactiveValues(GlobalOpts = GlobalOpts))
 }
 \arguments{
 \item{input}{}
