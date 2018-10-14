@@ -69,7 +69,6 @@ GlobalOptionsModule <- function(input,output, session,
    })
   
    observeEvent(MSFolder$dir,{
-          print("happening")
 if(length(SiriusFolder$dir) > 0 
    && !is.na(MSFolder$dir)
    ){

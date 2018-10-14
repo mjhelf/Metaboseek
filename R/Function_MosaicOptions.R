@@ -34,8 +34,9 @@ MosaicOptions <- function(..., defaults = F){
                              MLtoggle = T,
                              RTwindow = 30,
                              plotCx = 1,
-                             tICtoggle = F,
-                             colorscheme = "mosaic.colors")
+                             TICtoggle = F,
+                             colorscheme = "mosaic.colors",
+                             plotTransparency = 0.8)
     
   }
   else{
