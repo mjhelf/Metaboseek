@@ -18,8 +18,7 @@ MainPageContainer <- function(input,output, session,
   
   ns <- NS(session$ns(NULL))
   
-  callModule(WelcomePageModule,"topnews",
-                                show = reactive({T}))
+  
   
   OptionsBox <- callModule(OptionsContainer, "optionsbox",
                            values = reactiveValues(projectData = values$projectData,
@@ -69,9 +68,6 @@ MainPageContainerUI <- function(id){
   ns <- NS(id)
   
   fluidPage(
-    fluidRow(
-      WelcomePageModuleUI(ns("topnews"))
-    ),
     fluidRow(
       OptionsContainerUI(ns("optionsbox"))
     ),

@@ -29,6 +29,9 @@ SaveTableModule <- function(input,output, session,
   
   observeEvent(input$savetable,{
     
+    if(!is.null(values$featureTables)){
+      TableUpdateChunk()}
+    
     showModal(
       modalDialog(
         fluidPage(
@@ -50,10 +53,8 @@ SaveTableModule <- function(input,output, session,
   })
   
   output$modalDownload <- downloadHandler(filename= function(){basename(reactives()$filename)}, 
-                                          content = function(file){if(is.null(values$featureTables)){TableUpdateChunk()}
-
-                                            
-                                                                    write.table(if(is.null(values$featureTables)){reactives()$df}
+                                          content = function(file){
+                                            write.table(if(is.null(values$featureTables)){reactives()$df}
                                                                                else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
                                                                                file,
                                                                                sep = if(static$format =="tsv"){"\t"}else{","},

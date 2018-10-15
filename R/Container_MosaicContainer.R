@@ -14,6 +14,13 @@ MosaicContainer <- function(input,output, session){
   
   MosaicMinimalServer(diagnostics = .MosaicOptions$develMode, data = .MosaicOptions$loadExampleData, tables = .MosaicOptions$loadExampleTable)
   
+  StartPage <- callModule(WelcomePageModule,"startpage",
+                          values = reactiveValues(projectData = projectData,
+                                                  featureTables = featureTables,
+                                                  MSData = MSData,
+                                                  GlobalOpts = GlobalOpts),
+             show = reactive({T}))
+  
   MainPageContent <- callModule(MainPageContainer, "mainpagecontent",
                            values = reactiveValues(featureTables = featureTables,
                                                    MSData = MSData,
@@ -34,6 +41,16 @@ MosaicContainer <- function(input,output, session){
                                                                 refs = c("master", "devel", "devel_raw"),
                                                                 active = !.MosaicOptions$serverMode))
   
+  
+ observeEvent(StartPage$explore,{
+       print(StartPage$explore)
+   if(StartPage$explore){
+        updateTabItems(session, "MosaicSB", "exploredata")
+   }
+   
+   
+ })
+    
   
 }
 
@@ -58,6 +75,9 @@ MosaicContainerUI <- function(id){
                                file.info(system.file("config", "Mosaic_styles.css", package = "Mosaic"))$size)))),
                     
                     tabItems(
+                      tabItem(tabName = "start",
+                              WelcomePageModuleUI(ns("startpage"))
+                              ),
                       tabItem(tabName = "updateTab",
                               updaterModuleUI(ns('update'))
                       ),

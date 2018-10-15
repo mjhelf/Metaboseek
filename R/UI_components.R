@@ -92,15 +92,18 @@ MosaicSidebar <- function(..., id = NULL){
   if(!is.null(id)){
     ns <- NS(id)
     keyid <- ns("keyd")
+    SBid <- ns("MosaicSB")
   }else{
     keyid <- "keyd"
+    SBid <- "MosaicSB"
   }
   
   dashboardSidebar(
-  
+ 
 
   
   sidebarMenu(
+    id = SBid,
     useShinyjs(),
     
     shinyjs::extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
@@ -127,7 +130,7 @@ MosaicSidebar <- function(..., id = NULL){
                        ')),
     
     
-    
+    menuItem("Start", tabName = "start", icon = icon("home")),
     menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
     menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
     
@@ -136,7 +139,6 @@ MosaicSidebar <- function(..., id = NULL){
     menuItem("Update", tabName = "updateTab", icon = icon("upload")),
     ...,
     #bookmarkButton(label ="Bookmark this session"),
-    htmlOutput("activeTable"),
     #SelectActiveTableModuleUI("selectactivetable"),
     hr(),
     h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
