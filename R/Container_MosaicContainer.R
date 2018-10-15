@@ -43,7 +43,6 @@ MosaicContainer <- function(input,output, session){
   
   
  observeEvent(StartPage$explore,{
-       print(StartPage$explore)
    if(StartPage$explore){
         updateTabItems(session, "MosaicSB", "exploredata")
    }

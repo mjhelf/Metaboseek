@@ -39,7 +39,7 @@ background-color: #C41230;
 
 /* dashboard header items */
 .skin-black .main-header .navbar .nav > li > a:hover {
-background-color: #595959;
+background-color: #404040;
       color: #ffffff;
 }
 
@@ -63,7 +63,7 @@ background-color: #C41230;
 
 /* main sidebar */
   .skin-black .main-sidebar {
-    background-color: #595959;
+    background-color: #404040;
   }
 
 /* all content */
@@ -74,7 +74,7 @@ background-color: #C41230;
 
 /* background color in main window */
   .content-wrapper, .right-side {
-    background-color: #595959;
+    background-color: #404040;
   }
 
 /* active selected tab in the sidebarmenu */
@@ -85,7 +85,7 @@ background-color: #C41230;
 
 /* other links in the sidebarmenu */
   .skin-black .main-sidebar .sidebar .sidebar-menu a{
-    background-color: #595959;
+    background-color: #404040;
       color: #ffffff;
   }
 
@@ -102,7 +102,7 @@ background-color: #C41230;
 
 /* toggle button when hovered  */                    
   .skin-black .main-header .navbar .sidebar-toggle:hover{
-    background-color: #595959;
+    background-color: #404040;
       color: #ffffff;
   }
 
