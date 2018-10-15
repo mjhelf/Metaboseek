@@ -103,7 +103,7 @@ MosaicSidebar <- function(..., id = NULL){
   sidebarMenu(
     useShinyjs(),
     
-    extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
+    shinyjs::extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
     var element = document.documentElement,
       enterFS = element.requestFullscreen || element.msRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen,
       exitFS = document.exitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
