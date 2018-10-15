@@ -1,6 +1,6 @@
 Package: Mosaic
 Title: Metabolite Online Spectrum Analysis Center
-Version: 0.7.7
+Version: 0.7.99
 Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
 BiocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from a single, intuitive user interface, with powerful comparative metabolomics workflows!

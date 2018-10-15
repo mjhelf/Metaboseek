@@ -131,4 +131,19 @@ dashboardSidebar(
   
   
 )
-  }
+}
+
+
+
+#' mActionButton
+#'
+#' An actionButton that can optionally be colored in Cornell red
+#' 
+#' @param ... passed to shiny::actionButton
+#' @param red if True, button will be red
+#'
+mActionButton <- function(..., red = F){
+  
+  shiny::actionButton(..., style = if(red){"color: #fff; background-color: #C41230; border-color: #595959"}else{""})
+  
+}

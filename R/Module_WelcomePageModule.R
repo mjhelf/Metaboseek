@@ -27,29 +27,28 @@ WelcomePageModuleUI <- function(id){
 #' 
 #' @export
 WelcomePageModule <- function(input,output, session,
-                              values = reactiveValues(MSData = MSData)){
+                              show = reactive({T})){
   
   ns <- NS(session$ns(NULL))
   
   output$web <- renderUI({
     
-    if(is.null(values$MSData$data)){
+    if(show()){
     # div(title= "Welcome to Mosaic!",
-    box(width = 12, status= "primary",
-      fluidPage(
+    
       fluidRow(
-        column(6,
+        column(3,
                div(style="background-color:#595959",
                img(src = "/img/mosaic_logo.png",
                    alt = "Mosaic", style = "width:100%"))
                ),
         tryCatch({
           rl <- readLines(paste0('http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = ".")), n = 1)
-          column(6,
+          column(9,
                  HTML('
 <iframe id="inlineFrameExample"
 title="webpage" 
-style="border:none;width:100%;height:265px;" ',
+style="border:none;width:100%;height:130px;" ',
 paste0('src="http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = "."),'">'),
 #paste0('src="http://mosaic.bti.cornell.edu/welcome/">'),
 '</iframe>
@@ -58,14 +57,13 @@ paste0('src="http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVe
           
         },
         error = function(e){
-          column(8,
-                 h3("Welcome to Mosaic"),
-                 p("No MS data loaded")
+          column(9,
+                 h3("Welcome to Mosaic", style="color:#ffffff;")#,
+                 #p("No MS data loaded", style="color:#ffffff;")
           )
         })
       )
-    )
-)
+ 
     }
     
   })

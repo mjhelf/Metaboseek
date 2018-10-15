@@ -15,7 +15,8 @@ SaveTableModule <- function(input,output, session,
                             reactives = reactive({list(df = NULL,
                                                        filename = "table.csv")}),
                             values = reactiveValues(projectData = projectData,
-                                                    featureTables = NULL),
+                                                    featureTables = NULL,
+                                                    MainTable = NULL),
                             static = list(tooltip = "Save",
                                           label = "Save",
                                           format = c("tsv", "csv"))
@@ -49,7 +50,11 @@ SaveTableModule <- function(input,output, session,
   })
   
   output$modalDownload <- downloadHandler(filename= function(){basename(reactives()$filename)}, 
-                                          content = function(file){write.table(reactives()$df,
+                                          content = function(file){if(is.null(values$featureTables)){TableUpdateChunk()}
+
+                                            
+                                                                    write.table(if(is.null(values$featureTables)){reactives()$df}
+                                                                               else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
                                                                                file,
                                                                                sep = if(static$format =="tsv"){"\t"}else{","},
                                                                                quote = F,
@@ -74,8 +79,10 @@ SaveTableModule <- function(input,output, session,
       if(!dir.exists(dirname(file.path(values$projectData$projectFolder, reactives()$filename)))){
         dir.create(dirname(file.path(values$projectData$projectFolder, reactives()$filename)), recursive = T)
       }
+      if(is.null(values$featureTables)){TableUpdateChunk()}
       
-      write.table(reactives()$df,
+      write.table(if(is.null(values$featureTables)){reactives()$df}
+                  else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
                   file.path(values$projectData$projectFolder, reactives()$filename),
                   sep = if(static$format =="tsv"){"\t"}else{","},
                   quote = F,
