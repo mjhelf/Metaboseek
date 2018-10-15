@@ -5,7 +5,7 @@
 \title{EICmodule}
 \usage{
 EICmodule(input, output, session, values = reactiveValues(MSData =
-  MSData), keys)
+  MSData, GlobalOpts = GlobalOpts, MainTable = MainTable), keys)
 }
 \arguments{
 \item{input}{}

@@ -80,10 +80,6 @@ LoadDataModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      h4("Load data", style = "text-align:center;"),
-      hr()
-    ),
-    fluidRow(
       column(3, style = "text-align:center;", htmlOutput(ns("showfolder"))
       ),
       column(3, style = "justify-content:center;display:flex", SelectProjectFolderModuleUI(ns("projectfolder"))

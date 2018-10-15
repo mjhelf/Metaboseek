@@ -4,13 +4,9 @@
 \alias{runMosaic}
 \title{Run Mosaic}
 \usage{
-runMosaic(devel = F, server = T, ...)
+runMosaic(...)
 }
 \arguments{
-\item{devel}{Enable troubleshooting tools (default: FALSE). May constitute security risk if run on a publicly available server.}
-
-\item{server}{Enable server mode (users can not access file paths on the server directly), default is TRUE.}
-
 \item{...}{Additional arguments passed to shiny::runApp, e.g. to set up the port used or to make Mosaic reachable from other computers (with host = getOption("shiny.host", "0.0.0.0"))}
 }
 \description{
