@@ -199,8 +199,7 @@ RegroupMSDataModuleUI <- function(id){
                  LoadTableModuleUI(ns("tableLoader")))
     ),
     fluidRow(
-      div(class = "centerContainer",
-          simpleTableModuleUI(ns('groupingTable')))),
+          simpleTableModuleUI(ns('groupingTable'))),
     fluidRow(
       div(style="display:inline-block",
              div(title = "Add a new grouping scheme",

@@ -6,9 +6,9 @@
 \usage{
 MainTableModule(input, output, session,
   values = reactiveValues(featureTables = featureTables, GlobalOpts =
-  GlobalOpts), static = list(height = 300, readOnly = T, contextMenu = T,
-  fixedColumnsLeft = 1, invertReadOnly = NULL, controls = T, format =
-  list(col = NULL, format = NULL)))
+  GlobalOpts, projectData = projectData), static = list(height = 300,
+  readOnly = T, contextMenu = T, fixedColumnsLeft = 1, invertReadOnly =
+  NULL, controls = T, format = list(col = NULL, format = NULL)))
 }
 \arguments{
 \item{input}{}

@@ -49,7 +49,7 @@ MosaicContainerUI <- function(id){
   
   MosaicMinimalUI(skin = "black",
                   MosaicHeader(),
-                  MosaicSidebar(),
+                  MosaicSidebar(id = id),
                   dashboardBody(
                     
                     # Load custom CSS
@@ -77,6 +77,7 @@ MosaicContainerUI <- function(id){
                     
                   ) ,
                   diagnostics = .MosaicOptions$develMode,
-                  dashboard = T)
+                  dashboard = T,
+                  id = id)
   
 }

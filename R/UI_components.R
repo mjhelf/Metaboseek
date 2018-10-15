@@ -8,18 +8,25 @@
 #' @importFrom shiny fluidPage verbatimTextOutput
 #' 
 #' @export
-MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
+MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
+  
+  if(!is.null(id)){
+    ns <- NS(id)
+    keyid <- ns("keyd")
+  }else{
+    keyid <- "keyd"
+  }
   
   if(!dashboard){
     fluidPage(
-      tags$script('
+      tags$script(paste0('
                 $(document).on("keydown", function (e) {
-                Shiny.onInputChange("keyd", e.which);
+                Shiny.onInputChange("',keyid,'", e.which);
                 });
                 $(document).on("keyup", function (e) {
-                Shiny.onInputChange("keyd", "NO");
+                Shiny.onInputChange("',keyid,'", "NO");
                 });
-                '),
+                ')),
       if(diagnostics){
         fluidPage(
           ...,
@@ -81,8 +88,17 @@ dashboardHeader(title = "MOSAiC",
 #' generates the dashboardSidebar for Mosaic.
 #' 
 #' @export
-MosaicSidebar <- function(...){
-dashboardSidebar(
+MosaicSidebar <- function(..., id = NULL){
+  if(!is.null(id)){
+    ns <- NS(id)
+    keyid <- ns("keyd")
+  }else{
+    keyid <- "keyd"
+  }
+  
+  dashboardSidebar(
+  
+
   
   sidebarMenu(
     useShinyjs(),
@@ -101,14 +117,14 @@ dashboardSidebar(
     
     ##DETECT KEYBOARD ACTIONS
     ##key being held down
-    tags$script('
-                                  $(document).on("keydown", function (e) {
-                                  Shiny.onInputChange("keyd", e.which);
-                                  });
-                                  $(document).on("keyup", function (e) {
-                                  Shiny.onInputChange("keyd", "NO");
-                                  });
-                                  '),
+    tags$script(paste0('
+                $(document).on("keydown", function (e) {
+                       Shiny.onInputChange("',keyid,'", e.which);
+});
+                       $(document).on("keyup", function (e) {
+                       Shiny.onInputChange("',keyid,'", "NO");
+                       });
+                       ')),
     
     
     

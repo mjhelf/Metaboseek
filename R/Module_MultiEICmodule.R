@@ -46,7 +46,6 @@ MultiEICmodule <- function(input, output, session,
                                                                           keys = keys)
     
     internalValues[[paste0("EIC", internalValues$numEICs)]]$removable <- T
-    print("addedone")
   })
   
   
