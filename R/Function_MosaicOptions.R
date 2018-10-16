@@ -57,7 +57,7 @@ MosaicOptions <- function(..., defaults = F){
     
   }
   
-  if(gsub("/Mosaic","",system.file(package = "Mosaic")) %in% .libPaths()){
+  if(dirname(system.file(package = "Mosaic")) %in% .libPaths()){
     write(jsonlite::serializeJSON(.MosaicOptions, pretty = T), file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json"))
   }
   
