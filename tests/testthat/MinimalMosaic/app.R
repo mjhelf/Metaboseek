@@ -1,0 +1,19 @@
+library(Mosaic)
+library(shiny)
+library(shinyjs)
+
+#MosaicExamplePreload()
+
+ui <- MosaicMinimalUI(diagnostics = T)
+
+server <- function(input, output) {
+  MosaicMinimalServer(diagnostics = T, data = F, tables = F)
+  
+  output$diag <- renderPrint({
+    print(featureTables$tables$table0)
+  })
+  
+  }
+
+# Create Shiny app ----
+shinyApp(ui, server)

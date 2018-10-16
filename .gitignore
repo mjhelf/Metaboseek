@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+inst/doc
+Mosaic.Rproj
+mosaic.Rproj
+inst/config/MosaicOptions.json
