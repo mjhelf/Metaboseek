@@ -63,7 +63,10 @@ WelcomePageModule <- function(input,output, session,
                                 fluidRow(
                                  
                                          LoadDataModuleUI(ns("startdataload"))
-                                  )
+                                  ),
+                                fluidRow(
+                                  div(style="height:5px")
+                                )
                               )
           )
           
