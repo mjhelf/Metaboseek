@@ -45,7 +45,7 @@ MainPlotContainer <- function(input,output, session,
   #### Quickplots #####
   callModule(featurePlotModule, "quickplots",
              FT = reactive({values$featureTables$tables[[values$featureTables$active]]}),
-             rname = reactive({row.names(hot_to_r(input$maintable))[maintabsel()$rrng[1]]})
+             rname = reactive({row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],])})
   )
   
   #### interactiveView #####
