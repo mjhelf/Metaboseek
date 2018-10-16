@@ -4,7 +4,9 @@
 \alias{FilterModule}
 \title{FilterModule}
 \usage{
-FilterModule(input, output, session, lab = "Filter", tag, df, presets)
+FilterModule(input, output, session,
+  values = reactiveValues(featureTables = featureTables, MultiFilter =
+  MultiFilter), static = list(lab = "Filter"))
 }
 \arguments{
 \item{input}{}
@@ -13,13 +15,11 @@ FilterModule(input, output, session, lab = "Filter", tag, df, presets)
 
 \item{session}{}
 
-\item{lab}{heading of this module in UI}
+\item{values}{Import data from the shiny session}
 
-\item{tag}{same as id in UI module}
+\item{static}{Import data from the shiny session}
 
-\item{df}{data frame to be filtered}
-
-\item{presets}{Mosaic featureTable object filter$filter}
+\item{reactives}{Import data from the shiny session}
 }
 \description{
 Module to apply filters to a featureTable (UI)

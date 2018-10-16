@@ -8,18 +8,25 @@
 #' @importFrom shiny fluidPage verbatimTextOutput
 #' 
 #' @export
-MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F){
+MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
+  
+  if(!is.null(id)){
+    ns <- NS(id)
+    keyid <- ns("keyd")
+  }else{
+    keyid <- "keyd"
+  }
   
   if(!dashboard){
     fluidPage(
-      tags$script('
+      tags$script(paste0('
                 $(document).on("keydown", function (e) {
-                Shiny.onInputChange("keyd", e.which);
+                Shiny.onInputChange("',keyid,'", e.which);
                 });
                 $(document).on("keyup", function (e) {
-                Shiny.onInputChange("keyd", "NO");
+                Shiny.onInputChange("',keyid,'", "NO");
                 });
-                '),
+                ')),
       if(diagnostics){
         fluidPage(
           ...,
@@ -81,13 +88,25 @@ dashboardHeader(title = "MOSAiC",
 #' generates the dashboardSidebar for Mosaic.
 #' 
 #' @export
-MosaicSidebar <- function(...){
-dashboardSidebar(
+MosaicSidebar <- function(..., id = NULL){
+  if(!is.null(id)){
+    ns <- NS(id)
+    keyid <- ns("keyd")
+    SBid <- ns("MosaicSB")
+  }else{
+    keyid <- "keyd"
+    SBid <- "MosaicSB"
+  }
+  
+  dashboardSidebar(
+ 
+
   
   sidebarMenu(
+    id = SBid,
     useShinyjs(),
     
-    extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
+    shinyjs::extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
     var element = document.documentElement,
       enterFS = element.requestFullscreen || element.msRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen,
       exitFS = document.exitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
@@ -101,17 +120,17 @@ dashboardSidebar(
     
     ##DETECT KEYBOARD ACTIONS
     ##key being held down
-    tags$script('
-                                  $(document).on("keydown", function (e) {
-                                  Shiny.onInputChange("keyd", e.which);
-                                  });
-                                  $(document).on("keyup", function (e) {
-                                  Shiny.onInputChange("keyd", "NO");
-                                  });
-                                  '),
+    tags$script(paste0('
+                $(document).on("keydown", function (e) {
+                       Shiny.onInputChange("',keyid,'", e.which);
+});
+                       $(document).on("keyup", function (e) {
+                       Shiny.onInputChange("',keyid,'", "NO");
+                       });
+                       ')),
     
     
-    
+    menuItem("Start", tabName = "start", icon = icon("home")),
     menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
     menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
     
@@ -120,7 +139,6 @@ dashboardSidebar(
     menuItem("Update", tabName = "updateTab", icon = icon("upload")),
     ...,
     #bookmarkButton(label ="Bookmark this session"),
-    htmlOutput("activeTable"),
     #SelectActiveTableModuleUI("selectactivetable"),
     hr(),
     h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
@@ -131,4 +149,19 @@ dashboardSidebar(
   
   
 )
-  }
+}
+
+
+
+#' mActionButton
+#'
+#' An actionButton that can optionally be colored in Cornell red
+#' 
+#' @param ... passed to shiny::actionButton
+#' @param red if True, button will be red
+#'
+mActionButton <- function(..., red = F){
+  
+  shiny::actionButton(..., style = if(red){"color: #fff; background-color: #C41230; border-color: #595959"}else{""})
+  
+}

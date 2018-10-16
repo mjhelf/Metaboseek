@@ -4,7 +4,7 @@
 \alias{MosaicSidebar}
 \title{MosaicSidebar}
 \usage{
-MosaicSidebar(...)
+MosaicSidebar(..., id = NULL)
 }
 \description{
 generates the dashboardSidebar for Mosaic.

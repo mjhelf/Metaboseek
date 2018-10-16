@@ -22,7 +22,7 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                   filegroups = NULL,
                                   projectName = paste0("MOSAiC_session_",strftime(Sys.time(),"%Y%m%d_%H%M%S")))
     
-    GlobalOpts <- callModule(GlobalOptionsModule, "globalopts")
+    GlobalOpts <- ListToReactiveValues(.MosaicOptions)
     
     
   }))
@@ -104,30 +104,30 @@ MosaicMinimalServer <- function(data = T, tables = T, diagnostics = T){
 MosaicExamplePreload <- function(tables = T, data = T){
   if(tables){
     eval.parent(quote({
-      tab1 <- constructFeatureTable (df= read.csv(system.file("data", "tables", "mini_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
+      tab1 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example projectfolder", "mini_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
                                      rtcol= "rt", #column in df with mz values (columnname)
                                      commentcol = "comments",
                                      fragmentcol = "fragments",
                                      rtFormat = "sec", # "sec" or "min" 
-                                     anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
+                                     anagrouptable = read.csv(system.file("extdata","examples", "example projectfolder", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
                                      tablename = "mini_example_features.csv",
                                      editable = F)
       
-      tab2 <- constructFeatureTable (df= read.csv(system.file("data", "tables", "large_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
+      tab2 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example projectfolder", "large_example_features.csv", package = "Mosaic"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
                                      rtcol= "rt", #column in df with mz values (columnname)
                                      commentcol = "comments",
                                      fragmentcol = "fragments",
                                      rtFormat = "sec", # "sec" or "min" 
-                                     anagrouptable = read.csv(system.file("data", "tables", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
+                                     anagrouptable = read.csv(system.file("extdata","examples", "example projectfolder", "analysis_groups.csv", package = "Mosaic"), stringsAsFactors = F),
                                      tablename = "large_example_features.csv",
                                      editable = F)
     }))}
   
   if(data){
     eval.parent(quote({
-      rawgroups <- read.csv(system.file("data", "tables", "filegroups.csv", package = "Mosaic"), stringsAsFactors = F)
+      rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "Mosaic"), stringsAsFactors = F)
       
       MSD <- list(layouts = list(Group1 = constructRawLayout(rawgrouptable = rawgroups)), #List of rawfile paths (unsorted)
                   rawgrouptable = NULL,

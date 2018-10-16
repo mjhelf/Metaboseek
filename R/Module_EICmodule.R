@@ -10,7 +10,9 @@
 #' 
 #' @export 
 EICmodule <- function(input, output, session, 
-                      values = reactiveValues(MSData = MSData),
+                      values = reactiveValues(MSData = MSData,
+                                              GlobalOpts = GlobalOpts,
+                                              MainTable = MainTable),
                       keys){
   
   ####Initialization####
@@ -47,13 +49,13 @@ EICmodule <- function(input, output, session,
     }
   })
   
-  observeEvent(c(values$MSData$selectedFeats),{
+  observeEvent(c(values$MainTable$selected_rows),{
     
-    if((is.null(input$hotl) || input$hotl)  && !is.null(values$MSData$selectedFeats)){
-      internalValues$controls$mz <- values$MSData$selectedFeats$mz[1]
+    if((is.null(input$hotl) || input$hotl)  && !is.null(values$MainTable$selected_rows)){
+      internalValues$controls$mz <- values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]
       
-      internalValues$controls$xrange <- c(max(0,values$MSData$selectedFeats$rt[1] - values$MSData$layouts[[values$MSData$active]]$settings$rtw),
-                                          values$MSData$selectedFeats$rt[1] + values$MSData$layouts[[values$MSData$active]]$settings$rtw)/60
+      internalValues$controls$xrange <- c(max(0,values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] - values$GlobalOpts$RTwindow),
+                                          values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow)/60
       
     }
   })
@@ -92,11 +94,6 @@ EICmodule <- function(input, output, session,
       internalValues$active <- FALSE
     }
   })
-  
-  observe({
-    
-  })
-  
   
   
   #### ** TIC checkbox ####
@@ -167,8 +164,8 @@ EICmodule <- function(input, output, session,
               ylim = if(!is.null(internalValues$controls$yrange)){internalValues$controls$yrange}else{internalValues$controls$maxyrange}, 
               xlim = if(!is.null(internalValues$controls$xrange)){internalValues$controls$xrange}else{internalValues$controls$maxxrange},
               legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(internalValues$EICs[[1]])))),
-              colr = do.call(values$MSData$layouts[[values$MSData$active]]$settings$colr, list(n = nrow(internalValues$EICs[[1]]), alpha=0.8)),
-              heading = if(input$EicTic){"TICs"}else{paste0("EIC for m/z ", round(input$selMZ,5), " +/- ",round(values$MSData$layouts[[values$MSData$active]]$settings$ppm,1), " ppm")},
+              colr = do.call(values$GlobalOpts$colorscheme, list(n = nrow(internalValues$EICs[[1]]), alpha=0.8)),
+              heading = if(input$EicTic){"TICs"}else{paste0("EIC for m/z ", round(input$selMZ,5), " +/- ",round(values$GlobalOpts$PPMwindow,1), " ppm")},
               relto = NULL,
               TIC = input$EicTic,
               single = T,
@@ -303,8 +300,8 @@ EICmodule <- function(input, output, session,
     if(internalValues$active && length(input$selEICs)>0){
       
       internalValues$EICs <- multiEICplus(adducts = c(0),
-                                          mz = data.frame(mzmin = max(1,internalValues$controls$mz-internalValues$controls$mz*values$MSData$layouts[[values$MSData$active]]$settings$ppm*1e-6),
-                                                          mzmax = max(1,internalValues$controls$mz+internalValues$controls$mz*values$MSData$layouts[[values$MSData$active]]$settings$ppm*1e-6)),
+                                          mz = data.frame(mzmin = max(1,internalValues$controls$mz-internalValues$controls$mz*values$GlobalOpts$PPMwindow*1e-6),
+                                                          mzmax = max(1,internalValues$controls$mz+internalValues$controls$mz*values$GlobalOpts$PPMwindow*1e-6)),
                                           rt = NULL, #data.frame(rtmin = min(internalValues$controls$xrange)*60, rtmax = min(internalValues$controls$xrange)*60),#  NULL,#data.frame(rtmin = FT$df$rt[1]-5, rtmax= FT$df$rt[1]+5),
                                           rnames = 1:length(internalValues$controls$mz),
                                           rawdata= values$MSData$data[which(basename(names(values$MSData$data)) %in% input$selEICs)],

@@ -11,7 +11,7 @@
 #' @param static Import data from the shiny session
 #' 
 #' @import shiny
-#' @importFrom shinyjs toggle
+#' @importFrom shinyjs toggle toggleElement
 #' 
 #' @export 
 PlotBrowserModule <- function(input,output, session,

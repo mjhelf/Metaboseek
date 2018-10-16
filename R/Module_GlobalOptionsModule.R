@@ -11,19 +11,17 @@
 #' @importFrom parallel detectCores
 #' 
 #' @export 
-GlobalOptionsModule <- function(input,output, session){
+GlobalOptionsModule <- function(input,output, session,
+                                values = reactiveValues(GlobalOpts = GlobalOpts)){
   #### Initialization ####
   
   ns <- NS(session$ns(NULL))
   
-   internalValues <- ListToReactiveValues(.MosaicOptions)
-   
-
    output$EnabledCores <- renderUI({
      
      div(id = ns("EnabledCoresDiv"), title= "How many cores should be used for parallel processing?",
          numericInput(ns('EnabledCores'), 'Enabled cores',
-                        value = internalValues$enabledCores,
+                        value = values$GlobalOpts$enabledCores,
                         min = 1,
                       max = parallel::detectCores(all.tests = FALSE, logical = TRUE),
                       step = 1)
@@ -39,14 +37,14 @@ GlobalOptionsModule <- function(input,output, session){
          title = "How many features should be shown per page?",
          numericInput(ns('perPage'), 
                       'Per page',
-                      value = internalValues$perPage,
+                      value = values$GlobalOpts$perPage,
                       min = 1,
                       max = 200,
                       step = 1))
    })
    
    MSFolder <- callModule(FilePathModule, "msFolder",
-                          filepaths = reactive({internalValues$filePaths}),
+                          filepaths = reactive({values$GlobalOpts$filePaths}),
                           label = "Database Folder", description= "Select folder for MS annotation database",
                           displayFolder = T)
    
@@ -54,41 +52,39 @@ GlobalOptionsModule <- function(input,output, session){
      
    
    SiriusFolder <- callModule(FilePathModule, "siriusFolder",
-                              filepaths = reactive({internalValues$filePaths}),
+                              filepaths = reactive({values$GlobalOpts$filePaths}),
                               label = "Sirius Folder", description= "Select folder that contains the sirius executable (sirius-console-64.exe or sirius in linux/macOS)",
                               displayFolder = T)
    
    SiriusFolder$dir <- .MosaicOptions$siriusFolder
    
     observeEvent(input$EnabledCores,{
-     internalValues$enabledCores <- input$EnabledCores
+     values$GlobalOpts$enabledCores <- input$EnabledCores
      MosaicOptions(enabledCores = input$EnabledCores)
    })
    
    observeEvent(input$perPage,{
-     internalValues$perPage <- input$perPage
+     values$GlobalOpts$perPage <- input$perPage
      MosaicOptions(perPage=input$perPage)
    })
   
    observeEvent(MSFolder$dir,{
-          print("happening")
 if(length(SiriusFolder$dir) > 0 
    && !is.na(MSFolder$dir)
    ){
-       internalValues$msdatabaseFolder <- MSFolder$dir
+       values$GlobalOpts$msdatabaseFolder <- MSFolder$dir
        MosaicOptions(msdatabaseFolder=MSFolder$dir)
      }
    }, ignoreInit =T)
    
    observeEvent(SiriusFolder$dir,{
      if(length(SiriusFolder$dir) > 0 && !is.na(SiriusFolder$dir)){
-     internalValues$siriusFolder <- SiriusFolder$dir
+     values$GlobalOpts$siriusFolder <- SiriusFolder$dir
      MosaicOptions(siriusFolder=SiriusFolder$dir)
      }
    }, ignoreInit =T)
    
- return(internalValues)
-  
+
 }
 
 #' GlobalOptionsModuleUI

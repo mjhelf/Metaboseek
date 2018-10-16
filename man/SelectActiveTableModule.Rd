@@ -5,7 +5,8 @@
 \title{SelectActiveTableModule}
 \usage{
 SelectActiveTableModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables))
+  values = reactiveValues(featureTables = featureTables, MainTable =
+  MainTable))
 }
 \arguments{
 \item{input}{}

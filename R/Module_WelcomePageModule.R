@@ -1,18 +1,3 @@
-#' WelcomePageModuleUI
-#' 
-#' 
-#' @param id id of the shiny module
-#' 
-#' @export
-WelcomePageModuleUI <- function(id){
-  ns <- NS(id)
-  
-  htmlOutput(ns("web"))
-  
-  
-}
-
-
 #' WelcomePageModule
 #' 
 #' 
@@ -27,46 +12,110 @@ WelcomePageModuleUI <- function(id){
 #' 
 #' @export
 WelcomePageModule <- function(input,output, session,
-                              values = reactiveValues(MSData = MSData)){
+                              values = reactiveValues(projectData = values$projectData,
+                                                      featureTables = values$featureTables,
+                                                      MSData = values$MSData,
+                                                      GlobalOpts = values$GlobalOpts),
+                              show = reactive({T})){
   
   ns <- NS(session$ns(NULL))
   
+  StartDataLoad <- callModule(LoadDataModule, "startdataload",
+                              values = reactiveValues(projectData = values$projectData,
+                                                      featureTables = values$featureTables,
+                                                      MSData = values$MSData,
+                                                      GlobalOpts = values$GlobalOpts)
+  )
+  
+  internalValues <- reactiveValues(explore = F,
+                                   StartDataLoad = StartDataLoad)
+  
+  observeEvent(c(values$MSData$data, values$featureTables$tables),{
+    
+    if(!is.null(values$MSData$data) || length(values$featureTables$index) > 1){
+      
+      internalValues$explore <- T
+    }
+  })
+  
   output$web <- renderUI({
     
-    if(is.null(values$MSData$data)){
-    # div(title= "Welcome to Mosaic!",
-    box(width = 12, status= "primary",
+    if(show()){
+      # div(title= "Welcome to Mosaic!",
       fluidPage(
-      fluidRow(
-        column(6,
-               div(style="background-color:#595959",
-               img(src = "/img/mosaic_logo.png",
-                   alt = "Mosaic", style = "width:100%"))
-               ),
-        tryCatch({
-          rl <- readLines(paste0('http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = ".")), n = 1)
+        fluidRow(
+          column(3),
           column(6,
-                 HTML('
-<iframe id="inlineFrameExample"
-title="webpage" 
-style="border:none;width:100%;height:265px;" ',
-paste0('src="http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = "."),'">'),
-#paste0('src="http://mosaic.bti.cornell.edu/welcome/">'),
-'</iframe>
-              ')
+                 img(src = "/img/mosaic_logo.png",
+                     alt = "Mosaic", style = "width:100%")
+          ),
+          column(3)
+          ),
+        fluidRow(
+          shinydashboard::box(status = "primary", width = 12, solidHeader = T,
+                              title = "Welcome to MOSAiC!",
+                              fluidPage(
+                                fluidRow(
+                                  
+                                  p("Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.", style = "text-align:center;"),
+                                hr()
+                                  ),
+                                fluidRow(
+                                 
+                                         LoadDataModuleUI(ns("startdataload"))
+                                  ),
+                                fluidRow(
+                                  div(style="height:5px")
+                                )
+                              )
           )
           
-        },
-        error = function(e){
-          column(8,
-                 h3("Welcome to Mosaic"),
-                 p("No MS data loaded")
-          )
-        })
+        ),
+        div(style="height:4px;"),
+        
+        fluidRow(
+          tryCatch({
+            rl <- readLines(paste0('http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = ".")), n = 1)
+            
+            HTML('
+<iframe id="inlineFrameExample"
+title="webpage" 
+style="border:none;width:100%;height:500px;" ',
+                 paste0('src="http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = "."),'">'),
+                 #paste0('src="http://mosaic.bti.cornell.edu/welcome/">'),
+                 '</iframe>
+              ')
+            
+            
+          },
+          error = function(e){
+            
+            
+            
+          })
+        )
+        
       )
-    )
-)
     }
     
   })
+  
+  return(internalValues)
+}
+
+
+#' WelcomePageModuleUI
+#' 
+#' 
+#' @param id id of the shiny module
+#' 
+#' @export
+WelcomePageModuleUI <- function(id){
+  ns <- NS(id)
+  
+  
+  
+  htmlOutput(ns("web"))
+  
+  
 }

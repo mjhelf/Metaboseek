@@ -4,8 +4,10 @@
 \alias{WelcomePageModule}
 \title{WelcomePageModule}
 \usage{
-WelcomePageModule(input, output, session, values = reactiveValues(MSData
-  = MSData))
+WelcomePageModule(input, output, session,
+  values = reactiveValues(projectData = values$projectData, featureTables
+  = values$featureTables, MSData = values$MSData, GlobalOpts =
+  values$GlobalOpts), show = reactive({     T }))
 }
 \arguments{
 \item{input}{}

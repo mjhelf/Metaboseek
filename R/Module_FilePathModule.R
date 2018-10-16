@@ -67,7 +67,7 @@ FilePathModule <- function(input, output, session,
          if(!selectFile){
          ifelse(length(internalValues$dir) == 0 || is.na(internalValues$dir), "No folder selected", internalValues$dir)}
          else{
-           ifelse(class(internalValues$files) != "data.frame" || nrow(internalValues$files) == 0, "No files selected",  paste(basename(internalValues$files$datapath), collapse = ", "))
+           ifelse(is.null(internalValues$files) || nrow(internalValues$files) == 0, "No files selected",  paste(basename(internalValues$files$datapath), collapse = ", "))
          },
          '
  

@@ -23,12 +23,12 @@ EICOptionsModule <- function(input,output, session,
   
   
   output$TICtoggle <- renderUI({
-    checkboxInput(ns("TICtoggle"),"TIC", value = values$GlobalOpts$tICtoggle)
+    checkboxInput(ns("TICtoggle"),"TIC", value = values$GlobalOpts$TICtoggle)
   })
   
   observeEvent(input$TICtoggle,{
-    values$GlobalOpts$tICtoggle <- input$tICtoggle
-    MosaicOptions(tICtoggle = input$tICtoggle)
+    values$GlobalOpts$TICtoggle <- input$TICtoggle
+    MosaicOptions(TICtoggle = input$TICtoggle)
   })
   
   observeEvent(input$RTwindow,{
