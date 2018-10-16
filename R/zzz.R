@@ -18,7 +18,7 @@
   
   #Update example ms file locations
   if(gsub("/Mosaic","",system.file(package = "Mosaic")) %in% .libPaths()
-     && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups_ms1.csv", package = "Mosaic"))){
+     && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "Mosaic"))){
     rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "Mosaic"), stringsAsFactors = F, row.names = 1)
     rawgroups$File <- file.path(system.file("extdata", "examples", package = "Mosaic"), rawgroups$File)
     write.csv(rawgroups, system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "Mosaic"))
