@@ -16,7 +16,7 @@ MosaicOptions <- function(..., defaults = F){
                              loadExampleData = FALSE,
                              loadExampleTable = FALSE,
                              enabledCores = 4,
-                             filePaths = c(examples = system.file("data", package = "Mosaic"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
+                             filePaths = c(examples = system.file("extdata","examples", package = "Mosaic"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
                              filePattern = paste(
                                paste("\\.", 
                                      c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
@@ -44,7 +44,7 @@ MosaicOptions <- function(..., defaults = F){
   }
   
   if(!.MosaicOptions$serverMode && Sys.info()['sysname'] == "Windows"){
-    .MosaicOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("data", package = "Mosaic"), checkFolders())
+    .MosaicOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "Mosaic"), checkFolders())
   }  
   
   

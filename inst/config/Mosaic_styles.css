@@ -158,6 +158,31 @@ background-color: #C41230;
 
 }
 
+.box.box-solid.box-primary > .box-header {
+
+    color: #fff;
+    background: #C41230;
+    background-color: #C41230;
+    text-align: center;
+
+}
+
+.box.box-solid.box-primary > .box-header > h3 {
+
+    font-size: 14pt;
+    font-weight: bold;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 5px;
+
+}
+
+.box.box-solid.box-primary {
+
+    border: 1px solid #404040;
+
+}
+
+
 /* margins under input elements */
 .form-group {
 

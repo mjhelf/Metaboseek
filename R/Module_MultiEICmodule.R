@@ -62,8 +62,6 @@ MultiEICmodule <- function(input, output, session,
   })
   
   output$eicUIs <- renderUI({
-    print(paste0("rerendering with ", internalValues$numEICs))
-    
     lapply(seq(internalValues$numEICs), function(i){
       EICmoduleUI(ns(paste0("EIC",i)))
     })

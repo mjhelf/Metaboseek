@@ -52,11 +52,12 @@ WelcomePageModule <- function(input,output, session,
           column(3)
           ),
         fluidRow(
-          shinydashboard::box(status = "primary", width = 12,
+          shinydashboard::box(status = "primary", width = 12, solidHeader = T,
+                              title = "Welcome to MOSAiC!",
                               fluidPage(
                                 fluidRow(
-                                  h4("Welcome to Mosaic!", style = "text-align:center;"),
-                                  p("Go ahead and load your data below. You can load a Feature Table, any number of compatible MS data files, or a Project folder."),
+                                  
+                                  p("Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.", style = "text-align:center;"),
                                 hr()
                                   ),
                                 fluidRow(
@@ -67,7 +68,7 @@ WelcomePageModule <- function(input,output, session,
           )
           
         ),
-        
+        div(style="height:4px;"),
         
         fluidRow(
           tryCatch({
