@@ -74,7 +74,7 @@ MultiFilterModule <- function(input,output, session,
   
   
   
-  observeEvent(values$featureTables$active,{
+  observeEvent(values$featureTables$tables[[values$featureTables$active]]$df,{
     internalValues$outdated <- T
     internalValues$colnames <- colnames(values$featureTables$tables[[values$featureTables$active]]$df)
   })
