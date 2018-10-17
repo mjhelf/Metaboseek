@@ -1178,9 +1178,9 @@
         },
         {
           "name": "handsontable",
-          "version": "3.0.0",
+          "version": "0.35.0",
           "src": {
-            "href": "handsontable-3.0.0"
+            "href": "handsontable-0.35.0"
           },
           "meta": null,
           "script": "handsontable.full.min.js",
@@ -1248,9 +1248,9 @@
         },
         {
           "name": "rhandsontable",
-          "version": "0.3.6.1",
+          "version": "0.3.6",
           "src": {
-            "href": "rhandsontable-0.3.6.1"
+            "href": "rhandsontable-0.3.6"
           },
           "meta": null,
           "script": null,
@@ -1262,9 +1262,9 @@
         },
         {
           "name": "rhandsontable-binding",
-          "version": "0.3.6.1",
+          "version": "0.3.6",
           "src": {
-            "href": "rhandsontable-binding-0.3.6.1"
+            "href": "rhandsontable-binding-0.3.6"
           },
           "meta": null,
           "script": "rhandsontable.js",

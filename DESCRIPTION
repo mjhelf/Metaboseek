@@ -27,7 +27,6 @@ Imports: Biobase,
     shinydashboard,
     shinyFiles,
     shinyjs,
-    shinythemes,
     TeachingDemos,
     xcms (>= 3.0)
 Suggests: covr,
