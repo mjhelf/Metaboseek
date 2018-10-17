@@ -12,6 +12,15 @@ install:
 
 cache:
   - C:\RLibrary
+  
+platform: x64
+
+environment:
+  USE_RTOOLS: true
+  WARNINGS_ARE_ERRORS:
+  R_ARCH: x64
+
+
 
 # Adapt as necessary starting from here
 
