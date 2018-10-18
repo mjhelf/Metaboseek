@@ -1,9 +1,9 @@
 context("Class MSData")
 
 #A simple list from files in the trimmed example
-mutfile <-  list.files(system.file("data", "ms1", "mut", package = "Mosaic"), full.names = T, pattern = ".mzXML")
+mutfile <-  list.files(system.file("extdata", "examples", "ms1", "mut", package = "Mosaic"), full.names = T, pattern = ".mzXML")
 
-wtfile <-  list.files(system.file("data", "ms1", "wt", package = "Mosaic"), full.names = T, pattern = ".mzXML")
+wtfile <-  list.files(system.file("extdata", "examples", "ms1", "wt", package = "Mosaic"), full.names = T, pattern = ".mzXML")
 
 rgt <- data.frame(File = c(mutfile,wtfile),
                   Group = c(rep("mut",length(mutfile)), rep("wt",length(wtfile))),
@@ -14,7 +14,7 @@ y <- loadRawM(filelist = xt$filelist, MSn = T, workers =1)
 #Tests for the constructRawLayout function#
 
 test_that("rawgrouptable in the constructRawLayout function works",{
-  expect_equal(xt$rawgrouptable[[1]][1], system.file("data", "ms1", "mut","AA03.mzXML", package = "Mosaic"))})
+  expect_equal(xt$rawgrouptable[[1]][1], system.file("extdata", "examples", "ms1", "mut","AA03.mzXML", package = "Mosaic"))})
 
 test_that("groups in rawgrouptable in the constructRawLayout function are correct",{
   expect_equal(names(xt$grouping), c("mut", "wt"))})
@@ -73,8 +73,8 @@ test_that("rawEICm function works",{
 #Tests for getgauss
 #not sure what cor is equal to...
 test_that("getgauss function works",{
-  g <- getgauss(x = c(1:100),1) 
-  expect_equivalent(g, 0.9961026, tolerance = 0.0000001)
+  g <- getgauss(y = c(1:10,10:1),1) 
+  expect_equivalent(g, 0.9959037, tolerance = 0.000001)
 })
 
 #Tests for bestgauss

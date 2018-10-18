@@ -1,7 +1,9 @@
 library(testthat)
 library(Mosaic)
 library(shinytest)
-library(xcms) #getgauss() does not work otherwise -- needs fix!
+
+  if (!dependenciesInstalled()) {installDependencies()}
+  message("Using phantom.js from ", shinytest:::find_phantom(), "\n")
 
 #test_dir("./tests/testthat/")
 

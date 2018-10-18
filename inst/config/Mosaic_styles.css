@@ -1,0 +1,286 @@
+/* custom classes */
+.bottomHolder {
+      
+      position: absolute;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      bottom: 5px;
+      left: 0;
+      right: 0;
+      
+    }
+
+.centerContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* logo */
+  .skin-black .main-header .logo {
+    background-color: #C41230;
+      color: #ffffff;
+  }
+
+/* logo when hovered */
+  .skin-black .main-header .logo:hover {
+    background-color: #C41230;
+  }
+
+/* dashboard header items */
+.skin-black .main-header .navbar .nav > li > a {
+background-color: #C41230;
+    position: relative;
+
+}
+
+/* dashboard header items */
+.skin-black .main-header .navbar .nav > li > a:hover {
+background-color: #404040;
+      color: #ffffff;
+}
+
+/* dashboard header items */
+.skin-black .main-header .navbar .nav > li > a:active {
+background-color: #C41230;
+      color: #ffffff;
+}
+
+/* dashboard header items */
+.skin-black .main-header .navbar .nav > li > a:focus {
+background-color: #C41230;
+      color: #ffffff;
+}
+
+/* navbar (rest of the header) */
+  .skin-black .main-header .navbar {
+    background-color: #C41230;
+      color: #ffffff;
+  }        
+
+/* main sidebar */
+  .skin-black .main-sidebar {
+    background-color: #404040;
+  }
+
+/* all content */
+.content {
+    min-height: 250px;
+    padding: 5px;
+}
+
+/* background color in main window */
+  .content-wrapper, .right-side {
+    background-color: #404040;
+  }
+
+/* active selected tab in the sidebarmenu */
+  .skin-black .main-sidebar .sidebar .sidebar-menu .active a{
+    background-color: #404040;
+      color: #ffffff;
+  }
+
+/* other links in the sidebarmenu */
+  .skin-black .main-sidebar .sidebar .sidebar-menu a{
+    background-color: #404040;
+      color: #ffffff;
+  }
+
+/* other links in the sidebarmenu when hovered */
+  .skin-black .main-sidebar .sidebar .sidebar-menu a:hover{
+    background-color: #404040;
+  }
+
+/* toggle button  */                    
+  .skin-black .main-header .navbar .sidebar-toggle{
+    background-color: #C41230;
+      color: #ffffff;
+  }
+
+/* toggle button when hovered  */                    
+  .skin-black .main-header .navbar .sidebar-toggle:hover{
+    background-color: #404040;
+      color: #ffffff;
+  }
+
+
+
+
+.skin-black.box.box-solid.box-primary>.box-header {
+  color:#FFFFFF;
+    background-color:#C41230;}
+    
+    .skin-black.box.box-solid.box-primary{
+      border-bottom-color:#C41230;
+        border-left-color:#C41230;
+        border-right-color:#C41230;
+        border-top-color:#C41230;
+    }
+  
+  /* color of sliver in selected tabs of tabBoxes */
+    .nav-tabs-custom .nav-tabs li.active {
+      border-top-color: #C41230;
+    }
+  
+  /* removes padding for all column width 12 objects */
+ .col-sm-12 {
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+  
+  .box-body {
+    padding-bottom: 0px;
+  }
+  .shiny-plot-output {
+    margin-bottom: 0px;
+  }
+  
+  /* space between boxes and box corner appearance */
+  .nav-tabs-custom {
+    border-radius: 1px;
+    margin-bottom: 5px;
+  }
+  
+  /* for non-tab boxes */
+  .box{
+    margin-bottom: 5px;
+  }
+  
+    /* for non-tab boxes */
+  .box.box-primary {
+
+    border-top-color: #C41230;
+
+}
+
+.box.box-solid.box-primary > .box-header {
+
+    color: #fff;
+    background: #C41230;
+    background-color: #C41230;
+    text-align: center;
+
+}
+
+.box.box-solid.box-primary > .box-header > h3 {
+
+    font-size: 14pt;
+    font-weight: bold;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 5px;
+
+}
+
+.box.box-solid.box-primary {
+
+    border: 1px solid #404040;
+
+}
+
+
+/* margins under input elements */
+.form-group {
+
+    margin-bottom: 3px;
+}
+
+.label {
+  margin-bottom: 0;
+}
+
+.selectize-control {
+
+    margin-bottom: 0px;
+
+}
+
+.form-control {
+
+    display: block;
+    width: 100%;
+    height: 30px;
+    padding: 3px 6px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+}
+
+.nav-tabs-custom > .tab-content {
+
+    background: #fff;
+    padding: 5px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+
+}
+
+.container-fluid {
+
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-right: auto;
+    margin-left: auto;
+
+}
+
+.progress {
+
+    height: 10px;
+    margin-bottom: 0px;
+}
+
+.btn{
+  height: 30px;
+  padding: 3px 6px;
+}
+
+.checkbox, .radio {
+
+    position: relative;
+    display: block;
+    margin-top: 0px;
+    margin-bottom: 0px;
+
+}
+
+.row {
+
+    margin: 1px -10px;
+    padding: 0px 3px;
+    
+}
+
+.h1, .h2, .h3, h1, h2, h3 {
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+}
+
+.h4, .h5, .h6, h4, h5, h6 {
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+}
+
+.selectize-input {
+
+    min-height: 30px;
+    padding: 3px 6px;
+}
+
+.selectize-control.single .selectize-input, .selectize-control.single .selectize-input input {
+
+    height: 30px;
+
+}
+
