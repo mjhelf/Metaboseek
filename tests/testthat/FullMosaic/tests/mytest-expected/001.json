@@ -1,0 +1,143 @@
+{
+  "input": {
+    "EICplots": "Grouped EICs",
+    "Mosaic-mainpagecontent-filtersort-FilterBox": "Table Filter",
+    "Mosaic-mainpagecontent-filtersort-rowselector-addFilter": 0,
+    "Mosaic-mainpagecontent-mainplotbox-groupedeics-miniPlots": false,
+    "Mosaic-mainpagecontent-mainplotbox-groupedeics-RtCorrActive": false,
+    "Mosaic-mainpagecontent-mainplotbox-groupedeics-ShowSpec": false,
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-errorbar": "none",
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-gtype": "by group",
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-log10": false,
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-mark": "none",
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-multidata": false,
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-pdots": true,
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-ptype": "barplot",
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-rot": false,
+    "Mosaic-mainpagecontent-mainplotbox-quickplots-usenorm": false,
+    "Mosaic-mainpagecontent-mainplotbox-regroupms-newGroup": 0,
+    "Mosaic-mainpagecontent-mainplotbox-regroupms-updateGroups": 0,
+    "Mosaic-mainpagecontent-maintabbox-tabanalysis-analyzeButton": 0,
+    "Mosaic-mainpagecontent-maintabbox-tabgrouping-intcols": 0,
+    "Mosaic-mainpagecontent-maintabbox-tabgrouping-removeGroups": 0,
+    "Mosaic-mainpagecontent-maintabbox-tabgrouping-updateGroups": 0,
+    "Mosaic-mainpagecontent-maintabbox-TableBox": "View Table",
+    "Mosaic-mainpagecontent-optionsbox-maindataload-msdata-loadMSDButton": 0,
+    "Mosaic-mainpagecontent-optionsbox-massshifts-updateshifts": 0,
+    "Mosaic-mainpagecontent-optionsbox-rtcorrviewer-RtCorrLoad": null,
+    "Mosaic-MosaicSB": "start",
+    "Mosaic-startpage-startdataload-msdata-loadMSDButton": 0,
+    "Mosaic-startpage-startdataload-projectfolder-pfolder-folder": 0,
+    "Mosaic-startpage-startdataload-table-loadtable": 0,
+    "Mosaic-xcmsMod-TabAnalysisXcms-analyzeButton": 0,
+    "Mosaic-xcmsMod-xcms_loadfolder": 0,
+    "Mosaic-xcmsMod-xcms_loadfolderOffline": 0,
+    "Mosaic-xcmsMod-xcms_name": "xcms_run",
+    "Mosaic-xcmsMod-xcms_settingsLoad": null,
+    "Mosaic-xcmsMod-xcms_start": 0,
+    "PlotOpts": "Load Data",
+    "sidebarCollapsed": false,
+    "sidebarItemExpanded": null,
+    "xcms_settingsBox": "XCMS Settings"
+  },
+  "output": {
+    "Mosaic-startpage-startdataload-projectfolder-pfolder-folderButton": {
+      "html": "<div id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-div\" title=\"Select an existing Mosaic Project Folder (e.g. with xcms results)\">\n  <button id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mosaic Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mosaic-startpage-startdataload-projectfolder-pfolder-folderUI": {
+      "html": "<div class=\"container-fluid\">\n  <div id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mosaic-startpage-startdataload-showfolder": {
+      "html": "<p>No Project Folder currently selected<\/p>",
+      "deps": [
+
+      ]
+    },
+    "Mosaic-startpage-startdataload-table-loadTableButton": {
+      "html": "<button id=\"Mosaic-startpage-startdataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "4.7.0",
+          "src": {
+            "href": "shared/font-awesome"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/font-awesome.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mosaic-startpage-web": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-3\"><\/div>\n    <div class=\"col-sm-6\">\n      <img src=\"/img/mosaic_logo.png\" alt=\"Mosaic\" style=\"width:100%\"/>\n    <\/div>\n    <div class=\"col-sm-3\"><\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"box box-solid box-primary\">\n        <div class=\"box-header\">\n          <h3 class=\"box-title\">Welcome to MOSAiC!<\/h3>\n        <\/div>\n        <div class=\"box-body\">\n          <div class=\"container-fluid\">\n            <div class=\"row\">\n              <p style=\"text-align:center;\">Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.<\/p>\n              <hr/>\n            <\/div>\n            <div class=\"row\">\n              <div class=\"container-fluid\">\n                <div class=\"row\">\n                  <div class=\"col-sm-3\" style=\"text-align:center;\">\n                    <div id=\"Mosaic-startpage-startdataload-showfolder\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <head>\n                      <style>.FolderBox {\n word-wrap: break-word;\nbackground-color: azure;\npadding: 5px;\n\n} \n                            .ContextBox {\nbackground-color: gainsboro;\npadding: 5px;\n\n} \n                            <\/style>\n                    <\/head>\n                    <div id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-folderUI\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <div id=\"Mosaic-startpage-startdataload-table-loadTableButton\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <button id=\"Mosaic-startpage-startdataload-msdata-loadMSDButton\" type=\"button\" class=\"btn btn-default action-button\">\n                      <i class=\"fa fa-folder-open\"><\/i>\n                      Load MS data\n                    <\/button>\n                  <\/div>\n                <\/div>\n              <\/div>\n            <\/div>\n            <div class=\"row\">\n              <div style=\"height:5px\"><\/div>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div style=\"height:4px;\"><\/div>\n  <div class=\"row\">\n<iframe id=\"inlineFrameExample\"\ntitle=\"webpage\" \nstyle=\"border:none;width:100%;height:500px;\"  src=\"http://mosaic.bti.cornell.edu/welcome/integrated/0.8.0\"> <\/iframe>\n              <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "4.7.0",
+          "src": {
+            "href": "shared/font-awesome"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/font-awesome.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    }
+  },
+  "export": {
+
+  }
+}
