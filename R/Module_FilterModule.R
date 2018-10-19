@@ -26,7 +26,11 @@ FilterModule <- function(input,output, session,
                                    minSel = NULL,
                                    maxSel = NULL,
                                    modeSel = NULL,
-                                   txtSel = NULL
+                                   txtSel = NULL,
+                                   minSelInit = NULL,
+                                   maxSelInit = NULL,
+                                   modeSelInit = NULL,
+                                   txtSelInit = NULL
                                    )
   
   #    reactive({paste0(df(),"!!!")})
@@ -60,13 +64,14 @@ FilterModule <- function(input,output, session,
              ", median: ",
              round(median(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected])),3)
       )},
-      warning = function(w){paste("Error in calculation")})
+      warning = function(w){paste("Error in calculation")},
+      error = function(e){paste("Error in calculation")})
       }else{"This column does not contain numeric values."}
     
     div(title = tooltip,
     selectizeInput(ns('colsel'), static$lab,
                                             choices = values$MultiFilter$colnames,
-                                            selected = internalValues$colSelected,
+                                            selected = if(is.null(internalValues$colSelected) || !internalValues$colSelected %in% values$MultiFilter$colnames){NULL}else{internalValues$colSelected},
                                             multiple = F)
     )
     }) 
@@ -84,10 +89,10 @@ FilterModule <- function(input,output, session,
     internalValues$numeric <- !is.na(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[1,internalValues$colSelected]))
     if(length(internalValues$numeric) > 0 && internalValues$numeric){
     premin <- min(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
-    internalValues$minSel <- ifelse(premin < 0, premin*1.01, premin*0.99)
+    internalValues$minSelInit <- ifelse(premin < 0, premin*1.01, premin*0.99)
     
     premax <- max(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
-    internalValues$maxSel <- ifelse(premax < 0, premax*0.99, premax*1.01)
+    internalValues$maxSelInit <- ifelse(premax < 0, premax*0.99, premax*1.01)
     
     
     }
@@ -96,7 +101,7 @@ FilterModule <- function(input,output, session,
   
   #  if(!is.null(cond()){
   output$minSel <- renderUI({if(internalValues$numeric){column(3,numericInput(ns('minsel'), 'min.', 
-                                                                           value = internalValues$minSel,
+                                                                           value = internalValues$minSelInit,
                                                                            min = NA,
                                                                            max = NA)
                                                                )
@@ -109,7 +114,7 @@ FilterModule <- function(input,output, session,
   })
   
   output$maxSel <- renderUI({if(internalValues$numeric){column(3,numericInput(ns('maxsel'), 'max.',
-                                                                           value = internalValues$maxSel,
+                                                                           value = internalValues$maxSelInit,
                                                                            min = NA,
                                                                            max = NA)
                                                                )
@@ -123,7 +128,7 @@ FilterModule <- function(input,output, session,
   
   output$modeSel <- renderUI({if(!internalValues$numeric){column(3,selectizeInput(ns('modesel'), 'condition',
                                                                                choices = c("contains", "does not contain", "is", "is not"),
-                                                                               selected =internalValues$modeSel,
+                                                                               selected = internalValues$modeSelInit,
                                                                                multiple = F)
                                                                  )
     }})
@@ -136,40 +141,19 @@ FilterModule <- function(input,output, session,
   
   output$txtSel <- renderUI({if(!internalValues$numeric){column(3,
                                                                 textInput(ns('txtsel'), 'string',
-                                                                         value = internalValues$txtSel)
+                                                                         value = internalValues$txtSelInit)
                                                                 )
     }})
   
-  observeEvent(input$txtsel,{
+  observeEvent(input$txtsel,{   
     internalValues$txtSel <- input$txtsel
+
     values$MultiFilter$outdated <- T
     
   })
   
   
-  observe({
-    if(length(internalValues$active) !=0 && internalValues$active){
-      if(internalValues$numeric){
-        internalValues$filter <- (values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected] >= as.numeric(internalValues$minSel)
-                                  & values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected] <= as.numeric(internalValues$maxSel))
-      }else{
-        if(input$modeSel=="contains"){
-          internalValues$filter <- grepl(internalValues$txtSel,as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
-        }else if(input$modeSel=="does not contain"){
-          internalValues$filter <- !grepl(internalValues$txtSel,as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
-        }else if(input$modeSel=="is not"){
-          internalValues$filter <- ! (as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]) == internalValues$txtSel)
-          
-        }
-        #if(input$modeSel=="is"){
-        else{
-          internalValues$filter <- as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]) == internalValues$txtSel
-      }
-      }
-    }else{
-      internalValues$filter <- T
-    }
-    })
+
     
   return(internalValues)
   
