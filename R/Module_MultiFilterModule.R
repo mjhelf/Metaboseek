@@ -84,6 +84,27 @@ MultiFilterModule <- function(input,output, session,
 
     values$featureTables$row_filters <- looping(logilist)
     internalValues$outdated <- F
+    
+    for(i in grep("Filter", names(internalValues), value = T)){
+      #Make sure the Filter modules do not forget their values when a new one is added and the Filter UIs are rerendered
+      
+      if(internalValues[[i]]$numeric){
+        values$featureTables$Filters[[i]] <- list(active = internalValues[[i]]$active,
+                                                    column = internalValues[[i]]$colSelected,
+                                                    numeric = internalValues[[i]]$numeric,
+                                                    min = internalValues[[i]]$minSel,
+                                                  max = internalValues[[i]]$maxSel)
+                                                  
+      }
+      else{
+        values$featureTables$Filters[[i]] <- list(active = internalValues[[i]]$active,
+                                                  column = internalValues[[i]]$colSelected,
+                                                  numeric = internalValues[[i]]$numeric,
+                                                  text = internalValues[[i]]$txtSel,
+                                                  mode = internalValues[[i]]$modeSel)
+      }
+    }
+    
   })
   
   observeEvent(input$addFilter,{
