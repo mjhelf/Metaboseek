@@ -46,6 +46,13 @@ UploadTableModule <- function(input,output, session,
                                                                      sep = if(!is.null(static$format$sep)){static$format$sep}else{input$sep}),
                                                                  stringsAsFactors = static$format$stringsAsFactors)
                                           
+                                          # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings
+                                          # and a victim of type.convert - make them character vectors again
+                                          charCols <- sapply(feats,typeof) == "logical" & sapply(lapply(feats,is.na),all)
+                                          if(any(charCols)){
+                                          feats[,charCols] <- character(nrow(feats))
+                                          }
+                                          
                                           intColRange <- grep("__XIC$",colnames(feats))
                                           
                                           if(length(intColRange)==0){
