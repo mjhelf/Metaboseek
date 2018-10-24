@@ -104,6 +104,7 @@ MultiFilterModule <- function(input,output, session,
                                                   mode = internalValues[[i]]$modeSel)
       }
     }
+    values$featureTables$Filters$onTable <- values$featureTables$active
     
   })
   

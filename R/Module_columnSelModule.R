@@ -20,11 +20,11 @@ ColumnSelModule <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   
-  internalValues <- reactiveValues(featureTables = NULL,
-                                   selectedCols = NULL,
+  internalValues <- reactiveValues(selectedGroup = NULL,
                                    gPropsSelected = NULL,
                                    sPropsSelected = NULL,
-                                   intensitiesSelected = NULL
+                                   intensitiesSelected = NULL,
+                                   othersSelected = NULL
   )
   
 observeEvent(c(#values$featureTables$active,
