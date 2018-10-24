@@ -13,25 +13,26 @@
 FilterModule <- function(input,output, session,
                                     values = reactiveValues(featureTables = featureTables,
                                                             MultiFilter = MultiFilter),
-                         static = list(lab = "Filter")
+                         static = list(lab = "Filter"),
+                         initValues = list(active = F,
+                                           filter = TRUE,
+                                           colSelected = NULL,
+                                           summary = NULL,
+                                           numeric = T,
+                                           minSel = NULL,
+                                           maxSel = NULL,
+                                           modeSel = NULL,
+                                           txtSel = NULL,
+                                           minSelInit = NULL,
+                                           maxSelInit = NULL,
+                                           modeSelInit = NULL,
+                                           txtSelInit = NULL,
+                                           loadingFilters = F)
 ){
   
   ns <- NS(session$ns(NULL))
   
-  internalValues <- reactiveValues(active = F,
-                                   filter = TRUE,
-                                   colSelected = NULL,
-                                   summary = NULL,
-                                   numeric = T,
-                                   minSel = NULL,
-                                   maxSel = NULL,
-                                   modeSel = NULL,
-                                   txtSel = NULL,
-                                   minSelInit = NULL,
-                                   maxSelInit = NULL,
-                                   modeSelInit = NULL,
-                                   txtSelInit = NULL
-                                   )
+  internalValues <- ListToReactiveValues(initValues)
   
   #    reactive({paste0(df(),"!!!")})
   fu <- reactive({   df()})
@@ -85,6 +86,7 @@ FilterModule <- function(input,output, session,
   
  
   observeEvent(internalValues$colSelected,{
+    if(!internalValues$loadingFilters){
     #returns TRUE if the selected column is numeric
     internalValues$numeric <- !is.na(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[1,internalValues$colSelected]))
     if(length(internalValues$numeric) > 0 && internalValues$numeric){
@@ -93,8 +95,9 @@ FilterModule <- function(input,output, session,
     
     premax <- max(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
     internalValues$maxSelInit <- ifelse(premax < 0, premax*0.99, premax*1.01)
-    
-    
+    }
+    }else{
+      internalValues$loadingFilters <- F
     }
   })
   
