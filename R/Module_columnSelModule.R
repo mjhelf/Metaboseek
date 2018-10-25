@@ -59,6 +59,32 @@ observeEvent(c(#values$featureTables$active,
                                                     values$featureTables$tables[[values$featureTables$active]]$summaryStats))
                  
                  })
+
+# observeEven(values$featureTables$loadedColumns,{
+#   
+#   if(!is.null(values$featureTables$loadedColumns)){
+#     
+#     internalValues$selectedGroup <- values$featureTables$loadedColumns$activeGroup
+#   
+#     if(!is.null(internalValues$selectedGroup)){
+#   internalValues$gPropsSelected <- values$featureTables$loadedColumns$columns[values$featureTables$loadedColumns$columns %in% values$featureTables$tables[[values$featureTables$active]]$gProps[[internalValues$selectedGroup]]]
+#   
+#   internalValues$sPropsSelected <- values$featureTables$loadedColumns$columns[values$featureTables$loadedColumns$columns %in% values$featureTables$tables[[values$featureTables$active]]$sProps[[internalValues$selectedGroup]]]
+#   internalValues$intensitiesSelected <- values$featureTables$loadedColumns$columns[values$featureTables$loadedColumns$columns %in% values$featureTables$tables[[values$featureTables$active]]$anagroupnames[[internalValues$selectedGroup]]]
+#     internalValues$othersSelected <- values$featureTables$loadedColumns$columns[!values$featureTables$loadedColumns$columns %in% c(internalValues$gPropsSelected, internalValues$sPropsSelected, internalValues$intensitiesSelected)]
+#     } 
+#     else{
+#       internalValues$othersSelected <- values$featureTables$loadedColumns$columns
+#       
+#     }
+#   }
+# })
+
+
+
+
+internalValues$othersSelected <- unique(c(internalValues$colnames[internalValues$colnames %in% internalValues$othersSelected],
+                                          values$featureTables$tables[[values$featureTables$active]]$summaryStats))
   
   ###Column Selection
   
