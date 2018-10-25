@@ -152,7 +152,7 @@ shinyDirChoose(input, 'xcms_loadfolder', session = session, roots=internalStatic
 
 observeEvent(input$xcms_loadfolder,{
   fol <-  parseDirPath(roots=internalStatic$rootpath, input$xcms_loadfolder)
-  if(length(fol)>0){
+  if(length(fol)>0 &&!is.na(fol)){
     #taken from xcms package
     
     flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
@@ -165,7 +165,7 @@ observeEvent(input$xcms_loadfolder,{
 
 observeEvent(input$xcms_loadfolderOffline,{
   fol <- gsub("\\\\","/",choose.dir())
-  if(length(fol)>0){
+  if(length(fol)>0 &&!is.na(fol)){
     #taken from xcms package
     flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
