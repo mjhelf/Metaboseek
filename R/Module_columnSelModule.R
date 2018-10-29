@@ -83,9 +83,9 @@ observeEvent(c(#values$featureTables$active,
 
 
 
-internalValues$othersSelected <- unique(c(internalValues$colnames[internalValues$colnames %in% internalValues$othersSelected],
-                                          values$featureTables$tables[[values$featureTables$active]]$summaryStats))
-  
+# internalValues$othersSelected <- unique(c(internalValues$colnames[internalValues$colnames %in% internalValues$othersSelected],
+#                                           values$featureTables$tables[[values$featureTables$active]]$summaryStats))
+#   
   ###Column Selection
   
   output$mainSelGroup <- renderUI({
