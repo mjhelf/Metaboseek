@@ -155,6 +155,27 @@ EICmodule <- function(input, output, session,
                    multiple = TRUE)
   })
   
+  output$pdfButton <- downloadHandler(filename= function(){
+    titleout <- "EIC"
+    
+    return(paste0(titleout,".pdf"))}, 
+    content = function(file){
+      
+      pdf(file,
+          14,6
+      )
+      
+    
+            if(!is.null(internalValues$recordedPlot)){
+              replayPlot(internalValues$recordedPlot)
+            }
+       
+      #replayPlot(selections$plots$spec$fullplot)
+      dev.off()
+      
+    },
+    contentType = "application/pdf")
+  
   
   observeEvent(input$selEICs,{
     if(internalValues$active){
@@ -371,6 +392,9 @@ EICmodule <- function(input, output, session,
         column(1,
                htmlOutput(ns("remover"))),
         column(2,
+               downloadButton(ns("pdfButton"), label = "Download EIC")
+               ),
+        column(1,
                htmlOutput(ns('rtcorr')) 
         ),
         column(1,
@@ -379,7 +403,7 @@ EICmodule <- function(input, output, session,
         column(2,
                htmlOutput(ns('hotlink')) 
         ),
-        column(3,
+        column(2,
                htmlOutput(ns('mzin')) 
                
         ),
