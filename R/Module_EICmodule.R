@@ -42,7 +42,16 @@ EICmodule <- function(input, output, session,
   observeEvent(c(values$MSData$layouts[[values$MSData$active]]$grouping, internalValues$active),{
     
     if(internalValues$active  && !is.null(values$MSData$layouts[[values$MSData$active]]$grouping)){
-      internalValues$files$choices <- lapply(values$MSData$layouts[[values$MSData$active]]$grouping,basename)
+      
+      #avoid issues with single file in a group:
+      
+      tempchoices <- lapply(values$MSData$layouts[[values$MSData$active]]$grouping,basename)
+      
+      for(i in seq(length(tempchoices))){
+        names(tempchoices[[i]]) <- tempchoices[[i]]
+      }
+      
+      internalValues$files$choices <- tempchoices
       if(is.null(internalValues$files$selected)){
         internalValues$files$selected <- internalValues$files$choices[[1]]
       }
@@ -324,7 +333,7 @@ EICmodule <- function(input, output, session,
       internalValues$controls$nearpoints <- data.frame(rt = rts/60,
                                                        # intensity = intens,
                                                        scan = unlist(internalValues$EICs[[1]][,"scan"]),
-                                                       file = unlist(mapply(rep,row.names(internalValues$EICs[[1]]), sapply(internalValues$EICs[[1]][,"scan"], length))),
+                                                       file = unname(unlist(mapply(rep,row.names(internalValues$EICs[[1]]), sapply(internalValues$EICs[[1]][,"scan"], length)))),
                                                        stringsAsFactors = F)
       
       
