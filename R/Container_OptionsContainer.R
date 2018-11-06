@@ -19,10 +19,12 @@ OptionsContainer <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   
+  
+  
   callModule(MzqueryModule,"mzquery", tag = ns("mzquery"), 
              set = reactive({list(search = list(elements = "C0-100H0-202N0-15O0-20",
                                                 mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                          "spectrum" =  values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz#,
+                                                          "spectrum" =  internalValues$activeMZ # values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz#,
                                                           #                                                        "interactive view" = iSpec2()$spec$marker$mz
                                                 ), 
                                                 data = values$MainPlotBox$GroupedEICs$iSpec1()$spec$data
@@ -51,6 +53,26 @@ OptionsContainer <- function(input,output, session,
   callModule(GlobalOptionsModule, "globalopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
   internalValues <- reactiveValues(MainDataLoad = MainDataLoad)
+  
+  observeEvent(values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz,{
+    if(!is.null(values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz)){
+      
+    internalValues$activeMZ <- values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz
+    }
+  })
+  
+  observeEvent(values$MainPlotBox$iSpec2$marker$mz,{
+   if(!is.null(values$MainPlotBox$iSpec2$marker$mz)){
+    internalValues$activeMZ <- values$MainPlotBox$iSpec2$marker$mz
+   }
+  })
+  
+  
+  observeEvent(values$MainPlotBox$MS2Browser$iSpec2$marker$mz,{
+  if(!is.null(values$MainPlotBox$MS2Browser$iSpec2$marker$mz)){
+    internalValues$activeMZ <- values$MainPlotBox$MS2Browser$iSpec2$marker$mz
+    }
+    })
   
   return(internalValues)
   
