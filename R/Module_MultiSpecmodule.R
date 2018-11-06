@@ -272,6 +272,23 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
                       keys = reactive({keys()})
   )
   
+  observeEvent(Spec1()$spec$marker,{
+    selections$marker <- Spec1()$spec$marker
+  })
+  observeEvent(Spec2()$spec$marker,{
+    selections$marker <- Spec2()$spec$marker
+  })
+  observeEvent(Spec3()$spec$marker,{
+    selections$marker <- Spec3()$spec$marker
+  })
+  observeEvent(Spec4()$spec$marker,{
+    selections$marker <- Spec4()$spec$marker
+  })
+  observeEvent(Spec5()$spec$marker,{
+    selections$marker <- Spec5()$spec$marker
+  })
+  
+  
   output$multiOut <-renderUI({
     
     actives <- unlist(lapply(lapply(selections$plots$sets,"[[","layout"),"[[","active"))
