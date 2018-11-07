@@ -233,6 +233,10 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       
       fluidPage(
+        fluidRow(downloadButton(ns('pdfButton'), "Save as pdf"),
+                 downloadButton(ns('peaklistButton'), "Save as table")
+                          
+        ),
         fluidRow(
           tags$div(title = paste("Scans:", paste(coll, collapse = ", ")),
                    plotOutput(ns("Mspec"),
@@ -489,6 +493,58 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       
     }})
+  
+  output$pdfButton <- downloadHandler(filename= function(){
+    titleout <- if(length(set()$spec$sel$File) == 1){
+      filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
+      
+      paste0(basename(set()$spec$sel$File), "_", 
+             if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+               set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
+             }
+             else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]})}
+    else{"averagedSpectra"}
+    
+    return(paste0(titleout,".pdf"))}, 
+    content = function(file){
+      
+      pdf(file,
+          14,6
+      )
+      
+      if(!is.null(selections$plots$spec$fullplot)){
+        replayPlot(selections$plots$spec$fullplot)
+      }
+      
+      #replayPlot(selections$plots$spec$fullplot)
+      dev.off()
+      
+    },
+    contentType = "application/pdf")
+  
+  output$peaklistButton <- downloadHandler(filename= function(){
+    titleout <- if(length(set()$spec$sel$File) == 1){
+      filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
+      
+      paste0(basename(set()$spec$sel$File), "_", 
+             if(!is.null(set()$spec$MS2) && set()$spec$MS2){
+               set()$msdata[[filesel]]@msnAcquisitionNum[set()$spec$sel$scan]
+             }
+             else{set()$msdata[[filesel]]@acquisitionNum[set()$spec$sel$scan]})}
+    else if(!is.null(selections$plots$spec$data)){"averagedSpectra"}
+    else{"ERROR"}
+    
+    return(paste0(titleout,".tsv"))}, 
+    content = function(file){
+      if(!is.null(selections$plots$spec$data)){
+      data.table::fwrite(data.frame(mz = selections$plots$spec$data[,1],
+                                          intensity = selections$plots$spec$data[,2]), file, sep = "\t")
+      }else{
+        data.table::fwrite(data.frame(mz = 0,
+                                      intensity = 0), file, sep = "\t")
+      }
+    },
+    contentType = "text/tab-separated-values")
   
   return(
     reactive({

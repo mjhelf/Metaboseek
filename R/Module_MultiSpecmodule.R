@@ -205,9 +205,11 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
                      
                      for(i in seq(length(selections$plots$sets))){
                        # print(selections$plots$global$compare)
-                       if(!selections$plots$global$compare 
+                       if(is.null(set()$layout$highlights) #only remove highlights if they have not been externally provided
+                          &&(
+                          !selections$plots$global$compare 
                           || !selections$plots$spec$compare[i] #remove highlights in spectra that are not in comparison
-                          || length(complist) == 1) #this is 0 if there is no peak in the comparison that is in more than one spectrum (e.g. if only one spectrum loaded)
+                          || length(complist) == 1)) #this is 0 if there is no peak in the comparison that is in more than one spectrum (e.g. if only one spectrum loaded)
                        {
                          selections$plots$sets[[i]]$layout$highlights <- NULL
                        }
