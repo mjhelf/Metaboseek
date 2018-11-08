@@ -102,6 +102,9 @@ GroupedEICModule <- function(input,output, session,
                                                                RTcorr = RTcorrect
       )
       
+
+      
+      
       EICgeneral(rtmid,
                  mzmid,
                  glist = values$MSData$layouts[[values$MSData$active]]$grouping,
@@ -121,7 +124,8 @@ GroupedEICModule <- function(input,output, session,
                  midline = values$GlobalOpts$MLtoggle,
                  yzoom = values$GlobalOpts$plotYzoom,
                  RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
-                 importEIC = EICcache[[values$MSData$active]]
+                 importEIC = EICcache[[values$MSData$active]],
+                 globalYmax = internalValues$reltoCheck
       )
       
     }
@@ -160,6 +164,8 @@ GroupedEICModule <- function(input,output, session,
       plotOutput(ns("adductLegend"), height = "30px")
     }
   })
+   
+ 
   
   output$adductLegend <- renderPlot({
     if(length(values$MSData$massShifts$shifts) > 0 && (length(values$MSData$massShifts$shifts) > 1 || values$MSData$massShifts$shifts != 0)){
@@ -239,7 +245,31 @@ GroupedEICModule <- function(input,output, session,
                                  static = list(editOnly = F)
   )
   
-  internalValues <- reactiveValues(iSpec1 = iSpec1)
+  internalValues <- reactiveValues(iSpec1 = iSpec1,
+                                   yaxmax = NULL,
+                                   reltoCheck = F)
+  
+  output$reltocheck <- renderUI({
+
+           checkboxInput(ns("reltoCheck"), "Scale", value = internalValues$reltoCheck)
+    
+  })
+  
+  # output$reltonum <- renderUI({
+  #   
+  #          numericInput(ns("reltoNum"), "Y-axis maximum", value = internalValues$yaxmax)
+  #  
+  # })
+  
+  
+  
+  # observeEvent(input$reltoNum,{
+  #   internalValues$yaxmax <- input$reltoNum
+  # })
+  
+  observeEvent(input$reltoCheck,{
+    internalValues$reltoCheck <- input$reltoCheck
+  })
   
   return(internalValues)
   
@@ -262,18 +292,24 @@ GroupedEICModuleUI <- function(id){
       #),
       
       
-      column(2,
+      column(1,
              checkboxInput(ns("RtCorrActive"), "RT correction", value = F)
       ),
       
-      column(2,
+      column(1,
              checkboxInput(ns("ShowSpec"), "Show spectrum", value = F)
       ),
       
-      column(2,
+      column(1,
              div(title = "Make EIC plots smaller to gain vertical space",  checkboxInput(ns("miniPlots"), "small EICs", value = F))
       ),
       
+      column(1,
+             htmlOutput(ns("reltocheck"))
+             ),
+      # column(2,
+      #        htmlOutput(ns("reltonum"))
+      # ),
       column(2,
              downloadButton(ns("pdfButton"), "Save Plot")
       ),
