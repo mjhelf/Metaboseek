@@ -52,7 +52,8 @@ GroupedEICModule <- function(input,output, session,
                  cx = values$GlobalOpts$plotCx,
                  midline = values$GlobalOpts$MLtoggle,
                  yzoom = values$GlobalOpts$plotYzoom,
-                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr}
+                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
+                 globalYmax = internalValues$reltoCheck
       )
     },
     
@@ -250,8 +251,9 @@ GroupedEICModule <- function(input,output, session,
                                    reltoCheck = F)
   
   output$reltocheck <- renderUI({
-
-           checkboxInput(ns("reltoCheck"), "Scale", value = internalValues$reltoCheck)
+    div(title = "Plot EICs for all groups to the same scale (the highest intensity value in all EICs for a feature).",
+           checkboxInput(ns("reltoCheck"), "Rescale", value = internalValues$reltoCheck)
+    )
     
   })
   
@@ -292,11 +294,11 @@ GroupedEICModuleUI <- function(id){
       #),
       
       
-      column(1,
+      column(2,
              checkboxInput(ns("RtCorrActive"), "RT correction", value = F)
       ),
       
-      column(1,
+      column(2,
              checkboxInput(ns("ShowSpec"), "Show spectrum", value = F)
       ),
       

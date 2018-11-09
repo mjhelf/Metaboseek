@@ -109,7 +109,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     
     
     
-    yl <- if(!is.null(globalYmax) && globalYmax){matrix(rep(c(0,max(sapply(EICsTIC, function(x){ max(unlist(x[,"tic"])) }))), length(EICsTIC)), ncol = 2)}else{NULL}
+    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICsTIC)),sapply(EICsTIC, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
     
     groupPlot(EIClist = EICsTIC,
               grouping = glist,
@@ -146,13 +146,13 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   else{
     EICs <- importEIC
   }
- 
   if(TICall){
-    yl <- if(!is.null(globalYmax) && globalYmax){matrix(rep(c(0,max(sapply(EICs, function(x){ max(unlist(x[,"tic"])) }))), length(EICs)), ncol = 2)}else{NULL}
+    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
   }else{
-    yl <- if(!is.null(globalYmax) && globalYmax){matrix(rep(c(0,max(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }))), length(EICs)), ncol = 2)}else{NULL}
+    #make sure the EICs all get scaled to their highest intensity across all adducts
+    maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
+    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),rep(maxys, length(adducts))), ncol = 2, byrow = F)}else{NULL}
 }
-  
   groupPlot(EIClist = EICs,
             grouping = glist,
             plotProps = list(TIC = tictog, #settings for single plots
