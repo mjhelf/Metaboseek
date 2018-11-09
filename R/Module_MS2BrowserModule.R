@@ -171,6 +171,11 @@ MS2BrowserModule <- function(input,output, session, tag, set = list(MSData =  xc
                        static = list(title = "MS2 spectra")
   )
   
+  internalValues <- reactiveValues(iSpec2 = iSpec2,
+                                   selectScan = selectScan,
+                                   netout = netout)
+  
+  return(internalValues)
   
 }
 

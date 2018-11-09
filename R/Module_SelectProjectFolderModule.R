@@ -117,8 +117,11 @@ SelectProjectFolderModule <- function(input,output, session,
                                                sep = ","),
                              stringsAsFactors = F)
       
-      if("comments" %in% colnames(feats)){
-        feats$comments <- as.character(feats$comments)
+      # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings
+      # and a victim of type.convert - make them character vectors again
+      charCols <- sapply(feats,typeof) == "logical" & sapply(lapply(feats,is.na),all)
+      if(any(charCols)){
+        feats[,charCols] <- character(nrow(feats))
       }
      
       ColumnNames <- gsub("-",".",paste0(basename(internalValues$filegroups$File),"__XIC"))

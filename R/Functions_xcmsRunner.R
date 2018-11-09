@@ -161,12 +161,25 @@ savetable <- function(xset,
   if(nonfill){
     
     if(!is.null(intens)){
-    tb <- cbind(tb,intens) } 
+    tb <- cbind(tb,intens) }
+    
+    if(!is.null(status)){
+      status <- writeStatus (previous = status,
+                             message = list(Status = paste0("Saving table ", gsub("\\.csv$","_unprocessed.csv",filename)),
+                                            Details = "Writing file"))
+    }
+    
+    write.csv(tb, file = gsub("\\.csv$","_unprocessed.csv",filename))
+    if(saveR){save(xset,file = paste0(filename,".Rdata"))}
+    
     
     if(!is.null(postProc)){
+      
+      
+      
   if(!is.null(status)){
       status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Post-Processing", filename),
+                             message = list(Status = paste0("Post-Processing ", filename),
                                             Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
   }
       
@@ -190,21 +203,18 @@ savetable <- function(xset,
                            message = list(Status = paste0("Post-Processing finished", filename),
                                           Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
                                           ))
-  }
-  }
-    
-    if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                              message = list(Status = paste0("Saving table ", filename),
-                                             Details = "Writing file"))
     }
+       
+       if(!is.null(status)){
+         status <- writeStatus (previous = status,
+                                message = list(Status = paste0("Saving table ", filename),
+                                               Details = "Writing file"))
+       }
+       
+       write.csv(tb, file = filename)
+  }
     
-    
-  
-    
-    
-    write.csv(tb, file = filename)
-    if(saveR){save(xset,file = paste0(filename,".Rdata"))}    
+      
     
   }
   
@@ -235,11 +245,21 @@ savetable <- function(xset,
     else{
     fn <-  paste(paste0(paste(fn[1:(length(fn)-1)], collapse = "."),"_filled"),fn[length(fn)], sep = ".", collapse = NULL)
     }
+
+    if(!is.null(status)){
+      status <- writeStatus (previous = status,
+                             message = list(Status = paste0("Saving table ", gsub("\\.csv$","_unprocessed.csv",fn)),
+                                            Details = "Writing file"))
+    }
+    
+    write.csv(tbf, file = gsub("\\.csv$","_unprocessed.csv",fn))
+    if(saveR){save(xset,file = paste0(fn,".Rdata"))}
+    
     
     if(!is.null(postProc)){
       if(!is.null(status)){
         status <- writeStatus (previous = status,
-                               message = list(Status = paste0("Post-Processing", filename),
+                               message = list(Status = paste0("Post-Processing ", filename),
                                               Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
       }
       
@@ -264,16 +284,19 @@ savetable <- function(xset,
                                               Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
                                ))
       }
-    }
-    
-    if(!is.null(status)){
+      
+          if(!is.null(status)){
       status <- writeStatus (previous = status,
                               message = list(Status = paste0("Saving table ", fn),
                                              Details = "Writing file"))
     }
     
     write.csv(tbf, file = fn)
-    if(saveR){save(xset,file = paste0(fn,".Rdata"))}
+      
+      
+    }
+    
+
   }
   return(status)
 }
