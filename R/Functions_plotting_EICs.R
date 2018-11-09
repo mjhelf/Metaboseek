@@ -47,7 +47,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        midline = T,
                        yzoom = 1,
                        RTcorrect = NULL,
-                       importEIC = NULL
+                       importEIC = NULL,
+                       globalYmax = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -105,6 +106,11 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                         byFile = F,
                         RTcorr = RTcorrect  #if true, table will be sorted by rawfile, otherwise by feature
     )
+    
+    
+    
+    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICsTIC)),sapply(EICsTIC, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
+    
     groupPlot(EIClist = EICsTIC,
               grouping = glist,
               plotProps = list(TIC = T, #settings for single plots
@@ -112,7 +118,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                                colr = colrs,
                                lw = lw,
                                midline = NULL,
-                               ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
+                               ylim = yl, #these should be data.frames or matrices of nrow = number of plotted features
                                xlim = NULL,
                                yzoom = 1),
               compProps = list(mfrow=c(rows,cols), #par options for the composite plot
@@ -140,13 +146,20 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   else{
     EICs <- importEIC
   }
- 
+  if(TICall){
+    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
+  }else{
+    #make sure the EICs all get scaled to their highest intensity across all adducts
+    maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
+    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),rep(maxys, length(adducts))), ncol = 2, byrow = F)}else{NULL}
+}
   groupPlot(EIClist = EICs,
             grouping = glist,
             plotProps = list(TIC = tictog, #settings for single plots
                              cx = cx,
                              colr = colrs,
                              xlim = rtx,
+                             ylim = yl, #these should be data.frames or matrices of nrow = number of plotted features
                              lw = lw,
                              midline = if(midline){rtmid}else{NULL},
                              yzoom = yzoom),
@@ -309,7 +322,14 @@ groupPlot <- function(EIClist = res,
       else{c(min(plotProps$xlim[majoritem,]), max(plotProps$xlim[majoritem,]))/60}
       
       ### by default, only the visible part of the spectrum will be used to determine y-max
-      if(plotProps$TIC){
+      
+      
+      if(!is.null(plotProps$ylim)){
+        ylimes = c(0,1)
+        try({
+        ylimes = c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))
+        })
+      }else if(plotProps$TIC){
         mm <- 1
           for(k in 1:length(minoritem$EIClist)){
             mm <- max(mm,
@@ -318,7 +338,7 @@ groupPlot <- function(EIClist = res,
           }
         ylimes = c(0,mm)
         }
-      else if (is.null(plotProps$ylim)){
+      else{
         mm <- 1
         for(k in 1:length(minoritem$EIClist)){
           mm <- max(mm,
@@ -327,10 +347,7 @@ groupPlot <- function(EIClist = res,
         }
         ylimes = c(0,mm)
       }
-      else{ylimes = c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))}
-      
-      
-      
+
       EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
               ylim = ylimes, 
               xlim = xlimes,

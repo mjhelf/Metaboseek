@@ -14,7 +14,7 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   ppm = MSData$layouts[[MSData$active]]$settings$ppm,
   rdata = MSData$data, pdfFile = file, leadingTIC = T, lw = 1,
   adducts = c(0), cx = 1, midline = T, yzoom = 1,
-  RTcorrect = NULL, importEIC = NULL)
+  RTcorrect = NULL, importEIC = NULL, globalYmax = NULL)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
