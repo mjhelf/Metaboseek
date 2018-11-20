@@ -326,19 +326,19 @@ EICmodule <- function(input, output, session,
     toggleState(id = "selMZ", condition = if(is.null(input$hotl)){F}else{!input$hotl})
   })
   
-  observeEvent(c(internalValues$controls$mz, input$selEICs, internalValues$active),{ 
-    if(internalValues$active && length(input$selEICs)>0){
+  observeEvent(c(internalValues$controls$mz, internalValues$files$selected, internalValues$active, values$GlobalOpts$PPMwindow, values$MSData$data),{ 
+    if(internalValues$active && length(internalValues$files$selected)>0){
       
       internalValues$EICs <- multiEICplus(adducts = c(0),
                                           mz = data.frame(mzmin = max(1,internalValues$controls$mz-internalValues$controls$mz*values$GlobalOpts$PPMwindow*1e-6),
                                                           mzmax = max(1,internalValues$controls$mz+internalValues$controls$mz*values$GlobalOpts$PPMwindow*1e-6)),
                                           rt = NULL, #data.frame(rtmin = min(internalValues$controls$xrange)*60, rtmax = min(internalValues$controls$xrange)*60),#  NULL,#data.frame(rtmin = FT$df$rt[1]-5, rtmax= FT$df$rt[1]+5),
                                           rnames = 1:length(internalValues$controls$mz),
-                                          rawdata= values$MSData$data[which(basename(names(values$MSData$data)) %in% input$selEICs)],
+                                          rawdata= values$MSData$data[which(basename(names(values$MSData$data)) %in% internalValues$files$selected)],
                                           RTcorr = if(is.null(input$interactiveRTcorr) || !input$interactiveRTcorr){NULL}else{values$MSData$RTcorr}
       )
       
-      internalValues$controls$maxxrange <- range(sapply(lapply(values$MSData$data[which(basename(names(values$MSData$data)) %in% input$selEICs)], slot, "scantime"),range))/60
+      internalValues$controls$maxxrange <- range(sapply(lapply(values$MSData$data[which(basename(names(values$MSData$data)) %in% internalValues$files$selected)], slot, "scantime"),range))/60
       
       # print(names(internalValues$EICs[[1]][1,"rt"]))
       # print(unlist(mapply(rep,row.names(internalValues$EICs[[1]]), sapply(internalValues$EICs[[1]][,"scan"], length))))
@@ -358,6 +358,8 @@ EICmodule <- function(input, output, session,
                                                        stringsAsFactors = F)
       
       
+    }else{
+      internalValues$EICs <- NULL
     }
   })
   
