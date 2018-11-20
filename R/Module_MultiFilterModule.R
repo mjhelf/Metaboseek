@@ -60,11 +60,11 @@ MultiFilterModule <- function(input,output, session,
         }else{
           
           
-          if(input$modeSel=="contains"){
+          if(!is.null(internalValues[[i]]$modeSel) && internalValues[[i]]$modeSel=="contains"){
             internalValues[[i]]$filter <- grepl(internalValues[[i]]$txtSel,as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]))
-          }else if(input$modeSel=="does not contain"){
+          }else if(!is.null(internalValues[[i]]$modeSel) && internalValues[[i]]$modeSel=="does not contain"){
             internalValues[[i]]$filter <- !grepl(internalValues[[i]]$txtSel,as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]))
-          }else if(input$modeSel=="is not"){
+          }else if(!is.null(internalValues[[i]]$modeSel) && internalValues[[i]]$modeSel=="is not"){
             internalValues[[i]]$filter <- ! (as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]) == internalValues[[i]]$txtSel)
             
           }
