@@ -7,13 +7,17 @@
 Parentsearch(xcmsRaws, mz = c(499.11085), rt = c(366.65), ppm = 5,
   rtw = 200)
 }
+\arguments{
+\item{xcmsRaws}{list of xcmsRaw objects}
+
+\item{mz}{parent mz values (mumeric vector)}
+
+\item{rt}{parent retention time (in seconds, numeric vector), needs to be same length as mz}
+
+\item{ppm}{parent mz tolerance in ppm}
+
+\item{rtw}{parent rt tolerance in seconds}
+}
 \description{
 Make a list of all MS2 scans with the defined parent masses at a given retention time
-}
-\details{
-@param xcmsRaws list of xcmsRaw objects
- @param mz parent mz values (mumeric vector)
- @param rt parent retention time (in seconds, numeric vector), needs to be same length as mz
- @param ppm parent mz tolerance in ppm
- @param rtw parent rt tolerance in seconds
 }

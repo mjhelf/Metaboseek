@@ -169,11 +169,11 @@ makeScanlist <- function(splitme, MSData = NULL){
 #'
 #' Make a list of all MS2 scans with the defined parent masses at a given retention time
 #' 
-#'  @param xcmsRaws list of xcmsRaw objects
-#'  @param mz parent mz values (mumeric vector)
-#'  @param rt parent retention time (in seconds, numeric vector), needs to be same length as mz
-#'  @param ppm parent mz tolerance in ppm
-#'  @param rtw parent rt tolerance in seconds
+#' @param xcmsRaws list of xcmsRaw objects
+#' @param mz parent mz values (mumeric vector)
+#' @param rt parent retention time (in seconds, numeric vector), needs to be same length as mz
+#' @param ppm parent mz tolerance in ppm
+#' @param rtw parent rt tolerance in seconds
 #'
 #' @export
 Parentsearch <- function (xcmsRaws,

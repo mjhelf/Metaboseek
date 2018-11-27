@@ -19,11 +19,13 @@ FindMS2ScansModule <- function(input,output, session,
 ){
   ns <- NS(session$ns(NULL))
   
+  internalValues <- reactiveValues(done = FALSE)
+  
   output$findMS2button <- renderUI({
     div(title = static$tooltip,
     actionButton(ns("findMS2"), 
                  static$label,
-                 icon = icon("chart-bar", lib = "font-awesome")
+                 icon = icon("bar-chart", lib = "font-awesome")
                  )
     )
   })
@@ -76,6 +78,7 @@ FindMS2ScansModule <- function(input,output, session,
 
       showNotification(paste("Finished MS2 search"), duration = 10)
       removeModal()
+      internalValues$done <- TRUE
       
     },
     error = function(e){
@@ -85,7 +88,7 @@ FindMS2ScansModule <- function(input,output, session,
   )
   })
   
-  
+  return(internalValues)
 }
 
 #' FindMS2ScansModuleUI
