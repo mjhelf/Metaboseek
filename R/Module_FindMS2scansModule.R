@@ -45,8 +45,10 @@ FindMS2ScansModule <- function(input,output, session,
                           numericInput(ns("MS2ppm"),"ppm window", value = 5))),
             column(4, div( title = "Define retention time tolerance for parent m/z search", 
                            numericInput(ns("MS2rtw"), "RT window (in seconds)", value = 15))),
-            column(4, div( title = "Search MS2 scans", 
-                           actionButton(ns("startMS2search"), "Start search")))
+            column(2, div( title = "Search MS2 scans", 
+                           actionButton(ns("startMS2search"), "Start search"))),
+            column(2, div( title = "You can skip this step if you have already assigned MS2 scans to features in the feature table.", 
+                           actionButton(ns("skipMS2search"), "Skip")))
           )),
         title = "Search MS2 scans",
         easyClose = T,
@@ -57,6 +59,18 @@ FindMS2ScansModule <- function(input,output, session,
     
   })
   
+  observeEvent(input$skipMS2search,{
+    
+    if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$MS2scans)){
+
+      removeModal()
+      internalValues$done <- TRUE
+      
+    }else{
+      showNotification(paste("No MS2scan data available for this feature table yet, you cannot skip this step."), type = "error", duration = 0)
+    }
+  })
+  
   
   observeEvent(input$startMS2search,{
     
@@ -65,13 +79,11 @@ FindMS2ScansModule <- function(input,output, session,
       
       withProgress(message = 'Please wait!', detail = "Finding MS2 scans", value = 0.5, {
         
-        MS2s <-  data.frame(MS2scans = mapply(listMS2scans,
-                                      mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,
+        MS2s <-  data.frame(MS2scans = listMS2scans(mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,
                                       rt = values$featureTables$tables[[values$featureTables$active]]$df$rt,
-                                      MoreArgs = list(ppm = input$MS2ppm,
+                                     ppm = input$MS2ppm,
                                                       rtw = input$MS2rtw,
-                                                      MSData = values$MSData$data)
-      ), stringsAsFactors = F)
+                                                      MSData = values$MSData$data), stringsAsFactors = F)
       
       values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],MS2s)
 })

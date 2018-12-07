@@ -247,7 +247,15 @@ saveScanlist <- function(scanlist){
 #'
 #' @export
 listMS2scans <- function(mz,rt,ppm,rtw,MSData){
-  return(saveScanlist(Parentsearch(MSData, mz, rt, ppm, rtw)))
+  
+  return(mapply(function(mz,rt,ppm,rtw,MSData){
+    saveScanlist(Parentsearch(MSData, mz, rt, ppm, rtw))
+    
+  }, mz, rt, MoreArgs = list(ppm = ppm, rtw = rtw, MSData = MSData)
+  
+  )
+  )
+  
 }
 
 #' makeScanlist2
