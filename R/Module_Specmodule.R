@@ -100,9 +100,9 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
           
           #make sure signal to other functions that the spectrum IS a merge product
           if(length(speclist) > 1){
-            selections$plots$spec$MSmerge <- mergeMS(speclist)
+            selections$plots$spec$MSmerge <- quickMergeMS(speclist)
             
-            res <- selections$plots$spec$MSmerge$merged}
+            res <- selections$plots$spec$MSmerge}
           else{
             selections$plots$spec$MSmerge <- NULL
           }

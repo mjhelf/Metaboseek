@@ -4,9 +4,11 @@
 \alias{MS2BrowserModule}
 \title{MS2BrowserModule}
 \usage{
-MS2BrowserModule(input, output, session, tag, set = list(MSData =
-  xcmsRaws, query = list(mz = NULL, rt = NULL)), keys = reactive({    
-  keys() }))
+MS2BrowserModule(input, output, session, reactives = reactive({    
+  list(query = list(mz = NULL, rt = NULL)) }),
+  values = reactiveValues(featureTables = featureTables, MainTable =
+  MainTable, MSData = MSData, GlobalOpts = GlobalOpts), keys = reactive({
+      keys() }))
 }
 \arguments{
 \item{input}{}
