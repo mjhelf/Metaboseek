@@ -406,6 +406,8 @@ quickMergeMS <- function(speclist, ppm =5, mzdiff = 0.0005, removeNoise = NULL, 
     
   }
   
+  #remove 0 intensity peaks because they will produce NaN mz values downstream
+  aspec <- aspec[aspec[,2] != 0,]
   
   if(nrow(aspec) !=1){
     aspec <- aspec[order(aspec[,1]),]

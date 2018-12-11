@@ -110,7 +110,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         }          
         #print("sc")
         #set the maximum x axis range to cover the spectrum data
-        if(!is.null(set()$spec$maxxrange) && !identical(selections$plots$set$maxxrange,set()$spec$maxxrange)){
+        if(!is.null(set()$spec$maxxrange) 
+           && !identical(selections$plots$set$maxxrange,set()$spec$maxxrange)){
           selections$plots$spec$maxxrange <- set()$spec$maxxrange
         }else{
           selections$plots$spec$maxxrange <- c(min(res[,1])-1,

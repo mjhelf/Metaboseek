@@ -95,9 +95,9 @@ NetworkModule <- function(input,output, session,
       internalValues$vlabcolfactors = NULL
       internalValues$markgroups = NULL
       
-      internalValues$graph <- values$Networks[[internalValues$active]]$graph
       internalValues$tables <- values$Networks[[internalValues$active]]$tables
-      
+      internalValues$graph <- values$Networks[[internalValues$active]]$graph
+
       
       #generate the initial layout
       res <- layout_components_qgraph(internalValues$graph, qgraph::qgraph.layout.fruchtermanreingold)
@@ -234,7 +234,8 @@ sliderInput(ns("seledges"), "Filter edges",
   
   output$Netw <- renderPlot({
     #print(internalValues$activelayout$graph)
-    if(reactives()$active && !is.null(internalValues$activelayout$graph)){
+    if(reactives()$active 
+       && !is.null(internalValues$activelayout$graph)){
       #sc()
       # print("plotting")
       # make color vectors here (so that graph is not changed! -> infinite loop)
