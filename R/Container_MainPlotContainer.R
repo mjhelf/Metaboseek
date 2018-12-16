@@ -45,11 +45,14 @@ MainPlotContainer <- function(input,output, session,
   )
   
   
-  MS2Browser <- callModule(MS2BrowserModule, 'MS2B', tag = ns("MS2B"), 
-                           set = reactive({list(MSData = values$MSData$data,
-                                                query = list(mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                             rt = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
-                                                ))}),
+  MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
+                           reactives = reactive({list(query = list(mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
+                                                                   rt = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
+                           ))}),
+                           values = reactiveValues(featureTables = values$featureTables,
+                                                   MainTable = values$MainTable,
+                                                   MSData = values$MSData,
+                                                   GlobalOpts = values$GlobalOpts),
                            keys = reactive({keys()}))
   
   #### Quickplots #####

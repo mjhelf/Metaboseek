@@ -91,3 +91,62 @@ groupedplot <- function(...,
   if(rotate){p <- p + ggplot2::theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5))}
   return(p)
 }
+
+
+#' assignColor
+#' 
+#' Assign a color from a range of colors to all values in a numeric vector (datarange)
+#' 
+#' @param datarange the data range for the legend
+#' @param colscale character vector of colors
+#'
+#' @export
+assignColor <- function(datarange, colscale){
+  
+  ncolors <- length(colscale)
+  
+  if(max(abs(datarange)) > 0){
+    colsel <- round(ncolors * (datarange-min(datarange))/(max(datarange)-min(datarange)) ,0)
+    
+    #introducing minor inaccuracyfor low values, should become less relevant with larger ncolors:
+    colsel[colsel == 0] <- 1
+    
+    return(colscale[colsel])
+  }
+  else{
+    return(rep(colscale[1], length(datarange)))
+  }
+  
+}
+
+#' colorRampLegend
+#' 
+#' Make a figure legend for a continuous color range
+#' 
+#' @param datarange the data range for the legend
+#' @param colscale character vector of colors
+#' @param title legend title
+#'
+#' @export
+colorRampLegend <- function(datarange, colscale, title = ""){
+  par(oma = c(1,0,1,0),
+      mar = c(1,2,1,2), xpd = FALSE,
+      xaxs = "i") 
+  legend_image <- as.raster(matrix(colscale, nrow=1))
+  
+  plot(numeric(), numeric(),
+       xlim =  c(min(datarange),max(datarange)),
+       ylim = c(0,1),
+       type = 'n', axes = F,xlab = '', ylab = '', main = title)
+  
+  
+  axis(side=1, lwd=1, at = pretty(c(min(datarange),max(datarange))),
+       labels = format(pretty(c(min(datarange),max(datarange))),
+                       scientific = (max(abs(datarange)) > 10000 || min(abs(datarange)) < 0.0001 )),
+       mgp=c(0,0.4,0), cex.axis=1, xaxs = "i")
+  
+  Hmisc::minor.tick(nx=2, ny=1, tick.ratio=0.5, x.args = list(), y.args = list())
+  
+  
+  rasterImage(legend_image,min(datarange), 0, max(datarange), 1)
+}

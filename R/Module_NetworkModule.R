@@ -6,113 +6,144 @@
 #' @param input 
 #' @param output 
 #' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
+#' @param reactives Import data from the shiny session
+#' 
 #' 
 #' @export 
-NetworkModule <- function(input,output, session, tag, set = list(net = list(xrange = NULL,
-                                                                            yrange = NULL,
-                                                                            maxxrange = NULL,
-                                                                            maxyrange = NULL,
-                                                                            sel = NULL,
-                                                                            mz = NULL,
-                                                                            data = NULL,
-                                                                            tables = list(nodes = NULL,
-                                                                                          edges = NULL)),
-                                                                 layout = list(lw = 1,
-                                                                               cex = 1,
-                                                                               controls = F,
-                                                                               ppm = 5,
-                                                                               active = T)),
+NetworkModule <- function(input,output, session, 
+                          values = reactiveValues(Networks = Networks),
+                          reactives = reactive({list(active = T,
+                                                     highlights = integer(0) # fixed__id values of nodes to be highlighted
+                                                     )
+                            }),
+                          static = list(noSelection = T),
                           keys
 ){
   
-  ns <- NS(tag)
-  selections <- reactiveValues(plots = list(net = list(graph = NULL,
-                                                       xrange = NULL, #the x axis range
-                                                       yrange = NULL, #the y axis range
-                                                       maxxrange = NULL, #maximum x axis range
-                                                       maxyrange = NULL, #maximum y axis range
-                                                       layouts = NULL,
-                                                       activelayout = list(graph = NULL,
-                                                                           layout = NULL,
-                                                                           subg = NULL),
-                                                       marker = NULL, #selected peak with $mz and $intensity
-                                                       hover = NULL, #peak hovered over with $mz and $intensity
-                                                       data = NULL,
-                                                       elabels = NULL,
-                                                       elabelcheck = F,
-                                                       vlabels = NULL,
-                                                       vlabelcheck = F,
-                                                       vlabelcol = NULL,
-                                                       vlabccheck = F,
-                                                       vlabcolfactors = NULL,
-                                                       overview = F,
-                                                       markgroups = NULL,
-                                                       
-                                                       tables = NULL,
-                                                       activeTab = ""
-                                                       
-  ),
-  set = NULL #copy of set() to check if set() has changed
-  )
+  ns <- NS(session$ns(NULL))
+  internalValues <- reactiveValues(graph = NULL,tables = NULL,
+                                   xrange = NULL, #the x axis range
+                                   yrange = NULL, #the y axis range
+                                   maxxrange = NULL, #maximum x axis range
+                                   maxyrange = NULL, #maximum y axis range
+                                   layouts = NULL,
+                                   activelayout = list(graph = NULL,
+                                                       layout = NULL,
+                                                       subg = NULL),
+                                   marker = NULL, #selected peak with $mz and $intensity
+                                   hover = NULL, #peak hovered over with $mz and $intensity
+                                   elabels = NULL,
+                                   elabelcheck = F,
+                                   vlabels = NULL,
+                                   vlabelcheck = F,
+                                   vlabelcol = NULL,
+                                   vlabccheck = F,
+                                   vlabcolfactors = NULL,
+                                   overview = F,
+                                   markgroups = NULL,
+                                   activeTab = "",
+                                   active = NULL, #which network is currently selected,
+                                   colscale = {crange <- colorRampPalette(c("blue", "gray", "red"))
+                                   crange(200)                               },
+                                   sliderValues = c(0,1),
+                                   highlights = integer(0),
+                                   hoverActive = T,
+                                   recordedPlot = NULL
   )
   
-  # observeEvent(set(),{sc()})
-  #sc <- eventReactive({
-  observeEvent(set(),{
-    # print(set())
-    
-    if(set()$layout$active && !is.null(set()$net$data) && !identical(selections$plots$set,set()$net )){
-      #print(set()$net$data)
+  
+  output$activenetwork <- renderUI({
+    if(!static$noSelection){
+    selectizeInput(ns('activeNetwork'), 'Show Network', 
+                   selected = input$activeNetwork, 
+                   choices = names(values$Networks)[names(values$Networks) != "numNetworks"],
+                   multiple = FALSE)
+    }
+  })  
+  
+  observeEvent(input$activeNetwork, { 
+    if(!static$noSelection){
+    internalValues$active <- input$activeNetwork
+    }
+  })
+  
+  
+  observeEvent(c(internalValues$active),{
+    if(!is.null(values$Networks) 
+       && length(names(values$Networks)[names(values$Networks) != "numNetworks"]) > 0
+      # && !is.null(internalValues$active) 
+      # && internalValues$active != ""
+      # && !is.null(values$Networks[[internalValues$active]]$graph)
+      ){
       
-      selections$plots$net$graph <- set()$net$data
-      selections$plots$net$tables <- set()$net$tables
+      if(is.null(internalValues$active) 
+         || is.na(internalValues$active)
+         || internalValues$active == ""
+         || is.null(values$Networks[[internalValues$active]]$graph)){
+        
+        internalValues$active <- names(values$Networks)[names(values$Networks) != "numNetworks"][1]
+   
+           }
+      internalValues$marker = NULL #selected peak with $mz and $intensity
+      internalValues$hover = NULL #peak hovered over with $mz and $intensity
+      internalValues$elabels = NULL
+      internalValues$elabelcheck = F
+      internalValues$vlabels = NULL
+      internalValues$vlabelcheck = F
+      internalValues$vlabelcol = NULL
+      internalValues$vlabccheck = F
+      internalValues$vlabcolfactors = NULL
+      internalValues$markgroups = NULL
       
+      internalValues$tables <- values$Networks[[internalValues$active]]$tables
+      internalValues$graph <- values$Networks[[internalValues$active]]$graph
+
       
       #generate the initial layout
-      res <- layout_components_qgraph(selections$plots$net$graph, qgraph.layout.fruchtermanreingold)
+      res <- layout_components_qgraph(internalValues$graph, qgraph::qgraph.layout.fruchtermanreingold)
       
-      selections$plots$net$layouts <- res
+      internalValues$layouts <- res
       
-      selections$plots$net$activelayout$graph <- selections$plots$net$graph
-      selections$plots$net$activelayout$layout <- norm_coords(selections$plots$net$layouts$layout)
-      colnames(selections$plots$net$activelayout$layout) <- c("x", "y")
+     # print( V(internalValues$layouts$subgraphs[[1]])$fixed__id )
+      
+      internalValues$activelayout$graph <- internalValues$graph
+      internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+      colnames(internalValues$activelayout$layout) <- c("x", "y")
       
       #if there are subgraphs, start in overview mode
-      if(length(selections$plots$net$layouts$subgraphs) > 1){selections$plots$net$overview <- T}
+      if(length(internalValues$layouts$subgraphs) > 1){internalValues$overview <- T}
       
       #set the maximum x axis range to cover the spectrum data
-      selections$plots$net$maxxrange <- c(-1,1)#range(selections$plots$net$activelayout$layout[,1])
-      selections$plots$net$maxyrange <- c(-1,1)#range(selections$plots$net$activelayout$layout[,2])
+      internalValues$maxxrange <- c(-1,1)#range(internalValues$activelayout$layout[,1])
+      internalValues$maxyrange <- c(-1,1)#range(internalValues$activelayout$layout[,2])
       
-      selections$plots$net$xrange <- c(-1,1)#range(selections$plots$net$activelayout$layout[,1])
-      selections$plots$net$yrange <- c(-1,1)#range(selections$plots$net$activelayout$layout[,2])
+      internalValues$xrange <- c(-1,1)#range(internalValues$activelayout$layout[,1])
+      internalValues$yrange <- c(-1,1)#range(internalValues$activelayout$layout[,2])
       
       
-      selections$plots$set <- set()$net
-      return(res)
+
       
     }
   })
   
+  
   output$netinfo <- renderUI({ 
-    if(!is.null(set()$layout$active) && set()$layout$active && !is.null(set()$net$data)){
-      if(selections$plots$net$overview && !is.null(selections$plots$net$hover$subgraph)){
-        p("Subgraph #", selections$plots$net$hover$subgraph, "with ",
-          strong(vcount(selections$plots$net$layouts$subgraphs[[selections$plots$net$hover$subgraph]])),
+    if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$graph)){
+      if(internalValues$overview && !is.null(internalValues$hover$subgraph)){
+        p("Subgraph #", internalValues$hover$subgraph, "with ",
+          strong(vcount(internalValues$layouts$subgraphs[[internalValues$hover$subgraph]])),
           "nodes and",
-          strong(ecount(selections$plots$net$layouts$subgraphs[[selections$plots$net$hover$subgraph]])),
+          strong(ecount(internalValues$layouts$subgraphs[[internalValues$hover$subgraph]])),
           "edges.")
         
       }
       else{
-        p(paste0(if(!is.null(selections$plots$net$marker$vertex)){
-          paste0("Marker on ", input$vlabelsel," ", vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel, selections$plots$net$marker$vertex))
+        p(paste0(if(!is.null(internalValues$marker$vertex)){
+          paste0("Marker on ", input$vlabelsel," ", vertex_attr(internalValues$activelayout$graph,input$vlabelsel, internalValues$marker$vertex))
         }
         else{""},
-        if(!is.null(selections$plots$net$hover$vertex)){
-          paste0(" Cursor on ",input$vlabelsel," ", vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel, selections$plots$net$hover$vertex))
+        if(!is.null(internalValues$hover$vertex)){
+          paste0(" Cursor on ",input$vlabelsel," ", vertex_attr(internalValues$activelayout$graph,input$vlabelsel, internalValues$hover$vertex))
         }else{""}
         ))
       }
@@ -122,184 +153,231 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
   })
   
   output$controls <- renderUI({
-    if(!is.null(set()$layout$active) && set()$layout$active && !is.null(selections$plots$net$activelayout$graph)){
+    if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$activelayout$graph)){
       fluidRow(
-        column(2,
-               checkboxInput(ns('vlabelcheck'), "Show all node labels", value = selections$plots$net$vlabelcheck),
+        
+        if(!static$noSelection){column(4,
+          htmlOutput(ns("activenetwork")))}else{tagList()},
+        
+        column(if(!static$noSelection){2}else{3},
+               checkboxInput(ns('vlabelcheck'), "Show all node labels", value = internalValues$vlabelcheck),
                selectizeInput(ns("vlabelsel"), "Node Labels",
-                              choices = names(vertex_attr(selections$plots$net$activelayout$graph)),
-                              selected = selections$plots$net$vlabels)
+                              choices = names(vertex_attr(internalValues$activelayout$graph)),
+                              selected = internalValues$vlabels)
         ),
         
-        column(2,
-               checkboxInput(ns('elabelcheck'), "Show all edge labels", value = selections$plots$net$elabelcheck),
+        column(if(!static$noSelection){2}else{3},
+               checkboxInput(ns('elabelcheck'), "Show all edge labels", value = internalValues$elabelcheck),
                selectizeInput(ns("elabelsel"), "Edge Labels",
-                              choices = names(edge_attr(selections$plots$net$activelayout$graph)),
-                              selected = selections$plots$net$elabels)
+                              choices = names(edge_attr(internalValues$activelayout$graph)),
+                              selected = internalValues$elabels)
         ),
-        column(2,
-               checkboxInput(ns('vlabccheck'), "Color-code nodes", value = selections$plots$net$vlabccheck),
+        column(if(!static$noSelection){2}else{3},
+               checkboxInput(ns('vlabccheck'), "Color-code nodes", value = internalValues$vlabccheck),
                selectizeInput(ns("vlabelcol"), "Node Colors",
-                              choices = c(NULL, names(vertex_attr(selections$plots$net$activelayout$graph))),
-                              selected = selections$plots$net$vlabelc)
-        )
+                              choices = c(NULL, names(vertex_attr(internalValues$activelayout$graph))),
+                              selected = internalValues$vlabelc)
+        ),
+        column(if(!static$noSelection){2}else{3},
+               div(title = "Activate interactive highlighting on the network plot when hovering or selecting items in the feature table. Poor performance for large networks.",
+  checkboxInput(ns('hoveractive'), "Highlights", value = internalValues$hoverActive)),
+sliderInput(ns("seledges"), "Filter edges",
+                           min = 0, max = 1,
+                              value = c(0,1) #internalValues$sliderValues
+                           )
+               )
       )
     }
   })
   
-  observeEvent(input$vlabelcheck,{selections$plots$net$vlabelcheck <- input$vlabelcheck})
+  observeEvent(input$hoveractive,{internalValues$hoverActive <- input$hoveractive})
+  
+  
+  observeEvent(input$vlabelcheck,{internalValues$vlabelcheck <- input$vlabelcheck})
+  
+  observeEvent(input$seledges,{internalValues$sliderValues <- input$seledges})
+  
+  
   observeEvent(input$vlabccheck,{
-    selections$plots$net$vlabccheck <- input$vlabccheck
+    internalValues$vlabccheck <- input$vlabccheck
     if(input$vlabccheck){
-      selections$plots$net$vlabcolfactors <- as.factor(vertex_attr(selections$plots$net$graph,input$vlabelcol))
+      internalValues$vlabcolfactors <- as.factor(vertex_attr(internalValues$graph,input$vlabelcol))
     }
   })
   
-  observeEvent(input$elabelcheck,{selections$plots$net$elabelcheck <- input$elabelcheck})
+  observeEvent(input$elabelcheck,{internalValues$elabelcheck <- input$elabelcheck})
   
-  observeEvent(input$vlabelsel,{selections$plots$net$vlabels <- input$vlabelsel})
-  observeEvent(input$vlabelcol,{selections$plots$net$vlabelc <- input$vlabelcol
+  observeEvent(input$vlabelsel,{internalValues$vlabels <- input$vlabelsel})
+  
+  
+  observeEvent(input$vlabelcol,{internalValues$vlabelc <- input$vlabelcol
   if(input$vlabccheck){
-    selections$plots$net$vlabcolfactors <- as.factor(vertex_attr(selections$plots$net$graph,input$vlabelcol))
+    internalValues$vlabcolfactors <- as.factor(vertex_attr(internalValues$graph,input$vlabelcol))
   }
   })
   
-  observeEvent(input$elabelsel,{selections$plots$net$elabels <- input$elabelsel})
+  observeEvent(input$elabelsel,{internalValues$elabels <- input$elabelsel})
   
   output$nettables <- renderUI({
-    if(!is.null(set()$layout$active) && set()$layout$active && !is.null(selections$plots$net$tables)){
+    if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$tables)){
       
-      selectizeInput(ns('tabs'), "Show network table", choices = c("",names(selections$plots$net$tables)), selected = selections$plots$net$activeTab)
+      selectizeInput(ns('tabs'), "Show network table", choices = c("",names(internalValues$tables)), selected = internalValues$activeTab)
       
     }
   })
   observeEvent(input$tabs,{
-    selections$plots$net$activeTab <- input$tabs
+    internalValues$activeTab <- input$tabs
     
   })
   
   
   
   output$Netw <- renderPlot({
-    #print(selections$plots$net$activelayout$graph)
-    if(set()$layout$active && !is.null(selections$plots$net$activelayout$graph)){
+    #print(internalValues$activelayout$graph)
+    if(reactives()$active 
+       && !is.null(internalValues$activelayout$graph)){
       #sc()
       # print("plotting")
       # make color vectors here (so that graph is not changed! -> infinite loop)
       
       # set all frame color to black
-      fc <- rep("black", times = vcount(selections$plots$net$activelayout$graph))
-      #set all edge colors to black
-      ec <- rep("grey50", times = ecount(selections$plots$net$activelayout$graph))
+      fc <- rep("black", times = vcount(internalValues$activelayout$graph))
+      #set all edge colors to grey
+      ec <- rep("grey50", times = ecount(internalValues$activelayout$graph))
       
       #set all vertex colors
-      if(selections$plots$net$vlabccheck){
+      if(internalValues$vlabccheck){
         
-        if(selections$plots$net$overview){
-          vc <- mosaic.colors(n = length(levels(selections$plots$net$vlabcolfactors)), alpha = 1)[selections$plots$net$vlabcolfactors]
+        if(!is.numeric(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)) 
+           || length(unique(vertex_attr(internalValues$activelayout$graph,input$vlabelcol))) <= 5){
+        
+        if(internalValues$overview){
+          vc <- mosaic.colors(n = length(levels(internalValues$vlabcolfactors)), alpha = 1)[internalValues$vlabcolfactors]
           
           #make sure subgraphs use same color scheme as overview:
         }else{
           
-          colassign <- as.character(vertex_attr(selections$plots$net$activelayout$graph,input$vlabelcol))
-          for (l in seq(length(levels(selections$plots$net$vlabcolfactors)))){
-            sel <- which(colassign == levels(selections$plots$net$vlabcolfactors)[l])
+          colassign <- as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelcol))
+          for (l in seq(length(levels(internalValues$vlabcolfactors)))){
+            sel <- which(colassign == levels(internalValues$vlabcolfactors)[l])
             if(length(sel) >0){
               colassign[sel] <- l
             }
           }
-          vc <- mosaic.colors(n = length(levels(selections$plots$net$vlabcolfactors)), alpha = 1)[as.integer(colassign)]
+          vc <- mosaic.colors(n = length(levels(internalValues$vlabcolfactors)), alpha = 1)[as.integer(colassign)]
+        }
+        }else{
+          
+          vc <- assignColor(vertex_attr(internalValues$activelayout$graph,input$vlabelcol), internalValues$colscale)
+          
         }
         
-        
       }else{
-        vc <- rep("olivedrab1", times = vcount(selections$plots$net$activelayout$graph))
+        vc <- rep("olivedrab1", times = vcount(internalValues$activelayout$graph))
       }
       
       #edge labels
-      elabs <- if(selections$plots$net$elabelcheck){
-        if(is.numeric(edge_attr(selections$plots$net$activelayout$graph,input$elabelsel))){
-          round(edge_attr(selections$plots$net$activelayout$graph,input$elabelsel),2)}
-        else{edge_attr(selections$plots$net$activelayout$graph,input$elabelsel)}
-      }else{rep(NA, times = vcount(selections$plots$net$activelayout$graph))}
+      elabs <- if(internalValues$elabelcheck){
+        if(is.numeric(edge_attr(internalValues$activelayout$graph,input$elabelsel))){
+          round(edge_attr(internalValues$activelayout$graph,input$elabelsel),2)}
+        else{edge_attr(internalValues$activelayout$graph,input$elabelsel)}
+      }else{rep(NA, times = vcount(internalValues$activelayout$graph))}
       
       #edge label color and font
-      elabc <- rep("blue", times = vcount(selections$plots$net$activelayout$graph))
-      elabf <- rep(1, times = vcount(selections$plots$net$activelayout$graph))
+      elabc <- rep("blue", times = vcount(internalValues$activelayout$graph))
+      elabf <- rep(1, times = vcount(internalValues$activelayout$graph))
       
       #vertex labels
-      vlabs <- if(selections$plots$net$vlabelcheck){
-        as.character(vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel))
-      }else{rep(NA, times = vcount(selections$plots$net$activelayout$graph))}
+      vlabs <- if(internalValues$vlabelcheck){
+        as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel))
+      }else{rep(NA, times = vcount(internalValues$activelayout$graph))}
       
       #vertex label color and font
-      vlabc <- rep("black", times = vcount(selections$plots$net$activelayout$graph))
-      vlabf <- rep( 2, times = vcount(selections$plots$net$activelayout$graph))
+      vlabc <- rep("black", times = vcount(internalValues$activelayout$graph))
+      vlabf <- rep( 2, times = vcount(internalValues$activelayout$graph))
       
-      #recolor based on marking
-      if(!is.null(selections$plots$net$marker) && !selections$plots$net$overview){
-        sel <- selections$plots$net$marker$vertex
-        neigh <- neighbors(selections$plots$net$activelayout$graph, V(selections$plots$net$activelayout$graph)[sel] ) 
-        edg <- incident(selections$plots$net$activelayout$graph,V(selections$plots$net$activelayout$graph)[sel])
-        
-        fc[sel] <- "red"
-        fc[neigh] <- "orange"
-        vc[sel] <- "indianred3"
-        vc[neigh] <- "indianred1"  
-        ec[edg] <- "red"
-        elabs[edg] <- if(is.numeric(edge_attr(selections$plots$net$activelayout$graph,input$elabelsel))){
-          round(edge_attr(selections$plots$net$activelayout$graph,input$elabelsel)[edg],2)}
-        else{edge_attr(selections$plots$net$activelayout$graph,input$elabelsel)[edg]}
-        elabc[edg] <- "darkorange2"
-        elabf[edg] <- 2
-        
-        
-        vlabs[c(sel,neigh)] <- as.character(vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel)[c(sel,neigh)])
-        vlabc[c(sel,neigh)] <- "black"
-        vlabf[sel] <- 4
-        
-      }
       
-      #recolor based on hovering (overrides marking colors!)
-      if(!is.null(selections$plots$net$hover) && !selections$plots$net$overview){
+      
+      #recolor based on hovering
+      if(!is.null(internalValues$hover) && !internalValues$overview){
         
         #which vortex is hovered over
-        sel <- selections$plots$net$hover$vertex
-        neigh <- neighbors(selections$plots$net$activelayout$graph, V(selections$plots$net$activelayout$graph)[sel] )  
-        edg <- incident(selections$plots$net$activelayout$graph,V(selections$plots$net$activelayout$graph)[sel])
+        sel <- internalValues$hover$vertex
+        neigh <- neighbors(internalValues$activelayout$graph, V(internalValues$activelayout$graph)[sel] )  
+        edg <- incident(internalValues$activelayout$graph,V(internalValues$activelayout$graph)[sel])
         #recolor 
         fc[sel] <- "cyan"
         fc[neigh] <- "lightcyan3"
         ec[edg] <- "cyan"
-        elabs[edg] <- if(is.numeric(edge_attr(selections$plots$net$activelayout$graph,input$elabelsel))){
-          round(edge_attr(selections$plots$net$activelayout$graph,input$elabelsel)[edg],2)}
-        else{edge_attr(selections$plots$net$activelayout$graph,input$elabelsel)[edg]}
+        elabs[edg] <- if(is.numeric(edge_attr(internalValues$activelayout$graph,input$elabelsel))){
+          round(edge_attr(internalValues$activelayout$graph,input$elabelsel)[edg],2)}
+        else{edge_attr(internalValues$activelayout$graph,input$elabelsel)[edg]}
         elabc[edg] <- "blue"
         elabf[edg] <- 2
         
-        vlabs[c(sel,neigh)] <- as.character(vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel)[c(sel,neigh)])
+        vlabs[c(sel,neigh)] <- as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[c(sel,neigh)])
         vlabc[c(sel,neigh)] <- "black"
         vlabf[sel] <- 4
       }
       
-      #scale node width based on label width
-      if(!selections$plots$net$overview){
-        scalingH <- max(420*max(strwidth(vlabs, units = "figure")),
-                        420*strwidth(as.character(vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel)[1]), units = "figure"))
-        scalingV <- 550*strheight(vertex_attr(selections$plots$net$activelayout$graph,input$vlabelsel)[1], units = "figure")
+      #recolor based on marking (overrides hover colors)
+      if(!is.null(internalValues$marker) && !internalValues$overview){
+        sel <- internalValues$marker$vertex
+        neigh <- neighbors(internalValues$activelayout$graph, V(internalValues$activelayout$graph)[sel] ) 
+        edg <- incident(internalValues$activelayout$graph,V(internalValues$activelayout$graph)[sel])
         
-      }else{
-        #in overview mode, just show squares with pleasant aspect ratio
-        scalingH <- 70/sqrt(vcount(selections$plots$net$activelayout$graph))
-        scalingV <- (70/sqrt(vcount(selections$plots$net$activelayout$graph)))/1.414
+        fc[sel] <- "red"
+        fc[neigh] <- "orange"
+        #vc[sel] <- "indianred3"
+        #vc[neigh] <- "indianred1"  
+        ec[edg] <- "red"
+        elabs[edg] <- if(is.numeric(edge_attr(internalValues$activelayout$graph,input$elabelsel))){
+          round(edge_attr(internalValues$activelayout$graph,input$elabelsel)[edg],2)}
+        else{edge_attr(internalValues$activelayout$graph,input$elabelsel)[edg]}
+        elabc[edg] <- "darkorange2"
+        elabf[edg] <- 2
+        
+        
+        vlabs[c(sel,neigh)] <- as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[c(sel,neigh)])
+        vlabc[c(sel,neigh)] <- "black"
+        vlabf[sel] <- 4
         
       }
       
-      plot(selections$plots$net$activelayout$graph, 
-           xlim = selections$plots$net$xrange,
-           ylim = selections$plots$net$yrange,
+      #scale node width based on label width
+      if(!internalValues$overview){
+        scalingH <- max(420*max(strwidth(vlabs, units = "figure")),
+                        420*strwidth(as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1]), units = "figure"))
+        scalingV <- 550*strheight(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1], units = "figure")
+        
+      }else{
+        #in overview mode, just show squares with pleasant aspect ratio
+        scalingH <- 70/sqrt(vcount(internalValues$activelayout$graph))
+        scalingV <- (70/sqrt(vcount(internalValues$activelayout$graph)))/1.414
+        
+      }
+      
+      ew <- rep(2, ecount(internalValues$activelayout$graph))
+      
+      if(length(internalValues$sliderValues) > 0){
+       hidethese <-  which(edge_attr(internalValues$activelayout$graph,"cosine") < min(internalValues$sliderValues)
+                 | edge_attr(internalValues$activelayout$graph,"cosine") > max(internalValues$sliderValues))
+       
+       ew[hidethese] <- 0
+       elabs [hidethese] <- ""
+      }
+      
+      if(length(internalValues$highlights) >0 ){
+        
+        vc[internalValues$highlights] <- "red"
+        
+      }
+      
+      plot(internalValues$activelayout$graph, 
+           xlim = internalValues$xrange,
+           ylim = internalValues$yrange,
            
-           mark.groups = selections$plots$net$markgroups,
+           mark.groups = internalValues$markgroups,
            mark.expand = 1,
            vertex.size = scalingH,
            vertex.size2 = scalingV,
@@ -312,35 +390,18 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
            edge.label.color = elabc,
            edge.label.font = elabf,
            edge.color = ec,
-           edge.width = 2,
+           edge.width = ew,
            vertex.label = vlabs,
            vertex.label.family = "sans",
            vertex.label.color = vlabc,
            vertex.label.font = vlabf,
            
-           main = if(selections$plots$net$overview){"Overview"}else{NULL},
+           main = if(internalValues$overview){"Overview"}else{NULL},
            margin = 0,
            rescale = F,
-           layout=selections$plots$net$activelayout$layout)
+           layout=internalValues$activelayout$layout)
       
-      
-      
-      #print(selections$plots$net$hover)
-      # if(!is.null(selections$plots$net$hover)){
-      
-      #  points(selections$plots$net$hover[,1],
-      #        selections$plots$net$hover[,2],
-      #       bty = "n", type = "p", lwd = 5, col = "#00FF0080")
-      
-      #}
-      
-      #  if(!is.null(selections$plots$net$marker)){
-      
-      #   points(selections$plots$net$marker[,1],
-      #         selections$plots$net$marker[,2],
-      #        bty = "n", type = "p", lwd = 5, col = "#FFAB3680")
-      
-      #}
+      internalValues$recordedPlot <- recordPlot()
       
       
       
@@ -348,8 +409,12 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
   }, height = 900)
   
   output$ColorLegend <- renderPlot({
-    if(selections$plots$net$vlabccheck){
-      colfacs <- as.factor(vertex_attr(selections$plots$net$graph,input$vlabelcol))
+    if(internalValues$vlabccheck){
+      
+      if(!is.numeric(vertex_attr(internalValues$graph,input$vlabelcol)) 
+         || length(unique(vertex_attr(internalValues$graph,input$vlabelcol))) <= 5){
+        
+      colfacs <- as.factor(vertex_attr(internalValues$graph,input$vlabelcol))
       cols <- mosaic.colors(n = length(levels(colfacs)), alpha = 1)
       
       
@@ -358,42 +423,48 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
                  fill = cols,
                  col = "black", bty = "n", 
                  cex = 1, horiz = T)
+      }else{
+        
+        colorRampLegend(vertex_attr(internalValues$activelayout$graph,input$vlabelcol), internalValues$colscale, input$vlabelcol)
+        
+      }
+      
     }
     
-  }, height = 30)
+  }, height = 85)
   
   
   
   
   observeEvent(input$Netw_click,{
     if (length(keys())>0 && keys() == 16) {
-      selections$plots$net$marker <- nearPoints(as.data.frame(selections$plots$net$activelayout$layout),
-                                                input$Netw_click,
-                                                xvar = "x",
-                                                yvar = "y",
-                                                threshold = 100,
-                                                maxpoints = 1)
+      internalValues$marker <- nearPoints(as.data.frame(internalValues$activelayout$layout),
+                                          input$Netw_click,
+                                          xvar = "x",
+                                          yvar = "y",
+                                          threshold = 100,
+                                          maxpoints = 1)
       
-      selections$plots$net$marker$vertex <- which(selections$plots$net$activelayout$layout[,1] == selections$plots$net$hover$x
-                                                  & selections$plots$net$activelayout$layout[,2] == selections$plots$net$hover$y)
+      internalValues$marker$vertex <- which(internalValues$activelayout$layout[,1] == internalValues$marker$x
+                                            & internalValues$activelayout$layout[,2] == internalValues$marker$y)
       
       #selecting a subgraph and setting up plot for it
-      if (selections$plots$net$overview) {
-        subg <- findsubgraph(V(selections$plots$net$activelayout$graph)$id[selections$plots$net$marker$vertex], selections$plots$net$layouts$subgraphs)
+      if (internalValues$overview) {
+        subg <- findsubgraph(V(internalValues$activelayout$graph)$fixed__id[internalValues$marker$vertex], internalValues$layouts$subgraphs)
         
         #record which subgraph is selected
-        selections$plots$net$activelayout$subg <- subg
+        internalValues$activelayout$subg <- subg
         
         
-        selections$plots$net$activelayout$graph <- selections$plots$net$layouts$subgraphs[[subg]]
-        selections$plots$net$activelayout$layout <- norm_coords(as.matrix(selections$plots$net$layouts$sublayouts[[subg]]))
-        colnames(selections$plots$net$activelayout$layout) <- c("x", "y")
-        selections$plots$net$hover <- NULL
-        selections$plots$net$marker <- NULL
-        selections$plots$net$markgroups <- NULL
-        selections$plots$net$overview <- F
-        selections$plots$net$xrange <- selections$plots$net$maxxrange
-        selections$plots$net$yrange <- selections$plots$net$maxyrange
+        internalValues$activelayout$graph <- internalValues$layouts$subgraphs[[subg]]
+        internalValues$activelayout$layout <- norm_coords(as.matrix(internalValues$layouts$sublayouts[[subg]]))
+        colnames(internalValues$activelayout$layout) <- c("x", "y")
+        internalValues$hover <- NULL
+        internalValues$marker <- NULL
+        internalValues$markgroups <- NULL
+        internalValues$overview <- F
+        internalValues$xrange <- internalValues$maxxrange
+        internalValues$yrange <- internalValues$maxyrange
       }
       
     }
@@ -403,27 +474,27 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
       
       if (!is.null(input$Netw_brush)) {
         
-        selections$plots$net$xrange <- c(input$Netw_brush$xmin, input$Netw_brush$xmax)
-        selections$plots$net$yrange <- c(input$Netw_brush$ymin, input$Netw_brush$ymax)
+        internalValues$xrange <- c(input$Netw_brush$xmin, input$Netw_brush$xmax)
+        internalValues$yrange <- c(input$Netw_brush$ymin, input$Netw_brush$ymax)
         
       } else {
         #switch back into overview mode on doubleclick in subgraph if full xy range is shown in current plot
-        if(selections$plots$net$xrange == selections$plots$net$maxxrange
-           && selections$plots$net$yrange == selections$plots$net$maxyrange
-           && !selections$plots$net$overview){
-          selections$plots$net$activelayout$graph <- disjoint_union(selections$plots$net$layouts$subgraphs)#selections$plots$net$graph
+        if(internalValues$xrange == internalValues$maxxrange
+           && internalValues$yrange == internalValues$maxyrange
+           && !internalValues$overview){
+          internalValues$activelayout$graph <- disjoint_union(internalValues$layouts$subgraphs)#internalValues$graph
           
           #update large layout with new coords from changes in subgraphs
-          selections$plots$net$layouts$layout <- merge_coords(selections$plots$net$layouts$subgraphs, selections$plots$net$layouts$sublayouts)
-          selections$plots$net$activelayout$layout <- norm_coords(selections$plots$net$layouts$layout)
-          colnames(selections$plots$net$activelayout$layout) <- c("x", "y")
-          selections$plots$net$overview <- T
-          selections$plots$net$hover <- NULL
-          selections$plots$net$marker <- NULL
+          internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs, internalValues$layouts$sublayouts)
+          internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+          colnames(internalValues$activelayout$layout) <- c("x", "y")
+          internalValues$overview <- T
+          internalValues$hover <- NULL
+          internalValues$marker <- NULL
           
         }
-        selections$plots$net$xrange <- selections$plots$net$maxxrange
-        selections$plots$net$yrange <- selections$plots$net$maxyrange
+        internalValues$xrange <- internalValues$maxxrange
+        internalValues$yrange <- internalValues$maxyrange
         
       }
     }
@@ -432,19 +503,19 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
   
   observeEvent(input$Netw_brush,{
     # if(is.null(input$Netw_brush)){
-    # selections$plots$net$hover <- 
+    # internalValues$hover <- 
     if (length(keys())>0 && keys() == 17) {     
       
       xs <- c(input$Netw_brush$xmin,input$Netw_brush$xmax)
       ys <- c(input$Netw_brush$ymin,input$Netw_brush$ymax)
       
-      selections$plots$net$hover$x<- xs[which.max(abs(xs-selections$plots$net$hover$x))]
-      selections$plots$net$hover$y<- ys[which.max(abs(ys-selections$plots$net$hover$y))]
+      internalValues$hover$x<- xs[which.max(abs(xs-internalValues$hover$x))]
+      internalValues$hover$y<- ys[which.max(abs(ys-internalValues$hover$y))]
       
-      selections$plots$net$activelayout$layout[selections$plots$net$hover$vertex,1] <- selections$plots$net$hover$x
-      selections$plots$net$activelayout$layout[selections$plots$net$hover$vertex,2] <- selections$plots$net$hover$y
+      internalValues$activelayout$layout[internalValues$hover$vertex,1] <- internalValues$hover$x
+      internalValues$activelayout$layout[internalValues$hover$vertex,2] <- internalValues$hover$y
       
-      selections$plots$net$layouts$sublayouts[[selections$plots$net$activelayout$subg]] <- selections$plots$net$activelayout$layout
+      internalValues$layouts$sublayouts[[internalValues$activelayout$subg]] <- internalValues$activelayout$layout
       
     }
   })
@@ -454,28 +525,32 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
     
     
     
-    if(is.null(input$Netw_brush) && !(length(keys())>0 && keys() == 17)){
+    if(internalValues$hoverActive && is.null(input$Netw_brush) && !(length(keys())>0 && keys() == 17)){
       
       
+      #print("h1")
+      internalValues$hover <- nearPoints(as.data.frame(internalValues$activelayout$layout),
+                                         input$Netw_hover,
+                                         xvar = "x",
+                                         yvar = "y",
+                                         threshold = 100,
+                                         maxpoints = 1)
+
+      #print("h2")
+      internalValues$hover$vertex <- which(internalValues$activelayout$layout[,1] == internalValues$hover$x
+                                           & internalValues$activelayout$layout[,2] == internalValues$hover$y)
       
-      selections$plots$net$hover <- nearPoints(as.data.frame(selections$plots$net$activelayout$layout),
-                                               input$Netw_hover,
-                                               xvar = "x",
-                                               yvar = "y",
-                                               threshold = 100,
-                                               maxpoints = 1)
-      selections$plots$net$hover$vertex <- which(selections$plots$net$activelayout$layout[,1] == selections$plots$net$hover$x
-                                                 & selections$plots$net$activelayout$layout[,2] == selections$plots$net$hover$y)
-      
-      if(selections$plots$net$overview && !is.null(selections$plots$net$hover)){
-        
-        selections$plots$net$hover$subgraph <- findsubgraph(V(selections$plots$net$activelayout$graph)$id[selections$plots$net$hover$vertex], selections$plots$net$layouts$subgraphs)
+      #print("h3")
+      if(internalValues$overview && !is.null(internalValues$hover)){
+        #print("h4")
+        internalValues$hover$subgraph <- findsubgraph(V(internalValues$activelayout$graph)$fixed__id[internalValues$hover$vertex], internalValues$layouts$subgraphs)
       }
-      
-      selections$plots$net$markgroups <- if(selections$plots$net$overview && !is.null(selections$plots$net$hover)){
-        which(V(selections$plots$net$activelayout$graph)$subcl == V(selections$plots$net$activelayout$graph)$subcl[selections$plots$net$hover$vertex])
+      #print("h5")
+      internalValues$markgroups <- if(internalValues$overview && !is.null(internalValues$hover)){
+        #print("h6")
+        which(V(internalValues$activelayout$graph)$subcl == V(internalValues$activelayout$graph)$subcl[internalValues$hover$vertex])
       }else{NULL}
-      
+      #print("h7")
       
       
     }
@@ -486,38 +561,38 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
   })
   
   observeEvent(input$Netw_dblclick, {
-    selections$plots$net$dblclick <- input$Netw_dblclick
+    internalValues$dblclick <- input$Netw_dblclick
     
     
     if (!is.null(input$Netw_brush)) {
       
-      selections$plots$net$xrange <- c(input$Netw_brush$xmin, input$Netw_brush$xmax)
-      selections$plots$net$yrange <- c(input$Netw_brush$ymin, input$Netw_brush$ymax)
+      internalValues$xrange <- c(input$Netw_brush$xmin, input$Netw_brush$xmax)
+      internalValues$yrange <- c(input$Netw_brush$ymin, input$Netw_brush$ymax)
       
     } else {
       #switch back into overview mode on doubleclick in subgraph if full xy range is shown in current plot
-      if(selections$plots$net$xrange == selections$plots$net$maxxrange
-         && selections$plots$net$yrange == selections$plots$net$maxyrange
-         && !selections$plots$net$overview){
-        selections$plots$net$activelayout$graph <- disjoint_union(selections$plots$net$layouts$subgraphs)#selections$plots$net$graph
+      if(internalValues$xrange == internalValues$maxxrange
+         && internalValues$yrange == internalValues$maxyrange
+         && !internalValues$overview){
+        internalValues$activelayout$graph <- disjoint_union(internalValues$layouts$subgraphs)#internalValues$graph
         
         #update large layout with new coords from changes in subgraphs
-        selections$plots$net$layouts$layout <- merge_coords(selections$plots$net$layouts$subgraphs, selections$plots$net$layouts$sublayouts)
-        selections$plots$net$activelayout$layout <- norm_coords(selections$plots$net$layouts$layout)
-        colnames(selections$plots$net$activelayout$layout) <- c("x", "y")
-        selections$plots$net$overview <- T
-        selections$plots$net$hover <- NULL
-        selections$plots$net$marker <- NULL
+        internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs, internalValues$layouts$sublayouts)
+        internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+        colnames(internalValues$activelayout$layout) <- c("x", "y")
+        internalValues$overview <- T
+        internalValues$hover <- NULL
+        internalValues$marker <- NULL
         
       }
-      selections$plots$net$xrange <- selections$plots$net$maxxrange
-      selections$plots$net$yrange <- selections$plots$net$maxyrange
+      internalValues$xrange <- internalValues$maxxrange
+      internalValues$yrange <- internalValues$maxyrange
       
     }})
   
   
   #Edge or Node table
-  table1 <- callModule(TableModule,'nettab', tag = ns('nettab'), set = reactive({list(df =  selections$plots$net$tables[[selections$plots$net$activeTab]],
+  table1 <- callModule(TableModule,'nettab', tag = ns('nettab'), set = reactive({list(df =  internalValues$tables[[internalValues$activeTab]],
                                                                                       update = NULL,
                                                                                       layout = list(
                                                                                         perpage = 100,
@@ -532,8 +607,12 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
   )
   
   output$netAll <- renderUI({
-    if(!is.null(set()$layout$active) && set()$layout$active && !is.null(set()$net$data)){
+    if(!is.null(reactives()$active) 
+       && reactives()$active 
+       && !is.null(internalValues$graph)
+    ){
       fluidPage(
+            
         htmlOutput(ns('controls')),
         fluidRow(
           
@@ -547,14 +626,19 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
                        opacity = 0,
                        #direction = "x",
                        resetOnNew = TRUE),
-                     height = "900px",
-                     width = "900px"
-          )),
+                     height = "900px"#,
+                     #width = "100%"
+          )
+          ),
         fluidRow(
-          plotOutput(ns("ColorLegend"), height = "30px")),
+          plotOutput(ns("ColorLegend"), height = "85px")
+          ),
         fluidRow(
           htmlOutput(ns("netinfo"))
-        ),
+        )
+          ,
+        
+        hr(),
         fluidRow(
           htmlOutput(ns("nettables"))
         ),
@@ -568,11 +652,7 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
   
   
   
-  return(
-    reactive({
-      selections$plots
-    })
-  )
+  return(internalValues)
 }
 
 #' NetworkModuleUI
@@ -585,8 +665,8 @@ NetworkModule <- function(input,output, session, tag, set = list(net = list(xran
 #' @export
 NetworkModuleUI <- function(id){
   ns <- NS(id)
-  
-  htmlOutput(ns("netAll"))
-  
+  fluidPage(
+    htmlOutput(ns("netAll"))
+  )
   
 }
