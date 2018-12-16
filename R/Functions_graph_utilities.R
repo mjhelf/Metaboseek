@@ -190,7 +190,7 @@ simplifyGraph <- function(nodes, edges, mergebyedges){
     
   }, groups, nodes)
   
-  res <- list(nodes = as.data.frame(rbindlist(res_l)))
+  res <- list(nodes = as.data.frame(data.table::rbindlist(res_l)))
   
   res$nodes <- data.frame(id = seq(nrow(res$nodes)),res$nodes[,colnames(res$nodes) != "id"], stringsAsFactors = F)
   
