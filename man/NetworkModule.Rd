@@ -4,10 +4,9 @@
 \alias{NetworkModule}
 \title{NetworkModule}
 \usage{
-NetworkModule(input, output, session, tag, set = list(net = list(xrange =
-  NULL, yrange = NULL, maxxrange = NULL, maxyrange = NULL, sel = NULL, mz =
-  NULL, data = NULL, tables = list(nodes = NULL, edges = NULL)), layout =
-  list(lw = 1, cex = 1, controls = F, ppm = 5, active = T)), keys)
+NetworkModule(input, output, session, values = reactiveValues(Networks =
+  Networks), reactives = reactive({     list(active = T, highlights =
+  integer(0)) }), static = list(noSelection = T), keys)
 }
 \arguments{
 \item{input}{}
@@ -16,9 +15,7 @@ NetworkModule(input, output, session, tag, set = list(net = list(xrange =
 
 \item{session}{}
 
-\item{tag}{id to be used in ns()}
-
-\item{set}{Import data from the shiny session}
+\item{reactives}{Import data from the shiny session}
 }
 \description{
 server module for interactive mass spectrum view

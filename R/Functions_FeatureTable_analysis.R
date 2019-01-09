@@ -18,7 +18,13 @@
 analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
                          groups = tab1$anagroupnames,
                          analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"), 
-                         normalize = T, useNormalized = T, MSData = NULL, ppm = 5, controlGroup = NULL, numClusters = 2){
+                         normalize = T,
+                         useNormalized = T,
+                         logNormalized = F,
+                         MSData = NULL,
+                         ppm = 5,
+                         controlGroup = NULL,
+                         numClusters = 2){
   out <- list(errmsg = list())
   
   if(normalize 
@@ -31,8 +37,12 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
     mx <- as.matrix(df[,intensities])
     mx <- featureTableNormalize(mx,
                                 raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-    # mx <- featureTableNormalize(mx, log =  "log10")
+    # 
     mx <- featureTableNormalize(mx, normalize = "colMeans")
+    if(logNormalized){
+      mx <- featureTableNormalize(mx, log =  "log10")
+    }
+    
     #make copy of normalized intensities in active table df
     mx <- as.data.frame(mx)
     colnames(mx) <- paste0(colnames(mx),"__norm")

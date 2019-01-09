@@ -59,7 +59,378 @@ findsubgraph <- function(id, graphlist){
   if(length(id) == 0){return(numeric(0))}
   
   for(i in seq(length(graphlist))){
-    if(id %in% V(graphlist[[i]])$id){return(i)}
+    if(id %in% V(graphlist[[i]])$fixed__id){return(i)}
   }
   return(numeric(0))
 }
+
+#' simplifyGraph
+#' 
+#' Assign a color from a range of colors to all values in a numeric vector (datarange). NOTE: Edges are expected to not have a direction.
+#' 
+#' @param nodes a node table
+#' @param edges an edge table with "from" and "to" as the first two columns. "From" and "to" have to refer to rownumbers of nodes.
+#' @param mergebyedges indices by of those edges in edges that link two nodes that should be joined
+#'
+#' @export
+simplifyGraph <- function(nodes, edges, mergebyedges){
+  
+  if(length(mergebyedges) == 0){
+    return(list(nodes = nodes,
+                edges = as.data.frame(edges)))
+  }
+  
+  edges[,1] <- as.integer(edges[,1])
+  edges[,2] <- as.integer(edges[,2])
+  
+  
+  nodes$edgeGroup = numeric(nrow(nodes))
+  
+  
+  
+  edges <- as.data.frame(edges)
+  
+  other_edges <- edges[-mergebyedges,]
+  
+  edges <- edges[mergebyedges,]
+  
+  for(i in seq(nrow(nodes))){
+    
+    if(nodes$edgeGroup[i] == 0){
+      nodes$edgeGroup[i] <- i
+    }
+    
+    selTargets <- edges[edges[,1] == i,2]
+    
+    if(length(selTargets) > 0){
+      
+      #this way, all nodes with any connections below throeshold will be in group even if it is a single link
+      if(is.na(any(nodes$edgeGroup[selTargets] != 0)) | !is.logical(any(nodes$edgeGroup[selTargets] != 0)) | length(any(nodes$edgeGroup[selTargets] != 0)) == 0){
+        print("it happened")
+        print(selTargets)
+        print(nodes$edgeGroup[selTargets])
+        print(any(nodes$edgeGroup[selTargets] != 0))
+      }
+      
+      if(any(nodes$edgeGroup[selTargets] != 0)){
+        
+        supergroup <- nodes$edgeGroup[nodes$edgeGroup[selTargets] != 0][1]
+        
+        nodes$edgeGroup[c(i,selTargets)] <- supergroup
+        
+        
+      }else{
+        nodes$edgeGroup[selTargets] <- i
+      }
+      
+    }
+    
+  }
+  
+  
+  
+  
+  groups <- nodes$edgeGroup
+  group = unique(groups)
+  
+  res_l <- lapply(group, function(group,groups,nodes){
+    
+    sel <- which(groups == group)
+    
+    # dt <- data.table(nodes[1,])
+    if(length(sel) == 1){
+      return(nodes[sel,])
+    }
+    
+    
+    return(as.data.frame(mapply(function(col,coln){
+      
+      if(coln == "mzmin"){
+        return(min(col))
+      }
+      
+      if(coln == "mzmax"){
+        return(max(col))
+      }
+      
+      if(coln == "rtmin"){
+        return(min(col))
+      }
+      
+      if(coln == "rtmax"){
+        return(max(col))
+      }      
+      
+      if(coln == "fixed__id"){
+        return(paste(col, collapse = " "))
+      }
+      
+      if(coln == "MS2scans"){
+        if(!any(col != "")){return("")}
+        return(paste(col[which(col != "")], collapse = "|"))
+      }
+      
+      if(!is.numeric(col)){
+        return(paste(col, collapse = " "))
+      }
+      
+      if(is.numeric(col)){
+        return(mean(col))
+      }
+      
+      
+      
+      return("ERROR")
+      
+    }, col = nodes[sel,],
+    coln = colnames(nodes),
+    SIMPLIFY = F), stringsAsFactors = F))
+    
+    
+    
+  }, groups, nodes)
+  
+  res <- list(nodes = as.data.frame(data.table::rbindlist(res_l)))
+  
+  res$nodes <- data.frame(id = seq(nrow(res$nodes)),res$nodes[,colnames(res$nodes) != "id"], stringsAsFactors = F)
+  
+  mergetracking <- lapply(res$nodes$edgeGroup, function(ind, df){
+    which(df$edgeGroup == ind)
+  }, df = nodes)
+  
+  mergeedges <- other_edges
+  
+  if(nrow(other_edges) < 1){
+    
+    res$edges <- other_edges
+    return(res)
+    
+  }
+  
+  for(i in seq(length(mergetracking)) ){
+    
+    mergeedges[other_edges[,1] %in% mergetracking[[i]],1] <- i
+    mergeedges[other_edges[,2] %in% mergetracking[[i]],2] <- i
+    
+  }
+  
+  mergeedges <- mergeedges[mergeedges[,1] != mergeedges[,2],]
+  
+  #make sure that from is always < to, prevents having multiple edges between node with different direction
+  if(nrow(mergeedges) > 1){
+    
+    asm <- as.matrix(mergeedges[,1:2])
+    
+    mergeedges[,1] <- Biobase::rowMin(asm)
+    mergeedges[,2] <- Biobase::rowMax(asm)
+    
+  }else{
+    mergeedges[1,1:2] <- c(min(mergeedges[1,1:2]), max(mergeedges[1,1:2]))
+    
+    
+  }
+  
+  splitedges <- split(mergeedges, list(mergeedges[,1], mergeedges[,2]), drop = T)
+  
+  
+  res$edges <- as.data.frame(data.table::rbindlist(lapply(splitedges, function(tab){
+    
+    outp <- data.frame(from = tab[1,1],
+                       to = tab[1,2],
+                       stringsAsFactors = F)
+    
+    for( i in colnames(tab)[c(-1,-2)] ){
+      
+      if(is.numeric(tab[[i]])){
+        
+        outp[[i]] <- mean(tab[[i]])
+        outp[[paste0("min_",i)]] <- min(tab[[i]])
+        outp[[paste0("max_",i)]] <- max(tab[[i]])
+        outp[[paste0("median_",i)]] <- median(tab[[i]])
+        
+        
+      }
+      else{
+        
+        outp[[i]] <- paste(unique(tab[[i]]), collapse = " ")
+        
+      }
+      
+    }
+    outp[["mergedEdges"]] <- nrow(tab)
+    
+    return(outp)
+    
+  })), stringsAsFactors = F)
+  
+  return(res)
+  
+}
+
+
+
+#' pairCompare
+#'
+#' Compare two vectors of equal length pairwise and calculate a similarity score (e.g. intensity values of matched MS peaks)
+#'
+#' 
+#' @param v1 vector 1
+#' @param v2 vector 2
+#' @param NAasZero replace NA values with 0
+#' @param method "cosine" will use lsa::cosine(), "pearson" will use stats::cor()
+#' 
+#' @importFrom stats cor
+#' @importFrom lsa cosine
+#'
+#' @export
+pairCompare <- function(v1, v2, NAasZero = T, method = c("cosine", "pearson")){
+  if(NAasZero){
+    selfeats <- which(!is.na(v1) | !is.na(v2))
+    
+    v1[selfeats[which(is.na(v1[selfeats]))]] <- 0
+    v2[selfeats[which(is.na(v2[selfeats]))]] <- 0
+  }
+  
+  if(method == "pearson"){
+    cor(v1,v2, method = "pearson", use = "pairwise.complete.obs")
+  }else{
+    cosine(matrix(c(v1,v2),ncol = 2, byrow = F))[1,2]
+  }
+}
+
+#' pairCompare
+#'
+#' Compare two vectors of equal length pairwise and calculate a similarity score (e.g. intensity values of matched MS peaks)
+#' NOTE: Current limitations: (1) peaks from one spectrum can match multiple peaks from the other scan (workaround: quickMergeMS with ppm = 0 and mzdiff same as mzdiff here)
+#'
+#' 
+#' @param spec1 spectrum 1
+#' @param spec2 spectrum 2
+#' @param mztol allowed m/z difference between peaks to match matching
+#' @param parentshift m/z difference between parentmasses (importantly, has to be Parent(spec2) - Parent(spec1) ) to find alternative matches; will only be calculated if < mztol
+#' @param method method passed on to \code{\link{pairCompare}()}; "cosine" will use lsa::cosine(), "pearson" will use stats::cor()
+#' @param minpeaks minimum number of peaks that have to be matched, otherwise returns 0
+#' 
+#'
+#' @export
+network1 <- function(spec1, spec2, mztol = 0.005,
+                     parentshift = 0,
+                     method = "cosine",
+                     minpeaks = 6,
+                     nonmatched = T){
+  
+  posx <- which(abs(outer(spec1[,1], spec2[,1], "-")) < abs(mztol), arr.ind = T)
+  
+  if(abs(parentshift) > abs(mztol)){
+    
+    posx <- rbind(posx, which(abs(outer(spec1[,1]+parentshift, spec2[,1], "-")) < abs(mztol), arr.ind = T))
+    
+    posx <- posx[!(duplicated(posx[,1]) & duplicated(posx[,2])),  ]
+    
+    if(length(posx) ==2){
+      posx <- matrix(posx,nrow =1)
+    }
+    
+  }
+  
+  if(nrow(posx) >= minpeaks && nrow(posx) > 0){
+    
+    if(nonmatched){
+      
+      #v1 <- numeric(length(spec1[,1]) + length(spec2[,2]) - length(unique(posx )
+      
+      v1 <- c(spec1[posx[,1],2], spec1[-posx[,1],2], rep(0, length(spec2[-posx[,2],2])))
+      v2 <- c(spec2[posx[,2],2], rep(0, length(spec1[-posx[,1],2])), spec2[-posx[,2],2] )
+      return(pairCompare(v1, v2, method = method))
+      
+    }
+    
+    return(pairCompare(spec1[posx[,1],2], spec2[posx[,2],2], method = method))
+    
+  }else{
+    return(0)
+  }
+  
+  
+}
+
+#' makeEdges
+#'
+#' Make an edgelist (data.table) using a vector of parentmasses and a list of MS spectra
+#'
+#' 
+#' @param speclist (non-nested) list of MS spectra
+#' @param parentmasses vector of parent m/z values (same length as speclist)
+#' @param mztol max difference between matched peaks in m/z
+#' @param minpeaks minimum number of peaks that have to be matched, otherwise returns 0
+#' @importFrom data.table data.table
+#'
+#' @export
+makeEdges <- function(speclist = speclist1, parentmasses, mztol = 0.005, minpeaks = 6, nonmatched = T){
+  
+  #remove NULLs from the speclist, but keep track of the indices of the non-NULL scans:
+  selNonNulls <- which(!sapply(speclist,is.null))
+  speclist <- speclist[selNonNulls]
+  
+  selectlist <- list()
+  for(i in seq(length(speclist)-1)){
+    selectlist[[i]] <- i:length(speclist)
+  }
+  
+  if(!is.null(parentmasses)){
+    parentmasses <- parentmasses[selNonNulls]
+    
+    #inefficient but prob wont take long
+    pmassShifts <- list()
+    for(n in seq(length(speclist)-1)){
+      #spec2 - spec1!!
+      pmassShifts[[n]] <- parentmasses[selectlist[[n]][1]] - parentmasses[selectlist[[n]][-1]]
+    }
+    
+    
+    alledges <-  mapply(function(sel, specs, pmasses){
+      mapply(network1, spec1 = specs[sel[-1]],  parentshift = pmasses,
+             MoreArgs = list(spec2 = specs[[sel[1]]],
+                             mztol = mztol,
+                             minpeaks = minpeaks,
+                             nonmatched = nonmatched))
+    }, sel = selectlist, pmasses = pmassShifts, MoreArgs = list(specs = speclist), SIMPLIFY = F)
+  }else{
+    
+    
+    alledges <-  lapply(selectlist, function(sel, specs, mzt, mp, nonm){
+      lapply(specs[sel[-1]],network1, spec2 = specs[[sel[1]]], mztol = mzt, minpeaks = mp, nonmatched = nonm)
+    }, specs = speclist, mzt = mztol, mp = minpeaks, nonm = nonmatched)
+    
+  }
+  
+  
+  
+  
+  
+  sz <- sum(sapply(alledges, length))
+  
+  dt <- data.table(from = integer(sz),
+                   to = integer(sz),
+                   cosine = numeric(sz))
+  
+  seq(6,1)
+  dt$from = unlist(mapply(rep, 1:length(alledges), sapply(alledges, length)))
+  dt$to = unlist(sapply(selectlist, "[", -1))
+  
+  if(!is.null(parentmasses)){
+    
+    dt$deltamz = unlist(pmassShifts)
+    
+  }
+  
+  dt$cosine = unlist(alledges)
+  
+  #put the node indices back together correctly
+  dt$from <- selNonNulls[dt$from]
+  dt$to <- selNonNulls[dt$to]
+  
+  return(as.data.frame(dt))
+  
+}
+

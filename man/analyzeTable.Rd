@@ -7,8 +7,8 @@
 analyzeTable(df = tab1$df, intensities = tab1$intensities,
   groups = tab1$anagroupnames, analyze = c("Basic analysis",
   "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"),
-  normalize = T, useNormalized = T, MSData = NULL, ppm = 5,
-  controlGroup = NULL, numClusters = 2)
+  normalize = T, useNormalized = T, logNormalized = F,
+  MSData = NULL, ppm = 5, controlGroup = NULL, numClusters = 2)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values, rt and mz values}

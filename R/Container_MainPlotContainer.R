@@ -35,11 +35,24 @@ MainPlotContainer <- function(input,output, session,
   
   #### MS2Browsewr #####
   
-  MS2Browser <- callModule(MS2BrowserModule, 'MS2B', tag = ns("MS2B"), 
-                           set = reactive({list(MSData = values$MSData$data,
-                                                query = list(mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                             rt = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
-                                                ))}),
+  
+  FindMS2 <- callModule(FindMS2ScansModule, "findms2",
+                        values = reactiveValues(featureTables = values$featureTables,
+                                                MSData = values$MSData,
+                                                MainTable = values$MainTable),
+                        static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table",
+                                      label = "Find MS2 scans")
+  )
+  
+  
+  MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
+                           reactives = reactive({list(query = list(mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
+                                                                   rt = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
+                           ))}),
+                           values = reactiveValues(featureTables = values$featureTables,
+                                                   MainTable = values$MainTable,
+                                                   MSData = values$MSData,
+                                                   GlobalOpts = values$GlobalOpts),
                            keys = reactive({keys()}))
   
   #### Quickplots #####
@@ -133,6 +146,7 @@ MainPlotContainerUI <- function(id){
                   PcaViewModuleUI(ns("pcaviewfeatures"))
          ),
          tabPanel("MS2 Browser",
+                  FindMS2ScansModuleUI(ns("findms2")),
                   MS2BrowserModuleUI(ns('MS2B'))
          )
          
