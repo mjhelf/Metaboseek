@@ -26,6 +26,7 @@ TableAnalysisModule <- function(input,output, session,
   
   internalValues <- reactiveValues(normalize = TRUE,
                                    useNormalized = TRUE,
+                                   logNormalized = F,
                                    controlGroups = NULL,
                                    analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"),
                                    analysesSelected = "Basic analysis",
@@ -52,10 +53,22 @@ TableAnalysisModule <- function(input,output, session,
         checkboxInput(ns('usenormdata'), 'Use normalized data', value = internalValues$useNormalized))
   })
   
+ 
+  
   observeEvent(input$usenormdata,{
     internalValues$useNormalized <- input$usenormdata
   })
   
+   output$logDataUseCheck <- renderUI({
+    div(title= "Calculate logarithm with base 10 of normalized intensity values (will replace normalized intensity values)",
+        checkboxInput(ns('lognormdata'), 'Apply log10', value = internalValues$logNormalized))
+  })
+   
+   observeEvent(input$lognormdata,{
+     internalValues$logNormalized <- input$lognormdata
+   })
+   
+   
   output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
                                                 choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{reactives()$fileGrouping$Group},
                                                 selected = if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups},
@@ -102,6 +115,7 @@ TableAnalysisModule <- function(input,output, session,
                             analyze = internalValues$analysesSelected, 
                             normalize = internalValues$normalize,
                             useNormalized = internalValues$useNormalized,
+                            logNormalized = internalValues$logNormalized,
                             MSData = values$MSData$data,
                             ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
                             controlGroup = internalValues$controlGroups,
@@ -182,7 +196,12 @@ TableAnalysisModuleUI <- function(id){
       ),
       column(4,
              htmlOutput(ns('normDataUseCheck'))
-      )),
+      ),
+      column(4,
+             htmlOutput(ns('logDataUseCheck'))
+      )
+      
+      ),
     fluidRow(
       h4("Basic analysis"),
       column(4,
