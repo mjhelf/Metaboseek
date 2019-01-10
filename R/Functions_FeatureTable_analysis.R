@@ -39,7 +39,7 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
                                 raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
     # 
     mx <- featureTableNormalize(mx, normalize = "colMeans")
-    if(logNormalized){
+    if(!is.null(logNormalized) && logNormalized){
       mx <- featureTableNormalize(mx, log =  "log10")
     }
     
