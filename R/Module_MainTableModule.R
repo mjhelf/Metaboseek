@@ -130,7 +130,7 @@ MainTableModule <- function(input,
     if(length(internalValues$inpage > 0 )){
       
       
-      rhandsontable(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage,colnames(values$featureTables$tables[[values$featureTables$active]]$df) %in% values$featureTables$selectedCols],
+      rhandsontable(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage,values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(values$featureTables$tables[[values$featureTables$active]]$df)]],
                     readOnly = !values$featureTables$tables[[values$featureTables$active]]$editable,
                     contextMenu = values$featureTables$tables[[values$featureTables$active]]$editable,
                     selectCallback = TRUE,

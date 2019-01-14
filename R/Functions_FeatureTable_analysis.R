@@ -116,6 +116,15 @@ error = function(e){out$errMsg[["Basic analysis"]] <- paste(e)})
 error = function(e){out$errMsg[["t-test"]] <- paste(e)})
   }
   
+  if("anova" %in% analyze){
+    tryCatch({
+      df <- updateDF(MseekAnova(df = df[,intensities],
+                                groups),
+                     df)
+    },
+    error = function(e){out$errMsg[["anova"]] <- paste(e)})
+  }
+  
   
   if("clara_cluster" %in% analyze){
     tryCatch({
@@ -538,3 +547,40 @@ MosCluster <- function(method = "clara",
   return(data.frame(cluster__clara = res$clustering))
   
 }    
+
+#' multittest
+#' 
+#' 
+#' Calculate per-row one-way ANOVA between grouped columns of a data.frame. NOTE: Equal variance is not assumed (uses stats::oneway.test)
+#' Returns NaN in cases where one group has all equal values (no variance), 
+#' 
+#' @param df a data.frame with numeric (intensity) values
+#' @param groups named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MosaicFT objects)
+#'  
+#' @importFrom stats oneway.test
+#'  
+#' @export
+MseekAnova <- function(df, groups){
+  
+  ints <- df[,unlist(groups)]  
+  
+  assigngroups <- lapply(groups, match, colnames(ints))
+  
+  grp <- character(ncol(ints))
+  
+  for(i in seq(length(assigngroups))){
+    
+    grp[assigngroups[[i]]] <- names(groups)[i]
+    
+  }
+  
+  grp <- as.factor(grp)
+  
+  pvals <- apply(ints,1,function(x,grp){
+    oneway.test(x ~ grp, var.equal = F)$p.value
+    
+  }, grp)
+  
+  return(data.frame(ANOVA_pvalue = pvals))
+  
+}
