@@ -40,11 +40,11 @@ MseekOptions <- function(..., defaults = F){
     
   }
   else{
-    .MseekOptions <<- unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "Mseek"), file.info(system.file("config", "MseekOptions.json", package = "Mseek"))$size))
+    .MseekOptions <<- unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "METABOseek"), file.info(system.file("config", "MseekOptions.json", package = "METABOseek"))$size))
   }
   
   if(!.MseekOptions$serverMode && Sys.info()['sysname'] == "Windows"){
-    .MseekOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "Mseek"), checkFolders())
+    .MseekOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "METABOseek"), checkFolders())
   }  
   
   
@@ -57,8 +57,8 @@ MseekOptions <- function(..., defaults = F){
     
   }
   
-  if(dirname(system.file(package = "Mseek")) %in% .libPaths()){
-    write(jsonlite::serializeJSON(.MseekOptions, pretty = T), file.path(system.file("config", package = "Mseek"), "MseekOptions.json"))
+  if(dirname(system.file(package = "METABOseek")) %in% .libPaths()){
+    write(jsonlite::serializeJSON(.MseekOptions, pretty = T), file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))
   }
   
 }
