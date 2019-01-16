@@ -100,7 +100,7 @@ RegroupMSDataModule <- function(input,output, session,
         showModal(modalDialog(
           p("These MSData files are not currently loaded:"),
           p(paste(basename(internalValues$missingFiles), collapse = ", ")),
-          p("These file names will be removed from the grouping scheme. Load these files into Mosaic first."),
+          p("These file names will be removed from the grouping scheme. Load these files into Mseek first."),
           actionButton(ns("modalRemoveEntries"), "OK"),
           title = "Not all files are loaded!",
           easyClose = F,

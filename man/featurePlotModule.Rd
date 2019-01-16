@@ -13,7 +13,7 @@ featurePlotModule(input, output, session, FT, rname)
 
 \item{session}{}
 
-\item{FT}{Mosaic Feature Table object}
+\item{FT}{Mseek Feature Table object}
 
 \item{rname}{row names of rows in FT selected for plotting}
 }

@@ -10,7 +10,7 @@ multittest(df = as.data.frame(mx), groups, ttest = T,
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MosaicFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
 
 \item{ttest}{if TRUE, ttest will be calculated}
 
@@ -18,5 +18,5 @@ multittest(df = as.data.frame(mx), groups, ttest = T,
 }
 \description{
 Calculate per-row t-test between grouped columns of a data.frame.
-Note that for column groups with less than 2 members, a pseudo-ttest will be calculated via Mosaic::ttestx to avoid throwing errors.
+Note that for column groups with less than 2 members, a pseudo-ttest will be calculated via Mseek::ttestx to avoid throwing errors.
 }

@@ -1,5 +1,5 @@
-Package: Mosaic
-Title: Metabolite Online Spectrum Analysis Center
+Package: METABOseek
+Title: METABOseek platform
 Version: 0.8.4
 Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
 BiocViews: MassSpectrometry, DataAnalysis

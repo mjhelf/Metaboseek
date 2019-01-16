@@ -1,3 +1,3 @@
 function(input, output, session) {
-  callModule(MosaicContainer, "Mosaic")
+  callModule(MseekContainer, "Mseek")
 }

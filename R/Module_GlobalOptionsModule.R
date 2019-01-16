@@ -48,7 +48,7 @@ GlobalOptionsModule <- function(input,output, session,
                           label = "Database Folder", description= "Select folder for MS annotation database",
                           displayFolder = T)
    
-   MSFolder$dir <- .MosaicOptions$msdatabaseFolder
+   MSFolder$dir <- .MseekOptions$msdatabaseFolder
      
    
    SiriusFolder <- callModule(FilePathModule, "siriusFolder",
@@ -56,16 +56,16 @@ GlobalOptionsModule <- function(input,output, session,
                               label = "Sirius Folder", description= "Select folder that contains the sirius executable (sirius-console-64.exe or sirius in linux/macOS)",
                               displayFolder = T)
    
-   SiriusFolder$dir <- .MosaicOptions$siriusFolder
+   SiriusFolder$dir <- .MseekOptions$siriusFolder
    
     observeEvent(input$EnabledCores,{
      values$GlobalOpts$enabledCores <- input$EnabledCores
-     MosaicOptions(enabledCores = input$EnabledCores)
+     MseekOptions(enabledCores = input$EnabledCores)
    })
    
    observeEvent(input$perPage,{
      values$GlobalOpts$perPage <- input$perPage
-     MosaicOptions(perPage=input$perPage)
+     MseekOptions(perPage=input$perPage)
    })
   
    observeEvent(MSFolder$dir,{
@@ -73,14 +73,14 @@ if(length(SiriusFolder$dir) > 0
    && !is.na(MSFolder$dir)
    ){
        values$GlobalOpts$msdatabaseFolder <- MSFolder$dir
-       MosaicOptions(msdatabaseFolder=MSFolder$dir)
+       MseekOptions(msdatabaseFolder=MSFolder$dir)
      }
    }, ignoreInit =T)
    
    observeEvent(SiriusFolder$dir,{
      if(length(SiriusFolder$dir) > 0 && !is.na(SiriusFolder$dir)){
      values$GlobalOpts$siriusFolder <- SiriusFolder$dir
-     MosaicOptions(siriusFolder=SiriusFolder$dir)
+     MseekOptions(siriusFolder=SiriusFolder$dir)
      }
    }, ignoreInit =T)
    

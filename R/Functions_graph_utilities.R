@@ -1,9 +1,9 @@
 #' layout_components_qgraph
 #' 
-#' Generate subgraphs and sublayouts from a graph for Mosaic interactive view.
+#' Generate subgraphs and sublayouts from a graph for Mseek interactive view.
 #' 
 #' @param graph an igraph object, needs to have an "id" vertex property
-#' @param layout the layout function applied (from igraph or qgraph packages). Defaults to qgraph.layout.fruchtermanmeingold with some Mosaic specific settings
+#' @param layout the layout function applied (from igraph or qgraph packages). Defaults to qgraph.layout.fruchtermanmeingold with some Mseek specific settings
 #' @param ... arguments passed to layout (except if layout is qgraph.layout.fruchtermanreingold)
 #' 
 #' @import igraph

@@ -80,8 +80,8 @@ writeStatus <- function(previous = NULL,
 #' @param nonfill also write the non-filled peaktable data? TRUE or FALSE
 #' @param filename filename to use when writing the csv file (including file extension). "_filled" will be added for filled data.
 #' @param bparams BBPARAMs (BiocParallel::BiocParallelParam object with parameters for parallel computing used in fill peaks)
-#' @param intensities list of parameters for Mosaic EIC intensity extraction (for each feature in the peaklist). ppm: mz window, rtw: rt window (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, if FALSE rtw centers around value in column rt. Not performed if intensities = NULL.
-#' @param rawdata named list of xcmsRaw objects (as returned by Mosaic::loadRawM), required for Mosaic EIC intensity extraction which is not performed if NULL.
+#' @param intensities list of parameters for Mseek EIC intensity extraction (for each feature in the peaklist). ppm: mz window, rtw: rt window (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, if FALSE rtw centers around value in column rt. Not performed if intensities = NULL.
+#' @param rawdata named list of xcmsRaw objects (as returned by Mseek::loadRawM), required for Mseek EIC intensity extraction which is not performed if NULL.
 #' @param saveR save the xset object as .Rdata file
 #'  
 #' @export
@@ -127,7 +127,7 @@ savetable <- function(xset,
        if(!is.null(status)){
       status <- writeStatus (previous = status,
                               message = list(Status = paste0("Saving table ", filename),
-                                             Details = "Getting Mosaic intensities"))
+                                             Details = "Getting Mseek intensities"))
        }
       
   rtx <-  rtexport(xset)    

@@ -1,7 +1,7 @@
 #' constructFeatureTable
 #' 
 #' 
-#' Constructor function for "MosaicFT" object from a feature table data.frame.
+#' Constructor function for "MseekFT" object from a feature table data.frame.
 #' uses and retains the original data frame plus names of columns containing relevant data. 
 #' 
 #' NOTE: currently, only the default values for column names are supported.
@@ -13,8 +13,8 @@
 #' @param fragmentcol column in df with fragmentation information (columnname), defaults to "fragments"
 #' @param rtFormat Are retention times given in seconds ("sec") or minutes ("min")
 #' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
-#' @param tablename Name of the table as displayed by Mosaic
-#' @param editable allow editing of this table in the Mosaic app? if FALSE, only comments column can be edited. editable tables are also not paginated.
+#' @param tablename Name of the table as displayed by Mseek
+#' @param editable allow editing of this table in the Mseek app? if FALSE, only comments column can be edited. editable tables are also not paginated.
 #' 
 #' @export
 constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3)),# data frame 
@@ -91,7 +91,7 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
-    class(FT) <- "MosaicFT"
+    class(FT) <- "MseekFT"
     
     return(FT)
 
@@ -121,9 +121,9 @@ updateDF <- function(a, b){
 
 #' updateDF
 #' 
-#' update an existing MosaicFT with new data frame columns (leaving intensitiy tables and constants in effect)
+#' update an existing MseekFT with new data frame columns (leaving intensitiy tables and constants in effect)
 #' 
-#' @param FT MosaicFT object
+#' @param FT MseekFT object
 #' @param df source data.frame
 #' 
 #' @export
@@ -154,9 +154,9 @@ updateFeatureTable <- function(FT, df){
 
 #' updateFTgrouping
 #' 
-#' update or construct grouping information of a MosaicFT object
+#' update or construct grouping information of a MseekFT object
 #' 
-#' @param FT MosaicFT object
+#' @param FT MseekFT object
 #' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
 #' 
 #' @export
@@ -228,9 +228,9 @@ updateFTgrouping <- function(FT,anagrouptable){
 
 #' updateFTgrouping
 #' 
-#' update the FT index of the Mosaic App (needed because this index is a named list - extracts tablename entry from each MosaicFT object in list)
+#' update the FT index of the Mseek App (needed because this index is a named list - extracts tablename entry from each MseekFT object in list)
 #' 
-#' @param table list of MosaicFT objects 
+#' @param table list of MseekFT objects 
 #' 
 #' @export
 updateFTIndex <- function(tables){

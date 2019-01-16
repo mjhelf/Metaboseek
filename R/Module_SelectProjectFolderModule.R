@@ -26,7 +26,7 @@ SelectProjectFolderModule <- function(input,output, session,
   
   MSFolder <- callModule(FilePathModule, "pfolder",
                          filepaths = reactive({values$GlobalOpts$filePaths}),
-                         label = "Load Project Folder", description= "Select an existing Mosaic Project Folder (e.g. with xcms results)",
+                         label = "Load Project Folder", description= "Select an existing Mseek Project Folder (e.g. with xcms results)",
                          displayFolder = F)
  
   
@@ -82,7 +82,7 @@ SelectProjectFolderModule <- function(input,output, session,
         
         
         showModal(modalDialog(
-          p("You have selected a folder that contaions one specific Mosaic xcms job. Would you like to load its settings?"),
+          p("You have selected a folder that contaions one specific Mseek xcms job. Would you like to load its settings?"),
           p("If you do not select a .csv file, only the MS data files will be loaded."),
           checkboxInput(ns("checkModal"), "Load a Feature Table", value = T),
           selectizeInput(ns("modalSelect"), "select feature table to load",
@@ -191,7 +191,7 @@ SelectProjectFolderModule <- function(input,output, session,
         showModal(modalDialog(
           p("These MSData files were not found:"),
           p(paste(internalValues$missingFiles, collapse = ", ")),
-          p("Please select a folder that contains these files. Mosaic will search all subfolders for matching filenames and update the information in this project folder for the next time you load it."),
+          p("Please select a folder that contains these files. Mseek will search all subfolders for matching filenames and update the information in this project folder for the next time you load it."),
           FilePathModuleUI(ns("altfilefolder")),
           
           title = "File locations have changed",
@@ -222,7 +222,7 @@ SelectProjectFolderModule <- function(input,output, session,
    # print("dirTrigger")
     if(length(AltFileFolder$dir) > 0){
       
-      allFiles <- list.files(AltFileFolder$dir, pattern=.MosaicOptions$filePattern, recursive = TRUE, full.names=T)
+      allFiles <- list.files(AltFileFolder$dir, pattern=.MseekOptions$filePattern, recursive = TRUE, full.names=T)
       
       allHits <- sapply(basename(internalValues$missingFiles), grep, x = allFiles, value = T)
       if(is.list(allHits)){

@@ -9,7 +9,7 @@ MseekAnova(df, groups)
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MosaicFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
 }
 \description{
 Calculate per-row one-way ANOVA between grouped columns of a data.frame. NOTE: Equal variance is not assumed (uses stats::oneway.test)

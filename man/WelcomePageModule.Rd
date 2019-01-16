@@ -17,5 +17,5 @@ WelcomePageModule(input, output, session,
 \item{session}{}
 }
 \description{
-module to welcome Mosaic users.
+module to welcome Mseek users.
 }

@@ -7,10 +7,10 @@
 updateFeatureTable(FT, df)
 }
 \arguments{
-\item{FT}{MosaicFT object}
+\item{FT}{MseekFT object}
 
 \item{df}{source data.frame}
 }
 \description{
-update an existing MosaicFT with new data frame columns (leaving intensitiy tables and constants in effect)
+update an existing MseekFT with new data frame columns (leaving intensitiy tables and constants in effect)
 }

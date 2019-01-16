@@ -1,14 +1,14 @@
 # Define UI for dataset viewer app ----
-#' MosaicMinimalUI
+#' MseekMinimalUI
 #'
-#' A minimal UI for Mosaic that can be extended with additional objects for testing and development purposes
+#' A minimal UI for Mseek that can be extended with additional objects for testing and development purposes
 #'
 #' @importFrom shinyjs runcodeUI 
 #' @importFrom shinydashboard dashboardPage 
 #' @importFrom shiny fluidPage verbatimTextOutput
 #' 
 #' @export
-MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
+MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
   
   if(!is.null(id)){
     ns <- NS(id)
@@ -53,13 +53,13 @@ MosaicMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
   
 }
 
-#' MosaicHeader
+#' MseekHeader
 #'
-#' generates the dashboardHeader for Mosaic.
+#' generates the dashboardHeader for Mseek.
 #' 
 #' @export
-MosaicHeader <- function(...){
-dashboardHeader(title = "MOSAiC",
+MseekHeader <- function(...){
+dashboardHeader(title = "METABOseek",
                 # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
                 #                          icon = shiny::icon("fullscreen", lib = "glyphicon"), 
                 #                          href = NULL),
@@ -72,9 +72,9 @@ dashboardHeader(title = "MOSAiC",
                   title = "Activate/deactivate full-screen mode"),
                   class = "dropdown"),
                 tags$li(a(
-                  href = 'http://mosaic.bti.cornell.edu/welcome/doc.html',
+                  href = 'http://Mseek.bti.cornell.edu/welcome/doc.html',
                   icon("question-circle fa-lg"),
-                  title = "Mosaic online help (opens in new window)",
+                  title = "Mseek online help (opens in new window)",
                   target="_blank",
                   style="color:#ffffff"),
                   class = "dropdown"),
@@ -83,19 +83,19 @@ dashboardHeader(title = "MOSAiC",
 }
 
 
-#' MosaicSidebar
+#' MseekSidebar
 #'
-#' generates the dashboardSidebar for Mosaic.
+#' generates the dashboardSidebar for Mseek.
 #' 
 #' @export
-MosaicSidebar <- function(..., id = NULL){
+MseekSidebar <- function(..., id = NULL){
   if(!is.null(id)){
     ns <- NS(id)
     keyid <- ns("keyd")
-    SBid <- ns("MosaicSB")
+    SBid <- ns("MseekSB")
   }else{
     keyid <- "keyd"
-    SBid <- "MosaicSB"
+    SBid <- "MseekSB"
   }
   
   dashboardSidebar(
@@ -141,8 +141,8 @@ MosaicSidebar <- function(..., id = NULL){
     #bookmarkButton(label ="Bookmark this session"),
     #SelectActiveTableModuleUI("selectactivetable"),
     hr(),
-    h5(a(paste0("MOSAiC version ",packageVersion("Mosaic")), 
-         href="https://github.com/mjhelf/Mosaic", target="_blank"), align = "center")
+    h5(a(paste0("METABOseek version ",packageVersion("METABOseek")), 
+         href="https://github.com/mjhelf/Mseek", target="_blank"), align = "center")
     
   )
   

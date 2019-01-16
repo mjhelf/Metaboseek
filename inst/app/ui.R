@@ -1,5 +1,5 @@
 function(request){
   
-  MosaicContainerUI("Mosaic")
+  MseekContainerUI("Mseek")
   
 }

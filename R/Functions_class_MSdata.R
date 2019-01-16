@@ -1,6 +1,6 @@
 #' constructRawLayout
 #' 
-#' Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in MOSAiC.
+#' Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in METABOseek.
 #' 
 #' @param rawgrouptable a data.frame with columns File and Group , holding file paths and group names, respectively.
 #' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
@@ -16,7 +16,7 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
     MSD$settings = list(rtw = 30,
                         ppm = 5,
                         cols = 1,
-                        colr = 'mosaic.colors',
+                        colr = 'Mseek.colors',
                         alpha = 0.8)
     
     class(MSD) <- "rawLayout"
