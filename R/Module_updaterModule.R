@@ -1,7 +1,7 @@
 #' updaterModule
 #' 
 #' 
-#' module to update Mseek by the click of a button
+#' module to update METABOseek by the click of a button
 #' 
 #' @param input 
 #' @param output 
@@ -41,11 +41,11 @@ updaterModule <- function(input,output, session, tag, set = list(package = "META
     showModal(
         modalDialog(
           p(strong("WARNING: This will shut down the current METABOseek session and unsaved work will be lost!")),
-          p("Mseek will shut down, and a terminal window will appear with information on the update progress."),
+          p("METABOseek will shut down, and a terminal window will appear with information on the update progress."),
           p("The terminal Window may not show up on Linux or macOS systems. In that case, check after a few minutes if the update has worked."),
           
           actionButton(ns('startUpdate'), 'Start Update Now!'),
-          title = paste0('Update to latest "',input$branch,'" branch of Mseek?'),
+          title = paste0('Update to latest "',input$branch,'" branch of METABOseek?'),
           easyClose = T,
           footer = modalButton("Cancel")
 
@@ -100,7 +100,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "META
 #' updaterModuleUI
 #' 
 #' 
-#' module to update Mseek by the click of a button
+#' module to update METABOseek by the click of a button
 #' 
 #' @param id id to be used in ns()
 #' 
@@ -109,7 +109,7 @@ updaterModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      shinydashboard::box(title = "Update Mseek!", status = "primary", collapsible = F, width = 12,
+      shinydashboard::box(title = "Update METABOseek!", status = "primary", collapsible = F, width = 12,
                           htmlOutput(ns('updateUI'))
       )
     )
