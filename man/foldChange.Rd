@@ -10,7 +10,7 @@ foldChange(mx, groups, ctrl = NULL, calc = "mean", topgroup = T,
 \arguments{
 \item{mx}{a matrix of numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MosaicFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
 
 \item{ctrl}{character() naming the control group(s)}
 

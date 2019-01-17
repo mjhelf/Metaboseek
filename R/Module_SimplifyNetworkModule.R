@@ -152,7 +152,7 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
             hr(),
             fluidRow(
               div( title = "Use these parameters to simplify the network", 
-                             Mosaic:::mActionButton(ns("simplifyNow"), "Go", red = T)))
+                             Mseek:::mActionButton(ns("simplifyNow"), "Go", red = T)))
               
             ),
           title = "Simplify network",

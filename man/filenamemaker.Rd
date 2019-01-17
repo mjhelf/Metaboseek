@@ -9,7 +9,7 @@ filenamemaker(projectName, FT)
 \arguments{
 \item{projectName}{ProjectName used as prefix}
 
-\item{FT}{Mosaic's featureTable reactiveValues (or a list with same structure)}
+\item{FT}{Mseek's featureTable reactiveValues (or a list with same structure)}
 }
 \description{
 Generate a filename from project name and filter criteria

@@ -1,7 +1,7 @@
 #' WelcomePageModule
 #' 
 #' 
-#' module to welcome Mosaic users.
+#' module to welcome Mseek users.
 #' 
 #' @param input 
 #' @param output 
@@ -41,19 +41,19 @@ WelcomePageModule <- function(input,output, session,
   output$web <- renderUI({
     
     if(show()){
-      # div(title= "Welcome to Mosaic!",
+      # div(title= "Welcome to Mseek!",
       fluidPage(
-        fluidRow(
-          column(3),
-          column(6,
-                 img(src = "/img/mosaic_logo.png",
-                     alt = "Mosaic", style = "width:100%")
-          ),
-          column(3)
-          ),
+        # fluidRow(
+        #   column(3),
+        #   column(6,
+        #          img(src = "/img/Mseek_logo.png",
+        #              alt = "Mseek", style = "width:100%")
+        #   ),
+        #   column(3)
+        #   ),
         fluidRow(
           shinydashboard::box(status = "primary", width = 12, solidHeader = T,
-                              title = "Welcome to MOSAiC!",
+                              title = "Welcome to METABOseek!",
                               fluidPage(
                                 fluidRow(
                                   
@@ -75,14 +75,14 @@ WelcomePageModule <- function(input,output, session,
         
         fluidRow(
           tryCatch({
-            rl <- readLines(paste0('http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = ".")), n = 1)
+            rl <- readLines(paste0('http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = ".")), n = 1)
             
             HTML('
 <iframe id="inlineFrameExample"
 title="webpage" 
 style="border:none;width:100%;height:500px;" ',
-                 paste0('src="http://mosaic.bti.cornell.edu/welcome/integrated/', paste(packageVersion("Mosaic")[[1]],collapse = "."),'">'),
-                 #paste0('src="http://mosaic.bti.cornell.edu/welcome/">'),
+                 paste0('src="http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = "."),'">'),
+                 #paste0('src="http://metaboseek.com">'),
                  '</iframe>
               ')
             

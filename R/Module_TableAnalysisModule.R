@@ -28,7 +28,7 @@ TableAnalysisModule <- function(input,output, session,
                                    useNormalized = TRUE,
                                    logNormalized = F,
                                    controlGroups = NULL,
-                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"),
+                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "anova"),
                                    analysesSelected = "Basic analysis",
                                    numClusters = 2
   )

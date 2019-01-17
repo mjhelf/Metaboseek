@@ -70,7 +70,7 @@ LoadMSDataModule <- function(input,output, session,
   observeEvent(input$modalConf,{
     
     withProgress(message = 'Please wait!', detail = "Loading MS data", value = 0.8, {
-      folderfiles <- if(length(FolderLoader$dir) > 0){list.files(FolderLoader$dir, pattern=.MosaicOptions$filePattern, recursive = TRUE, full.names=T)}else{NULL}
+      folderfiles <- if(length(FolderLoader$dir) > 0){list.files(FolderLoader$dir, pattern=.MseekOptions$filePattern, recursive = TRUE, full.names=T)}else{NULL}
       print(folderfiles)
       newfiles <- unique(c(FileLoader$files$datapath, folderfiles))
       print(newfiles)

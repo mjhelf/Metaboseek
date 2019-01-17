@@ -5,7 +5,7 @@
 #' @param input 
 #' @param output 
 #' @param session 
-#' @param FT Mosaic Feature Table object
+#' @param FT Mseek Feature Table object
 #' @param rname row names of rows in FT selected for plotting
 #' 
 #' @import ggplot2

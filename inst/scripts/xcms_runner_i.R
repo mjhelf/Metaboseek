@@ -3,14 +3,14 @@ tryCatch({
 
 
 library(xcms)
-library(Mosaic)
+library(METABOseek)
 
 fols <- commandArgs(trailingOnly=TRUE)
 
 setwd(fols[1])
 
 history <- writeStatus (previous = NULL,
-                        message = list(Status = paste0("Starting analysis with xcms_runner in MOSAiC v",packageVersion("Mosaic")," and xcms version ", packageVersion("xcms")),
+                        message = list(Status = paste0("Starting analysis with xcms_runner in METABOseek v",packageVersion("METABOseek")," and xcms version ", packageVersion("xcms")),
                                        Details = "initializing parameters"))
 
 #Load settings from csv files in wd
@@ -129,7 +129,7 @@ history <- writeStatus (previous = history,
                         message = list(Status = "Starting analysis",
                                        Details = "loading files"))
 
-#xcmsRaw object list for Mosaic intensity method
+#xcmsRaw object list for Mseek intensity method
 if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) ||  "Peak shapes" %in%  ppOptions$analysesSelected){
 rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
 }

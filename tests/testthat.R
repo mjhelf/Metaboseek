@@ -1,5 +1,5 @@
 library(testthat)
-library(Mosaic)
+library(METABOseek)
 library(shinytest)
 
   if (!dependenciesInstalled()) {installDependencies()}
@@ -7,6 +7,6 @@ library(shinytest)
 
 #test_dir("./tests/testthat/")
 
-test_check("Mosaic")
+test_check("Mseek")
 
 

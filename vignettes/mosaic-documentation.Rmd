@@ -1,5 +1,5 @@
 ---
-title: "MOSAiC documentation"
+title: "METABOseek documentation"
 author: "Maximilian J. Helf"
 date: "`r Sys.Date()`"
 output: 

@@ -252,7 +252,7 @@ sliderInput(ns("seledges"), "Filter edges",
            || length(unique(vertex_attr(internalValues$activelayout$graph,input$vlabelcol))) <= 5){
         
         if(internalValues$overview){
-          vc <- mosaic.colors(n = length(levels(internalValues$vlabcolfactors)), alpha = 1)[internalValues$vlabcolfactors]
+          vc <- Mseek.colors(n = length(levels(internalValues$vlabcolfactors)), alpha = 1)[internalValues$vlabcolfactors]
           
           #make sure subgraphs use same color scheme as overview:
         }else{
@@ -264,7 +264,7 @@ sliderInput(ns("seledges"), "Filter edges",
               colassign[sel] <- l
             }
           }
-          vc <- mosaic.colors(n = length(levels(internalValues$vlabcolfactors)), alpha = 1)[as.integer(colassign)]
+          vc <- Mseek.colors(n = length(levels(internalValues$vlabcolfactors)), alpha = 1)[as.integer(colassign)]
         }
         }else{
           
@@ -415,7 +415,7 @@ sliderInput(ns("seledges"), "Filter edges",
          || length(unique(vertex_attr(internalValues$graph,input$vlabelcol))) <= 5){
         
       colfacs <- as.factor(vertex_attr(internalValues$graph,input$vlabelcol))
-      cols <- mosaic.colors(n = length(levels(colfacs)), alpha = 1)
+      cols <- Mseek.colors(n = length(levels(colfacs)), alpha = 1)
       
       
       legendplot("center",

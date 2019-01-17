@@ -28,12 +28,12 @@ EICOptionsModule <- function(input,output, session,
   
   observeEvent(input$TICtoggle,{
     values$GlobalOpts$TICtoggle <- input$TICtoggle
-    MosaicOptions(TICtoggle = input$TICtoggle)
+    MseekOptions(TICtoggle = input$TICtoggle)
   })
   
   observeEvent(input$RTwindow,{
     values$GlobalOpts$RTwindow <- input$RTwindow
-    MosaicOptions(RTwindow=input$RTwindow)
+    MseekOptions(RTwindow=input$RTwindow)
   })
   
   output$RTwindow <- renderUI({
@@ -48,7 +48,7 @@ EICOptionsModule <- function(input,output, session,
   
   observeEvent(input$RTtoggle,{
     values$GlobalOpts$RTtoggle <- input$RTtoggle
-    MosaicOptions(RTtoggle=input$RTtoggle)
+    MseekOptions(RTtoggle=input$RTtoggle)
   })
   
   output$PPMwindow <- renderUI({
@@ -61,7 +61,7 @@ EICOptionsModule <- function(input,output, session,
   # })
   observeEvent(input$PPMwindow,{
     values$GlobalOpts$PPMwindow <- input$PPMwindow
-    MosaicOptions(PPMwindow=input$PPMwindow)
+    MseekOptions(PPMwindow=input$PPMwindow)
   })
   
   output$plotCols <- renderUI({
@@ -74,7 +74,7 @@ EICOptionsModule <- function(input,output, session,
   # })
   observeEvent(input$plotCols,{
     values$GlobalOpts$plotCols <- input$plotCols
-    MosaicOptions(plotCols=input$plotCols)
+    MseekOptions(plotCols=input$plotCols)
   })
   
   output$plotYzoom <- renderUI({
@@ -82,7 +82,7 @@ EICOptionsModule <- function(input,output, session,
   })
   observeEvent(input$plotYzoom,{
     values$GlobalOpts$plotYzoom <- input$plotYzoom
-    MosaicOptions(plotYzoom=input$plotYzoom)
+    MseekOptions(plotYzoom=input$plotYzoom)
   })
   
   output$plotLw <- renderUI({
@@ -90,7 +90,7 @@ EICOptionsModule <- function(input,output, session,
   })
   observeEvent(input$plotLw,{
     values$GlobalOpts$plotLw <- input$plotLw
-    MosaicOptions(plotLw=input$plotLw)
+    MseekOptions(plotLw=input$plotLw)
   })
   
   output$MLtoggle <- renderUI({
@@ -98,7 +98,7 @@ EICOptionsModule <- function(input,output, session,
   })
   observeEvent(input$MLtoggle,{
     values$GlobalOpts$MLtoggle <- input$MLtoggle
-    MosaicOptions(MLtoggle=input$MLtoggle)
+    MseekOptions(MLtoggle=input$MLtoggle)
   })
   
   output$plotCx <- renderUI({
@@ -106,13 +106,13 @@ EICOptionsModule <- function(input,output, session,
   })
   observeEvent(input$plotCx,{
     values$GlobalOpts$plotCx <- input$plotCx
-    MosaicOptions(plotCx=input$plotCx)
+    MseekOptions(plotCx=input$plotCx)
   })
   
   
   output$colorscheme <- renderUI({
     selectizeInput(ns("colorscheme"),"Color palette: ", 
-                   choices= c("mosaic.colors", "topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
+                   choices= c("Mseek.colors", "topo.colors", "rainbow", "heat.colors", "terrain.colors", "cm.colors"),
                    selected = NULL
     )
   })
@@ -123,7 +123,7 @@ EICOptionsModule <- function(input,output, session,
   # })
   observeEvent(input$colorscheme,{
     values$GlobalOpts$colorscheme <- input$colorscheme
-    MosaicOptions(colorscheme=input$colorscheme)
+    MseekOptions(colorscheme=input$colorscheme)
   })
   
   

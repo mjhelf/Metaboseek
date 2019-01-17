@@ -5,8 +5,8 @@
 \title{xcmsModule}
 \usage{
 xcmsModule(input, output, session, values = reactiveValues(),
-  static = list(servermode = F, rootpath = .MosaicOptions$filePaths,
-  activateXCMS = T, filePattern = .MosaicOptions$filePattern))
+  static = list(servermode = F, rootpath = .MseekOptions$filePaths,
+  activateXCMS = T, filePattern = .MseekOptions$filePattern))
 }
 \arguments{
 \item{input}{}

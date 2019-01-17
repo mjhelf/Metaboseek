@@ -1,8 +1,8 @@
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    paste("\nWelcome to MOSAiC version",
-          utils::packageVersion("Mosaic"),
-          "\nVisit our websites: http://mosaic.bti.cornell.edu and https://github.com/mjhelf/Mosaic\n"))
+    paste("\nWelcome to METABOseek version",
+          utils::packageVersion("METABOseek"),
+          "\nVisit our websites: http://metaboseek.com and https://github.com/mjhelf/METABOseek\n"))
   
   
 }
@@ -11,16 +11,16 @@
   
   options(scipen = 5)
 
-  MosaicOptions()
+  MseekOptions()
   
   #Update example ms file locations
-  if(dirname(system.file(package = "Mosaic")) %in% .libPaths()
-     && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "Mosaic"))){
-    rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "Mosaic"), stringsAsFactors = F, row.names = 1)
-    rawgroups$File <- file.path(system.file("extdata", "examples", package = "Mosaic"), rawgroups$File)
-    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "Mosaic"), "filegroups.csv"))
-    #write.csv(rawgroups[rawgroups$Group != "MS2",], file.path(system.file("extdata", "examples", "example projectfolder", package = "Mosaic"), "filegroups_ms1.csv"))
-   # write.csv(rawgroups[rawgroups$Group == "MS2",], file.path(system.file("extdata", "examples", "example projectfolder", package = "Mosaic"), "filegroups_ms2.csv"))
+  if(dirname(system.file(package = "METABOseek")) %in% .libPaths()
+     && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "METABOseek"))){
+    rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "METABOseek"), stringsAsFactors = F, row.names = 1)
+    rawgroups$File <- file.path(system.file("extdata", "examples", package = "METABOseek"), rawgroups$File)
+    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "METABOseek"), "filegroups.csv"))
+    #write.csv(rawgroups[rawgroups$Group != "MS2",], file.path(system.file("extdata", "examples", "example projectfolder", package = "METABOseek"), "filegroups_ms1.csv"))
+   # write.csv(rawgroups[rawgroups$Group == "MS2",], file.path(system.file("extdata", "examples", "example projectfolder", package = "METABOseek"), "filegroups_ms2.csv"))
   }
   
   

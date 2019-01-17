@@ -7,8 +7,8 @@
 updateFTIndex(tables)
 }
 \arguments{
-\item{table}{list of MosaicFT objects}
+\item{table}{list of MseekFT objects}
 }
 \description{
-update the FT index of the Mosaic App (needed because this index is a named list - extracts tablename entry from each MosaicFT object in list)
+update the FT index of the Mseek App (needed because this index is a named list - extracts tablename entry from each MseekFT object in list)
 }

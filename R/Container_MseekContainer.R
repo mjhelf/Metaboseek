@@ -1,6 +1,6 @@
-#' MosaicContainer
+#' MseekContainer
 #' 
-#' Module that contains the entire Mosaic program
+#' Module that contains the entire METABOseek program
 #' 
 #' @param input 
 #' @param output 
@@ -8,11 +8,11 @@
 #' @param values Import data from the shiny session
 #' 
 #' @export 
-MosaicContainer <- function(input,output, session){
+MseekContainer <- function(input,output, session){
   
   ns <- NS(session$ns(NULL))
   
-  MosaicMinimalServer(diagnostics = .MosaicOptions$develMode, data = .MosaicOptions$loadExampleData, tables = .MosaicOptions$loadExampleTable)
+  MseekMinimalServer(diagnostics = .MseekOptions$develMode, data = .MseekOptions$loadExampleData, tables = .MseekOptions$loadExampleTable)
   
   StartPage <- callModule(WelcomePageModule,"startpage",
                           values = reactiveValues(projectData = projectData,
@@ -31,20 +31,20 @@ MosaicContainer <- function(input,output, session){
   
   xcmsOut <- callModule(xcmsModule, "xcmsMod",
                         values = list(MSData = MSData),
-                        static = list(servermode = .MosaicOptions$serverMode,
-                                      activateXCMS = .MosaicOptions$activateXCMS,
-                                      rootpath = .MosaicOptions$filePaths,
-                                      filePattern = .MosaicOptions$filePattern)
+                        static = list(servermode = .MseekOptions$serverMode,
+                                      activateXCMS = .MseekOptions$activateXCMS,
+                                      rootpath = .MseekOptions$filePaths,
+                                      filePattern = .MseekOptions$filePattern)
   )
   
-  callModule(updaterModule, 'update', tag = ns('update'), set =list(package = "Mosaic",
+  callModule(updaterModule, 'update', tag = ns('update'), set =list(package = "METABOseek",
                                                                 refs = c("master", "devel", "devel_raw"),
-                                                                active = !.MosaicOptions$serverMode))
+                                                                active = !.MseekOptions$serverMode))
   
   
  observeEvent(StartPage$explore,{
    if(StartPage$explore){
-        updateTabItems(session, "MosaicSB", "exploredata")
+        updateTabItems(session, "MseekSB", "exploredata")
    }
    
    
@@ -53,25 +53,25 @@ MosaicContainer <- function(input,output, session){
   
 }
 
-#' MosaicContainerUI
+#' MseekContainerUI
 #' 
-#' Module that contains the entire Mosaic program
+#' Module that contains the entire METABOseek program
 #' 
 #' @param id
 #' 
 #' @export
-MosaicContainerUI <- function(id){
+MseekContainerUI <- function(id){
   ns <- NS(id)
   
-  MosaicMinimalUI(skin = "black",
-                  MosaicHeader(),
-                  MosaicSidebar(id = id),
+  MseekMinimalUI(skin = "black",
+                  MseekHeader(),
+                  MseekSidebar(id = id),
                   dashboardBody(
                     
                     # Load custom CSS
                     tags$head(tags$style(HTML(
-                      readChar(system.file("config", "Mosaic_styles.css", package = "Mosaic"),
-                               file.info(system.file("config", "Mosaic_styles.css", package = "Mosaic"))$size)))),
+                      readChar(system.file("config", "METABOseek_styles.css", package = "METABOseek"),
+                               file.info(system.file("config", "METABOseek_styles.css", package = "METABOseek"))$size)))),
                     
                     tabItems(
                       tabItem(tabName = "start",
@@ -95,7 +95,7 @@ MosaicContainerUI <- function(id){
                     
                     
                   ) ,
-                  diagnostics = .MosaicOptions$develMode,
+                  diagnostics = .MseekOptions$develMode,
                   dashboard = T,
                   id = id)
   
