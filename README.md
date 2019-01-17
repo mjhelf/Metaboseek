@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/mjhelf/Mseek.svg?branch=master)](https://travis-ci.org/mjhelf/Mseek)
-[![codecov](https://codecov.io/gh/mjhelf/Mseek/branch/master/graph/badge.svg)](https://codecov.io/gh/mjhelf/Mseek)
+[![Build Status](https://travis-ci.org/mjhelf/Mosaic.svg?branch=master)](https://travis-ci.org/mjhelf/Mosaic)
+[![codecov](https://codecov.io/gh/mjhelf/Mosaic/branch/master/graph/badge.svg)](https://codecov.io/gh/mjhelf/Mosaic)
 
 # METABOseek
 
