@@ -36,7 +36,7 @@ EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0,
 
 \item{yzoom}{zoom factor into y-axis}
 
-\item{EIClistItem}{item from a list of EICs from Mosaic:multiEIC}
+\item{EIClistItem}{item from a list of EICs from Mseek:multiEIC}
 }
 \description{
 generate one EIC plot for multiple files

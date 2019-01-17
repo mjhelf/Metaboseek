@@ -1,34 +1,34 @@
 {
   "input": {
     "EICplots": "Grouped EICs",
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelgProps": null,
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelGroup": "",
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelIntensities": null,
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelOthers": null,
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelsProps": null,
-    "Mosaic-mainpagecontent-filtersort-FilterBox": "Table Filter",
-    "Mosaic-mainpagecontent-filtersort-rowselector-addFilter": 0,
-    "Mosaic-mainpagecontent-filtersort-rowselector-applyfilter": 0,
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-activecheck": false,
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-colsel": "mz",
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-maxsel": 0,
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-minsel": 0,
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-miniPlots": false,
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-RtCorrActive": false,
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-ShowSpec": false,
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-errorbar": "none",
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-gtype": "by group",
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-log10": false,
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-mark": "none",
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-multidata": false,
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-pdots": true,
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-ptype": "barplot",
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-rot": false,
-    "Mosaic-mainpagecontent-mainplotbox-quickplots-usenorm": false,
-    "Mosaic-mainpagecontent-mainplotbox-regroupms-newGroup": 0,
-    "Mosaic-mainpagecontent-mainplotbox-regroupms-updateGroups": 0,
-    "Mosaic-mainpagecontent-maintabbox-maintable-decreasingCheck": true,
-    "Mosaic-mainpagecontent-maintabbox-maintable-maintable": {
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelgProps": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelGroup": "",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelOthers": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelsProps": null,
+    "Mseek-mainpagecontent-filtersort-FilterBox": "Table Filter",
+    "Mseek-mainpagecontent-filtersort-rowselector-addFilter": 0,
+    "Mseek-mainpagecontent-filtersort-rowselector-applyfilter": 0,
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-activecheck": false,
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel": "mz",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-maxsel": 0,
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-minsel": 0,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-miniPlots": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-RtCorrActive": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-ShowSpec": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-errorbar": "none",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-gtype": "by group",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-log10": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-mark": "none",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-multidata": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-pdots": true,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-ptype": "barplot",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-rot": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-usenorm": false,
+    "Mseek-mainpagecontent-mainplotbox-regroupms-newGroup": 0,
+    "Mseek-mainpagecontent-mainplotbox-regroupms-updateGroups": 0,
+    "Mseek-mainpagecontent-maintabbox-maintable-decreasingCheck": true,
+    "Mseek-mainpagecontent-maintabbox-maintable-maintable": {
       "data": [
         [
           0,
@@ -174,38 +174,38 @@
         "fixedColumnsLeft": 3
       }
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-savetable-savetable": 0,
-    "Mosaic-mainpagecontent-maintabbox-maintable-sortBy": "mz",
-    "Mosaic-mainpagecontent-maintabbox-maintable-sortCheck": false,
-    "Mosaic-mainpagecontent-maintabbox-maintable-tablechange-activeTable": "table0",
-    "Mosaic-mainpagecontent-maintabbox-tabanalysis-analyzeButton": 0,
-    "Mosaic-mainpagecontent-maintabbox-tabgrouping-intcols": 0,
-    "Mosaic-mainpagecontent-maintabbox-tabgrouping-removeGroups": 0,
-    "Mosaic-mainpagecontent-maintabbox-tabgrouping-updateGroups": 0,
-    "Mosaic-mainpagecontent-maintabbox-TableBox": "View Table",
-    "Mosaic-mainpagecontent-optionsbox-maindataload-msdata-loadMSDButton": 0,
-    "Mosaic-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folder": 0,
-    "Mosaic-mainpagecontent-optionsbox-maindataload-table-loadtable": 0,
-    "Mosaic-mainpagecontent-optionsbox-massshifts-updateshifts": 0,
-    "Mosaic-mainpagecontent-optionsbox-rtcorrviewer-RtCorrLoad": null,
-    "Mosaic-MosaicSB": "exploredata",
-    "Mosaic-startpage-startdataload-msdata-loadMSDButton": 0,
-    "Mosaic-startpage-startdataload-projectfolder-pfolder-folder": 0,
-    "Mosaic-startpage-startdataload-table-loadtable": 0,
-    "Mosaic-xcmsMod-TabAnalysisXcms-analyzeButton": 0,
-    "Mosaic-xcmsMod-xcms_loadfolder": 0,
-    "Mosaic-xcmsMod-xcms_loadfolderOffline": 0,
-    "Mosaic-xcmsMod-xcms_name": "xcms_run",
-    "Mosaic-xcmsMod-xcms_settingsLoad": null,
-    "Mosaic-xcmsMod-xcms_start": 0,
+    "Mseek-mainpagecontent-maintabbox-maintable-savetable-savetable": 0,
+    "Mseek-mainpagecontent-maintabbox-maintable-sortBy": "mz",
+    "Mseek-mainpagecontent-maintabbox-maintable-sortCheck": false,
+    "Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable": "table0",
+    "Mseek-mainpagecontent-maintabbox-tabanalysis-analyzeButton": 0,
+    "Mseek-mainpagecontent-maintabbox-tabgrouping-intcols": 0,
+    "Mseek-mainpagecontent-maintabbox-tabgrouping-removeGroups": 0,
+    "Mseek-mainpagecontent-maintabbox-tabgrouping-updateGroups": 0,
+    "Mseek-mainpagecontent-maintabbox-TableBox": "View Table",
+    "Mseek-mainpagecontent-optionsbox-maindataload-msdata-loadMSDButton": 0,
+    "Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folder": 0,
+    "Mseek-mainpagecontent-optionsbox-maindataload-table-loadtable": 0,
+    "Mseek-mainpagecontent-optionsbox-massshifts-updateshifts": 0,
+    "Mseek-mainpagecontent-optionsbox-rtcorrviewer-RtCorrLoad": null,
+    "Mseek-MseekSB": "exploredata",
+    "Mseek-startpage-startdataload-msdata-loadMSDButton": 0,
+    "Mseek-startpage-startdataload-projectfolder-pfolder-folder": 0,
+    "Mseek-startpage-startdataload-table-loadtable": 0,
+    "Mseek-xcmsMod-TabAnalysisXcms-analyzeButton": 0,
+    "Mseek-xcmsMod-xcms_loadfolder": 0,
+    "Mseek-xcmsMod-xcms_loadfolderOffline": 0,
+    "Mseek-xcmsMod-xcms_name": "xcms_run",
+    "Mseek-xcmsMod-xcms_settingsLoad": null,
+    "Mseek-xcmsMod-xcms_start": 0,
     "PlotOpts": "Load Data",
     "sidebarCollapsed": false,
     "sidebarItemExpanded": null,
     "xcms_settingsBox": "XCMS Settings"
   },
   "output": {
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelgProps": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelgProps\">Group properties<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelgProps\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelgProps\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelgProps": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelgProps\">Group properties<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelgProps\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelgProps\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -223,8 +223,8 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelGroup": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelGroup\">Group of interest<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelGroup\" class=\"form-control\"><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelGroup\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelGroup": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\">Group of interest<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\" class=\"form-control\"><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -242,8 +242,8 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelIntensities": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelIntensities\">Sample intensities<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelIntensities\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Intensities\">\n\n<\/optgroup>\n<optgroup label=\"Normalized Intensities\">\n\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelIntensities\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities\">Sample intensities<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Intensities\">\n\n<\/optgroup>\n<optgroup label=\"Normalized Intensities\">\n\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -261,8 +261,8 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelOthers": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelOthers\">other columns<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelOthers\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Basic Stats\">\n\n<\/optgroup>\n<optgroup label=\"Others\">\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelOthers\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelOthers": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\">other columns<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Basic Stats\">\n\n<\/optgroup>\n<optgroup label=\"Others\">\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -280,8 +280,8 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-colselector-mainSelsProps": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelsProps\">Sample properties<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelsProps\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-filtersort-colselector-mainSelsProps\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelsProps": {
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelsProps\">Sample properties<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelsProps\" class=\"form-control\" multiple=\"multiple\"><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelsProps\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -299,20 +299,20 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-rowselector-applyFilter": {
-      "html": "<button id=\"Mosaic-mainpagecontent-filtersort-rowselector-applyfilter\" type=\"button\" class=\"btn btn-default action-button\" style=\"color: #fff; background-color: #C41230; border-color: #595959\">Apply Filters<\/button>",
+    "Mseek-mainpagecontent-filtersort-rowselector-applyFilter": {
+      "html": "<button id=\"Mseek-mainpagecontent-filtersort-rowselector-applyfilter\" type=\"button\" class=\"btn btn-default action-button\" style=\"color: #fff; background-color: #C41230; border-color: #595959\">Apply Filters<\/button>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-activeCheck": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-activecheck\" type=\"checkbox\"/>\n      <span>activate<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-activeCheck": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-activecheck\" type=\"checkbox\"/>\n      <span>activate<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-colSel": {
-      "html": "<div title=\"Numeric column, range:0 - 0, mean: 0, median: 0\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-colsel\">Filter<\/label>\n    <div>\n      <select id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-colsel\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-colsel\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-colSel": {
+      "html": "<div title=\"Numeric column, range:0 - 0, mean: 0, median: 0\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\">Filter<\/label>\n    <div>\n      <select id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -330,42 +330,42 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-maxSel": {
-      "html": "<div class=\"col-sm-3\">\n  <div class=\"form-group shiny-input-container\">\n    <label for=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-maxsel\">max.<\/label>\n    <input id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-maxsel\" type=\"number\" class=\"form-control\" value=\"0\"/>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-maxSel": {
+      "html": "<div class=\"col-sm-3\">\n  <div class=\"form-group shiny-input-container\">\n    <label for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-maxsel\">max.<\/label>\n    <input id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-maxsel\" type=\"number\" class=\"form-control\" value=\"0\"/>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-minSel": {
-      "html": "<div class=\"col-sm-3\">\n  <div class=\"form-group shiny-input-container\">\n    <label for=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-minsel\">min.<\/label>\n    <input id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-minsel\" type=\"number\" class=\"form-control\" value=\"0\"/>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-minSel": {
+      "html": "<div class=\"col-sm-3\">\n  <div class=\"form-group shiny-input-container\">\n    <label for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-minsel\">min.<\/label>\n    <input id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-minsel\" type=\"number\" class=\"form-control\" value=\"0\"/>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-modeSel": null,
-    "Mosaic-mainpagecontent-filtersort-rowselector-filter1-txtSel": null,
-    "Mosaic-mainpagecontent-filtersort-rowselector-FilterUIs": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-2\">\n    <div id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-activeCheck\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-4\">\n    <div id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-colSel\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-minSel\" class=\"shiny-html-output\"><\/div>\n  <div id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-maxSel\" class=\"shiny-html-output\"><\/div>\n  <div id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-modeSel\" class=\"shiny-html-output\"><\/div>\n  <div id=\"Mosaic-mainpagecontent-filtersort-rowselector-filter1-txtSel\" class=\"shiny-html-output\"><\/div>\n<\/div>",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-modeSel": null,
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-txtSel": null,
+    "Mseek-mainpagecontent-filtersort-rowselector-FilterUIs": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-2\">\n    <div id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-activeCheck\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-4\">\n    <div id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colSel\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-minSel\" class=\"shiny-html-output\"><\/div>\n  <div id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-maxSel\" class=\"shiny-html-output\"><\/div>\n  <div id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-modeSel\" class=\"shiny-html-output\"><\/div>\n  <div id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-txtSel\" class=\"shiny-html-output\"><\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-adductPlot": null,
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-mainPlotEICs": null,
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-selectLayout-activeTable": {
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-adductPlot": null,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-mainPlotEICs": null,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-selectLayout-activeTable": {
       "html": "<p>No MS data loaded<\/p>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-mainplotbox-groupedeics-Spec1-specAll": null,
-    "Mosaic-mainpagecontent-maintabbox-maintable-decreasingC": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mosaic-mainpagecontent-maintabbox-maintable-decreasingCheck\" type=\"checkbox\" checked=\"checked\"/>\n      <span>decreasing<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-Spec1-specAll": null,
+    "Mseek-mainpagecontent-maintabbox-maintable-decreasingC": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-maintabbox-maintable-decreasingCheck\" type=\"checkbox\" checked=\"checked\"/>\n      <span>decreasing<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-maintable": {
+    "Mseek-mainpagecontent-maintabbox-maintable-maintable": {
       "x": {
         "data": [
           {
@@ -502,16 +502,16 @@
 
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-pageN": null,
-    "Mosaic-mainpagecontent-maintabbox-maintable-perPageI": null,
-    "Mosaic-mainpagecontent-maintabbox-maintable-savetable-saveTableButton": {
-      "html": "<button id=\"Mosaic-mainpagecontent-maintabbox-maintable-savetable-savetable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"glyphicon glyphicon-floppy-save\"><\/i>\n  Save Table\n<\/button>",
+    "Mseek-mainpagecontent-maintabbox-maintable-pageN": null,
+    "Mseek-mainpagecontent-maintabbox-maintable-perPageI": null,
+    "Mseek-mainpagecontent-maintabbox-maintable-savetable-saveTableButton": {
+      "html": "<button id=\"Mseek-mainpagecontent-maintabbox-maintable-savetable-savetable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"glyphicon glyphicon-floppy-save\"><\/i>\n  Save Table\n<\/button>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-sortByC": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-maintabbox-maintable-sortBy\">Sort by column<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-maintabbox-maintable-sortBy\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-maintabbox-maintable-sortBy\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-maintabbox-maintable-sortByC": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\">Sort by column<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -529,20 +529,20 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-sortC": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mosaic-mainpagecontent-maintabbox-maintable-sortCheck\" type=\"checkbox\"/>\n      <span>sort<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-maintabbox-maintable-sortC": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-maintabbox-maintable-sortCheck\" type=\"checkbox\"/>\n      <span>sort<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-tabCtrls": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-1\">\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-sortC\" class=\"shiny-html-output\"><\/div>\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-decreasingC\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-sortByC\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-1\">\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-pageN\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-2\">\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-perPageI\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-2\">\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-savetable-saveTableButton\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-tablechange-activeTable\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-maintabbox-maintable-tabCtrls": {
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-1\">\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-sortC\" class=\"shiny-html-output\"><\/div>\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-decreasingC\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-sortByC\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-1\">\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-pageN\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-2\">\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-perPageI\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-2\">\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-savetable-saveTableButton\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"col-sm-3\">\n    <div id=\"Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-tablechange-activeTable": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mosaic-mainpagecontent-maintabbox-maintable-tablechange-activeTable\">Active Table<\/label>\n  <div>\n    <select id=\"Mosaic-mainpagecontent-maintabbox-maintable-tablechange-activeTable\" class=\"form-control\"><option value=\"table0\" selected>Custom Table<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mosaic-mainpagecontent-maintabbox-maintable-tablechange-activeTable\">{}<\/script>\n  <\/div>\n<\/div>",
+    "Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable\">Active Table<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable\" class=\"form-control\"><option value=\"table0\" selected>Custom Table<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -560,8 +560,8 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-maintabbox-maintable-tabUI": {
-      "html": "<div class=\"row\">\n  <div id=\"Mosaic-mainpagecontent-maintabbox-maintable-maintable\" style=\"width:100%; height:100%; \" class=\"rhandsontable html-widget html-widget-output\"><\/div>\n<\/div>",
+    "Mseek-mainpagecontent-maintabbox-maintable-tabUI": {
+      "html": "<div class=\"row\">\n  <div id=\"Mseek-mainpagecontent-maintabbox-maintable-maintable\" style=\"width:100%; height:100%; \" class=\"rhandsontable html-widget html-widget-output\"><\/div>\n<\/div>",
       "deps": [
         {
           "name": "htmlwidgets",
@@ -677,14 +677,14 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderButton": {
-      "html": "<div id=\"Mosaic-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-div\" title=\"Select an existing Mosaic Project Folder (e.g. with xcms results)\">\n  <button id=\"Mosaic-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mosaic Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
+    "Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderButton": {
+      "html": "<div id=\"Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-div\" title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">\n  <button id=\"Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderUI": {
-      "html": "<div class=\"container-fluid\">\n  <div id=\"Mosaic-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
+    "Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderUI": {
+      "html": "<div class=\"container-fluid\">\n  <div id=\"Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
       "deps": [
         {
           "name": "bootstrap",
@@ -708,14 +708,14 @@
         }
       ]
     },
-    "Mosaic-mainpagecontent-optionsbox-maindataload-showfolder": {
+    "Mseek-mainpagecontent-optionsbox-maindataload-showfolder": {
       "html": "<p>No Project Folder currently selected<\/p>",
       "deps": [
 
       ]
     },
-    "Mosaic-mainpagecontent-optionsbox-maindataload-table-loadTableButton": {
-      "html": "<button id=\"Mosaic-mainpagecontent-optionsbox-maindataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
+    "Mseek-mainpagecontent-optionsbox-maindataload-table-loadTableButton": {
+      "html": "<button id=\"Mseek-mainpagecontent-optionsbox-maindataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
       "deps": [
         {
           "name": "font-awesome",
@@ -733,14 +733,14 @@
         }
       ]
     },
-    "Mosaic-startpage-startdataload-projectfolder-pfolder-folderButton": {
-      "html": "<div id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-div\" title=\"Select an existing Mosaic Project Folder (e.g. with xcms results)\">\n  <button id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mosaic Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
+    "Mseek-startpage-startdataload-projectfolder-pfolder-folderButton": {
+      "html": "<div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-div\" title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">\n  <button id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
       "deps": [
 
       ]
     },
-    "Mosaic-startpage-startdataload-projectfolder-pfolder-folderUI": {
-      "html": "<div class=\"container-fluid\">\n  <div id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
+    "Mseek-startpage-startdataload-projectfolder-pfolder-folderUI": {
+      "html": "<div class=\"container-fluid\">\n  <div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
       "deps": [
         {
           "name": "bootstrap",
@@ -764,14 +764,14 @@
         }
       ]
     },
-    "Mosaic-startpage-startdataload-showfolder": {
+    "Mseek-startpage-startdataload-showfolder": {
       "html": "<p>No Project Folder currently selected<\/p>",
       "deps": [
 
       ]
     },
-    "Mosaic-startpage-startdataload-table-loadTableButton": {
-      "html": "<button id=\"Mosaic-startpage-startdataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
+    "Mseek-startpage-startdataload-table-loadTableButton": {
+      "html": "<button id=\"Mseek-startpage-startdataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
       "deps": [
         {
           "name": "font-awesome",
@@ -789,8 +789,8 @@
         }
       ]
     },
-    "Mosaic-startpage-web": {
-      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-3\"><\/div>\n    <div class=\"col-sm-6\">\n      <img src=\"/img/mosaic_logo.png\" alt=\"Mosaic\" style=\"width:100%\"/>\n    <\/div>\n    <div class=\"col-sm-3\"><\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"box box-solid box-primary\">\n        <div class=\"box-header\">\n          <h3 class=\"box-title\">Welcome to MOSAiC!<\/h3>\n        <\/div>\n        <div class=\"box-body\">\n          <div class=\"container-fluid\">\n            <div class=\"row\">\n              <p style=\"text-align:center;\">Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.<\/p>\n              <hr/>\n            <\/div>\n            <div class=\"row\">\n              <div class=\"container-fluid\">\n                <div class=\"row\">\n                  <div class=\"col-sm-3\" style=\"text-align:center;\">\n                    <div id=\"Mosaic-startpage-startdataload-showfolder\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <head>\n                      <style>.FolderBox {\n word-wrap: break-word;\nbackground-color: azure;\npadding: 5px;\n\n} \n                            .ContextBox {\nbackground-color: gainsboro;\npadding: 5px;\n\n} \n                            <\/style>\n                    <\/head>\n                    <div id=\"Mosaic-startpage-startdataload-projectfolder-pfolder-folderUI\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <div id=\"Mosaic-startpage-startdataload-table-loadTableButton\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <button id=\"Mosaic-startpage-startdataload-msdata-loadMSDButton\" type=\"button\" class=\"btn btn-default action-button\">\n                      <i class=\"fa fa-folder-open\"><\/i>\n                      Load MS data\n                    <\/button>\n                  <\/div>\n                <\/div>\n              <\/div>\n            <\/div>\n            <div class=\"row\">\n              <div style=\"height:5px\"><\/div>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div style=\"height:4px;\"><\/div>\n  <div class=\"row\">\n<iframe id=\"inlineFrameExample\"\ntitle=\"webpage\" \nstyle=\"border:none;width:100%;height:500px;\"  src=\"http://mosaic.bti.cornell.edu/welcome/integrated/0.8.0\"> <\/iframe>\n              <\/div>\n<\/div>",
+    "Mseek-startpage-web": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-3\"><\/div>\n    <div class=\"col-sm-6\">\n      <img src=\"/img/Mseek_logo.png\" alt=\"Mseek\" style=\"width:100%\"/>\n    <\/div>\n    <div class=\"col-sm-3\"><\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"box box-solid box-primary\">\n        <div class=\"box-header\">\n          <h3 class=\"box-title\">Welcome to METABOseek!<\/h3>\n        <\/div>\n        <div class=\"box-body\">\n          <div class=\"container-fluid\">\n            <div class=\"row\">\n              <p style=\"text-align:center;\">Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.<\/p>\n              <hr/>\n            <\/div>\n            <div class=\"row\">\n              <div class=\"container-fluid\">\n                <div class=\"row\">\n                  <div class=\"col-sm-3\" style=\"text-align:center;\">\n                    <div id=\"Mseek-startpage-startdataload-showfolder\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <head>\n                      <style>.FolderBox {\n word-wrap: break-word;\nbackground-color: azure;\npadding: 5px;\n\n} \n                            .ContextBox {\nbackground-color: gainsboro;\npadding: 5px;\n\n} \n                            <\/style>\n                    <\/head>\n                    <div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folderUI\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <div id=\"Mseek-startpage-startdataload-table-loadTableButton\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <button id=\"Mseek-startpage-startdataload-msdata-loadMSDButton\" type=\"button\" class=\"btn btn-default action-button\">\n                      <i class=\"fa fa-folder-open\"><\/i>\n                      Load MS data\n                    <\/button>\n                  <\/div>\n                <\/div>\n              <\/div>\n            <\/div>\n            <div class=\"row\">\n              <div style=\"height:5px\"><\/div>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div style=\"height:4px;\"><\/div>\n  <div class=\"row\">\n<iframe id=\"inlineFrameExample\"\ntitle=\"webpage\" \nstyle=\"border:none;width:100%;height:500px;\"  src=\"http://Mseek.bti.cornell.edu/welcome/integrated/0.8.0\"> <\/iframe>\n              <\/div>\n<\/div>",
       "deps": [
         {
           "name": "font-awesome",

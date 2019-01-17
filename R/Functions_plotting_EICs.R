@@ -233,7 +233,7 @@ EICtitles <- function(mzs, rts, ppm){
 #' generate multiple EICs on one page
 #' 
 #' 
-#' @param EIClist list of EICs from Mosaic:multiEIC
+#' @param EIClist list of EICs from Mseek:multiEIC
 #' @param grouping a named list of grouped file names (as supplied in $grouping of rawLayout objects)
 #' @param plotProps a list of settings for the individual plots
 #' @param plotProps.TIC if TRUE, TIC instead of EIC
@@ -400,7 +400,7 @@ groupPlot <- function(EIClist = res,
 #' generate one EIC plot for multiple files
 #' 
 #' 
-#' @param EIClistItem item from a list of EICs from Mosaic:multiEIC
+#' @param EIClistItem item from a list of EICs from Mseek:multiEIC
 #' @param ylim numeric(2) min and max visible rt value (in seconds)
 #' @param xlim numeric(2) min and max visible intensity value (in seconds)
 #' @param legendtext character() with item for each shown EIC for the plot legend

@@ -9,10 +9,10 @@ layout_components_qgraph(graph, layout, ...)
 \arguments{
 \item{graph}{an igraph object, needs to have an "id" vertex property}
 
-\item{layout}{the layout function applied (from igraph or qgraph packages). Defaults to qgraph.layout.fruchtermanmeingold with some Mosaic specific settings}
+\item{layout}{the layout function applied (from igraph or qgraph packages). Defaults to qgraph.layout.fruchtermanmeingold with some Mseek specific settings}
 
 \item{...}{arguments passed to layout (except if layout is qgraph.layout.fruchtermanreingold)}
 }
 \description{
-Generate subgraphs and sublayouts from a graph for Mosaic interactive view.
+Generate subgraphs and sublayouts from a graph for Mseek interactive view.
 }

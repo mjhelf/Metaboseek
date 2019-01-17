@@ -4,8 +4,8 @@
 \alias{updaterModule}
 \title{updaterModule}
 \usage{
-updaterModule(input, output, session, tag, set = list(package = "Mosaic",
-  refs = c("master", "devel", "devel_raw"), active = T))
+updaterModule(input, output, session, tag, set = list(package =
+  "METABOseek", refs = c("master", "devel", "devel_raw"), active = T))
 }
 \arguments{
 \item{input}{}
@@ -19,5 +19,5 @@ updaterModule(input, output, session, tag, set = list(package = "Mosaic",
 \item{set}{Import data from the shiny session}
 }
 \description{
-module to update Mosaic by the click of a button
+module to update Mseek by the click of a button
 }

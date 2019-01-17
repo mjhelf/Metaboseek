@@ -12,5 +12,5 @@ constructRawLayout(rawgrouptable, stem = NULL)
 \item{stem}{if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.}
 }
 \description{
-Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in MOSAiC.
+Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in METABOseek.
 }

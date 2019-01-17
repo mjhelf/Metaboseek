@@ -23,9 +23,9 @@ savetable(xset, status = NULL, fill = FillChromPeaksParam(expandMz =
 
 \item{bparams}{BBPARAMs (BiocParallel::BiocParallelParam object with parameters for parallel computing used in fill peaks)}
 
-\item{intensities}{list of parameters for Mosaic EIC intensity extraction (for each feature in the peaklist). ppm: mz window, rtw: rt window (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, if FALSE rtw centers around value in column rt. Not performed if intensities = NULL.}
+\item{intensities}{list of parameters for Mseek EIC intensity extraction (for each feature in the peaklist). ppm: mz window, rtw: rt window (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, if FALSE rtw centers around value in column rt. Not performed if intensities = NULL.}
 
-\item{rawdata}{named list of xcmsRaw objects (as returned by Mosaic::loadRawM), required for Mosaic EIC intensity extraction which is not performed if NULL.}
+\item{rawdata}{named list of xcmsRaw objects (as returned by Mseek::loadRawM), required for Mseek EIC intensity extraction which is not performed if NULL.}
 
 \item{saveR}{save the xset object as .Rdata file}
 }

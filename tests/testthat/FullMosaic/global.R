@@ -1,5 +1,5 @@
 #load packages for code that is not functionalized yet
-library(Mosaic)
+library(METABOseek)
 
-#load .MosaicOptions in case they have been deleted from environment
-MosaicOptions()
+#load .MseekOptions in case they have been deleted from environment
+MseekOptions()

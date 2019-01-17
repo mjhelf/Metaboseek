@@ -5,7 +5,7 @@
 \title{FilePathModule}
 \usage{
 FilePathModule(input, output, session, filepaths = reactive({    
-  .MosaicOptions$filePaths }), label = "Select Folder",
+  .MseekOptions$filePaths }), label = "Select Folder",
   description = "Select Folder", displayFolder = F, selectFile = F,
   pattern = "")
 }

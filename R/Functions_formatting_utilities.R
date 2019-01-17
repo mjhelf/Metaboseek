@@ -49,7 +49,7 @@ checkFolders <- function(query = paste0(LETTERS,":/")){
 #' Generate a filename from project name and filter criteria
 #' 
 #' @param projectName ProjectName used as prefix
-#' @param FT Mosaic's featureTable reactiveValues (or a list with same structure)
+#' @param FT Mseek's featureTable reactiveValues (or a list with same structure)
 #'
 #'
 #' @export
@@ -102,7 +102,7 @@ get_common_dir <- function(paths, delim = "/")
 }
 
 
-#' mosaic.colors
+#' Mseek.colors
 #' 
 #' custom color spectrum using color brewer Set1 colors plus topo.colors; good color discrimination up to n = 13
 #' 
@@ -110,7 +110,7 @@ get_common_dir <- function(paths, delim = "/")
 #' @param alpha transparency
 #' 
 #' @export
-mosaic.colors<- function (n, alpha){
+Mseek.colors<- function (n, alpha){
   
   alphahex <- as.hexmode(as.integer(alpha*255))
   if(nchar(alphahex) == 1){alphahex <- paste0("0",alphahex)}

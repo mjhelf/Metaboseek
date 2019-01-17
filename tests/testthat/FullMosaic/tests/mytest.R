@@ -3,15 +3,15 @@ app$snapshotInit("mytest")
 Sys.sleep(5)
 
 app$snapshot()
-app$setInputs(`Mosaic-MosaicSB` = "exploredata")
+app$setInputs(`Mseek-MseekSB` = "exploredata")
 Sys.sleep(5)
 
 app$snapshot()
-app$setInputs(`Mosaic-MosaicSB` = "XCMSrunpanel")
+app$setInputs(`Mseek-MseekSB` = "XCMSrunpanel")
 Sys.sleep(5)
 
 app$snapshot()
-app$setInputs(`Mosaic-MosaicSB` = "updateTab")
+app$setInputs(`Mseek-MseekSB` = "updateTab")
 Sys.sleep(5)
 
 app$snapshot()

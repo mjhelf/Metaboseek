@@ -1,22 +1,22 @@
-#' MosaicOptions
+#' MseekOptions
 #'
-#' Load and/or change .MosaicOptions
+#' Load and/or change .MseekOptions
 #' 
-#' @param defaults if TRUE, default MosaicOptions are loaded
+#' @param defaults if TRUE, default MseekOptions are loaded
 #' @param ... parameters to be modified
 #' @importFrom jsonlite serializeJSON unserializeJSON
 #'
 #' @export
-MosaicOptions <- function(..., defaults = F){
+MseekOptions <- function(..., defaults = F){
   
-  if(!file.exists(file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json")) || defaults){
-    .MosaicOptions <<- list( activateLocalFiles = T,
+  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json")) || defaults){
+    .MseekOptions <<- list( activateLocalFiles = T,
                              activateXCMS = T,
                              develMode = FALSE,
                              loadExampleData = FALSE,
                              loadExampleTable = FALSE,
                              enabledCores = 4,
-                             filePaths = c(examples = system.file("extdata","examples", package = "Mosaic"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
+                             filePaths = c(examples = system.file("extdata","examples", package = "METABOseek"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
                              filePattern = paste(
                                paste("\\.", 
                                      c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
@@ -35,16 +35,16 @@ MosaicOptions <- function(..., defaults = F){
                              RTwindow = 30,
                              plotCx = 1,
                              TICtoggle = F,
-                             colorscheme = "mosaic.colors",
+                             colorscheme = "Mseek.colors",
                              plotTransparency = 0.8)
     
   }
   else{
-    .MosaicOptions <<- unserializeJSON(readChar(system.file("config", "MosaicOptions.json", package = "Mosaic"), file.info(system.file("config", "MosaicOptions.json", package = "Mosaic"))$size))
+    .MseekOptions <<- unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "METABOseek"), file.info(system.file("config", "MseekOptions.json", package = "METABOseek"))$size))
   }
   
-  if(!.MosaicOptions$serverMode && Sys.info()['sysname'] == "Windows"){
-    .MosaicOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "Mosaic"), checkFolders())
+  if(!.MseekOptions$serverMode && Sys.info()['sysname'] == "Windows"){
+    .MseekOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "METABOseek"), checkFolders())
   }  
   
   
@@ -53,12 +53,12 @@ MosaicOptions <- function(..., defaults = F){
   
   for(i in names(newSettings)){
     
-    .MosaicOptions[[i]] <<- newSettings[[i]]
+    .MseekOptions[[i]] <<- newSettings[[i]]
     
   }
   
-  if(dirname(system.file(package = "Mosaic")) %in% .libPaths()){
-    write(jsonlite::serializeJSON(.MosaicOptions, pretty = T), file.path(system.file("config", package = "Mosaic"), "MosaicOptions.json"))
+  if(dirname(system.file(package = "METABOseek")) %in% .libPaths()){
+    write(jsonlite::serializeJSON(.MseekOptions, pretty = T), file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))
   }
   
 }

@@ -1,7 +1,7 @@
 #' updaterModule
 #' 
 #' 
-#' module to update Mosaic by the click of a button
+#' module to update METABOseek by the click of a button
 #' 
 #' @param input 
 #' @param output 
@@ -10,7 +10,7 @@
 #' @param set Import data from the shiny session
 #' 
 #' @export 
-updaterModule <- function(input,output, session, tag, set = list(package = "Mosaic",
+updaterModule <- function(input,output, session, tag, set = list(package = "METABOseek",
                                                                        refs = c("master", "devel", "devel_raw"),
                                                                        active = T
 )){
@@ -40,12 +40,12 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
     
     showModal(
         modalDialog(
-          p(strong("WARNING: This will shut down the current MOSAiC session and unsaved work will be lost!")),
-          p("Mosaic will shut down, and a terminal window will appear with information on the update progress."),
+          p(strong("WARNING: This will shut down the current METABOseek session and unsaved work will be lost!")),
+          p("METABOseek will shut down, and a terminal window will appear with information on the update progress."),
           p("The terminal Window may not show up on Linux or macOS systems. In that case, check after a few minutes if the update has worked."),
           
           actionButton(ns('startUpdate'), 'Start Update Now!'),
-          title = paste0('Update to latest "',input$branch,'" branch of Mosaic?'),
+          title = paste0('Update to latest "',input$branch,'" branch of METABOseek?'),
           easyClose = T,
           footer = modalButton("Cancel")
 
@@ -55,7 +55,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
   
   observeEvent(input$startUpdate,{
     
-                   runner <- system.file("scripts", "update_script.R",package = "Mosaic")
+                   runner <- system.file("scripts", "update_script.R",package = "METABOseek")
                    rpath <- file.path(R.home(component = "bin"), "Rscript")
                    
                    
@@ -100,7 +100,7 @@ updaterModule <- function(input,output, session, tag, set = list(package = "Mosa
 #' updaterModuleUI
 #' 
 #' 
-#' module to update Mosaic by the click of a button
+#' module to update METABOseek by the click of a button
 #' 
 #' @param id id to be used in ns()
 #' 
@@ -109,7 +109,7 @@ updaterModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      shinydashboard::box(title = "Update mosaic!", status = "primary", collapsible = F, width = 12,
+      shinydashboard::box(title = "Update METABOseek!", status = "primary", collapsible = F, width = 12,
                           htmlOutput(ns('updateUI'))
       )
     )
