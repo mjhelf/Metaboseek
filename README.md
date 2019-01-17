@@ -5,9 +5,8 @@
 
 The Metabolite Online Sprectrum Analysis Center is here to help you analyze your mass spectrometry data!
 
-Visit our website at http://Mseek.bti.cornell.edu to test METABOseek online and to sign up for our Newsletter!
 
-<a href = "http://Mseek.bti.cornell.edu/doc/METABOseek_documentation.html">Installation and data analysis documentation</a>
+Visit our website at http://metaboseek.com to test METABOseek online
 
 METABOseek is an interactive tool to analyze and browse your mass spectrometry data.
 It is built on functions from the <a href = "https://github.com/sneumann/xcms">xcms</a> package, and provides a web-based graphical user interface built with <a href = "http://shiny.rstudio.com/">shiny</a>.
