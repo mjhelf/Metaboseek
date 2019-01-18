@@ -19,5 +19,5 @@ updaterModule(input, output, session, tag, set = list(package =
 \item{set}{Import data from the shiny session}
 }
 \description{
-module to update Mseek by the click of a button
+module to update METABOseek by the click of a button
 }

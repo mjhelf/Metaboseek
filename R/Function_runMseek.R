@@ -12,7 +12,7 @@ runMseek <- function(...) {
   
   appDir <- system.file("app", package = "METABOseek")
   if (appDir == "") {
-    stop("Could not find Mseek directory. Try re-installing `Mseek`.", call. = FALSE)
+    stop("Could not find METABOseek directory. Try re-installing `METABOseek`.", call. = FALSE)
   }
   
   shiny::runApp(appDir, ...)
