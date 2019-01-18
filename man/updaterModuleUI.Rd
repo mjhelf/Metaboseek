@@ -10,5 +10,5 @@ updaterModuleUI(id)
 \item{id}{id to be used in ns()}
 }
 \description{
-module to update Mseek by the click of a button
+module to update METABOseek by the click of a button
 }
