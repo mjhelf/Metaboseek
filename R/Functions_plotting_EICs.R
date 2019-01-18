@@ -147,7 +147,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     EICs <- importEIC
   }
   if(TICall){
-    if(is.null(rtx) || length(EICs) != nrow(rtx)){
+    if(is.null(rtx) || length(EICs) %% nrow(rtx) != 0 ){
       
     yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
     }
@@ -158,7 +158,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     
     }else{
     #make sure the EICs all get scaled to their highest intensity across all adducts
-    if(is.null(rtx)  || length(EICs) != nrow(rtx) ){
+    if(is.null(rtx)  || length(EICs) %% nrow(rtx) != 0  ){
     maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
     }else{
       maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){ max(unlist(x[,"intensity"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
