@@ -11,9 +11,11 @@
 #' 
 #' @export 
 MultiFilterModule <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables,
-                                                      MainTable = MainTable),
-                              static = list(lab = "Filter")
+                              values = reactiveValues(featureTables = featureTables),
+                              static = list(lab = "Filter",
+                                            modFeatureTable = T,
+                                            name = NULL,
+                                            activate = F)
 ){
   
   ns <- NS(session$ns(NULL))
@@ -44,7 +46,7 @@ MultiFilterModule <- function(input,output, session,
     
     logilist <- list()
     
-    for(i in grep("Filter", names(internalValues), value = T)){
+    for(i in grep(static$lab, names(internalValues), value = T)){
       
       if(length(internalValues[[i]]$colSelected) == 0 || !internalValues[[i]]$colSelected %in% internalValues$colnames){
         internalValues[[i]]$active <- F
@@ -82,10 +84,16 @@ MultiFilterModule <- function(input,output, session,
       
     }
     
+    if(static$modFeatureTable){
     values$featureTables$row_filters <- looping(logilist)
+    }else{
+      internalValues$results <- looping(logilist)
+    }
+    
     internalValues$outdated <- F
     
-    for(i in grep("Filter", names(internalValues), value = T)){
+    #main reason for using static$lab instead of "Filter"
+    for(i in grep(static$lab, names(internalValues), value = T)){
       #Make sure the Filter modules do not forget their values when a new one is added and the Filter UIs are rerendered
       
       if(internalValues[[i]]$numeric){
@@ -110,7 +118,7 @@ MultiFilterModule <- function(input,output, session,
   
   observeEvent(input$addFilter,{
     
-    for(i in grep("Filter", names(internalValues), value = T)){
+    for(i in grep(static$lab, names(internalValues), value = T)){
       #Make sure the Filter modules do not forget their values when a new one is added and the Filter UIs are rerendered
       internalValues[[i]]$minSelInit <- internalValues[[i]]$minSel
       internalValues[[i]]$maxSelInit <- internalValues[[i]]$maxSel
@@ -121,7 +129,7 @@ MultiFilterModule <- function(input,output, session,
     
     internalValues$numFils <- internalValues$numFils + 1
     
-    internalValues[[paste0("Filter", internalValues$numFils)]] <- callModule(FilterModule,
+    internalValues[[paste0(static$lab, internalValues$numFils)]] <- callModule(FilterModule,
                                                                              paste0("filter", internalValues$numFils),
                                                                              values = reactiveValues(featureTables = values$featureTables,
                                                                                                      MultiFilter = internalValues))
@@ -130,9 +138,13 @@ MultiFilterModule <- function(input,output, session,
   
   internalValues <- reactiveValues(numFils = 1,
                                    applyButton = 0,
-                                   Filter1 = Filter1,
                                    colnames = NULL,
-                                   outdated = F)
+                                   outdated = F,
+                                   active = F,
+                                   name = static$name)
+  
+  internalValues[[paste0(static$lab, 1)]] <- Filter1
+  
   
   output$FilterUIs <- renderUI({
     lapply(seq(internalValues$numFils), function(i){
@@ -141,6 +153,28 @@ MultiFilterModule <- function(input,output, session,
     
   })
   
+  output$optionalHeader <- renderUI({
+    if(!is.null(static$name) && static$activate){
+    fluidRow(
+      column(3,
+             checkboxInput(ns("activate"), "activate", value = internalValues$active) ),
+      column(6, 
+             textInput(ns("filname"), "Filter name", value = internalValues$name)
+             ),
+      column(3,
+             actionButton(ns("namebutton"), "Change name")
+             )
+    )
+    }
+  })
+  
+  observeEvent(input$namebutton,{
+    internalValues$name <- input$filname
+  })
+  
+  observeEvent(input$activate,{
+    internalValues$active <- input$activate
+  })
   
   
   observeEvent(values$featureTables$tables[[values$featureTables$active]]$df,{
@@ -153,13 +187,13 @@ MultiFilterModule <- function(input,output, session,
     if(!is.null(values$featureTables$loadedFilters)){
       
       #first check how many Filters are already available and add Filter modules as needed
-      internalValues$numFils <- length(values$featureTables$loadedFilters$filterSet)      
+      internalValues$numFils <- length(grep(static$lab, names(values$featureTables$loadedFilters$filterSet)))      
       #if(internalValues$numFils < length(values$featureTables$loadedFilters$filterSet)){
         
         for(i in seq(internalValues$numFils)){
         
 
-        internalValues[[paste0("Filter", i)]] <- callModule(FilterModule,
+        internalValues[[paste0(static$lab, i)]] <- callModule(FilterModule,
                                                                                  paste0("filter", i),
                                                                                  values = reactiveValues(featureTables = values$featureTables,
                                                                                                          MultiFilter = internalValues),
@@ -225,6 +259,7 @@ MultiFilterModuleUI <- function(id){
   ns <- NS(id)
   
   fluidPage(
+    htmlOutput(ns("optionalHeader")),
     fluidRow(column(4,
                     htmlOutput(ns("applyFilter"))
     ),column(4,

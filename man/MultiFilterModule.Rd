@@ -5,8 +5,9 @@
 \title{MultiFilterModule}
 \usage{
 MultiFilterModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MainTable =
-  MainTable), static = list(lab = "Filter"))
+  values = reactiveValues(featureTables = featureTables),
+  static = list(lab = "Filter", modFeatureTable = T, name = NULL,
+  activate = F))
 }
 \arguments{
 \item{input}{}
