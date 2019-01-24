@@ -34,7 +34,8 @@ PlotBrowserModule <- function(input,output, session,
                                    color = NULL,
                                    shape = NULL,
                                    text = NULL,
-                                   textChoices = NULL)
+                                   textChoices = NULL,
+                                   volcano = F)
   
 
   
@@ -90,9 +91,9 @@ PlotBrowserModule <- function(input,output, session,
           txtmake <- plotlyTextFormatter(reactives()$PCAtable, internalValues$text)
         }
         colvec <- reactives()$PCAtable[[internalValues$color]]
-        suppressWarnings({
-          
-          internalValues$plot <- ggplot(reactives()$PCAtable,
+        try({
+          suppressWarnings({
+          p <- ggplot(reactives()$PCAtable,
                                         aes_string(x=internalValues$x,
                                                    y=internalValues$y)) + 
             geom_point(aes_string(col = internalValues$color,
@@ -105,7 +106,15 @@ PlotBrowserModule <- function(input,output, session,
           else{
             scale_color_gradientn(colours=rainbow(4))}
           
-        })
+          
+            if(internalValues$volcano){
+              
+              p <- p + scale_y_continuous(trans=reverselog_trans(10))  + scale_x_continuous(trans = "log2") + geom_hline(yintercept=0.05, color = "red")
+            }
+          
+          internalValues$plot <- p
+          })
+       }, silent = T)
         
       }else{
         internalValues$plot <- NULL
@@ -125,6 +134,16 @@ PlotBrowserModule <- function(input,output, session,
   
   observeEvent(input$interactivecheck,{
     internalValues$interactive <- input$interactivecheck
+  })
+  
+  output$volcanoCheck <- renderUI({
+    div(title= "Use volcano style. Will apply log10 to y-axis, and log2 to x-axis. Please select appropriate columns to be plotted as x- and y- values.",
+        checkboxInput(ns('volcanocheck'), 'Volcano style', 
+                      value = internalValues$volcano))
+  })
+  
+  observeEvent(input$volcanocheck,{
+    internalValues$volcano <- input$volcanocheck
   })
   
   
@@ -187,16 +206,19 @@ PlotBrowserModule <- function(input,output, session,
     
     fluidPage(
       fluidRow(
-        column(1,
+        column(2,
                htmlOutput(ns('interactiveCheck'))
         ),
-        column(3,
+        column(2,
+               htmlOutput(ns('volcanoCheck'))
+        ),
+        column(2,
                htmlOutput(ns("xSelect"))
         ),
-        column(3,
+        column(2,
                htmlOutput(ns("ySelect"))
         ),
-        column(3,
+        column(2,
                htmlOutput(ns("Color"))
         ),
         column(2,

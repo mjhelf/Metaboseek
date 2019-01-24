@@ -58,13 +58,7 @@ PlotModule <- function(input,output, session,
     }
   })
   
-  observe({
-    
-    
-    
-  })
-  
-  
+ 
   
 }
 
