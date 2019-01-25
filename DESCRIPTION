@@ -1,6 +1,6 @@
 Package: METABOseek
 Title: METABOseek platform
-Version: 0.8.4
+Version: 0.8.5
 Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
 BiocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
@@ -24,12 +24,14 @@ Imports: Biobase,
     plotly,
     qgraph,
     rhandsontable,
+    scales,
     shiny,
     shinyBS,
     shinydashboard,
     shinyFiles,
     shinyjs,
     TeachingDemos,
+    VennDiagram,
     xcms (>= 3.0)
 Suggests: covr,
     knitr,

@@ -150,3 +150,23 @@ colorRampLegend <- function(datarange, colscale, title = ""){
   
   rasterImage(legend_image,min(datarange), 0, max(datarange), 1)
 }
+
+
+
+#' reverselog_trans
+#' 
+#' reverse log scale for ggplot, as described here: https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2
+#' 
+#' 
+#' @param base base of log
+#' 
+#' @importFrom scales trans_new log_breaks
+#'
+#' @export
+reverselog_trans <- function(base = exp(1)) {
+  trans <- function(x) -log(x, base)
+  inv <- function(x) base^(-x)
+  trans_new(paste0("reverselog-", format(base)), trans, inv, 
+            log_breaks(base = base), 
+            domain = c(1e-100, Inf))
+}
