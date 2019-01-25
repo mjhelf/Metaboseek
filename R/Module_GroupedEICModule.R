@@ -34,6 +34,25 @@ GroupedEICModule <- function(input,output, session,
       
       TableUpdateChunk()
       
+     subtitles <- NULL
+
+     if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){
+
+       subtitles <- paste0(internalValues$subtitleColumns[1], ": ",
+                           values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),internalValues$subtitleColumns[1]])
+
+       if(length(internalValues$subtitleColumns) > 1){
+         for( i in 2:length(internalValues$subtitleColumns)){
+
+           subtitles <- paste0(subtitles, " ", internalValues$subtitleColumns[i], ": ",
+                               values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),internalValues$subtitleColumns[i]])
+
+         }
+       }
+
+
+     }
+      
       EICgeneral(rtmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"rt"],
                  mzmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"mz"],
                  glist = values$MSData$layouts[[values$MSData$active]]$grouping,
@@ -53,7 +72,8 @@ GroupedEICModule <- function(input,output, session,
                  midline = values$GlobalOpts$MLtoggle,
                  yzoom = values$GlobalOpts$plotYzoom,
                  RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
-                 globalYmax = internalValues$reltoCheck
+                 globalYmax = internalValues$reltoCheck,
+                 subtitles = subtitles
       )
     },
     
@@ -103,6 +123,26 @@ GroupedEICModule <- function(input,output, session,
                                                                RTcorr = RTcorrect
       )
       
+      #make subtitles
+      
+      subtitles <- NULL
+      
+      if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){
+        
+        subtitles <- paste0(internalValues$subtitleColumns[1], ": ",
+                       values$MainTable$liveView[values$MainTable$selected_rows[1],internalValues$subtitleColumns[1]])
+        
+        if(length(internalValues$subtitleColumns) > 1){
+        for( i in 2:length(internalValues$subtitleColumns)){
+          
+          subtitles <- paste0(subtitles, " ", internalValues$subtitleColumns[i], ": ",
+                              values$MainTable$liveView[values$MainTable$selected_rows[1],internalValues$subtitleColumns[i]])
+          
+        }
+        }
+        
+
+      }
 
       
       
@@ -126,7 +166,8 @@ GroupedEICModule <- function(input,output, session,
                  yzoom = values$GlobalOpts$plotYzoom,
                  RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
                  importEIC = EICcache[[values$MSData$active]],
-                 globalYmax = internalValues$reltoCheck
+                 globalYmax = internalValues$reltoCheck,
+                 subtitles
       )
       
     }
@@ -248,7 +289,8 @@ GroupedEICModule <- function(input,output, session,
   
   internalValues <- reactiveValues(iSpec1 = iSpec1,
                                    yaxmax = NULL,
-                                   reltoCheck = F)
+                                   reltoCheck = F,
+                                   subtitleColumns = "comments")
   
   output$reltocheck <- renderUI({
     div(title = "Plot EICs for all groups to the same scale (the highest intensity value in all EICs for a feature).",
@@ -257,17 +299,20 @@ GroupedEICModule <- function(input,output, session,
     
   })
   
-  # output$reltonum <- renderUI({
-  #   
-  #          numericInput(ns("reltoNum"), "Y-axis maximum", value = internalValues$yaxmax)
-  #  
-  # })
-  
-  
-  
-  # observeEvent(input$reltoNum,{
-  #   internalValues$yaxmax <- input$reltoNum
-  # })
+  output$subtitleSelect <- renderUI({
+    div(title = "Select columns to use for the plot subtitle. All columns currently selected for the main table can be used.",
+           selectizeInput(ns("subtitleselect"), "Subtitle content", 
+                          selected = internalValues$subtitleColumns, 
+                          choices = colnames(values$MainTable$liveView),
+                          multiple = TRUE)
+)
+  })
+
+
+
+  observeEvent(input$subtitleselect,{
+    internalValues$subtitleColumns <- input$subtitleselect
+  })
   
   observeEvent(input$reltoCheck,{
     internalValues$reltoCheck <- input$reltoCheck
@@ -294,11 +339,11 @@ GroupedEICModuleUI <- function(id){
       #),
       
       
-      column(2,
+      column(1,
              checkboxInput(ns("RtCorrActive"), "RT correction", value = F)
       ),
       
-      column(2,
+      column(1,
              checkboxInput(ns("ShowSpec"), "Show spectrum", value = F)
       ),
       
@@ -309,9 +354,9 @@ GroupedEICModuleUI <- function(id){
       column(1,
              htmlOutput(ns("reltocheck"))
              ),
-      # column(2,
-      #        htmlOutput(ns("reltonum"))
-      # ),
+       column(2,
+              htmlOutput(ns("subtitleSelect"))
+       ),
       column(2,
              downloadButton(ns("pdfButton"), "Save Plot")
       ),

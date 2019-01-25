@@ -26,6 +26,7 @@
 #' @param adducts numeric() of mass shifts to be added to feature masses
 #' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
 #' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
+#' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -48,7 +49,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        yzoom = 1,
                        RTcorrect = NULL,
                        importEIC = NULL,
-                       globalYmax = NULL
+                       globalYmax = NULL,
+                       subtitles = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -86,7 +88,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     titx <- EICtitles(mzmid, rtmid, ppm)
   }
   
+ 
   
+  if(length(titx) != length(subtitles)){ subtitles <-NULL}
   
   
   
@@ -182,7 +186,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              oma=c(0,2,4,0),
                              xpd=NA, bg="white",
                              header =  titx,
-                             header2 = NULL,
+                             header2 = subtitles,
                              pdfFile = NULL,
                              pdfHi = 6*rows,
                              pdfWi = 6*cols,
@@ -297,6 +301,7 @@ groupPlot <- function(EIClist = res,
   
   #majoritem is the EIClist top level (typically by mz, but could be)
   
+ 
   if(!is.null(compProps$pdfFile)){pdf(compProps$pdfFile,compProps$pdfWi,compProps$pdfHi)}
   
   if(!is.null(compProps$header)){
@@ -385,8 +390,11 @@ groupPlot <- function(EIClist = res,
     
       title(main = compProps$header[majoritem], outer=T,line=2, cex.main=autosize, font = 2)}
     
+ 
     
-    if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0.5, cex=compProps$cx)}
+    if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0, cex=compProps$cx)}
+    
+
     # par(mar=c(0,0,0,0))
     
     #   if(length(compProps$adductLabs)>1){
