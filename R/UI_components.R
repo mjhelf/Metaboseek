@@ -58,13 +58,21 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
 #' generates the dashboardHeader for Mseek.
 #' 
 #' @export
-MseekHeader <- function(...){
+MseekHeader <- function(..., id = NULL){
+  
+  if(!is.null(id)){
+    ns <- NS(id)
+  }
+  
 dashboardHeader(title = "METABOseek",
                 # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
-                #                          icon = shiny::icon("fullscreen", lib = "glyphicon"), 
+                #                          icon = shiny::icon("fullscreen", lib = "glyphicon"),
                 #                          href = NULL),
                 #              type = c("messages"),
                 #              badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL),
+                tags$li(actionLink(ns("loadAll"), "Load data...", icon = icon("folder-open"), style="color:#ffffff" ), class = "dropdown"),
+                
+                
                 tags$li(a(
                   icon("fullscreen", lib = "glyphicon"),
                   onclick = "shinyjs.toggleFullScreen();",

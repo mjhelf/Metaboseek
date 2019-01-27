@@ -198,6 +198,9 @@ rawEICm <- function(object,
   if (length(rtrange) >= 2 ) {
     
     if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
+    if(max(rtrange) < min(object@scantime)){return(list(scan = 1, intensity = numeric(1)))} #also fixing behaviour if no scans inside the selected rt range
+    
+    
     rtrange <- range(rtrange)
     
     #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)

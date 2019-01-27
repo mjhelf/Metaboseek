@@ -156,8 +156,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
     }
     else{
+      suppressWarnings({
       yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),mapply(function(x, rt){ max(unlist(x[,"tic"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  )), ncol = 2, byrow = F)}else{NULL}
-      
+    }) #warnings occur if all scans are out of given rt range
     }
     
     }else{
@@ -165,9 +166,10 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     if(is.null(rtx)  || length(EICs) %% nrow(rtx) != 0  ){
     maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
     }else{
+      suppressWarnings({
       maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){ max(unlist(x[,"intensity"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
       
-      
+      }) #warnings occur if all scans are out of given rt range
     }
     
     yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),rep(maxys, length(adducts))), ncol = 2, byrow = F)}else{NULL}
@@ -353,8 +355,11 @@ groupPlot <- function(EIClist = res,
         mm <- 1
           for(k in 1:length(minoritem$EIClist)){
             mm <- max(mm,
+                      suppressWarnings({
                       max(unlist(minoritem$EIClist[[k]][,"tic"])[which(unlist(minoritem$EIClist[[k]][,"rt"]) >= min(xlimes)*60 
-                                                                       & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)]))
+                                                                       & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)])
+          }) #warnings occur if all scans are out of given rt range
+                      )
           }
         ylimes = c(0,mm)
         }
@@ -362,8 +367,11 @@ groupPlot <- function(EIClist = res,
         mm <- 1
         for(k in 1:length(minoritem$EIClist)){
           mm <- max(mm,
+                    suppressWarnings({
                     max(unlist(minoritem$EIClist[[k]][,"intensity"])[which(unlist(minoritem$EIClist[[k]][,"rt"]) >= min(xlimes)*60 
-                                                                     & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)]))
+                                                                     & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)])
+                    }) #warnings occur if all scans are out of given rt range
+                    )
         }
         ylimes = c(0,mm)
       }

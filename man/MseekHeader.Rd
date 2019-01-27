@@ -4,7 +4,7 @@
 \alias{MseekHeader}
 \title{MseekHeader}
 \usage{
-MseekHeader(...)
+MseekHeader(..., id = NULL)
 }
 \description{
 generates the dashboardHeader for Mseek.
