@@ -8,7 +8,7 @@
 #' @export
 runMseek <- function(...) {
   
-  #assign("devel__mode", devel, envir = "package:Mseek")
+  #assign("devel__mode", devel, envir = "package:METABOseek")
   
   appDir <- system.file("app", package = "METABOseek")
   if (appDir == "") {

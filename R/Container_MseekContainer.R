@@ -69,7 +69,7 @@ MseekContainer <- function(input,output, session){
        title = "Load data",
        easyClose = T,
        fade = F,
-       size = "m",
+       size = "l",
        footer = modalButton("Cancel") 
      ))
    

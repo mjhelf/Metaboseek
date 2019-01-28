@@ -53,6 +53,35 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
   
 }
 
+
+#' dashboardHeaderM
+#'
+#' METABOseek-specific, modified version of shinydashboard::dashboardHeader that allows placing icons left and right in the navbar
+#'
+dashboardHeaderM <- function (..., title = NULL, titleWidth = NULL, disable = FALSE, 
+                              .list = NULL, left = NULL) 
+{
+  items <- c(list(...), .list, left)
+  lapply(items, shinydashboard:::tagAssert, type = "li", class = "dropdown")
+  titleWidth <- shiny::validateCssUnit(titleWidth)
+  custom_css <- NULL
+  if (!is.null(titleWidth)) {
+    custom_css <- tags$head(tags$style(HTML(gsub("_WIDTH_", 
+                                                 titleWidth, fixed = TRUE, "\n      @media (min-width: 768px) {\n        .main-header > .navbar {\n          margin-left: _WIDTH_;\n        }\n        .main-header .logo {\n          width: _WIDTH_;\n        }\n      }\n    "))))
+  }
+  tags$header(class = "main-header", custom_css, style = if (disable) 
+    "display: none;", span(class = "logo", title), tags$nav(class = "navbar navbar-static-top", 
+                                                            role = "navigation", span(shiny::icon("bars"), style = "display:none;"), 
+                                                            a(href = "#", class = "sidebar-toggle", `data-toggle` = "offcanvas", 
+                                                              role = "button", span(class = "sr-only", "Toggle navigation")), 
+                                                            div(class = "navbar-custom-menu", tags$ul(class = "nav navbar-nav", 
+                                                                                                      left),
+                                                                style = "float:left"),
+                                                            div(class = "navbar-custom-menu", tags$ul(class = "nav navbar-nav", 
+                                                                                                      c(list(...), .list)))
+    ))
+}
+
 #' MseekHeader
 #'
 #' generates the dashboardHeader for Mseek.
@@ -64,13 +93,19 @@ MseekHeader <- function(..., id = NULL){
     ns <- NS(id)
   }
   
-dashboardHeader(title = "METABOseek",
+dashboardHeaderM(title = "METABOseek",
+                #style = "width:95%",
                 # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
                 #                          icon = shiny::icon("fullscreen", lib = "glyphicon"),
                 #                          href = NULL),
                 #              type = c("messages"),
                 #              badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL),
-                tags$li(actionLink(ns("loadAll"), "Load data...", icon = icon("folder-open"), style="color:#ffffff" ), class = "dropdown"),
+                left = list(
+                tags$li(actionLink(ns("loadAll"), "",
+                                   icon = icon("folder-open"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
+                                   title = "Load Projects, MS data or feature tables into METABOseek" ),
+                        class = "dropdown",
+                        style = "float:left")),
                 
                 
                 tags$li(a(
@@ -80,14 +115,15 @@ dashboardHeader(title = "METABOseek",
                   title = "Activate/deactivate full-screen mode"),
                   class = "dropdown"),
                 tags$li(a(
-                  href = 'http://Mseek.bti.cornell.edu/welcome/doc.html',
+                  href = 'http://metaboseek.com/doc.html',
                   icon("question-circle fa-lg"),
                   title = "Mseek online help (opens in new window)",
                   target="_blank",
                   style="color:#ffffff"),
                   class = "dropdown"),
                 ...
-)
+
+                )
 }
 
 
