@@ -69,17 +69,19 @@ dashboardHeaderM <- function (..., title = NULL, titleWidth = NULL, disable = FA
     custom_css <- tags$head(tags$style(HTML(gsub("_WIDTH_", 
                                                  titleWidth, fixed = TRUE, "\n      @media (min-width: 768px) {\n        .main-header > .navbar {\n          margin-left: _WIDTH_;\n        }\n        .main-header .logo {\n          width: _WIDTH_;\n        }\n      }\n    "))))
   }
-  tags$header(class = "main-header", custom_css, style = if (disable) 
-    "display: none;", span(class = "logo", title), tags$nav(class = "navbar navbar-static-top", 
-                                                            role = "navigation", span(shiny::icon("bars"), style = "display:none;"), 
-                                                            a(href = "#", class = "sidebar-toggle", `data-toggle` = "offcanvas", 
-                                                              role = "button", span(class = "sr-only", "Toggle navigation")), 
-                                                            div(class = "navbar-custom-menu", tags$ul(class = "nav navbar-nav", 
-                                                                                                      left),
-                                                                style = "float:left"),
-                                                            div(class = "navbar-custom-menu", tags$ul(class = "nav navbar-nav", 
-                                                                                                      c(list(...), .list)))
-    ))
+  tags$header(class = "main-header", custom_css, style = if (disable) "display: none;",
+              span(class = "logo", title), 
+              tags$nav(class = "navbar navbar-static-top", 
+                       role = "navigation",
+                       span(shiny::icon("bars"), style = "display:none;"), 
+                       a(href = "#", class = "sidebar-toggle", `data-toggle` = "offcanvas", 
+                         role = "button", span(class = "sr-only", "Toggle navigation")), 
+                       div(class = "navbar-custom-menu", tags$ul(class = "nav navbar-nav", 
+                                                                 left),
+                           style = "float:left"),
+                       div(class = "navbar-custom-menu", tags$ul(class = "nav navbar-nav", 
+                                                                 c(list(...), .list)))
+              ))
 }
 
 #' MseekHeader
@@ -93,37 +95,37 @@ MseekHeader <- function(..., id = NULL){
     ns <- NS(id)
   }
   
-dashboardHeaderM(title = "METABOseek",
-                #style = "width:95%",
-                # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
-                #                          icon = shiny::icon("fullscreen", lib = "glyphicon"),
-                #                          href = NULL),
-                #              type = c("messages"),
-                #              badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL),
-                left = list(
-                tags$li(actionLink(ns("loadAll"), "",
-                                   icon = icon("folder-open"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
-                                   title = "Load Projects, MS data or feature tables into METABOseek" ),
-                        class = "dropdown",
-                        style = "float:left")),
-                
-                
-                tags$li(a(
-                  icon("fullscreen", lib = "glyphicon"),
-                  onclick = "shinyjs.toggleFullScreen();",
-                  style="color:#ffffff",
-                  title = "Activate/deactivate full-screen mode"),
-                  class = "dropdown"),
-                tags$li(a(
-                  href = 'http://metaboseek.com/doc.html',
-                  icon("question-circle fa-lg"),
-                  title = "Mseek online help (opens in new window)",
-                  target="_blank",
-                  style="color:#ffffff"),
-                  class = "dropdown"),
-                ...
-
-                )
+  dashboardHeaderM(title = "METABOseek",
+                   #style = "width:95%",
+                   # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
+                   #                          icon = shiny::icon("fullscreen", lib = "glyphicon"),
+                   #                          href = NULL),
+                   #              type = c("messages"),
+                   #              badgeStatus = "primary", icon = NULL, headerText = NULL, .list = NULL),
+                   left = list(
+                     tags$li(actionLink(ns("loadAll"), "",
+                                        icon = icon("folder-open"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
+                                        title = "Load Projects, MS data or feature tables into METABOseek" ),
+                             class = "dropdown",
+                             style = "float:left")),
+                   
+                   
+                   tags$li(a(
+                     icon("fullscreen", lib = "glyphicon"),
+                     onclick = "shinyjs.toggleFullScreen();",
+                     style="color:#ffffff",
+                     title = "Activate/deactivate full-screen mode"),
+                     class = "dropdown"),
+                   tags$li(a(
+                     href = 'http://metaboseek.com/doc.html',
+                     icon("question-circle fa-lg"),
+                     title = "Mseek online help (opens in new window)",
+                     target="_blank",
+                     style="color:#ffffff"),
+                     class = "dropdown"),
+                   ...
+                   
+  )
 }
 
 
@@ -143,14 +145,14 @@ MseekSidebar <- function(..., id = NULL){
   }
   
   dashboardSidebar(
- 
-
-  
-  sidebarMenu(
-    id = SBid,
-    useShinyjs(),
     
-    shinyjs::extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
+    
+    
+    sidebarMenu(
+      id = SBid,
+      useShinyjs(),
+      
+      shinyjs::extendShinyjs(text = 'shinyjs.toggleFullScreen = function() {
     var element = document.documentElement,
       enterFS = element.requestFullscreen || element.msRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen,
       exitFS = document.exitFullscreen || document.msExitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
@@ -160,11 +162,11 @@ MseekSidebar <- function(..., id = NULL){
       exitFS.call(document);
     }
   }', functions = "toggleFullScreen"),
-    
-    
-    ##DETECT KEYBOARD ACTIONS
-    ##key being held down
-    tags$script(paste0('
+      
+      
+      ##DETECT KEYBOARD ACTIONS
+      ##key being held down
+      tags$script(paste0('
                 $(document).on("keydown", function (e) {
                        Shiny.onInputChange("',keyid,'", e.which);
 });
@@ -172,27 +174,27 @@ MseekSidebar <- function(..., id = NULL){
                        Shiny.onInputChange("',keyid,'", "NO");
                        });
                        ')),
+      
+      
+      menuItem("Start", tabName = "start", icon = icon("home")),
+      menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
+      menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
+      
+      # menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
+      #          menuSubItem("Coming soon", tabName = "workflow1")),
+      menuItem("Update", tabName = "updateTab", icon = icon("upload")),
+      ...,
+      #bookmarkButton(label ="Bookmark this session"),
+      #SelectActiveTableModuleUI("selectactivetable"),
+      hr(),
+      h5(a(paste0("METABOseek version ",packageVersion("METABOseek")), 
+           href="https://github.com/mjhelf/Mseek", target="_blank"), align = "center")
+      
+    )
     
     
-    menuItem("Start", tabName = "start", icon = icon("home")),
-    menuItem("Data Explorer", tabName = "exploredata", icon = icon("area-chart")),
-    menuItem("XCMS analysis", tabName = "XCMSrunpanel", icon = icon("file-text-o")),
-    
-    # menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
-    #          menuSubItem("Coming soon", tabName = "workflow1")),
-    menuItem("Update", tabName = "updateTab", icon = icon("upload")),
-    ...,
-    #bookmarkButton(label ="Bookmark this session"),
-    #SelectActiveTableModuleUI("selectactivetable"),
-    hr(),
-    h5(a(paste0("METABOseek version ",packageVersion("METABOseek")), 
-         href="https://github.com/mjhelf/Mseek", target="_blank"), align = "center")
     
   )
-  
-  
-  
-)
 }
 
 
