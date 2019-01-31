@@ -327,7 +327,7 @@ EICmodule <- function(input, output, session,
   })
   
   observeEvent(c(internalValues$controls$mz, internalValues$files$selected, internalValues$active, values$GlobalOpts$PPMwindow, values$MSData$data),{ 
-    if(internalValues$active && length(internalValues$files$selected)>0){
+    if(internalValues$active && length(internalValues$files$selected)>0 && !is.null(input$EicTic)){
       
       internalValues$EICs <- multiEICplus(adducts = c(0),
                                           mz = data.frame(mzmin = max(1,internalValues$controls$mz-internalValues$controls$mz*values$GlobalOpts$PPMwindow*1e-6),
@@ -343,16 +343,16 @@ EICmodule <- function(input, output, session,
       # print(names(internalValues$EICs[[1]][1,"rt"]))
       # print(unlist(mapply(rep,row.names(internalValues$EICs[[1]]), sapply(internalValues$EICs[[1]][,"scan"], length))))
       # 
-      # intens <- if(input$EicTic){
-      #   unlist(internalValues$EICs[[1]][,"tic"])
-      # }else{
-      #   unlist(internalValues$EICs[[1]][,"intensity"])
-      # }
+      intens <- if(input$EicTic){
+        unlist(internalValues$EICs[[1]][,"tic"])
+      }else{
+        unlist(internalValues$EICs[[1]][,"intensity"])
+      }
       
       rts <- unlist(internalValues$EICs[[1]][,"rt"])
       
       internalValues$controls$nearpoints <- data.frame(rt = rts/60,
-                                                       # intensity = intens,
+                                                       intensity = intens,
                                                        scan = unlist(internalValues$EICs[[1]][,"scan"]),
                                                        file = unname(unlist(mapply(rep,row.names(internalValues$EICs[[1]]), sapply(internalValues$EICs[[1]][,"scan"], length)))),
                                                        stringsAsFactors = F)

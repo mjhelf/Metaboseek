@@ -484,13 +484,27 @@ getAllScans <- function(scanlist, MSData, removeNoise = NULL){
         if(MS2){
           if(!is.null(removeNoise)){
             s <- xcms::getMsnScan(MSfile, scan)
-            return(s[s[,2] > removeNoise*max(s[,2]),])
+            
+            sel <- which(s[,2] >= removeNoise*max(s[,2]))
+            if(length(sel) > 1 ){
+            return(s[sel,])
+              }
+            else{
+              return(t(as.matrix(s[sel,])))
+            }
           }
           return(xcms::getMsnScan(MSfile, scan))
         }else{
           if(!is.null(removeNoise)){
             s <- xcms::getScan(MSfile, scan)
-            return(s[s[,2] > removeNoise*max(s[,2]),])
+            
+            sel <- which(s[,2] >= removeNoise*max(s[,2]))
+            if(length(sel) > 1 ){
+              return(s[sel,])
+            }
+            else{
+              return(t(as.matrix(s[sel,])))
+            }
           }
           return(xcms::getScan(MSfile, scan))
         }

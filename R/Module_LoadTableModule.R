@@ -59,6 +59,8 @@ LoadTableModule <- function(input,output, session,
       internalValues$fileSelection <- tl
       
     }
+    removeModal()
+    
     
     showModal(
       modalDialog(

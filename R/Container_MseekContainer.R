@@ -49,7 +49,31 @@ MseekContainer <- function(input,output, session){
    
    
  })
+ 
+ HeaderDataLoad <- callModule(LoadDataModule, "modaldataload",
+                             values = reactiveValues(projectData = projectData,
+                                                     featureTables = featureTables,
+                                                     MSData = MSData,
+                                                     GlobalOpts = GlobalOpts)
+ )
     
+ 
+ observeEvent(input$loadAll,{
+   showModal(
+     modalDialog(
+       fluidPage(
+         fluidRow(
+           LoadDataModuleUI(ns("modaldataload"))
+           
+           )),
+       title = "Load data",
+       easyClose = T,
+       fade = F,
+       size = "l",
+       footer = modalButton("Cancel") 
+     ))
+   
+ })
   
 }
 
@@ -64,7 +88,7 @@ MseekContainerUI <- function(id){
   ns <- NS(id)
   
   MseekMinimalUI(skin = "black",
-                  MseekHeader(),
+                  MseekHeader(id = id),
                   MseekSidebar(id = id),
                   dashboardBody(
                     
