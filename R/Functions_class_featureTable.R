@@ -69,8 +69,8 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
                         inpage = 1,
                         filters = list(Filter1 = list(selected = 1:nrow(df),
                                               column = colnames(df)[1],
-                                              minSel = if(is.numeric(colnames(df)[1])){min(colnames(df)[1])}else{NULL},
-                                              maxSel = if(is.numeric(colnames(df)[1])){max(colnames(df)[1])}else{NULL},
+                                              minSel = if(is.numeric(df[,colnames(df)[1]])){min(df[,colnames(df)[1]])}else{NULL},
+                                              maxSel = if(is.numeric(df[,colnames(df)[1]])){max(df[,colnames(df)[1]])}else{NULL},
                                               modeSel = NULL,
                                               txtSel = "",
                                               active = F
