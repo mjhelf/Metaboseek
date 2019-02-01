@@ -70,6 +70,22 @@ PeakPickModule <- function(input,output, session,
     
     newdf <- do.call(rbind, newdf)
     
+    if(is.null(newdf) || nrow(newdf) == 0){
+      
+      removeModal()
+      showModal(
+        modalDialog(
+          p("No peaks were found for this feature table in the loaded MS data files.")
+          ,
+          title = "Peak picking failed!",
+          easyClose = T,
+          fade = F,
+          size = "s",
+          footer = modalButton("Ok") 
+        ))
+      
+    }else{
+    
     if(input$getintensities){
     
     for(i in seq(length(values$MSData$data))){
@@ -103,7 +119,8 @@ PeakPickModule <- function(input,output, session,
     removeModal()
     showNotification(paste("Peak finding completed."), duration = 0, type = "message")
     
-      })},
+      }}
+    )},
       error = function(e){
         
         showNotification(paste("An error occured: ", e), duration = 0, type = "error")

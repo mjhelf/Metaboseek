@@ -85,7 +85,7 @@ find_peaks <- function(EIC, maxdetect = list(neighlim = 4, deriv.lim = 0.5, peak
   if(length(mins) == 0 || length(maxs) == 0){
     
     return(
-      
+      list(
       data.frame(rtmin = numeric(0),
                  rtmax = numeric(0),
                  rt = numeric(0),
@@ -93,6 +93,7 @@ find_peaks <- function(EIC, maxdetect = list(neighlim = 4, deriv.lim = 0.5, peak
                  file = character(0),
                  stringsAsFactors = F)
       
+    )
     )
     
   }
@@ -270,10 +271,13 @@ getpeaks <- function(EIC, findProps = list(maxdetect = list(neighlim = 4, deriv.
   
   if(is.matrix(EIC)){
   
- pl <- do.call(rbind,do.call(find_peaks, c(list(EIC = EIC), findProps)))
- 
+    prepl <- do.call(find_peaks, c(list(EIC = EIC), findProps))
 
- return(do.call(mergepeaks, c(list(pl = pl), mergeProps)))
+ pl <- do.call(rbind,prepl)
+
+ outp <- do.call(mergepeaks, c(list(pl = pl), mergeProps))
+
+ return(outp)
   
   }else{
     
@@ -305,11 +309,10 @@ makeRTlist <- function(df, rawdata, ppm = 5, retainColumns = NULL){
                     RTcorr = NULL
   )
   
- # print(aEICs[[1]])
-  
+
   allpeaks <- getpeaks(aEICs)
-  
-  
+
+
 return(lapply(seq(nrow(df)), function(i, df, allpeaks, retainColumns, ppm){
     
     if(nrow(allpeaks[[i]]) > 0){
