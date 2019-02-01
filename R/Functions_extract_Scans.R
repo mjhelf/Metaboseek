@@ -406,10 +406,38 @@ quickMergeMS <- function(speclist, ppm =5, mzdiff = 0.0005, removeNoise = NULL, 
     
   }
   
-  #remove 0 intensity peaks because they will produce NaN mz values downstream
-  aspec <- aspec[aspec[,2] != 0,]
+  #lots of safeguards
+  if(is.null(aspec)){return(NULL)}
   
-  if(nrow(aspec) !=1){
+  
+  #remove 0 intensity peaks because they will produce NaN mz values downstream
+  
+  aspecsel <- aspec[,2] != 0
+  
+  if(sum(aspecsel) == 0){return(NULL)}
+  
+  if(sum(aspecsel) == 1){
+    
+    if(count){
+      res_mx <- t(as.matrix(c(aspec[aspecsel,], 1)))
+      colnames(res_mx) <- c("mz", "intensity", "count")
+      
+      return(res_mx)
+      
+    }else{
+  return(t(as.matrix(aspec[aspecsel,])))
+    }
+    
+         }
+  else{
+  aspec <- aspec[aspec[,2] != 0,]
+  }
+  
+  
+  if(is.null(aspec)){return(NULL)}
+
+  
+  if(nrow(aspec) != 1){
     aspec <- aspec[order(aspec[,1]),]
   }
   

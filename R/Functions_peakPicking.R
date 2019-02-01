@@ -82,6 +82,21 @@ find_peaks <- function(EIC, maxdetect = list(neighlim = 4, deriv.lim = 0.5, peak
   maxs <- do.call(find_max, c(list(EIC = EIC), maxdetect))
   mins <- do.call(find_min, c(list(EIC = EIC), mindetect))
   
+  if(length(mins) == 0 || length(maxs) == 0){
+    
+    return(
+      
+      data.frame(rtmin = numeric(0),
+                 rtmax = numeric(0),
+                 rt = numeric(0),
+                 maxint = numeric(0),
+                 file = character(0),
+                 stringsAsFactors = F)
+      
+    )
+    
+  }
+  
   peaks_detected <-  mapply(function(mins, maxs, EICrow, EIC){
     
     
@@ -172,6 +187,10 @@ plotpeaks <- function(EIC, peaklist){
 #' @export
 mergepeaks <- function(pl, minint = 10000, minrelint = 0.02, topN = 3){
   
+  if(nrow(pl) < 2){
+    return(pl)
+  }
+  
   pl <- pl[pl$maxint >= minrelint*max(pl$maxint),]
   pl <- pl[pl$maxint >= minint,]
   
@@ -179,7 +198,7 @@ mergepeaks <- function(pl, minint = 10000, minrelint = 0.02, topN = 3){
     return(pl)
   }
   
-  pl$group <- 0
+  pl$group <- numeric(nrow(pl))
   counter <- 1
   
   for(i in seq(nrow(pl))){
@@ -209,7 +228,11 @@ mergepeaks <- function(pl, minint = 10000, minrelint = 0.02, topN = 3){
   
   
  mergedpls <-  lapply(unique(pl$group), function(n, pl){
-    
+   
+   if(is.null(pl) || nrow(pl) == 0){
+     return(pl)
+   } 
+   
     sc <- pl[pl$group == n,]
     
     data.frame(rtmin = sum(sc$rtmin*sc$maxint)/ sum(sc$maxint),
@@ -217,7 +240,6 @@ mergepeaks <- function(pl, minint = 10000, minrelint = 0.02, topN = 3){
                rt = sum(sc$rt*sc$maxint)/ sum(sc$maxint),
                maxint = max(sc$maxint),
                file = paste(sc$file, collapse =  " "),
-               group = n,
                stringsAsFactors = F)
     
   }, pl)
