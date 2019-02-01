@@ -43,7 +43,8 @@ FeatureTableContainer <- function(input,output, session,
                           reactives = reactive({list()}),
                           values = reactiveValues(fileGrouping = NULL,
                                                   featureTables = values$featureTables,
-                                                  MSData= values$MSData))
+                                                  MSData= values$MSData,
+                                                  MainTable = MainTable))
 
     
   internalValues <- reactiveValues(MainTable = MainTable,

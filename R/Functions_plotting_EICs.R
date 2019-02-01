@@ -461,8 +461,12 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
                     yzoom = 1
 ){
   
-  if(max(ylim)==0){ylim = c(0,1)}
-  
+  suppressWarnings({
+  if(max(ylim)==0 
+     || !is.finite(max(ylim))){ylim = c(0,1)}
+  })
+    
+    
   maxint <- format(max(ylim), digits =3, scientific = T)
   
   if(!is.null(relto) && relto != 1 ){

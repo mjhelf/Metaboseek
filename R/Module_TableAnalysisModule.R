@@ -17,7 +17,8 @@
 TableAnalysisModule <- function(input,output, session,
                                 reactives = reactive({list(fileGrouping = NULL)}),
                                 values = reactiveValues(featureTables = featureTables,
-                                                        MSData = MSData),
+                                                        MSData = MSData,
+                                                        MainTable = MainTable),
                                 static = list()
 ){
   #### Initialization ####
@@ -166,12 +167,23 @@ TableAnalysisModule <- function(input,output, session,
     
   })
   
+  
+  output$peakpickMod <- renderUI({ 
+    PeakPickModuleUI(ns("pp"))
+  })
+  
   observe({
     
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
+    toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
     
   })
+  
+  PP <- callModule(PeakPickModule, "pp",
+                   values = reactiveValues(MSData = values$MSData,
+                                           featureTables = values$featureTables,
+                                           MainTable = values$MainTable))
   
   
   
@@ -207,10 +219,13 @@ TableAnalysisModuleUI <- function(id){
       column(4,
              htmlOutput(ns('analysisSelect'))
       ),
-      column(4,
+      column(3,
              htmlOutput(ns('ctrlSelect'))
       ),
-      column(4,
+      column(2,
+             htmlOutput(ns('peakpickMod'))
+             ),
+      column(3,
              htmlOutput(ns('claraClusters'))
       )
       
