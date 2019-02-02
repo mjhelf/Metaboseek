@@ -93,6 +93,8 @@ MseekHeader <- function(..., id = NULL){
   
   if(!is.null(id)){
     ns <- NS(id)
+  }else{
+    ns <- function(id){return(id)}
   }
   
   dashboardHeaderM(title = "METABOseek",

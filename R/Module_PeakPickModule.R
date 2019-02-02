@@ -107,7 +107,8 @@ PeakPickModule <- function(input,output, session,
     #simpler:
     values$featureTables$tables[[tabid]] <- constructFeatureTable(df = newdf,
                                                                   tablename = names(tabid),
-                                                                  anagrouptable = if(input$getintensities){values$MSData$layouts[[values$MSData$active]]$rawgrouptable}else{NULL})
+                                                                  anagrouptable = if(input$getintensities){values$MSData$layouts[[values$MSData$active]]$rawgrouptable}else{NULL},
+                                                                  editable = F)
     #values$featureTables$tables[[tabid]]$df <- newdf
     
     values$featureTables$index <- c( values$featureTables$index, tabid)
