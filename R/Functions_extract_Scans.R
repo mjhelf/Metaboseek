@@ -406,10 +406,38 @@ quickMergeMS <- function(speclist, ppm =5, mzdiff = 0.0005, removeNoise = NULL, 
     
   }
   
-  #remove 0 intensity peaks because they will produce NaN mz values downstream
-  aspec <- aspec[aspec[,2] != 0,]
+  #lots of safeguards
+  if(is.null(aspec)){return(NULL)}
   
-  if(nrow(aspec) !=1){
+  
+  #remove 0 intensity peaks because they will produce NaN mz values downstream
+  
+  aspecsel <- aspec[,2] != 0
+  
+  if(sum(aspecsel) == 0){return(NULL)}
+  
+  if(sum(aspecsel) == 1){
+    
+    if(count){
+      res_mx <- t(as.matrix(c(aspec[aspecsel,], 1)))
+      colnames(res_mx) <- c("mz", "intensity", "count")
+      
+      return(res_mx)
+      
+    }else{
+  return(t(as.matrix(aspec[aspecsel,])))
+    }
+    
+         }
+  else{
+  aspec <- aspec[aspec[,2] != 0,]
+  }
+  
+  
+  if(is.null(aspec)){return(NULL)}
+
+  
+  if(nrow(aspec) != 1){
     aspec <- aspec[order(aspec[,1]),]
   }
   
@@ -484,13 +512,27 @@ getAllScans <- function(scanlist, MSData, removeNoise = NULL){
         if(MS2){
           if(!is.null(removeNoise)){
             s <- xcms::getMsnScan(MSfile, scan)
-            return(s[s[,2] > removeNoise*max(s[,2]),])
+            
+            sel <- which(s[,2] >= removeNoise*max(s[,2]))
+            if(length(sel) > 1 ){
+            return(s[sel,])
+              }
+            else{
+              return(t(as.matrix(s[sel,])))
+            }
           }
           return(xcms::getMsnScan(MSfile, scan))
         }else{
           if(!is.null(removeNoise)){
             s <- xcms::getScan(MSfile, scan)
-            return(s[s[,2] > removeNoise*max(s[,2]),])
+            
+            sel <- which(s[,2] >= removeNoise*max(s[,2]))
+            if(length(sel) > 1 ){
+              return(s[sel,])
+            }
+            else{
+              return(t(as.matrix(s[sel,])))
+            }
           }
           return(xcms::getScan(MSfile, scan))
         }

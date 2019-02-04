@@ -14,7 +14,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   ppm = MSData$layouts[[MSData$active]]$settings$ppm,
   rdata = MSData$data, pdfFile = file, leadingTIC = T, lw = 1,
   adducts = c(0), cx = 1, midline = T, yzoom = 1,
-  RTcorrect = NULL, importEIC = NULL, globalYmax = NULL)
+  RTcorrect = NULL, importEIC = NULL, globalYmax = NULL,
+  subtitles = NULL)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
@@ -54,6 +55,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 \item{yzoom}{zoom factor into y-axis}
 
 \item{RTcorrect}{if not NULL, this RTcorr object will be used to adjust retention times.}
+
+\item{subtitles}{subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL}
 
 \item{exportmode}{if TRUE, $EIC list is exported along with $plot (as list)}
 }

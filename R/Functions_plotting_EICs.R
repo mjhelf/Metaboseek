@@ -26,6 +26,7 @@
 #' @param adducts numeric() of mass shifts to be added to feature masses
 #' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
 #' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
+#' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -48,7 +49,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        yzoom = 1,
                        RTcorrect = NULL,
                        importEIC = NULL,
-                       globalYmax = NULL
+                       globalYmax = NULL,
+                       subtitles = NULL
 ){
   #number of plot rows
   rows <- ceiling(length(glist)/cols)
@@ -86,7 +88,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     titx <- EICtitles(mzmid, rtmid, ppm)
   }
   
+ 
   
+  if(length(titx) != length(subtitles)){ subtitles <-NULL}
   
   
   
@@ -152,8 +156,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
     }
     else{
+      suppressWarnings({
       yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),mapply(function(x, rt){ max(unlist(x[,"tic"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  )), ncol = 2, byrow = F)}else{NULL}
-      
+    }) #warnings occur if all scans are out of given rt range
     }
     
     }else{
@@ -161,9 +166,10 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     if(is.null(rtx)  || length(EICs) %% nrow(rtx) != 0  ){
     maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
     }else{
+      suppressWarnings({
       maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){ max(unlist(x[,"intensity"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
       
-      
+      }) #warnings occur if all scans are out of given rt range
     }
     
     yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),rep(maxys, length(adducts))), ncol = 2, byrow = F)}else{NULL}
@@ -182,7 +188,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              oma=c(0,2,4,0),
                              xpd=NA, bg="white",
                              header =  titx,
-                             header2 = NULL,
+                             header2 = subtitles,
                              pdfFile = NULL,
                              pdfHi = 6*rows,
                              pdfWi = 6*cols,
@@ -248,7 +254,7 @@ EICtitles <- function(mzs, rts, ppm){
 #' generate multiple EICs on one page
 #' 
 #' 
-#' @param EIClist list of EICs from Mseek:multiEIC
+#' @param EIClist list of EICs from METABOseek:multiEIC
 #' @param grouping a named list of grouped file names (as supplied in $grouping of rawLayout objects)
 #' @param plotProps a list of settings for the individual plots
 #' @param plotProps.TIC if TRUE, TIC instead of EIC
@@ -297,6 +303,7 @@ groupPlot <- function(EIClist = res,
   
   #majoritem is the EIClist top level (typically by mz, but could be)
   
+ 
   if(!is.null(compProps$pdfFile)){pdf(compProps$pdfFile,compProps$pdfWi,compProps$pdfHi)}
   
   if(!is.null(compProps$header)){
@@ -348,8 +355,11 @@ groupPlot <- function(EIClist = res,
         mm <- 1
           for(k in 1:length(minoritem$EIClist)){
             mm <- max(mm,
+                      suppressWarnings({
                       max(unlist(minoritem$EIClist[[k]][,"tic"])[which(unlist(minoritem$EIClist[[k]][,"rt"]) >= min(xlimes)*60 
-                                                                       & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)]))
+                                                                       & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)])
+          }) #warnings occur if all scans are out of given rt range
+                      )
           }
         ylimes = c(0,mm)
         }
@@ -357,8 +367,11 @@ groupPlot <- function(EIClist = res,
         mm <- 1
         for(k in 1:length(minoritem$EIClist)){
           mm <- max(mm,
+                    suppressWarnings({
                     max(unlist(minoritem$EIClist[[k]][,"intensity"])[which(unlist(minoritem$EIClist[[k]][,"rt"]) >= min(xlimes)*60 
-                                                                     & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)]))
+                                                                     & unlist(minoritem$EIClist[[k]][,"rt"]) <= max(xlimes)*60)])
+                    }) #warnings occur if all scans are out of given rt range
+                    )
         }
         ylimes = c(0,mm)
       }
@@ -385,8 +398,11 @@ groupPlot <- function(EIClist = res,
     
       title(main = compProps$header[majoritem], outer=T,line=2, cex.main=autosize, font = 2)}
     
+ 
     
-    if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0.5, cex=compProps$cx)}
+    if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0, cex=compProps$cx)}
+    
+
     # par(mar=c(0,0,0,0))
     
     #   if(length(compProps$adductLabs)>1){
@@ -415,7 +431,7 @@ groupPlot <- function(EIClist = res,
 #' generate one EIC plot for multiple files
 #' 
 #' 
-#' @param EIClistItem item from a list of EICs from Mseek:multiEIC
+#' @param EIClistItem item from a list of EICs from METABOseek:multiEIC
 #' @param ylim numeric(2) min and max visible rt value (in seconds)
 #' @param xlim numeric(2) min and max visible intensity value (in seconds)
 #' @param legendtext character() with item for each shown EIC for the plot legend
@@ -445,8 +461,12 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
                     yzoom = 1
 ){
   
-  if(max(ylim)==0){ylim = c(0,1)}
-  
+  suppressWarnings({
+  if(max(ylim)==0 
+     || !is.finite(max(ylim))){ylim = c(0,1)}
+  })
+    
+    
   maxint <- format(max(ylim), digits =3, scientific = T)
   
   if(!is.null(relto) && relto != 1 ){

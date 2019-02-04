@@ -6,7 +6,8 @@
 \usage{
 TableAnalysisModule(input, output, session, reactives = reactive({    
   list(fileGrouping = NULL) }), values = reactiveValues(featureTables =
-  featureTables, MSData = MSData), static = list())
+  featureTables, MSData = MSData, MainTable = MainTable),
+  static = list())
 }
 \arguments{
 \item{input}{}

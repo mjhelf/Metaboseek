@@ -12,7 +12,7 @@ groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC =
   12, cx = 1, adductLabs = c("0", "1", "2")))
 }
 \arguments{
-\item{EIClist}{list of EICs from Mseek:multiEIC}
+\item{EIClist}{list of EICs from METABOseek:multiEIC}
 
 \item{grouping}{a named list of grouped file names (as supplied in $grouping of rawLayout objects)}
 

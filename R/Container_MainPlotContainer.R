@@ -102,12 +102,16 @@ MainPlotContainer <- function(input,output, session,
                                 values = reactiveValues(featureTables = values$featureTables)
   )
   
+  VennDiagrams <- callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
+                                                                           GlobalOpts = values$GlobalOpts))
+  
   internalValues <- reactiveValues(RegroupMS = RegroupMS,
                                    GroupedEICs = GroupedEICs,
                                    MS2Browser = MS2Browser,
                                    MultiEICout = MultiEICout,
                                    iSpec2 = iSpec2,
-                                   PcaViewFeatures = PcaViewFeatures)
+                                   PcaViewFeatures = PcaViewFeatures,
+                                   VennDiagrams = VennDiagrams)
 
   return(internalValues)
   
@@ -141,6 +145,9 @@ MainPlotContainerUI <- function(id){
          ),
          tabPanel("Quickplots",
                   featurePlotModuleUI(ns("quickplots"))
+         ),
+         tabPanel("Venn Diagrams",
+                  VennDiagramModuleUI(ns("venndiagrams"))
          ),
          tabPanel("PCA Viewer",
                   PcaViewModuleUI(ns("pcaviewfeatures"))
