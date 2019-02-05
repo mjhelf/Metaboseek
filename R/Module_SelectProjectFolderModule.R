@@ -67,7 +67,9 @@ SelectProjectFolderModule <- function(input,output, session,
                                                               "peakfilling.csv",
                                                               "retcor.csv",
                                                               "status.csv",
-                                                              "peaktable_all_unfilled.csv")]
+                                                              "peaktable_all_unfilled.csv",
+                                            "analysis_groups.csv",
+                                            "filegroups_base.csv")]
         
         tl <- list()
         
