@@ -1,4 +1,6 @@
 .onAttach <- function(libname, pkgname) {
+  data("isotopes", package = "enviPat", envir = as.environment("package:METABOseek"))
+  
   packageStartupMessage(
     paste("\nWelcome to METABOseek version",
           utils::packageVersion("METABOseek"),

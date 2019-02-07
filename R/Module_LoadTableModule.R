@@ -152,6 +152,10 @@ LoadTableModule <- function(input,output, session,
                                  Group = rep("G1",(length(intColRange))),
                                  stringsAsFactors = F)
         }
+        
+        
+        
+        
         incProgress(0.3, detail = "Formatting Feature Table")
         
         values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,

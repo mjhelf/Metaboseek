@@ -190,7 +190,7 @@ MseekSidebar <- function(..., id = NULL){
       #SelectActiveTableModuleUI("selectactivetable"),
       hr(),
       h5(a(paste0("METABOseek version ",packageVersion("METABOseek")), 
-           href="https://github.com/mjhelf/Mseek", target="_blank"), align = "center")
+           href="https://github.com/mjhelf/METABOseek", target="_blank"), align = "center")
       
     )
     

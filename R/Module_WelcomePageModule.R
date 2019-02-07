@@ -71,6 +71,13 @@ WelcomePageModule <- function(input,output, session,
           )
           
         ),
+        fluidRow(
+          div(class = "box box-solid box-primary",
+              div(class = "box-header",
+                  h3(class = "box-title", paste0("This is METABOseek version ",packageVersion("METABOseek")))))
+         
+        ),
+        
         div(style="height:4px;"),
         
         fluidRow(

@@ -172,11 +172,16 @@ TableAnalysisModule <- function(input,output, session,
     PeakPickModuleUI(ns("pp"))
   })
   
+  output$mzCalcMod <- renderUI({ 
+    MZcalcModuleUI(ns("mzcalc"))
+  })
+  
   observe({
     
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
     toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+    toggle(id = 'mzCalcMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables))
     
   })
   
@@ -185,6 +190,9 @@ TableAnalysisModule <- function(input,output, session,
                                            featureTables = values$featureTables,
                                            MainTable = values$MainTable))
   
+  MZcalc <- callModule(MZcalcModule, "mzcalc",
+                   values = reactiveValues(featureTables = values$featureTables,
+                                           MainTable = values$MainTable))
   
   
   
@@ -219,13 +227,16 @@ TableAnalysisModuleUI <- function(id){
       column(4,
              htmlOutput(ns('analysisSelect'))
       ),
-      column(3,
+      column(2,
              htmlOutput(ns('ctrlSelect'))
       ),
       column(2,
              htmlOutput(ns('peakpickMod'))
              ),
-      column(3,
+      column(2,
+             htmlOutput(ns('mzCalcMod'))
+      ),
+      column(2,
              htmlOutput(ns('claraClusters'))
       )
       
