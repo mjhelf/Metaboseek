@@ -72,8 +72,10 @@ WelcomePageModule <- function(input,output, session,
           
         ),
         fluidRow(
-          shinydashboard::box(status = "primary", width = 12, solidHeader = T,
-                              title = paste0("This is METABOseek version ",packageVersion("METABOseek")))
+          div(class = "box box-solid box-primary",
+              div(class = "box-header",
+                  h3(class = "box-title", paste0("This is METABOseek version ",packageVersion("METABOseek")))))
+         
         ),
         
         div(style="height:4px;"),
