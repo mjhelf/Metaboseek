@@ -132,7 +132,7 @@ calcMZs <- function(df, charges = c(1), carrier = "H", monoisotopic = T, mf_colu
   
   if(monoisotopic){
     
-    mzs <- (formulas$monoisotopic_mass[!formulas$warning] - 5.48579909070e-4*charges[1])/max(c(charges[1],1))
+    mzs <- (formulas$monoisotopic_mass[!formulas$warning] - 5.48579909070e-4*charges[1])/max(c(abs(charges[1]),1))
     
   }else{
     

@@ -240,7 +240,7 @@ mergepeaks <- function(pl, minint = 10000, minrelint = 0.02, topN = 3){
                rtmax = sum(sc$rtmax*sc$maxint)/ sum(sc$maxint),
                rt = sum(sc$rt*sc$maxint)/ sum(sc$maxint),
                maxint = max(sc$maxint),
-               file = paste(sc$file, collapse =  " "),
+               file = paste(basename(sc$file), collapse =  "|"),
                stringsAsFactors = F)
     
   }, pl)
