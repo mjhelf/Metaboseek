@@ -5,7 +5,7 @@
 \title{calcMZs}
 \usage{
 calcMZs(df, charges = c(1), carrier = "H", monoisotopic = T,
-  mf_column = "formula")
+  mf_column = "formula", adduct = NULL)
 }
 \arguments{
 \item{df}{data.frame that contains a column with molecular formulas (MFs)}
