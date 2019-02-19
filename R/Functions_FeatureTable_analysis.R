@@ -112,11 +112,13 @@ error = function(e){out$errMsg[["Basic analysis"]] <- paste(e)})
   if("mzMatch" %in% analyze){
     tryCatch({
       
+      #remove previous mzMatch results
+      remcols <-  grepl("mzMatch_", colnames(df)) | colnames(df) %in% c("mzMatches", "mzMatchError")
       
      
-      df <- updateDF(do.call(mzMatch, c(list(df),mzMatchParam)),
+      df <- updateDF(do.call(mzMatch, c(list(df[,!remcols, drop = F]),mzMatchParam)),
                                
-                     df)
+                     df[,!remcols, drop = F])
       
       
     },
@@ -625,6 +627,8 @@ mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){
   
   db <- db[!duplicated.data.frame(db),]
   
+  db <- db[db$mz > min(df$mz) & db$mz < max(df$mz),]
+  
   resdf <- data.frame(mzMatches = character(nrow(df)),
                       mzMatchError = character(nrow(df)),
                       stringsAsFactors = F)
@@ -632,6 +636,8 @@ mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){
   for(n in colnames(db)[!colnames(db) %in% c("id", "mz")]){
     resdf[[paste0("mzMatch_",n)]] <- character(nrow(df))
   }
+  
+  if(nrow(db) ==0){ return(resdf)}
   
   selmx <- abs(outer(df$mz, db$mz, "-"))
   

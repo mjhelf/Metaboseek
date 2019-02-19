@@ -111,6 +111,10 @@ TableAnalysisModule <- function(input,output, session,
     tryCatch({
       withProgress(message = 'Please wait!', detail = "analyzing feature table", value = 0.5, {
         
+        #if("mzMatch" %in% internalValues$analysesSelected){
+          
+      #  }
+        
         res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
                             intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
                             groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
@@ -183,8 +187,10 @@ TableAnalysisModule <- function(input,output, session,
   output$seldbs <- renderUI({ 
     selectizeInput(ns("selDB"), "select reference table for mz matching", 
                    choices = list("SMID-DB negative" = system.file("db", "smid-db_neg.csv", package = "METABOseek"),
-                                                                                      "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "METABOseek")),
-                   selected = internalValues$dbselected)
+                                  "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "METABOseek"),
+                                  "LipidBLAST negative" = system.file("db", "LipidBLAST_mz_trimmed_neg.csv", package = "METABOseek"),
+                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "METABOseek")),
+                   selected = internalValues$dbselected, multiple = T)
   })
   
   observeEvent(input$selDB,{
