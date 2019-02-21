@@ -12,19 +12,23 @@
 #' @param ppm ppm range for peak shape analysis
 #' @param controlGroup control group for foldChange (part of Basic analysis) analysis (optional) 
 #' @param numClusters number of clusters for clara_clusters analysis
+#' @param mzMatchParam list of parameters passed to mass
 #'
 #' @importFrom stats prcomp 
 #'
 analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
                          groups = tab1$anagroupnames,
-                         analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples"), 
+                         analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "mzMatch"), 
                          normalize = T,
                          useNormalized = T,
                          logNormalized = F,
                          MSData = NULL,
                          ppm = 5,
                          controlGroup = NULL,
-                         numClusters = 2){
+                         numClusters = 2,
+                         mzMatchParam = list(system.file("db", "smid-db_pos.csv", package = "METABOseek"),
+                                               ppm = 5,
+                                               mzdiff = 0.001)){
   out <- list(errmsg = list())
   
   if(normalize 
@@ -103,6 +107,22 @@ error = function(e){out$errMsg[["Peak shapes"]] <- paste(e)})
     
   },
 error = function(e){out$errMsg[["Basic analysis"]] <- paste(e)})
+  }
+  
+  if("mzMatch" %in% analyze){
+    tryCatch({
+      
+      #remove previous mzMatch results
+      remcols <-  grepl("mzMatch_", colnames(df)) | colnames(df) %in% c("mzMatches", "mzMatchError")
+      
+     
+      df <- updateDF(do.call(mzMatch, c(list(df[,!remcols, drop = F]),mzMatchParam)),
+                               
+                     df[,!remcols, drop = F])
+      
+      
+    },
+    error = function(e){out$errMsg[["mzMatch"]] <- paste(e)})
   }
   
   if("t-test" %in% analyze){
@@ -582,5 +602,66 @@ MseekAnova <- function(df, groups){
   }, grp)
   
   return(data.frame(ANOVA_pvalue = pvals))
+  
+}
+
+#' mzMatch
+#' 
+#' Find m/z matches for each item in a Feature Table in a database.
+#'
+#' @param df data.frame that contains a mz column
+#' @param db data.frame that contains the compound database and at least columns mz and id. Can also be a character vector of .csv file names (will be combined into a single list for the search, with duplicate lines removed)
+#' @param ppm ppm mz tolerance
+#' @param mzdiff maximum mz difference. NOTE: either ppm OR mzdiff condition has to be met
+#'
+#' @importFrom data.table rbindlist
+#'
+#' @export
+mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){
+  
+  if(!is.data.frame(db) && !is.null(db) && all(file.exists(db))){
+    
+    db <- as.data.frame(rbindlist(lapply(db, data.table::fread, sep = ","), fill = T))
+    
+  }
+  
+  db <- db[!duplicated.data.frame(db),]
+  
+  db <- db[db$mz > min(df$mz) & db$mz < max(df$mz),]
+  
+  resdf <- data.frame(mzMatches = character(nrow(df)),
+                      mzMatchError = character(nrow(df)),
+                      stringsAsFactors = F)
+  
+  for(n in colnames(db)[!colnames(db) %in% c("id", "mz")]){
+    resdf[[paste0("mzMatch_",n)]] <- character(nrow(df))
+  }
+  
+  if(nrow(db) ==0){ return(resdf)}
+  
+  selmx <- abs(outer(df$mz, db$mz, "-"))
+  
+  sel <- which(selmx < mzdiff | selmx/df$mz < ppm*1e-6, arr.ind = T)
+  
+  for(n in colnames(db)[!colnames(db) %in% c("id", "mz")]){
+    
+    resdf[[paste0("mzMatch_",n)]][unique(sel[,1])] <- sapply(unique(sel[,1]), function(i, n, db, sel){
+      return(paste(db[[n]][sel[,2][sel[,1]==i]], collapse = "|"))
+    },n, db, sel)
+    
+  }
+  
+  
+  resdf[["mzMatches"]][unique(sel[,1])] <- sapply(unique(sel[,1]), function(i, n, db, sel){
+    return(paste(db[[n]][sel[,2][sel[,1]==i]], collapse = "|"))
+  },n = "id", db, sel)
+  
+  resdf[["mzMatchError"]][unique(sel[,1])] <- sapply(unique(sel[,1]), function(i, n, db, sel){
+    return(paste(round(df$mz[i] - db$mz[sel[,2][sel[,1]==i]], 5), collapse = "|"  ))
+  },n = "mz", db, sel)
+  
+  
+  
+  return(resdf)  
   
 }

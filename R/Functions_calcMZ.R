@@ -113,16 +113,17 @@ getMono <- function(mf){
 #' 
 #' @importFrom enviPat check_chemform isopattern
 #'
-calcMZs <- function(df, charges = c(1), carrier = "H", monoisotopic = T, mf_column = "formula"){
+calcMZs <- function(df, charges = c(1), carrier = "H", monoisotopic = T, mf_column = "formula", adduct = NULL){
   
   
   if(charges[1] >= 0 ){
     
-    inpforms <- paste0(df[[mf_column]], paste(rep(carrier, abs(charges[1])), sep = "", collapse = ""))
+  inpforms <- paste0(df[[mf_column]], paste(rep(carrier, abs(charges[1])-length(adduct)), sep = "", collapse = ""), adduct)
+  
     
   }else{
     
-    inpforms <- sapply(paste0(df[[mf_column]], carrier, charges[1]), function(x){remakeSF(makeSF(x) )})
+    inpforms <- sapply(paste0(df[[mf_column]], carrier, charges[1]+length(adduct), adduct), function(x){remakeSF(makeSF(x) )})
     
     
   }
@@ -131,7 +132,7 @@ calcMZs <- function(df, charges = c(1), carrier = "H", monoisotopic = T, mf_colu
   
   if(monoisotopic){
     
-    mzs <- (formulas$monoisotopic_mass[!formulas$warning] - 5.48579909070e-4*charges[1])/max(c(charges[1],1))
+    mzs <- (formulas$monoisotopic_mass[!formulas$warning] - 5.48579909070e-4*charges[1])/max(c(abs(charges[1]),1))
     
   }else{
     
@@ -154,7 +155,14 @@ calcMZs <- function(df, charges = c(1), carrier = "H", monoisotopic = T, mf_colu
   
   newdf$mz <- mzs
   newdf$charge <- charges[1]
-  newdf$ion <- paste0("[M", if(charges[1] > 0 ){"+"}else{"-"}, if(abs(charges[1]) > 1){abs(charges[1])}else{""}, if(abs(charges[1]) > 0){paste0(carrier, "]", abs(charges[1]), if(charges[1] > 0 ){"+"}else{"-"})}else{"]"})
+  
+  hnumber <- if(charges[1] > 0){charges[1] - length(adduct)}else{charges[1] + length(adduct)}
+  newdf$ion <- paste0("[M",
+               if(length(adduct)>0){paste0("+", adduct)}else{""},
+               if(hnumber > 0){paste0("+",if(hnumber!=1){hnumber}else{""}, carrier,"]")}else if (hnumber < 0){paste0(if(hnumber!=-1){hnumber}else{"-"}, carrier,"]")}else{"]"},
+               if(charges[1] > 0 ){paste0(charges[1],"+")}else if(charges[1] < 0){paste0(abs(charges[1]),"-")}else{""}  )
+  
+  #newdf$ion <- paste0("[M",  if(charges[1] > 0 ){"+"}else{"-"}, if(abs(charges[1]) > 1){abs(charges[1])}else{""}, if(abs(charges[1]) > 0){paste0(carrier, "]", abs(charges[1]), )}else{"]"})
   
   
   if(length(charges) > 1){

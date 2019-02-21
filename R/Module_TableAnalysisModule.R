@@ -29,9 +29,10 @@ TableAnalysisModule <- function(input,output, session,
                                    useNormalized = TRUE,
                                    logNormalized = F,
                                    controlGroups = NULL,
-                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "anova"),
+                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "anova", "mzMatch"),
                                    analysesSelected = "Basic analysis",
-                                   numClusters = 2
+                                   numClusters = 2,
+                                   dbselected = system.file("db", "smid-db_pos.csv", package = "METABOseek")
   )
   
   observeEvent(reactives()$fileGrouping,{
@@ -110,6 +111,10 @@ TableAnalysisModule <- function(input,output, session,
     tryCatch({
       withProgress(message = 'Please wait!', detail = "analyzing feature table", value = 0.5, {
         
+        #if("mzMatch" %in% internalValues$analysesSelected){
+          
+      #  }
+        
         res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
                             intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
                             groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
@@ -120,7 +125,10 @@ TableAnalysisModule <- function(input,output, session,
                             MSData = values$MSData$data,
                             ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
                             controlGroup = internalValues$controlGroups,
-                            numClusters = internalValues$numClusters)
+                            numClusters = internalValues$numClusters,
+                            mzMatchParam = list(db = internalValues$dbselected,
+                                                ppm = 5,
+                                                mzdiff = 0.001))
         
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
         values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,
@@ -176,7 +184,23 @@ TableAnalysisModule <- function(input,output, session,
     MZcalcModuleUI(ns("mzcalc"))
   })
   
+  output$seldbs <- renderUI({ 
+    selectizeInput(ns("selDB"), "select reference table for mz matching", 
+                   choices = list("SMID-DB negative" = system.file("db", "smid-db_neg.csv", package = "METABOseek"),
+                                  "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "METABOseek"),
+                                  "LipidBLAST negative" = system.file("db", "LipidBLAST_mz_trimmed_neg.csv", package = "METABOseek"),
+                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "METABOseek")),
+                   selected = internalValues$dbselected, multiple = T)
+  })
+  
+  observeEvent(input$selDB,{
+    
+    internalValues$dbselected <- input$selDB
+    
+  })
+  
   observe({
+    toggle(id = 'seldbs', condition = "mzMatch" %in% internalValues$analysesSelected)
     
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
@@ -237,7 +261,8 @@ TableAnalysisModuleUI <- function(id){
              htmlOutput(ns('mzCalcMod'))
       ),
       column(2,
-             htmlOutput(ns('claraClusters'))
+             htmlOutput(ns('claraClusters')),
+             htmlOutput(ns('seldbs'))
       )
       
     ),
