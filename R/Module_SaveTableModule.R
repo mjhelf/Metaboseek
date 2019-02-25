@@ -10,6 +10,8 @@
 #' @param values Import data from the shiny session
 #' @param static Import data from the shiny session
 #' 
+#' @importFrom data.table fwrite
+#' 
 #' @export 
 SaveTableModule <- function(input,output, session,
                             reactives = reactive({list(df = NULL,
@@ -54,11 +56,11 @@ SaveTableModule <- function(input,output, session,
   
   output$modalDownload <- downloadHandler(filename= function(){paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))}, 
                                           content = function(file){
-                                            write.table(if(is.null(values$featureTables)){reactives()$df}
+                                            fwrite(if(is.null(values$featureTables)){reactives()$df}
                                                                                else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
                                                                                file,
                                                                                sep = if(static$format =="tsv"){"\t"}else{","},
-                                                                               quote = F,
+                                                                               quote = T,
                                                                                row.names = F
                                           )
                                             showNotification(paste("Downloading file: ", paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))), duration = 10)
@@ -82,11 +84,11 @@ SaveTableModule <- function(input,output, session,
       }
       if(is.null(values$featureTables)){TableUpdateChunk()}
       
-      write.table(if(is.null(values$featureTables)){reactives()$df}
+      fwrite(if(is.null(values$featureTables)){reactives()$df}
                   else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
                   file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename)))),
                   sep = if(static$format =="tsv"){"\t"}else{","},
-                  quote = F,
+                  quote = T,
                   row.names = F
       )
       showNotification(paste("Table saved as: ", file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))))), duration = 10)
