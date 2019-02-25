@@ -41,5 +41,6 @@ Suggests: covr,
     knitr,
     rmarkdown,
     testthat,
-    shinytest
+    shinytest,
+    splashR
 VignetteBuilder: knitr

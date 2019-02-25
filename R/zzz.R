@@ -15,6 +15,11 @@
 
   MseekOptions()
   
+  if(!"splashR" %in% rownames(installed.packages())) {
+    install.packages(devtools)
+    devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
+  }
+  
   #Update example ms file locations
   if(dirname(system.file(package = "METABOseek")) %in% .libPaths()
      && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "METABOseek"))){
