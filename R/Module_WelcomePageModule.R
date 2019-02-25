@@ -85,7 +85,7 @@ WelcomePageModule <- function(input,output, session,
             rl <- readLines(paste0('http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = ".")), n = 1)
             
             HTML('
-<iframe id="inlineFrameExample"
+<iframe id="inlineFrameWelcome"
 title="webpage" 
 style="border:none;width:100%;height:500px;" ',
                  paste0('src="http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = "."),'">'),
