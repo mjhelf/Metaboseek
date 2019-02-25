@@ -6,7 +6,6 @@ try({remove.packages("BiocInstaller")})
 source("https://bioconductor.org/biocLite.R")
 biocLite(c("xcms", "CAMERA","BiocParallel"), ask = F)
 
-install.packages("digest")
 
 devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
 

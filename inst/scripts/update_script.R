@@ -29,7 +29,7 @@ error = function(e){
    source("http://mosaic.bti.cornell.edu/files/install_METABOseek.R")
     },
     error = function(e){
-  warning("Installation failed. Try to install from the R console using the command:")
+  message("Installation failed. Try to install from the R console using the command:")
   message(paste0('devtools::install_github("mjhelf/METABOseek", ref ="',commandArgs(trailingOnly=TRUE)[1],'")'))
   message("You can close this window now.")
   Sys.sleep(10000)
