@@ -17,7 +17,8 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
   
   internalValues <- reactiveValues(numNetworks = 0,
                                    edgecolnames = NULL,
-                                   colSelected1 = "cosine")
+                                   colSelected1 = "cosine",
+                                   colSelected2 = "deltamz")
 
   observe({
     
@@ -50,8 +51,10 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
   
   
   output$colSel1 <- renderUI({
-    
+          if(!is.null(reactives()$activeNetwork)){
+
     tooltip <- tryCatch({
+        
         paste0("Numeric column, range:",
                round(min(as.numeric(values$Networks[[reactives()$activeNetwork]]$tables$edges[,internalValues$colSelected1])),3),
                " - ", 
@@ -70,12 +73,43 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
                        selected = if(is.null(internalValues$colSelected1) || !internalValues$colSelected1 %in% internalValues$edgecolnames){NULL}else{internalValues$colSelected1},
                        multiple = F)
     )
+    }
   }) 
   
   observeEvent(input$colsel1,{
     
     internalValues$colSelected1 <- input$colsel1
 
+  })
+  
+  output$colSel2 <- renderUI({
+    if(!is.null(reactives()$activeNetwork)){
+    tooltip <- tryCatch({
+      paste0("Numeric column, range:",
+             round(min(as.numeric(values$Networks[[reactives()$activeNetwork]]$tables$edges[,internalValues$colSelected2])),3),
+             " - ", 
+             round(max(as.numeric(values$Networks[[reactives()$activeNetwork]]$tables$edges[,internalValues$colSelected2])),3),
+             ", mean: ",
+             round(mean(as.numeric(values$Networks[[reactives()$activeNetwork]]$tables$edges[,internalValues$colSelected2])),3),
+             ", median: ",
+             round(median(as.numeric(values$Networks[[reactives()$activeNetwork]]$tables$edges[,internalValues$colSelected2])),3)
+      )},
+      warning = function(w){paste("Error in calculation")},
+      error = function(e){paste("Error in calculation")})
+    
+    div(title = tooltip,
+        selectizeInput(ns('colsel2'), "Filter 2",
+                       choices = internalValues$edgecolnames,
+                       selected = if(is.null(internalValues$colSelected2) || !internalValues$colSelected2 %in% internalValues$edgecolnames){NULL}else{internalValues$colSelected2},
+                       multiple = F)
+    )
+    }
+  }) 
+  
+  observeEvent(input$colsel2,{
+    
+    internalValues$colSelected2 <- input$colsel2
+    
   })
   
   output$edgeInfo1 <- renderUI({
@@ -123,8 +157,14 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
               column(2, div(title = "Minimum value for edges to merge",
                             numericInput(ns("col1min"),"min", value = 0.95))),
               column(2, div( title = "Maximum value for edges to merge", 
-                             numericInput(ns("col1max"), "max", value = 1)))
-              
+                             numericInput(ns("col1max"), "max", value = 1)))),
+            fluidRow(
+              column(3, checkboxInput(ns("mergeCheck2"),"Use second merge condition", value = F)),
+              column(4, htmlOutput(ns("colSel2"))),
+              column(2, div(title = "Minimum value for edges to merge",
+                            numericInput(ns("col2min"),"min", value = -0.001))),
+              column(2, div( title = "Maximum value for edges to merge", 
+                             numericInput(ns("col2max"), "max", value = 0.001)))
             ),
             fluidRow(
               htmlOutput(ns("edgeInfo"))
@@ -191,12 +231,24 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
     }
        
           if(input$mergeCheck){
-            
+            if(input$mergeCheck2){
     res <- list(tables = simplifyGraph(res$tables$nodes,
                                        res$tables$edges,
                                        which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
-                                             & res$tables$edges[[internalValues$colSelected1]] <= input$col1max)),
+                                             & res$tables$edges[[internalValues$colSelected1]] <= input$col1max
+                                             & res$tables$edges[[internalValues$colSelected2]] >= input$col2min
+                                             & res$tables$edges[[internalValues$colSelected2]] <= input$col2max
+                                       )),
                 graph = NULL)
+            }else{
+              res <- list(tables = simplifyGraph(res$tables$nodes,
+                                                 res$tables$edges,
+                                                 which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
+                                                       & res$tables$edges[[internalValues$colSelected1]] <= input$col1max)),
+                          graph = NULL)
+              
+            }
+    
           }
           
 
