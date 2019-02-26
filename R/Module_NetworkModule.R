@@ -396,7 +396,9 @@ sliderInput(ns("seledges"), "Filter edges",
            vertex.color = vc,
            vertex.shape = "rectangle",
            
+           #this alone does not improve plotting speed:
           # edge.lty = if(length(elabs) > 5000){0}else{1},
+          
            edge.label= elabs,
            edge.label.family = "sans",
            edge.label.color = elabc,
