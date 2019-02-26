@@ -29,6 +29,16 @@ SaveTableModule <- function(input,output, session,
     actionButton(ns("savetable"), static$label, icon = icon("floppy-save", lib = "glyphicon"))
   })
   
+  output$fileWarning <- renderUI({
+    if(!is.null(values$projectData$projectFolder) && !is.null(input$tabname)){
+      if(file.exists(file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),input$tabname)))){
+        
+        p("Warning: Filename already exists. You will override the existing file when saving locally!", style = "color:#ff1111;")
+        
+      }
+    }
+  })
+  
   observeEvent(input$savetable,{
     
     if(!is.null(values$featureTables)){
@@ -42,6 +52,12 @@ SaveTableModule <- function(input,output, session,
           ),
           hr(),
           fluidRow(
+            textInput(ns("tabname"), "File name:", value = paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename)))
+            ),
+          fluidRow(
+            htmlOutput(ns("fileWarning"))
+          ),
+          fluidRow(
             column(6, div(title = "Download table through Browser",     downloadButton(ns("modalDownload"),"Download"))),
             column(6, div( title = "Save directly to current projectFolder (only works if you are working in a project folder)", actionButton(ns("modalProjectFolder"), "Save locally")))
           )),
@@ -54,7 +70,10 @@ SaveTableModule <- function(input,output, session,
     
   })
   
-  output$modalDownload <- downloadHandler(filename= function(){paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))}, 
+  output$modalDownload <- downloadHandler(filename= function(){
+    #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))
+    input$tabname
+    }, 
                                           content = function(file){
                                             fwrite(if(is.null(values$featureTables)){reactives()$df}
                                                                                else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
@@ -63,35 +82,35 @@ SaveTableModule <- function(input,output, session,
                                                                                quote = T,
                                                                                row.names = F
                                           )
-                                            showNotification(paste("Downloading file: ", paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))), duration = 10)
+                                            showNotification(paste("Downloading file: ", 
+                                                                   input$tabname),
+                                                                   #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
+                                                             duration = 10)
                                             
                                             removeModal()
                                           },
                                           contentType = if(static$format =="tsv"){"text/tab-separated-values"}else{"text/comma-separated-values"})
   
   
-  # observeEvent(output$modalDownload,{
-  #   print(output$modalDownload)
-  # 
-  # })
+
   
   observeEvent(input$modalProjectFolder,{
     
     if(!is.null(values$projectData$projectFolder)){
       
-      if(!dir.exists(dirname(file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))))))){
-        dir.create(dirname(file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))))), recursive = T)
+      if(!dir.exists(dirname(file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),input$tabname))))){
+        dir.create(dirname(file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),input$tabname))), recursive = T)
       }
       if(is.null(values$featureTables)){TableUpdateChunk()}
       
       fwrite(if(is.null(values$featureTables)){reactives()$df}
                   else{values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]},
-                  file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename)))),
+                  file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),input$tabname)),
                   sep = if(static$format =="tsv"){"\t"}else{","},
                   quote = T,
                   row.names = F
       )
-      showNotification(paste("Table saved as: ", file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))))), duration = 10)
+      showNotification(paste("Table saved as: ", file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),input$tabname))), duration = 10)
       removeModal()
       
     }

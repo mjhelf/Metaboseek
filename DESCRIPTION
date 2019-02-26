@@ -33,6 +33,7 @@ Imports: Biobase,
     shinydashboard,
     shinyFiles,
     shinyjs,
+    splashR,
     TeachingDemos,
     VennDiagram,
     xcms (>= 3.0)
@@ -40,6 +41,5 @@ Suggests: covr,
     knitr,
     rmarkdown,
     testthat,
-    shinytest,
-    splashR
+    shinytest
 VignetteBuilder: knitr

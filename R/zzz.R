@@ -1,12 +1,7 @@
 .onAttach <- function(libname, pkgname) {
   data("isotopes", package = "enviPat", envir = as.environment("package:METABOseek"))
   
-  if(!"splashR" %in% rownames(installed.packages())) {
-    install.packages(devtools)
-    devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
-  }
-  
-  packageStartupMessage(
+ packageStartupMessage(
     paste("\nWelcome to METABOseek version",
           utils::packageVersion("METABOseek"),
           "\nVisit our websites: http://metaboseek.com and https://github.com/mjhelf/METABOseek\n"))
