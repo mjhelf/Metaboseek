@@ -119,7 +119,9 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                     row_highlight = 1,
                     #format = "0.0000",
                     highlightCol = TRUE,
-                    highlightRow = TRUE) %>%
+                    highlightRow = TRUE,
+                    autoWrapCol = FALSE,
+                    autoWrapRow = FALSE) %>%
         #  hot_cols(renderer = "
         #        function(instance, td, row, col, prop, value, cellProperties) {
         #               Handsontable.TextCell.renderer.apply(this, arguments);
