@@ -24,7 +24,8 @@ ColumnSelModule <- function(input,output, session,
                                    gPropsSelected = NULL,
                                    sPropsSelected = NULL,
                                    intensitiesSelected = NULL,
-                                   othersSelected = NULL
+                                   othersSelected = NULL,
+                                   rtMin = F
   )
   
 observeEvent(c(#values$featureTables$active,
@@ -89,11 +90,16 @@ observeEvent(c(#values$featureTables$active,
   ###Column Selection
   
   output$mainSelGroup <- renderUI({
+    tagList(fluidRow(
+    checkboxInput(ns("rtMin"), "Show RT in minutes", value = internalValues$rtMin)),
+    fluidRow(
     selectizeInput(ns('mainSelGroup'), 'Group of interest',
                                                   choices = values$featureTables$tables[[values$featureTables$active]]$gNames,
                                                   selected = internalValues$selectedGroup,
                                                   multiple = F,
-                                                  width = '100%')})
+                                                  width = '100%')
+    ))
+    })
   
   output$mainSelgProps <- renderUI({selectizeInput(ns('mainSelgProps'), 'Group properties', 
                                                    choices = values$featureTables$tables[[values$featureTables$active]]$gProps,
@@ -104,6 +110,16 @@ observeEvent(c(#values$featureTables$active,
   
   observeEvent(c(input$mainSelgProps),
                {internalValues$gPropsSelected <- input$mainSelgProps })
+  
+  observeEvent(c(input$rtMin),
+               {
+               if(input$rtMin){
+                 values$featureTables$tables[[values$featureTables$active]]$core <- c("mz","rt_minutes","comments","rt")
+               }else{
+                 values$featureTables$tables[[values$featureTables$active]]$core <- c("mz","rt","comments")
+                 }
+                 internalValues$rtMin <- input$rtMin
+               })
   
   
   output$mainSelsProps <- renderUI({selectizeInput(ns('mainSelsProps'), 'Sample properties', 
@@ -157,7 +173,8 @@ observeEvent(c(#values$featureTables$active,
   observeEvent(c(internalValues$gPropsSelected,
                  internalValues$sPropsSelected,
                  internalValues$intensitiesSelected,
-                 internalValues$othersSelected),{
+                 internalValues$othersSelected,
+                 internalValues$rtMin),{
     
                    
                    TableUpdateChunk()                   

@@ -26,7 +26,7 @@ devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRU
 error = function(e){
   
   tryCatch({
-   source("http://mosaic.bti.cornell.edu/files/install_METABOseek.R")
+   source("http://metaboseek.com/files/install_METABOseek.R")
     },
     error = function(e){
   message("Installation failed. Try to install from the R console using the command:")
