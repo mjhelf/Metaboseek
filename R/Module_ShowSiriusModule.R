@@ -53,25 +53,38 @@ ShowSiriusModule <- function(input,output, session,
       
     }else{
       
-      fullquery  <- data.frame(mz = reactives()$mz,
-                                         stringsAsFactors = F)
+      # fullquery  <- data.frame(mz = reactives()$mz,
+      #                                    stringsAsFactors = F)
 
+      searchterm <- paste(round(reactives()$mz,4),
+                          reactives()$splash,
+                          values$SiriusModule$selIon,
+                          values$SiriusModule$selCharge,
+                          values$SiriusModule$checkFinger,
+                          paste0("-e ",  values$SiriusModule$elements, " -p ", values$SiriusModule$selInstrument),
+                          c(REVISION = 1), sep = "//")
       
-      fullquery$splash = reactives()$splash
-      fullquery$ion = values$SiriusModule$selIon
-      fullquery$charge = values$SiriusModule$selCharge
-      fullquery$fingerid = values$SiriusModule$checkFinger
-      fullquery$moreOpts = paste0("-e ",  values$SiriusModule$elements, " -p ", values$SiriusModule$selInstruments)
-      fullquery$METABOseek_sirius_revision = 1
-      
-      checkme <- as.data.frame(rbindlist(list(query = fullquery, old = values$SiriusModule$siriusIndex[,c("mz", "splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")]), fill = T))
-      
+      # values$SiriusModule$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")]                    
+      #                     
+      # fullquery$splash = reactives()$splash
+      # fullquery$ion = values$SiriusModule$selIon
+      # fullquery$charge = values$SiriusModule$selCharge
+      # fullquery$fingerid = values$SiriusModule$checkFinger
+      # fullquery$moreOpts = paste0("-e ",  values$SiriusModule$elements, " -p ", values$SiriusModule$selInstruments)
+      # fullquery$METABOseek_sirius_revision = 1
+      # 
+      # checkme <- as.data.frame(rbindlist(list(query = fullquery, old = values$SiriusModule$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")]), fill = T))
+      # 
       #To avoid problems with m/z digits possibly not retained when exporting and reimporting of siriusIndex to/from index.csv
-      checkme$mz <- round(checkme$mz, 4)
+      #checkme$mz <- round(checkme$mz, 4)
       
-      hits <- which(duplicated.data.frame(checkme)[seq(nrow(fullquery)+1,nrow(fullquery))])
+      #hits <- which(duplicated.data.frame(checkme)[seq(nrow(fullquery)+1,nrow(fullquery))])
       
       #if there is a perfect hit for the current query, retrieve the latest(bottom) one
+      
+      hits <- which(values$SiriusModule$quickLookup == searchterm)
+     
+      
      if(length(hits)>0){
        
        internalValues$query <- values$SiriusModule$siriusIndex[hits[length(hits)],]

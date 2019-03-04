@@ -31,7 +31,8 @@ SiriusModule <- function(input,output, session,
                                    
                                    grabSettingsTrigger = T,
                                    
-                                   siriusJob = NULL
+                                   siriusJob = NULL,
+                                   quickLookup = character(0)
                                    )
   
   
@@ -50,6 +51,22 @@ SiriusModule <- function(input,output, session,
 }
   })
   
+  observeEvent(internalValues$siriusIndex,{
+    if(is.data.frame(internalValues$siriusIndex)  && nrow(internalValues$siriusIndex) > 0){
+      
+      tryCatch({
+    internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
+       apply(internalValues$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
+                                        1, paste, collapse = "//"), sep = "//")
+      },
+    error = function(e){print(e); return(character(0))})
+    
+    }
+    else{
+      character(0)
+    }
+    
+  })
  
   SirBrowser <- callModule(TableModule2, "sirbrowser",
                            reactives = reactive({list(df = if(is.null(internalValues$siriusIndex)){NULL}else{internalValues$siriusIndex},

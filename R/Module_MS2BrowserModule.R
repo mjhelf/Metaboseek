@@ -194,7 +194,13 @@ MS2BrowserModule <- function(input,output, session,
                     charge= Sirius$selCharge,
                     fingerid = Sirius$checkFinger,
                     scanindices = saveScanlist(splashsource()$stab),
-                    sirpath = file.path(values$GlobalOpts$siriusFolder,"sirius-console-64.exe"),
+                    
+                    sirpath = list.files(values$GlobalOpts$siriusFolder,
+                                         pattern = if(Sys.info()['sysname'] == "Windows"){
+                                           "^sirius-console"}else{"^sirius$"},
+                                         full.names = T,
+                                         recursive = T)[1],
+                    
                     moreOpts = paste0("-e ", Sirius$elements))
                }else{
                  
