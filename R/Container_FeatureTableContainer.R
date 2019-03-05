@@ -42,6 +42,7 @@ FeatureTableContainer <- function(input,output, session,
   TabAnalysis <- callModule(TableAnalysisModule, "tabanalysis",
                           reactives = reactive({list()}),
                           values = reactiveValues(fileGrouping = NULL,
+                                                  GlobalOpts = values$GlobalOpts,
                                                   featureTables = values$featureTables,
                                                   MSData= values$MSData,
                                                   MainTable = MainTable))

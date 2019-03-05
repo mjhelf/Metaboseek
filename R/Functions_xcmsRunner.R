@@ -187,14 +187,15 @@ savetable <- function(xset,
                           intensities = if(!is.null(intens)){
                             colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
                           groups = postProc$fileGrouping,
-                          analyze = postProc$analysesSelected, 
+                          analyze = c(postProc$analysesSelected,postProc$analysesSelected2), 
                           normalize = postProc$normalize,
                           useNormalized = postProc$useNormalized,
                           logNormalized = postProc$logNormalized,
                           MSData = rawdata,
                           ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
                           controlGroup = postProc$controlGroups,
-                          numClusters = postProc$numClusters)
+                          numClusters = postProc$numClusters,
+                          workers = bparams$workers)
       
        tb <- res$df
     
@@ -268,7 +269,7 @@ savetable <- function(xset,
                           intensities = if(!is.null(intens)){
                             colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
                           groups = postProc$fileGrouping,
-                          analyze = postProc$analysesSelected, 
+                          analyze =c(postProc$analysesSelected,postProc$analysesSelected2), 
                           normalize = postProc$normalize,
                           useNormalized = postProc$useNormalized,
                           logNormalized = postProc$logNormalized,

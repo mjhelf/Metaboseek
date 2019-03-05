@@ -17,6 +17,7 @@
 TableAnalysisModule <- function(input,output, session,
                                 reactives = reactive({list(fileGrouping = NULL)}),
                                 values = reactiveValues(featureTables = featureTables,
+                                                        GlobalOpts = values$GlobalOpts,
                                                         MSData = MSData,
                                                         MainTable = MainTable),
                                 static = list()
@@ -29,8 +30,14 @@ TableAnalysisModule <- function(input,output, session,
                                    useNormalized = TRUE,
                                    logNormalized = F,
                                    controlGroups = NULL,
-                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "anova", "mzMatch"),
+                                   analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test"),
+                                                            "No grouping required" = c("PCA features", "PCA samples"),
+                                                            "No intensities required" = list("mzMatch" = "mzMatch")),
+                                   
+                                   analysesAvailable2 = c("Peak shapes", "Fast peak shapes"),
+                                   
                                    analysesSelected = "Basic analysis",
+                                   analysesSelected = NULL,
                                    numClusters = 2,
                                    dbselected = system.file("db", "smid-db_pos.csv", package = "METABOseek")
   )
@@ -83,13 +90,31 @@ TableAnalysisModule <- function(input,output, session,
   })
   
   
-  output$analysisSelect <- renderUI({selectizeInput(ns('selAna'), 'Select analyses',
+  output$analysisSelect <- renderUI({
+    div(title = "Select analysis steps that will work on a feature table alone. Some of these will require a feature table with grouped intensity columns.",
+    selectizeInput(ns('selAna'), 'Select feature table analyses',
                                                     choices = internalValues$analysesAvailable,
                                                     selected = internalValues$analysesSelected,
-                                                    multiple = T)})
+                                                    multiple = T)
+    )
+    })
   
   observeEvent(input$selAna,{
     internalValues$analysesSelected <- input$selAna
+  })
+  
+  output$analysisSelect2 <- renderUI({
+    div(title = "Select analysis steps that will use all loaded MS data files in combination with the feature table",
+        
+selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
+                                                    choices = internalValues$analysesAvailable2,
+                                                    selected = internalValues$analysesSelected2,
+                                                    multiple = T)
+)
+})
+  
+  observeEvent(input$selAna2,{
+    internalValues$analysesSelected2 <- input$selAna2
   })
   
   output$claraClusters <- renderUI({ 
@@ -118,7 +143,7 @@ TableAnalysisModule <- function(input,output, session,
         res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
                             intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
                             groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
-                            analyze = internalValues$analysesSelected, 
+                            analyze = c(internalValues$analysesSelected, internalValues$analysesSelected2), 
                             normalize = internalValues$normalize,
                             useNormalized = internalValues$useNormalized,
                             logNormalized = internalValues$logNormalized,
@@ -128,7 +153,8 @@ TableAnalysisModule <- function(input,output, session,
                             numClusters = internalValues$numClusters,
                             mzMatchParam = list(db = internalValues$dbselected,
                                                 ppm = 5,
-                                                mzdiff = 0.001))
+                                                mzdiff = 0.001),
+                            workers = values$GlobalOpts$enabledCores)
         
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
         values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,
@@ -235,55 +261,53 @@ TableAnalysisModuleUI <- function(id){
     
     fluidRow(
       h4("Prepare data"),
-      column(4,
+      column(3,
              htmlOutput(ns('normDataCheck'))
       ),
-      column(4,
+      column(3,
              htmlOutput(ns('normDataUseCheck'))
       ),
-      column(4,
+      column(3,
+             htmlOutput(ns('ctrlSelect'))
+      ),
+      column(3,
              htmlOutput(ns('logDataUseCheck'))
       )
-      
       ),
     fluidRow(
       h4("Basic analysis"),
-      column(4,
+      column(3,
              htmlOutput(ns('analysisSelect'))
       ),
-      column(2,
-             htmlOutput(ns('ctrlSelect'))
+      column(3,
+             htmlOutput(ns('analysisSelect2'))
       ),
-      column(2,
-             htmlOutput(ns('peakpickMod'))
-             ),
-      column(2,
-             htmlOutput(ns('mzCalcMod'))
-      ),
-      column(2,
-             htmlOutput(ns('claraClusters')),
+      column(3,
+             htmlOutput(ns('claraClusters'))),
+      column(3,
              htmlOutput(ns('seldbs'))
       )
       
     ),
     fluidRow(
-      actionButton(ns('analyzeButton'),"Analyze data",style="color: #fff; background-color: #C41230; border-color: #595959")
-    )
-    # hr(),
-    # h3("Step 2: Advanced feature analysis"),
-    # hr(),
-    # h3("Step 3: Sample group analysis")
+      column(5),
+      column(2,
+      div(title = "Run all selected feature table normalization and analysis steps",
+      actionButton(ns('analyzeButton'),"Run selected analyses",style="color: #fff; background-color: #C41230; border-color: #595959")
+    )),
+    column(5))
+    ,
+    fluidRow(
+      hr(),
+      h4("Advanced analysis"),
+      p("These analysis tools will use the current feature table to generate a new feature table with different properties."),
+    column(2,
+           htmlOutput(ns('peakpickMod'))
+    ),
+    column(2,
+           htmlOutput(ns('mzCalcMod'))
+    ))
     
-    
-    #,
-    # fluidRow(
-    #    column(6,
-    #densplotModuleUI("nonNormalizedPlot")
-    #    ),
-    #   column(6,
-    #densplotModuleUI("NormalizedPlot")
-    #   )
-    #)
     
   )
   

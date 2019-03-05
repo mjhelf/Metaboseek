@@ -99,7 +99,7 @@ multiEIC <- function (rawdata= rawcoll,
         
         res <- t(mapply(fx3, res, mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss, RTcorrx = RTcorr)))
         
-      }, BPPARAM = SnowParam(workers = workers))
+      }, BPPARAM = SnowParam(workers = if(nrow(mz) > 500){workers}else{1}))
       
       return(summe)
       
@@ -502,11 +502,17 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
                            mz = tb$mz,
                            ppm = 5,
                            rtw= data.frame(rta[[1]]$rtmin-5,rta[[1]]$rtmax+5),
-                           baselineSubstract = T, SN = NULL
+                           baselineSubstract = T,
+                           SN = NULL
+                           
 ){
   
-  #cat(paste0("Reference list with ",length(featuretable[,1])," features, iterating through list, feature #" ))
-  
+  ##template for RTcorrection implementation later
+  # if(!is.null(RTcorrx)){
+  #                            ls$rt <- unname(RTcorrx$corr[[which(basename(RTcorrx$fnames) == basename(rfile@filepath@.Data))]])[ls$scan]
+  #                          }else{
+  #                            ls$rt <- rfile@scantime[ls$scan]
+  #                          }
   
   mx <- matrix(data= c(mz-ppm*(mz/1000000),
                        mz+ppm*(mz/1000000),
