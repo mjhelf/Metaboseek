@@ -263,6 +263,15 @@ SiriusModule <- function(input,output, session,
     
   })
   
+  output$SiriusUIWrap <- renderUI({
+    fluidPage(
+      bsCollapse(id = ns("collapseAllSirius"), open = NULL,
+                 bsCollapsePanel("SIRIUS Module (click to open/close)",
+      htmlOutput(ns("allSirius"))
+    )))
+    
+  })
+  
   
   output$allSirius <- renderUI({
     fluidPage(
@@ -322,8 +331,6 @@ SiriusModule <- function(input,output, session,
 #' @export
 SiriusModuleUI <- function(id){
   ns <- NS(id)
-  fluidPage(
-    htmlOutput(ns("allSirius"))
-  )
+  htmlOutput(ns("SiriusUIWrap"))
   
 }
