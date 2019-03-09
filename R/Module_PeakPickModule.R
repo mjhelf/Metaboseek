@@ -66,9 +66,19 @@ PeakPickModule <- function(input,output, session,
     names(tabid) <- paste0("peakpick_", values$featureTables$tables[[values$featureTables$active]]$tablename)
     
 
-    newdf <- makeRTlist(values$featureTables$tables[[values$featureTables$active]]$df, values$MSData$data, retainColumns = input$keepcolumns)
+    #newdf <- makeRTlist(values$featureTables$tables[[values$featureTables$active]]$df, values$MSData$data, retainColumns = input$keepcolumns)
     
-    newdf <- do.call(rbind, newdf)
+    newdf <- makeRTlist2(df = values$featureTables$tables[[values$featureTables$active]]$df,
+                         rawdata = values$MSData$data,
+                         ppm = 5,
+                         retainColumns = input$keepcolumns, 
+                         findProps = list(SN = 1,
+                                          minwidth = 4,
+                                          localNoise = 20,
+                                          localNoiseFactor = 0.5,
+                                          globalNoiseFactor = 0.5,
+                                          extend = T),
+                         mergeProps = list(rttol = 3, minint = 0, minrelint = 0, topN = 100))
     
     if(is.null(newdf) || nrow(newdf) == 0){
       
