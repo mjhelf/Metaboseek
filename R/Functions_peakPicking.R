@@ -598,7 +598,11 @@ mergepeaks2 <- function(pl,
     
     pl$group <- pl$group + cumsum(checkdoubles)
     
-    checkdoubles <- c(F,sapply(seq(2,length(pl$group)), function(n){pl$group[1:(n-1)] == pl$group[n] & pl$file[1:(n-1)] == pl$file[n]}))
+    checkdoubles <- c(F,sapply(seq(2,length(pl$group)), function(n){
+      
+      any(pl$group[1:(n-1)] == pl$group[n] & pl$file[1:(n-1)] == pl$file[n])
+      
+      }))
     
   }
   
