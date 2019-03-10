@@ -1,4 +1,4 @@
-#' PeakPickModule
+#' GetIntensitiesModule
 #' 
 #' 
 #' server module for saving Tables
@@ -10,7 +10,7 @@
 #' @param static Import data from the shiny session
 #' 
 #' @export 
-PeakPickModule <- function(input,output, session,
+GetIntensitiesModule <- function(input,output, session,
                            values = reactiveValues(MSData = MSData,
                                                    featureTables = featureTables,
                                                    MainTable = MainTable)){
@@ -29,53 +29,43 @@ PeakPickModule <- function(input,output, session,
   })
   
   
-  dialog <- callModule(MseekModalModule, "peakpickbutton",
+  dialog <- callModule(MseekModalModule, "getintbutton",
                        reactives = reactive({  
                          list(fp = fluidPage(
+                         
                            fluidRow(
-                             p("A new Feature Table will be generated, based on the mz values in the currently active Feature Table, and peaks detected in all MS data files", strong("in the currently active MS Grouping layout."))
+                             p("Calculate the peak intensities for the current feature table using all MS data files that are", strong("in the currently active MS Grouping layout."))
                            ),
                            fluidRow(
-                             column(4,
-                                    htmlOutput(ns("keepColumns"))
-                             ),
-                             column(2,
-                                    checkboxInput(ns("getintensities"), "Get intensities", value = T)
-                             ),
-                             column(1,
-                                    actionButton(ns("abutton"), "Go")
-                             )
-                           ),
-                           fluidRow(
-                             hr(),
-                             h4("Peak intensity calculation options"),
-                             p("Calculate the peak intensities for the current feature table using all MS data files that are", strong("in the currently active MS Grouping layout.")),
-                             column(2,
+                             column(6,
                                     div(title = "Use rtmin and rtmax of each feature for intensity calculation. 
 If this is selected, the rt window setting for peak intensity calculation starts at these reported outsides of the peak instead of at its apex, making the RT window width broader and variable between peaks.",
                                         checkboxInput(ns("intensRangeCheck"), "Use rtmin/rtmax", value  = TRUE)
                                     )),
-                             column(3,
+                             column(6,
                                     div(title = "RT window size (+/- in seconds from either a features rt value or its rtmin and rtmax values",
                                         numericInput(ns("intensRTsec"),"Retention time window (seconds)", value = 5, min = 0)
-                                    )),
-                             column(3,
+                                    ))),
+                           fluidRow(
+                             column(6,
                                     div(title = "m/z tolerance for intensity calculation",
                                         numericInput(ns("intensppm"), "m/z tolerance (ppm)", value = 5, min = 0)
                                     )),
-                             column(3,
+                             column(6,
                                     div(title = "Define the SUFFIX for the intensity columns. Column names will be filename__SUFFIX. WARNING: Columns with identical names will be replaced in the current table!",
                                         textInput(ns("intensSuffix"),"Intensity column suffix:", value = "XICmanual")
-                                    )),
+                                    ))),
+                           fluidRow(
+                             column(5),
                              column(1,
-                                    actionButton(ns("getIntensities"), "Get intensities")
+                                    actionButton(ns("getIntensities"), "Go")
                              )
                            )
                            
                          ) )     }),
-                       static = list(tooltip = "Find peaks for the mz values in this table",
-                                     title = "Find peaks", 
-                                     label = "Find peaks",
+                       static = list(tooltip = "Get peak intensities for the features in this table",
+                                     title = "Peak intensity calculation", 
+                                     label = "Get intensities",
                                      icon = icon("area-chart", lib = "font-awesome")))
   
   
@@ -83,47 +73,9 @@ If this is selected, the rt window setting for peak intensity calculation starts
   
   observeEvent(input$abutton,{
     tryCatch({
-      withProgress(message = 'Please wait!', detail = "Finding peaks", value = 0.5, {
+      withProgress(message = 'Please wait!', detail = "Calculating peak intensities", value = 0.5, {
         
-        METABOseek:::TableUpdateChunk()
-        
-        tabid <- paste0("table",length(values$featureTables$index))
-        names(tabid) <- paste0("peakpick_", values$featureTables$tables[[values$featureTables$active]]$tablename)
-        
-        
-        #newdf <- makeRTlist(values$featureTables$tables[[values$featureTables$active]]$df, values$MSData$data, retainColumns = input$keepcolumns)
-        
-        newdf <- makeRTlist2(df = values$featureTables$tables[[values$featureTables$active]]$df,
-                             rawdata = values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
-                             ppm = 5,
-                             retainColumns = input$keepcolumns, 
-                             findProps = list(SN = 1,
-                                              minwidth = 4,
-                                              localNoise = 20,
-                                              localNoiseFactor = 0.5,
-                                              globalNoiseFactor = 0.5,
-                                              extend = T),
-                             mergeProps = list(rttol = 3, minint = 0, minrelint = 0, topN = 100))
-        
-        if(is.null(newdf) || nrow(newdf) == 0){
-          
-          removeModal()
-          showModal(
-            modalDialog(
-              p("No peaks were found for this feature table in the loaded MS data files.")
-              ,
-              title = "Peak picking failed!",
-              easyClose = T,
-              fade = F,
-              size = "s",
-              footer = modalButton("Ok") 
-            ))
-          
-        }else{
-          
-          if(input$getintensities){
-            
-            for(i in values$MSData$layouts[[values$MSData$active]]$filelist){
+       for(i in values$MSData$layouts[[values$MSData$active]]$filelist){
               
               newdf[[paste0(basename(i),"__", input$intensSuffix)]] <- exIntensities(rawfile= values$MSData$data[[i]],
                                                                                      mz = newdf$mz,
@@ -173,15 +125,15 @@ If this is selected, the rt window setting for peak intensity calculation starts
   return(internalValues)
 }
 
-#' PeakPickModuleUI
+#' GetIntensitiesModuleUI
 #' 
 #' @param id id of the shiny module
 #' 
 #' @export
-PeakPickModuleUI <- function(id)
+GetIntensitiesModuleUI <- function(id)
 {
   ns <- NS(id)
   
-  MseekModalModuleUI(ns("peakpickbutton"))
+  MseekModalModuleUI(ns("getintbutton"))
   
 }

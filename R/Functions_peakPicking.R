@@ -387,7 +387,7 @@ peakDetect  <- function(trace,
   #find minima at beginning of peaks
   min_start <- which(slope <= 0 & c(na.omit(slope),NA) > 0)
   
-  if(length(max) == 0 | length(min_end) == 0 | length(min_start) == 0){return(data.frame(max = numeric(0), start = numeric(0), end = numeric(0)))}
+  if(length(max) == 0 | length(min_end) == 0 | length(min_start) == 0){return(data.frame(max = numeric(0), start = numeric(0), end = numeric(0), npeaks = numeric(0)))}
   
   #summary of all found peaks
   allpeaks <- matrix(unlist(lapply(seq_along(max), function(n){
@@ -443,7 +443,9 @@ peakDetect  <- function(trace,
   filpeakints <- allpeakints[filvec,, drop = F]
   filpeaknoises <- allpeaks[filvec,, drop = F]
   
-  if(nrow(filpeaks) == 0){return(as.data.frame(filpeaks))}
+  if(nrow(filpeaks) == 0){
+    return(data.frame(max = numeric(0), start = numeric(0), end = numeric(0), npeaks = numeric(0)))
+    }
   
   if(nrow(filpeaks)>1){
     
@@ -544,7 +546,7 @@ find_peaks2 <- function(EIC, ...){
     
     return(dtp)
   })
-  return(do.call(rbind,pl))
+  return(data.table::rbindlist(pl, fill  = T))
   
 }
 
@@ -624,7 +626,7 @@ mergepeaks2 <- function(pl,
     
   }, pl)
   
-  mergedpls <- do.call(rbind, mergedpls)
+  mergedpls <- as.data.frame(data.table::rbindlist(mergedpls, fill = T))
   
   return(mergedpls[na.omit(order(mergedpls$maxint, decreasing = T)[1:topN]), ])
   
@@ -690,7 +692,7 @@ makeRTlist2 <- function(df, rawdata, ppm = 5, retainColumns = NULL, ...){
   allpeaks <- getpeaks2(aEICs, ...)
   
   
-  return(do.call(rbind,lapply(seq(nrow(df)), function(i, df, allpeaks, retainColumns, ppm){
+  return(as.data.frame(data.table::rbindlist(lapply(seq(nrow(df)), function(i, df, allpeaks, retainColumns, ppm){
     
     if(nrow(allpeaks[[i]]) > 0){
       
@@ -725,7 +727,7 @@ makeRTlist2 <- function(df, rawdata, ppm = 5, retainColumns = NULL, ...){
     }
     
     
-  }, df, allpeaks, retainColumns, ppm)))
+  }, df, allpeaks, retainColumns, ppm), fill = T) ))
   
   
 }

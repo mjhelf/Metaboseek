@@ -34,7 +34,7 @@ TableAnalysisModule <- function(input,output, session,
                                                             "No grouping required" = c("PCA features", "PCA samples"),
                                                             "No intensities required" = list("mzMatch" = "mzMatch")),
                                    
-                                   analysesAvailable2 = c("Peak shapes", "Fast peak shapes"),
+                                   analysesAvailable2 = c("Peak shapes", "Fast peak shapes", if(!is.null(values$featureTables)){"Peak Intensities"}else{NULL}),
                                    
                                    analysesSelected = "Basic analysis",
                                    analysesSelected = NULL,
@@ -225,9 +225,11 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     
   })
   
+
+  
   observe({
     toggle(id = 'seldbs', condition = "mzMatch" %in% internalValues$analysesSelected)
-    
+    #toggle(id = "intensSettings", condition = !is.null(values$featureTables))
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
     toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
@@ -297,6 +299,7 @@ TableAnalysisModuleUI <- function(id){
     )),
     column(5))
     ,
+    #htmlOutput(ns("intensSettings")),
     fluidRow(
       hr(),
       h4("Advanced analysis"),
