@@ -160,13 +160,15 @@ LoadNetworkModule <- function(input,output, session, values = reactiveValues(fea
             
             
             fluidRow(
-              column(3, div(title = "Use parent m/z information for networking",
+              column(2, div(title = "Use parent m/z information for networking",
                             checkboxInput(ns("useparentmasses"),"Use parent masses", value = T))),
               column(3, div(title = "Define m/z tolerance for MS2 fragment peak matching",
-                            numericInput(ns("mzdiff"),"m/z window for peak matching", value = 0.002))),
-              column(3, div( title = "Remove noise (peaks below this threshold", 
+                            numericInput(ns("mzdiff"),"m/z tolerance", value = 0.002))),
+              column(3, div(title = "Minimum number of peaks that need to match between each pair of MS2 spectra",
+                            numericInput(ns("minpeaks"),"min. peaks", value = 6))),
+              column(3, div( title = "Remove noise (peaks below this reltaive intensity in a merged MS2 spectrum will be ignored)", 
                              numericInput(ns("noise"), "Noise level in %", value = 2))),
-              column(3, div( title = "Search MS2 scans", 
+              column(1, div( title = "Search MS2 scans", 
                              METABOseek:::mActionButton(ns("makeNetwork"), "Proceed", red = T)))
             )),
           title = "Make edges for network",
@@ -224,7 +226,7 @@ LoadNetworkModule <- function(input,output, session, values = reactiveValues(fea
         values$featureTables$tables[[values$featureTables$active]]$edges <- makeEdges(speclist = MergedSpecs,
                                                                                       mztol = input$mzdiff,
                                                                                       parentmasses = if(input$useparentmasses){values$featureTables$tables[[values$featureTables$active]]$df$mz}else{NULL},
-                                                                                      minpeaks = 6)
+                                                                                      minpeaks = input$minpeaks)
         
         #let's remove edges with cosine ~0 
         values$featureTables$tables[[values$featureTables$active]]$edges <- values$featureTables$tables[[values$featureTables$active]]$edges[values$featureTables$tables[[values$featureTables$active]]$edges$cosine > 0.001,]

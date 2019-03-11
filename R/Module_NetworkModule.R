@@ -560,10 +560,12 @@ sliderInput(ns("seledges"), "Filter edges",
         internalValues$hover$subgraph <- findsubgraph(V(internalValues$activelayout$graph)$fixed__id[internalValues$hover$vertex], internalValues$layouts$subgraphs)
       }
       #print("h5")
-      internalValues$markgroups <- if(internalValues$overview && !is.null(internalValues$hover)){
-        #print("h6")
+      
+      marktemp <- if(internalValues$overview && !is.null(internalValues$hover)){
         which(V(internalValues$activelayout$graph)$subcl == V(internalValues$activelayout$graph)$subcl[internalValues$hover$vertex])
       }else{NULL}
+      
+      internalValues$markgroups <- if(length(marktemp)>0){marktemp}else{NULL}
       #print("h7")
       
       
