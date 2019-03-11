@@ -56,6 +56,9 @@ MseekContainer <- function(input,output, session){
                                                      MSData = MSData,
                                                      GlobalOpts = GlobalOpts)
  )
+ 
+ callModule(GlobalOptionsModule, "globaloptshe", values = reactiveValues(GlobalOpts = GlobalOpts))
+ 
     
  
  observeEvent(input$loadAll,{
@@ -74,6 +77,22 @@ MseekContainer <- function(input,output, session){
      ))
    
  })
+ 
+ observeEvent(input$globaloptshead,{
+   showModal(
+     modalDialog(
+       fluidPage(
+         fluidRow(
+           GlobalOptionsModuleUI(ns("globaloptshe"))
+         )),
+       title = "Change global settings",
+       easyClose = T,
+       fade = F,
+       size = "l",
+       footer = modalButton("Close") 
+     ))
+   
+ })
   
 }
 
@@ -88,7 +107,12 @@ MseekContainerUI <- function(id){
   ns <- NS(id)
   
   MseekMinimalUI(skin = "black",
-                  MseekHeader(id = id),
+                  MseekHeader(id = id,
+                              tags$li(actionLink(ns("globaloptshead"), "",
+                                                 icon = icon("cog"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
+                                                 title = "Global settings for METABOseek" ),
+                                      class = "dropdown",
+                                      style = "float:left")),
                   MseekSidebar(id = id),
                   dashboardBody(
                     

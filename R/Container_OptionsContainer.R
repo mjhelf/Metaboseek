@@ -41,18 +41,20 @@ OptionsContainer <- function(input,output, session,
                                                      GlobalOpts = values$GlobalOpts)
   )
   
-  MainDataLoad <- callModule(LoadDataModule, "maindataload",
-                             values = reactiveValues(projectData = values$projectData,
-                                                     featureTables = values$featureTables,
-                                                     MSData = values$MSData,
-                                                     GlobalOpts = values$GlobalOpts)
-  )
+  # MainDataLoad <- callModule(LoadDataModule, "maindataload",
+  #                            values = reactiveValues(projectData = values$projectData,
+  #                                                    featureTables = values$featureTables,
+  #                                                    MSData = values$MSData,
+  #                                                    GlobalOpts = values$GlobalOpts)
+  # )
   
   callModule(EICOptionsModule, "eicopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
-  callModule(GlobalOptionsModule, "globalopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
+  # callModule(GlobalOptionsModule, "globalopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
-  internalValues <- reactiveValues(MainDataLoad = MainDataLoad)
+  internalValues <- reactiveValues(
+    #MainDataLoad = MainDataLoad
+    )
   
   observeEvent(values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz,{
     if(!is.null(values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz)){
@@ -89,13 +91,13 @@ OptionsContainerUI <- function(id){
   ns <- NS(id)
  
   tabBox(title = "Options",
-         id = "PlotOpts", width = 12, side = "right", selected = "Load Data",
+         id = "PlotOpts", width = 12, side = "right", selected = "EIC options",
          
          tabPanel("_"),
-         
-         tabPanel("Load Data",
-                  LoadDataModuleUI(ns("maindataload"))
-         ),
+         # 
+         # tabPanel("Load Data",
+         #          LoadDataModuleUI(ns("maindataload"))
+         # ),
          tabPanel("EIC options",
                   EICOptionsModuleUI(ns("eicopts"))
          ),
@@ -110,10 +112,10 @@ OptionsContainerUI <- function(id){
          
          tabPanel("Molecular formula prediction",
                   MzqueryModuleUI(ns("mzquery"))
-         ),
-         tabPanel("Global options",
-                  GlobalOptionsModuleUI(ns("globalopts"))
-         )
+         )#,
+         # tabPanel("Global options",
+         #          GlobalOptionsModuleUI(ns("globalopts"))
+         # )
          
          )
   

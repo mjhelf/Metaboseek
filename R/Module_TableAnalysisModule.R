@@ -202,16 +202,26 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   })
   
   
-  output$peakpickMod <- renderUI({ 
-    PeakPickModuleUI(ns("pp"))
-  })
   
-  output$getintmod <- renderUI({ 
-    GetIntensitiesModuleUI(ns("gi"))
-  })
-  
-  output$mzCalcMod <- renderUI({ 
-    MZcalcModuleUI(ns("mzcalc"))
+  output$advancedana <- renderUI({ 
+    tagList(
+    fluidRow(
+      hr(),
+      h4("Advanced analysis"),
+      column(2,
+             GetIntensitiesModuleUI(ns("gi")))
+      ),
+    fluidRow(
+      hr(),
+      p("These analysis tools will use the current feature table to generate a new feature table with different properties."),
+      column(2,
+             PeakPickModuleUI(ns("pp"))
+      ),
+      column(2,
+             MZcalcModuleUI(ns("mzcalc"))
+      ))
+  )
+    
   })
   
   output$seldbs <- renderUI({ 
@@ -236,10 +246,10 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     #toggle(id = "intensSettings", condition = !is.null(values$featureTables))
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
-    toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
-    toggle(id = 'getintmod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+   # toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+  #  toggle(id = 'getintmod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
     
-    toggle(id = 'mzCalcMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables))
+    toggle(id = 'advancedana', condition = !is.null(values$MainTable) && !is.null(values$featureTables))
     
   })
   
@@ -312,23 +322,7 @@ TableAnalysisModuleUI <- function(id){
     )),
     column(5))
     ,
-    #htmlOutput(ns("intensSettings")),
-    fluidRow(
-      hr(),
-      h4("Advanced analysis"),
-      column(2,
-             htmlOutput(ns("getintmod")))),
-    fluidRow(
-             hr(),
-      p("These analysis tools will use the current feature table to generate a new feature table with different properties."),
-    column(2,
-           htmlOutput(ns('peakpickMod'))
-    ),
-    column(2,
-           htmlOutput(ns('mzCalcMod'))
-    ))
-    
-    
+    htmlOutput(ns("advancedana"))
   )
   
   

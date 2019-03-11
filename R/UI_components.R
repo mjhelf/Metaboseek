@@ -109,7 +109,8 @@ MseekHeader <- function(..., id = NULL){
                                         icon = icon("folder-open"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
                                         title = "Load Projects, MS data or feature tables into METABOseek" ),
                              class = "dropdown",
-                             style = "float:left")),
+                             style = "float:left"),
+                     ...),
                    
                    
                    tags$li(a(
@@ -124,9 +125,7 @@ MseekHeader <- function(..., id = NULL){
                      title = "Mseek online help (opens in new window)",
                      target="_blank",
                      style="color:#ffffff"),
-                     class = "dropdown"),
-                   ...
-                   
+                     class = "dropdown")
   )
 }
 
