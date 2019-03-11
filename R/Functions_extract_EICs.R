@@ -543,7 +543,7 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
       
       if(!areaMode){return(mean(intens))}
     
-      ret <- object@scantime[x$scan]
+      ret <- rawfile@scantime[x$scan]
       dret <- c(diff(ret), 0)
       dintens <- c(diff(intens), 0)
       return(sum(dintens * dret) + sum(dintens * dret)/2)
