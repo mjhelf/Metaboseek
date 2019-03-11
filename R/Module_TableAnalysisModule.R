@@ -34,7 +34,7 @@ TableAnalysisModule <- function(input,output, session,
                                                             "No grouping required" = c("PCA features", "PCA samples"),
                                                             "No intensities required" = list("mzMatch" = "mzMatch")),
                                    
-                                   analysesAvailable2 = c("Peak shapes", "Fast peak shapes", if(!is.null(values$featureTables)){"Peak Intensities"}else{NULL}),
+                                   analysesAvailable2 = c("Peak shapes", "Fast peak shapes"),
                                    
                                    analysesSelected = "Basic analysis",
                                    analysesSelected = NULL,
@@ -104,7 +104,7 @@ TableAnalysisModule <- function(input,output, session,
   })
   
   output$analysisSelect2 <- renderUI({
-    div(title = "Select analysis steps that will use all loaded MS data files in combination with the feature table",
+    div(title = "Select analysis steps that will use all MS data files in the currently selected MS grouping layout in combination with the active  feature table",
         
 selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                     choices = internalValues$analysesAvailable2,
@@ -147,7 +147,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                             normalize = internalValues$normalize,
                             useNormalized = internalValues$useNormalized,
                             logNormalized = internalValues$logNormalized,
-                            MSData = values$MSData$data,
+                            MSData = values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
                             ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
                             controlGroup = internalValues$controlGroups,
                             numClusters = internalValues$numClusters,
@@ -177,7 +177,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
           
         }else{
           
-          showNotification(paste("Feature table analysis completed."), duration = 0, type = "message")
+          showNotification(paste("Feature table analysis completed."), duration = 10, type = "message")
           
           
         }
@@ -204,6 +204,10 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   
   output$peakpickMod <- renderUI({ 
     PeakPickModuleUI(ns("pp"))
+  })
+  
+  output$getintmod <- renderUI({ 
+    GetIntensitiesModuleUI(ns("gi"))
   })
   
   output$mzCalcMod <- renderUI({ 
@@ -233,14 +237,23 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
     toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+    toggle(id = 'getintmod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+    
     toggle(id = 'mzCalcMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables))
     
   })
   
+  IntensityGetter <- callModule(GetIntensitiesModule, "gi",
+                   values = reactiveValues(MSData = values$MSData,
+                                           featureTables = values$featureTables,
+                                           MainTable = values$MainTable,
+                                           GlobalOpts = values$GlobalOpts))
+  
   PP <- callModule(PeakPickModule, "pp",
                    values = reactiveValues(MSData = values$MSData,
                                            featureTables = values$featureTables,
-                                           MainTable = values$MainTable))
+                                           MainTable = values$MainTable,
+                                           GlobalOpts = values$GlobalOpts))
   
   MZcalc <- callModule(MZcalcModule, "mzcalc",
                    values = reactiveValues(featureTables = values$featureTables,
@@ -303,6 +316,10 @@ TableAnalysisModuleUI <- function(id){
     fluidRow(
       hr(),
       h4("Advanced analysis"),
+      column(2,
+             htmlOutput(ns("getintmod")))),
+    fluidRow(
+             hr(),
       p("These analysis tools will use the current feature table to generate a new feature table with different properties."),
     column(2,
            htmlOutput(ns('peakpickMod'))

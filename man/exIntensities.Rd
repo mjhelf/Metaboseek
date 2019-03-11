@@ -6,7 +6,7 @@
 \usage{
 exIntensities(rawfile = rawdata[[1]], mz = tb$mz, ppm = 5,
   rtw = data.frame(rta[[1]]$rtmin - 5, rta[[1]]$rtmax + 5),
-  baselineSubstract = T, SN = NULL)
+  baselineSubtract = T, SN = NULL, areaMode = F)
 }
 \arguments{
 \item{rawfile}{an xcmsRaw object}
@@ -17,7 +17,7 @@ exIntensities(rawfile = rawdata[[1]], mz = tb$mz, ppm = 5,
 
 \item{rtw}{a data.frame with minimum (column 1) and maximum (column 2) retention time values (in seconds) in each row.}
 
-\item{baselineSubstract}{substract baseline when calculating intensities}
+\item{baselineSubtract}{subtract baseline when calculating intensities}
 
 \item{SN}{signal to noise ratio. If not NULL, all peaks with max/min peak intensity below this will be reported as intensity 0. Requires Baselinesubstraction to be off.}
 }

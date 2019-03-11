@@ -492,7 +492,7 @@ bestgauss <- function(...){
 #' @param mz numeric (): m/z values (same length as nrow(rtw)).
 #' @param ppm m/z width (+/- ppm from values defined in mz)
 #' @param rtw a data.frame with minimum (column 1) and maximum (column 2) retention time values (in seconds) in each row.
-#' @param baselineSubstract substract baseline when calculating intensities
+#' @param baselineSubtract subtract baseline when calculating intensities
 #' @param SN signal to noise ratio. If not NULL, all peaks with max/min peak intensity below this will be reported as intensity 0. Requires Baselinesubstraction to be off.
 #' 
 #' @importFrom Biobase rowMax rowMin
@@ -502,8 +502,9 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
                            mz = tb$mz,
                            ppm = 5,
                            rtw= data.frame(rta[[1]]$rtmin-5,rta[[1]]$rtmax+5),
-                           baselineSubstract = T,
-                           SN = NULL
+                           baselineSubtract = T,
+                           SN = NULL,
+                           areaMode = F
                            
 ){
   
@@ -524,26 +525,32 @@ exIntensities <- function (rawfile= rawdata[[1]] ,
   
   
   summe <- mapply(rawEICm, mzrange = mxl,
-                  rtrange = rxl, MoreArgs=list(object=rawfile, scanrange = numeric(), viewermode = F), SIMPLIFY = F)
-  if(baselineSubstract){
+                  rtrange = rxl, MoreArgs=list(object=rawfile, scanrange = numeric(), viewermode = F),
+                  SIMPLIFY = F)
+ 
     #substract "baseline" and get rid of scan#
-    fx <- function(x) x$intensity-min(x$intensity)
-    summe <- lapply(summe, fx )
-  }else{
-    summe <- lapply(summe, function(x){
+    fx <- function(x){
       
-      #reject peaks with bad Signal to noise and report their intensity as 0
+       if(baselineSubtract){
+      intens <- x$intensity-min(x$intensity)
+       }
+      else{intens <- x$intensity}
+      
       if(!is.null(SN)){
         snf <- max(x$intensity)/min(x$intensity)
         if(is.na(snf) | snf < SN){return(0)}
       }
       
-      return(x$intensity)
-      
-    } )
-  }
-  
-  return(sapply(summe, mean))}
+      if(!areaMode){return(mean(intens))}
+    
+      ret <- object@scantime[x$scan]
+      dret <- c(diff(ret), 0)
+      dintens <- c(diff(intens), 0)
+      return(sum(dintens * dret) + sum(dintens * dret)/2)
+    
+    }
+
+  return(sapply(summe, fx))}
 
 #'multiEICplus
 #'
@@ -642,7 +649,7 @@ fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
   ints <- as.data.frame(lapply(bplapply(rawdata, 
                                         METABOseek::exIntensities, 
                                         mz, ppm, rtw, 
-                                        baselineSubstract = F, 
+                                        baselineSubtract = F, 
                                         SN = 10,
                                         BPPARAM = SnowParam(workers = if(length(mz) > 10000){workers}else{1}
                                         )),
@@ -665,13 +672,13 @@ fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
                                   XIC = F,
                                   getgauss = F,
                                   RTcorr = NULL, 
-                                  workers =  if(length(mz) > 5000){workers}else{1},
+                                  workers =  1,
                                   quickshapes = T,
                                   SN = 10,
                                   scoreBy = "intmean"))}
     else{numeric(0)}},
     
-    BPPARAM = SnowParam(workers = workers))
+    BPPARAM = SnowParam(workers = if(length(mz) > 5000){workers}else{1}))
   
   
   scores <- numeric(length(mz))

@@ -698,7 +698,9 @@ makeRTlist2 <- function(df, rawdata, ppm = 5, retainColumns = NULL, ...){
       
       pt <- allpeaks[[i]]
       
-      pt <- pt[,colnames(pt) != "group"]
+      if(!is.data.frame(pt)){pt <- as.data.frame(pt)}
+      
+      pt <- pt[,colnames(pt) != "group", drop = F]
       
       pt$mz <- df$mz[i]
       pt$mzmin <- df$mz[i]-ppm*1e-6*df$mz[i]

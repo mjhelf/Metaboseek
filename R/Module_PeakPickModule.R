@@ -25,7 +25,6 @@ PeakPickModule <- function(input,output, session,
                    choices = colnames(values$featureTables$tables[[values$featureTables$active]]$df),
                    multiple = T)
     
-    
   })
   
   
@@ -51,7 +50,7 @@ PeakPickModule <- function(input,output, session,
                              h4("Peak intensity calculation options"),
                              p("Calculate the peak intensities for the current feature table using all MS data files that are", strong("in the currently active MS Grouping layout.")),
                              column(2,
-                                    div(title = "Use rtmin and rtmax of each feature for intensity calculation. 
+                                    div(title = "Use rtmin and rtmax of each feature for intensity calculation.
 If this is selected, the rt window setting for peak intensity calculation starts at these reported outsides of the peak instead of at its apex, making the RT window width broader and variable between peaks.",
                                         checkboxInput(ns("intensRangeCheck"), "Use rtmin/rtmax", value  = TRUE)
                                     )),
