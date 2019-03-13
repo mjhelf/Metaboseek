@@ -4,7 +4,8 @@
 \alias{featurePlotModule}
 \title{featurePlotModule}
 \usage{
-featurePlotModule(input, output, session, FT, rname)
+featurePlotModule(input, output, session, FT, rname,
+  values = reactiveValues(featureTables = featureTables))
 }
 \arguments{
 \item{input}{}

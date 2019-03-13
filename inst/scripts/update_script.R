@@ -4,11 +4,10 @@ tryCatch({
   Sys.sleep(5)
   oldver <- packageVersion("METABOseek")[1]  
   
-  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json")) || defaults){
+  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))){
     oldSettings <- NULL
     
-  }
-  else{
+  }else{
     oldSettings <- jsonlite::unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "METABOseek"), file.info(system.file("config", "MseekOptions.json", package = "METABOseek"))$size))
   }
   
@@ -24,8 +23,14 @@ devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRU
   Sys.sleep(10000)
 },
 error = function(e){
-  warning("Installation failed. Try to install from the R console using the command:")
+  
+  tryCatch({
+   source("http://metaboseek.com/files/install_METABOseek.R")
+    },
+    error = function(e){
+  message("Installation failed. Try to install from the R console using the command:")
   message(paste0('devtools::install_github("mjhelf/METABOseek", ref ="',commandArgs(trailingOnly=TRUE)[1],'")'))
   message("You can close this window now.")
   Sys.sleep(10000)
 })
+  })

@@ -25,12 +25,22 @@ updaterModule <- function(input,output, session, tag, set = list(package = "META
           p(strong("devel:"),'latest stable version (with new, untested features)'),
           p(strong("devel_raw:"),'potentially unstable version (with new, untested features), not recommended! Updated most frequently.')
         ),
+        if(Sys.info()['sysname'] != "Windows"){
+        fluidRow(
+          p("The updater is currently only available for Windows system. enter the following line into your R terminal after closing all running R sessions:"),
+          p("devtools::install_github('mjhelf/METABOseek', ref = 'master')"),
+          p("You can enter 'devel' or 'devel_raw' instead of 'master', but 'master' is strongly recommended."),
+          p("If you encounter problems with the installation, try to  enter the following line into your R terminal after closing all running R sessions:"),
+          p("source('http://metaboseek.com/files/install_METABOseek.R')")
+          
+        )}else{
         fluidRow(
           column(2,
                  selectizeInput(ns('branch'), "Select version", choices = set$refs)),
           column(3,
                  actionButton(ns('updatePackage'), "Update!"))
-        ))
+        )}
+        )
     }
   })
   

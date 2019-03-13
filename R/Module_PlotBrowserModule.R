@@ -41,7 +41,7 @@ PlotBrowserModule <- function(input,output, session,
   
   plot1 <- callModule(PlotModule, "Plot1",
                       reactives = reactive({reactiveValues(plot = internalValues$plot,
-                                                           interactive = (!is.null(reactives()$PCAtable) && nrow(reactives()$PCAtable) <1000) && internalValues$interactive
+                                                           interactive = (!is.null(reactives()$PCAtable) && nrow(reactives()$PCAtable) <2000) && internalValues$interactive
                       )
                       }))
   
@@ -127,7 +127,7 @@ PlotBrowserModule <- function(input,output, session,
   })
   
   output$interactiveCheck <- renderUI({
-    div(title= "Use interactive plot. Will automatically be disabled for plots with more than 1000 data points due to performance issues. Filter your data to decrease number of data points.",
+    div(title= "Use interactive plot. Will automatically be disabled for plots with more than 2000 data points due to performance issues. Filter your data to decrease number of data points.",
         checkboxInput(ns('interactivecheck'), 'interactive', 
                       value = internalValues$interactive))
   })

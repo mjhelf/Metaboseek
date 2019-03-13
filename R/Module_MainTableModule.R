@@ -137,9 +137,13 @@ MainTableModule <- function(input,
                     height = if(length(internalValues$inpage) < 22){NULL}else{500},
                     outsideClickDeselects = FALSE,
                     digits=8,
-                    highlightCol = TRUE, highlightRow = TRUE) %>%
+                    highlightCol = TRUE, 
+                    highlightRow = TRUE,
+                    autoWrapCol = FALSE,
+                    autoWrapRow = FALSE) %>%
         hot_col("comments", readOnly = FALSE)%>%
-        hot_cols(columnSorting = FALSE,format="0.000000")%>%
+        hot_cols(columnSorting = FALSE,format="0.000")%>%
+        hot_col(col = grep("^mz",values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(values$featureTables$tables[[values$featureTables$active]]$df)], value = T), format="0.000000")%>%
         hot_cols(fixedColumnsLeft = 3)
       
       

@@ -35,7 +35,16 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     
     FT = list()
     #save the entire dataframe 
-    FT$df = df
+    FT$df = df 
+    
+    if(!"rt_minutes" %in% colnames(FT$df)){
+    if(rtFormat == "sec"){
+      FT$df$rt_minutes <- df[,rtcol]/60
+    }else{
+      FT$df$rt_minutes <- df[,rtcol]
+      df[,rtcol] <- df[,rtcol]*60
+    }
+    }
     
     FT$tablename = tablename
     FT$editable = editable

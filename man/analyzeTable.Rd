@@ -6,11 +6,12 @@
 \usage{
 analyzeTable(df = tab1$df, intensities = tab1$intensities,
   groups = tab1$anagroupnames, analyze = c("Basic analysis",
-  "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples",
-  "mzMatch"), normalize = T, useNormalized = T, logNormalized = F,
-  MSData = NULL, ppm = 5, controlGroup = NULL, numClusters = 2,
+  "clara_cluster", "t-test", "Peak shapes", "Fast peak shapes",
+  "PCA features", "PCA samples", "mzMatch"), normalize = T,
+  useNormalized = T, logNormalized = F, MSData = NULL, ppm = 5,
+  controlGroup = NULL, numClusters = 2,
   mzMatchParam = list(system.file("db", "smid-db_pos.csv", package =
-  "METABOseek"), ppm = 5, mzdiff = 0.001))
+  "METABOseek"), ppm = 5, mzdiff = 0.001), workers = 1)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values, rt and mz values}
@@ -32,6 +33,8 @@ analyzeTable(df = tab1$df, intensities = tab1$intensities,
 \item{numClusters}{number of clusters for clara_clusters analysis}
 
 \item{mzMatchParam}{list of parameters passed to mass}
+
+\item{workers}{number of workers to use for multithreaded analyses}
 
 \item{useNormalize}{use normalized values for analyses; will trigger normalize if there is no normalized data available for all selected intensity columns}
 }

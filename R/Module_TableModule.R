@@ -9,6 +9,7 @@
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
 #' 
+#' 
 #' @export 
 TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                                                                update = 1, #change this to trigger update of the df or set to NULL to update anytime df changes
@@ -118,7 +119,9 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                     row_highlight = 1,
                     #format = "0.0000",
                     highlightCol = TRUE,
-                    highlightRow = TRUE) %>%
+                    highlightRow = TRUE,
+                    autoWrapCol = FALSE,
+                    autoWrapRow = FALSE) %>%
         #  hot_cols(renderer = "
         #        function(instance, td, row, col, prop, value, cellProperties) {
         #               Handsontable.TextCell.renderer.apply(this, arguments);

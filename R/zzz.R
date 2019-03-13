@@ -1,7 +1,7 @@
 .onAttach <- function(libname, pkgname) {
   data("isotopes", package = "enviPat", envir = as.environment("package:METABOseek"))
   
-  packageStartupMessage(
+ packageStartupMessage(
     paste("\nWelcome to METABOseek version",
           utils::packageVersion("METABOseek"),
           "\nVisit our websites: http://metaboseek.com and https://github.com/mjhelf/METABOseek\n"))
@@ -14,6 +14,8 @@
   options(scipen = 5)
 
   MseekOptions()
+  
+  
   
   #Update example ms file locations
   if(dirname(system.file(package = "METABOseek")) %in% .libPaths()

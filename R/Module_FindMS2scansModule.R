@@ -41,10 +41,13 @@ FindMS2ScansModule <- function(input,output, session,
           ),
           hr(),
           fluidRow(
-            column(4, div(title = "Define ppm tolerance for parent m/z search",
+            column(3, div(title = "Define ppm tolerance for parent m/z search",
                           numericInput(ns("MS2ppm"),"ppm window", value = 5))),
-            column(4, div( title = "Define retention time tolerance for parent m/z search", 
+            column(3, div( title = "Define retention time tolerance for parent m/z search", 
                            numericInput(ns("MS2rtw"), "RT window (in seconds)", value = 15))),
+            column(2, div(title = "Spectra will be assigned to only one matching feature (the one with the closest elution time).",
+                          checkboxInput(ns("rtMatch"),"unique assignments", value = T))),
+            
             column(2, div( title = "Search MS2 scans", 
                            actionButton(ns("startMS2search"), "Start search"))),
             column(2, div( title = "You can skip this step if you have already assigned MS2 scans to features in the feature table.", 
@@ -83,7 +86,8 @@ FindMS2ScansModule <- function(input,output, session,
                                       rt = values$featureTables$tables[[values$featureTables$active]]$df$rt,
                                      ppm = input$MS2ppm,
                                                       rtw = input$MS2rtw,
-                                                      MSData = values$MSData$data), stringsAsFactors = F)
+                                                      MSData = values$MSData$data,
+                                     rtMatch = input$rtMatch), stringsAsFactors = F)
       
       values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],MS2s)
 })

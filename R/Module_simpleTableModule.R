@@ -53,7 +53,9 @@ simpleTableModule <- function(input,output, session,
         digits=8,
         row_highlight = 1,
         highlightCol = TRUE,
-        highlightRow = TRUE)
+        highlightRow = TRUE,
+        autoWrapCol = FALSE,
+        autoWrapRow = FALSE)
     }
   })
   

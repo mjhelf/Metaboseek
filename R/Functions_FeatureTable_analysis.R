@@ -13,12 +13,13 @@
 #' @param controlGroup control group for foldChange (part of Basic analysis) analysis (optional) 
 #' @param numClusters number of clusters for clara_clusters analysis
 #' @param mzMatchParam list of parameters passed to mass
+#' @param workers number of workers to use for multithreaded analyses
 #'
 #' @importFrom stats prcomp 
 #'
 analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
                          groups = tab1$anagroupnames,
-                         analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "mzMatch"), 
+                         analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "Fast peak shapes", "PCA features", "PCA samples", "mzMatch"), 
                          normalize = T,
                          useNormalized = T,
                          logNormalized = F,
@@ -28,7 +29,8 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
                          numClusters = 2,
                          mzMatchParam = list(system.file("db", "smid-db_pos.csv", package = "METABOseek"),
                                                ppm = 5,
-                                               mzdiff = 0.001)){
+                                               mzdiff = 0.001),
+                         workers = 1){
   out <- list(errmsg = list())
   
   if(normalize 
@@ -77,6 +79,7 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
         rawdata= MSData,
         mz = data.frame(mzmin = df$mz-ppm*1e-6*df$mz, mzmax=df$mz+ppm*1e-6*df$mz),
         rt = data.frame(rtmin = df$rt-10, rtmax=df$rt+10),
+        workers = workers,
         rnames = row.names(df)
       )
       
@@ -86,7 +89,31 @@ analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
   },
 error = function(e){out$errMsg[["Peak shapes"]] <- paste(e)})
     
-    }
+  }
+  
+  if("Fast peak shapes" %in% analyze){
+    tryCatch({
+      if(is.null(MSData)){
+        out$errmsg[["Fast peak shapes"]] <- "Peak shapes analysis was not performed because no MS data is loaded."
+        
+      }else if (!"mz" %in% colnames(df) || !"rt" %in% colnames(df)){
+        out$errmsg[["Fast peak shapes"]] <- "Peak shapes analysis was not performed because table does not contain 'rt' and 'mz' columns."
+      }else{
+        inp <- data.frame("Fast_Peak_Quality" = fastPeakShapes(
+          rawdata= MSData,
+          mz = df$mz,
+          ppm = ppm,
+          rt = data.frame(rtmin = df$rt-10, rtmax=df$rt+10),
+          workers = workers
+        ))
+        
+        df <- updateDF (inp, df)
+        
+      }
+    },
+    error = function(e){out$errMsg[["Fast peak shapes"]] <- paste(e)})
+    
+  }
   
   if("Basic analysis" %in% analyze){
     tryCatch({
