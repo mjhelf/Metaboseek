@@ -4,11 +4,10 @@ tryCatch({
   Sys.sleep(5)
   oldver <- packageVersion("METABOseek")[1]  
   
-  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json")) || defaults){
+  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))){
     oldSettings <- NULL
     
-  }
-  else{
+  }else{
     oldSettings <- jsonlite::unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "METABOseek"), file.info(system.file("config", "MseekOptions.json", package = "METABOseek"))$size))
   }
   
