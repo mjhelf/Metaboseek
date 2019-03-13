@@ -337,7 +337,7 @@ tAnalysisX <- callModule(TableAnalysisModule, "TabAnalysisXcms",
                         values = reactiveValues(featureTables = NULL,
                                                 MSData= NULL))
 observeEvent(tAnalysisX,{
-  tAnalysisX$analysesSelected <- tAnalysisX$analysesAvailable
+  tAnalysisX$analysesSelected <- NULL#tAnalysisX$analysesAvailable
 }, once = T)
 
 return(internalValues)

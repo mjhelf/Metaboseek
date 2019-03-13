@@ -180,7 +180,7 @@ savetable <- function(xset,
   if(!is.null(status)){
       status <- writeStatus (previous = status,
                              message = list(Status = paste0("Post-Processing ", filename),
-                                            Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
+                                            Details = paste(c("selected analyses:", postProc$analysesSelected, postProc$analysesSelected2), collapse = " ")))
   }
       
       res <- analyzeTable(df = tb,
@@ -262,7 +262,7 @@ savetable <- function(xset,
       if(!is.null(status)){
         status <- writeStatus (previous = status,
                                message = list(Status = paste0("Post-Processing ", filename),
-                                              Details = paste(c("selected analyses:", postProc$analysesSelected), collapse = " ")))
+                                              Details = paste(c("selected analyses:", postProc$analysesSelected, postProc$analysesSelected2), collapse = " ")))
       }
       
       res <- analyzeTable(df = tb,
