@@ -107,8 +107,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                         mz = mzx[1,],
                         rt = NULL,
                         rnames = "1", #major item names
-                        byFile = F,
-                        RTcorr = RTcorrect  #if true, table will be sorted by rawfile, otherwise by feature
+                        byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
+                        RTcorr = RTcorrect  
     )
     
     

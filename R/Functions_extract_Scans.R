@@ -307,16 +307,56 @@ saveScanlist <- function(scanlist){
 #' @param ppm target (parent) m/z tolerance in ppm
 #' @param rtw target (parent) rt tolerance in seconds
 #' @param MSData list of xcmsRaw objects
+#' @param rtMatch assign MS2 scans only to the matching feature with the closest rt
 #'
 #' @export
-listMS2scans <- function(mz,rt,ppm,rtw,MSData){
+listMS2scans <- function(mz,rt,ppm,rtw,MSData, rtMatch = F){
   
-  return(mapply(function(mz,rt,ppm,rtw,MSData){
-    saveScanlist(Parentsearch(MSData, mz, rt, ppm, rtw))
+  step1 <- mapply(function(mz,rt,ppm,rtw,MSData){
+    Parentsearch(MSData, mz, rt, ppm, rtw)
     
-  }, mz, rt, MoreArgs = list(ppm = ppm, rtw = rtw, MSData = MSData)
+  }, mz, rt, MoreArgs = list(ppm = ppm, rtw = rtw, MSData = MSData), SIMPLIFY = F
   
   )
+  
+  if(rtMatch){
+    step1 <- mapply(function(df,num){
+      if(!is.null(df) && nrow(df) > 0){
+        #df <- as.data.frame(df, stringsAsFactors = F)
+        df$tempgroup <- num
+      }
+      return(df)
+    } ,step1, seq(length(step1)), SIMPLIFY = F)
+    
+    bound <- rbindlist(step1)
+    
+    bound$dupfind <- paste0(bound$file,"#",bound$acquisition)
+    bound$deltart <- abs(bound$rt - rt[bound$tempgroup])
+    
+    spl <- split(bound, bound$dupfind)
+    
+    spl <- lapply(spl, function(df){
+      return(df[which.min(df$deltart),])
+    })
+    
+    bound <- rbindlist(spl)
+    
+    step1 <- lapply(seq(length(step1)), function(n, tab){
+      fin <- tab$tempgroup == n
+      if(!any(fin)){return(data.table::data.table(NULL))}
+      tab[fin,colnames(tab)[!colnames(tab) %in% c("tempgroup", "dupfind", "deltart")], with = F]
+      
+    }, bound)
+    
+    
+  }
+  
+  
+  
+  step2 <- sapply( step1, saveScanlist)
+  
+  return(
+    step2
   )
   
 }

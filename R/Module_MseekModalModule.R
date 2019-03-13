@@ -15,19 +15,34 @@ MseekModalModule <- function(input,output, session,
                                static = list(tooltip = "Tooltip",
                                              title = "title", 
                                              label = "label",
-                                             icon = icon("bar-chart", lib = "font-awesome"))
+                                             icon = icon("bar-chart", lib = "font-awesome")),
+                             useActionLink = F
 ){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)
   
   output$modButton <- renderUI({
+    
+    if(useActionLink){
+      
+      
+      actionLink(ns("modbutton"), static$label,
+                 icon = static$icon, style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
+                 title = static$tooltip )
+      
+    }else{
+    
+    
     div(title = static$tooltip,
         actionButton(ns("modbutton"), 
                      static$label,
                      icon = static$icon
         )
     )
+    }
+    
+    
   })
   
   observeEvent(input$modbutton,{

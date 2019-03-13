@@ -6,7 +6,8 @@
 \usage{
 MseekModalModule(input, output, session, reactives = reactive({     fp =
   NULL }), static = list(tooltip = "Tooltip", title = "title", label =
-  "label", icon = icon("bar-chart", lib = "font-awesome")))
+  "label", icon = icon("bar-chart", lib = "font-awesome")),
+  useActionLink = F)
 }
 \arguments{
 \item{input}{}

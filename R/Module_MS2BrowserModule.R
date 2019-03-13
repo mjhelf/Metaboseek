@@ -12,7 +12,7 @@
 #' @export 
 MS2BrowserModule <- function(input,output, session, 
                              reactives = reactive({list(query = list(mz = NULL,
-                                                                                 rt = NULL))}),
+                                                                     rt = NULL))}),
                              values = reactiveValues(featureTables = featureTables,
                                                      MainTable = MainTable,
                                                      MSData = MSData,
@@ -34,7 +34,7 @@ MS2BrowserModule <- function(input,output, session,
   
   
   observe({
-   # toggle(id = 'network', condition = input$showNet, anim = T)
+    # toggle(id = 'network', condition = input$showNet, anim = T)
     #toggle(id = 'LoadNet', condition = input$showLoadNet, anim = T)
     
   })
@@ -42,11 +42,19 @@ MS2BrowserModule <- function(input,output, session,
   output$searchcontrol <- renderUI({
     fluidRow(
       column(3,
-             h4("Parent m/z search options:")),
+             div(title = "m/z tolerance for MS2 scan search (ppm)",
+             numericInput(ns('ppmSearch'), "ppm", value = 5))),
       column(3,
-             numericInput(ns('ppmSearch'), "m/z tolerance (ppm)", value = 5)),
+             div(title = "RT tolerance for MS2 scan search (seconds)",
+                 
+             numericInput(ns('rtSearch'), "seconds", value = 60))
+             ),
       column(3,
-             numericInput(ns('rtSearch'), "RT tolerance (seconds)", value = 60))
+             ShowSiriusModuleUI(ns("showSirius"))
+             ),
+      column(3,
+             GetSiriusModuleUI(ns("getSirius"))
+             )
     )
   })
   
@@ -72,36 +80,36 @@ MS2BrowserModule <- function(input,output, session,
   output$network <- renderUI({
     tagList(
       box(width = 12, status= "primary",
-      fluidPage(
-          fluidRow(
-            column(4,
-            LoadNetworkModuleUI(ns('loadnetworks'))),
-            column(5,
-                   fluidRow(
-                   htmlOutput(ns("selectNetwork"))
-                   )
-                   ),
-            column(2,
-                   fluidRow(
-                     SimplifyNetworkModuleUI(ns("simplify"))                   )
+          fluidPage(
+            fluidRow(
+              column(4,
+                     LoadNetworkModuleUI(ns('loadnetworks'))),
+              column(5,
+                     fluidRow(
+                       htmlOutput(ns("selectNetwork"))
+                     )
+              ),
+              column(2,
+                     fluidRow(
+                       SimplifyNetworkModuleUI(ns("simplify"))                   )
+              ),
+              column(1,
+                     if(!is.null(NetMod$recordedPlot)){
+                       div(title = "Save current Network view as pdf",
+                           downloadButton(ns('pdfButton'), ""))
+                       
+                     }else{p()}
+              )
             ),
-            column(1,
-                   if(!is.null(NetMod$recordedPlot)){
-                   div(title = "Save current Network view as pdf",
-                   downloadButton(ns('pdfButton'), ""))
-                   
-            }else{p()}
-            )
-            ),
-      fluidRow(
-        NetworkModuleUI(ns('shownetworks')))
-    )
+            fluidRow(
+              NetworkModuleUI(ns('shownetworks')))
+          )
       )
     )
   })
   
   
-
+  
   
   output$selectNetwork <- renderUI({
     if(length(names(Networks)[names(Networks) != "numNetworks"]) >0 ){
@@ -111,11 +119,11 @@ MS2BrowserModule <- function(input,output, session,
                      multiple = FALSE)
     }
   })
-
+  
   observeEvent(input$activeNetwork,{
-
+    
     NetMod$active <- input$activeNetwork
-
+    
   })
   
   Networks <- callModule(LoadNetworkModule, "loadnetworks", values = reactiveValues(featureTables = values$featureTables,
@@ -129,31 +137,87 @@ MS2BrowserModule <- function(input,output, session,
                        keys = reactive({keys()}))
   
   SaveNetworks <- callModule(SaveNetworkModule, "savenetworks",
-                                               reactives = reactive({list(graphname = NetMod$active,
-                                                                          filename = paste0("networks/",NetMod$active,".graphml"))}),
-                                               values = reactiveValues(Networks = Networks),
-                                               static = list(tooltip = "Save Network as a graphml file",
-                                                             label = "Save Network",
-                                                             format = c("graphml"))
+                             reactives = reactive({list(graphname = NetMod$active,
+                                                        filename = paste0("networks/",NetMod$active,".graphml"))}),
+                             values = reactiveValues(Networks = Networks),
+                             static = list(tooltip = "Save Network as a graphml file",
+                                           label = "Save Network",
+                                           format = c("graphml"))
   )
   
-  # netout <- callModule(NetworkModule, 'net1', tag = ns('net1'), set = reactive({list(net = list(xrange = NULL,
-  #                                                                                               yrange = NULL,
-  #                                                                                               maxxrange = NULL,
-  #                                                                                               maxyrange = NULL,
-  #                                                                                               sel = NULL,
-  #                                                                                               mz = NULL,
-  #                                                                                               data = if(length(dataSets$activeGraph)>0){Graphloader()$graphs[[dataSets$activeGraph]]$graph}else{NULL},
-  #                                                                                               tables = if(length(dataSets$activeGraph)>0){Graphloader()$graphs[[dataSets$activeGraph]]$tables}else{NULL}
-  # ),
-  # layout = list(lw = 1,
-  #               cex = 1,
-  #               controls = F,
-  #               ppm = 5,
-  #               active = T))}),
-  # keys = reactive({keys()})
-  # )
   
+  Sirius <- callModule(SiriusModule,"sirius",
+                     values = reactiveValues(
+                       GlobalOpts = values$GlobalOpts))
+  
+  
+  
+  
+  splashsource <- reactive({
+    res <- list()
+    if(!is.null(internalValues$spectab)){
+      if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
+      #print(internalValues$spectab)
+      res$stab <- internalValues$spectab
+    
+      }else{
+        res$stab <- internalValues$spectab[selectScan()$props$selected_rows,]
+    }
+
+      AllSpecLists <- lapply(list(res$stab), getAllScans, values$MSData$data, removeNoise = 0)
+      
+      res$MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
+      
+      res$splashtag <- sapply(res$MergedSpecs, getSplash)
+      
+      }
+    else{
+      res$splashtag <- NULL
+    }
+    return(res)
+  })
+  
+  
+  
+  callModule(GetSiriusModule, "getSirius",
+             values = reactiveValues(MSData = values$MSData,
+                                     GlobalOpts = values$GlobalOpts),
+             reactives = reactive({
+               if(!is.null(splashsource()$stab) && !is.null(values$GlobalOpts$siriusFolder)){
+               list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
+                    ms2 = splashsource()$MergedSpecs,
+                    instrument = Sirius$selInstrument,
+                    parentmz = mean(splashsource()$stab$parentMz),
+                    rt = mean(splashsource()$stab$rt),
+                    comments = "",
+                    ion = Sirius$selIon,
+                    charge= Sirius$selCharge,
+                    fingerid = Sirius$checkFinger,
+                    scanindices = saveScanlist(splashsource()$stab),
+                    
+                    sirpath = list.files(values$GlobalOpts$siriusFolder,
+                                         pattern = if(Sys.info()['sysname'] == "Windows"){
+                                           "^sirius-console"}else{"^sirius$"},
+                                         full.names = T,
+                                         recursive = T)[1],
+                    
+                    moreOpts = paste0("-e ", Sirius$elements))
+               }else{
+                 
+                 NULL
+               }
+              
+             }))
+  
+  callModule(ShowSiriusModule, "showSirius",
+             values = reactiveValues(SiriusModule = Sirius,
+                                     GlobalOpts = values$GlobalOpts),
+             reactives = reactive({
+               list(splash = splashsource()$splashtag,
+                    mz = mean(splashsource()$stab$parentMz))
+               
+             })
+  )
   
   
   selectScan <- callModule(TableModule,'scantab', tag = ns('scantab'), set = reactive({list(df =  internalValues$spectab,
@@ -230,47 +294,47 @@ MS2BrowserModule <- function(input,output, session,
   observeEvent(values$MainTable$selected_rows,{
     #print("i see")
     tryCatch({
-    if(!is.null(NetMod$hoverActive) 
-       && NetMod$hoverActive 
-       && !is.null(values$MainTable$selected_rows)
-       && !is.null(NetMod$activelayout$graph)){
-      #print("A")       
-     # print(vertex_attr(NetMod$activelayout$graph,"fixed__id"))
-
-      if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$fixed__id)){
+      if(!is.null(NetMod$hoverActive) 
+         && NetMod$hoverActive 
+         && !is.null(values$MainTable$selected_rows)
+         && !is.null(NetMod$activelayout$graph)){
+        #print("A")       
+        # print(vertex_attr(NetMod$activelayout$graph,"fixed__id"))
         
-        
-        if(is.numeric(vertex_attr(NetMod$activelayout$graph,"fixed__id"))){
-        sel <- which(vertex_attr(NetMod$activelayout$graph,"fixed__id") == values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],]), "fixed__id"])
-        
+        if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$fixed__id)){
+          
+          
+          if(is.numeric(vertex_attr(NetMod$activelayout$graph,"fixed__id"))){
+            sel <- which(vertex_attr(NetMod$activelayout$graph,"fixed__id") == values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],]), "fixed__id"])
+            
+          }else{
+            
+            # note: \\b looks for word boundaries which can be whitespace or beginning/end of strings. Useful!
+            
+            sel <- grep(paste0("\\b",values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],]), "fixed__id"],"\\b"), vertex_attr(NetMod$activelayout$graph,"fixed__id"))
+            
+          }
+          
+          
         }else{
           
-          # note: \\b looks for word boundaries which can be whitespace or beginning/end of strings. Useful!
+          vmzs <- vertex_attr(NetMod$activelayout$graph,"mz")
+          vrts <- vertex_attr(NetMod$activelayout$graph,"rt")
           
-          sel <- grep(paste0("\\b",values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],]), "fixed__id"],"\\b"), vertex_attr(NetMod$activelayout$graph,"fixed__id"))
+          
+          sel <- which(vmzs <= values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+1e-6*values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
+                       & vmzs >= values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-1e-6*values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
+                       & vrts <= values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow
+                       & vrts >= values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]- values$GlobalOpts$RTwindow                                 )
+          
+          #  print("selected by mz+rt")
           
         }
         
+        NetMod$highlights <- sel
         
-      }else{
-        
-        vmzs <- vertex_attr(NetMod$activelayout$graph,"mz")
-        vrts <- vertex_attr(NetMod$activelayout$graph,"rt")
-        
-        
-        sel <- which(vmzs <= values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+1e-6*values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
-                     & vmzs >= values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-1e-6*values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
-        & vrts <= values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow
-        & vrts >= values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]- values$GlobalOpts$RTwindow                                 )
-    
-      #  print("selected by mz+rt")
         
       }
-      
-              NetMod$highlights <- sel
-
-      
-    }
     },
     error = function(e){print(e)})
     
@@ -300,21 +364,24 @@ MS2BrowserModuleUI <-  function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
+      SiriusModuleUI(ns("sirius"))
+    ),
+    fluidRow(
       column(6,
              fluidRow(
                htmlOutput(ns("network"))),
              
-               htmlOutput(ns("searchcontrol")),
+             htmlOutput(ns("searchcontrol")),
              
              fluidRow(
                TableModuleUI(ns('scantab'))
              )
-             ),
+      ),
       column(6,
              fluidRow(
                MultiSpecmoduleUI(ns('Spec2'))
              )
       )
-      )
     )
+  )
 }

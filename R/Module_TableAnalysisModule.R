@@ -17,6 +17,7 @@
 TableAnalysisModule <- function(input,output, session,
                                 reactives = reactive({list(fileGrouping = NULL)}),
                                 values = reactiveValues(featureTables = featureTables,
+                                                        GlobalOpts = values$GlobalOpts,
                                                         MSData = MSData,
                                                         MainTable = MainTable),
                                 static = list()
@@ -29,9 +30,16 @@ TableAnalysisModule <- function(input,output, session,
                                    useNormalized = TRUE,
                                    logNormalized = F,
                                    controlGroups = NULL,
-                                   analysesAvailable = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes", "PCA features", "PCA samples", "anova"),
+                                   analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test"),
+                                                            "No grouping required" = c("PCA features", "PCA samples"),
+                                                            "No intensities required" = list("mzMatch" = "mzMatch")),
+                                   
+                                   analysesAvailable2 = c("Peak shapes", "Fast peak shapes"),
+                                   
                                    analysesSelected = "Basic analysis",
-                                   numClusters = 2
+                                   analysesSelected = NULL,
+                                   numClusters = 2,
+                                   dbselected = system.file("db", "smid-db_pos.csv", package = "METABOseek")
   )
   
   observeEvent(reactives()$fileGrouping,{
@@ -82,13 +90,31 @@ TableAnalysisModule <- function(input,output, session,
   })
   
   
-  output$analysisSelect <- renderUI({selectizeInput(ns('selAna'), 'Select analyses',
+  output$analysisSelect <- renderUI({
+    div(title = "Select analysis steps that will work on a feature table alone. Some of these will require a feature table with grouped intensity columns.",
+    selectizeInput(ns('selAna'), 'Select feature table analyses',
                                                     choices = internalValues$analysesAvailable,
                                                     selected = internalValues$analysesSelected,
-                                                    multiple = T)})
+                                                    multiple = T)
+    )
+    })
   
   observeEvent(input$selAna,{
     internalValues$analysesSelected <- input$selAna
+  })
+  
+  output$analysisSelect2 <- renderUI({
+    div(title = "Select analysis steps that will use all MS data files in the currently selected MS grouping layout in combination with the active  feature table",
+        
+selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
+                                                    choices = internalValues$analysesAvailable2,
+                                                    selected = internalValues$analysesSelected2,
+                                                    multiple = T)
+)
+})
+  
+  observeEvent(input$selAna2,{
+    internalValues$analysesSelected2 <- input$selAna2
   })
   
   output$claraClusters <- renderUI({ 
@@ -110,17 +136,25 @@ TableAnalysisModule <- function(input,output, session,
     tryCatch({
       withProgress(message = 'Please wait!', detail = "analyzing feature table", value = 0.5, {
         
+        #if("mzMatch" %in% internalValues$analysesSelected){
+          
+      #  }
+        
         res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
                             intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
                             groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
-                            analyze = internalValues$analysesSelected, 
+                            analyze = c(internalValues$analysesSelected, internalValues$analysesSelected2), 
                             normalize = internalValues$normalize,
                             useNormalized = internalValues$useNormalized,
                             logNormalized = internalValues$logNormalized,
-                            MSData = values$MSData$data,
+                            MSData = values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
                             ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
                             controlGroup = internalValues$controlGroups,
-                            numClusters = internalValues$numClusters)
+                            numClusters = internalValues$numClusters,
+                            mzMatchParam = list(db = internalValues$dbselected,
+                                                ppm = 5,
+                                                mzdiff = 0.001),
+                            workers = values$GlobalOpts$enabledCores)
         
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
         values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,
@@ -143,7 +177,7 @@ TableAnalysisModule <- function(input,output, session,
           
         }else{
           
-          showNotification(paste("Feature table analysis completed."), duration = 0, type = "message")
+          showNotification(paste("Feature table analysis completed."), duration = 10, type = "message")
           
           
         }
@@ -168,23 +202,72 @@ TableAnalysisModule <- function(input,output, session,
   })
   
   
-  output$peakpickMod <- renderUI({ 
-    PeakPickModuleUI(ns("pp"))
+  
+  output$advancedana <- renderUI({ 
+    tagList(
+    fluidRow(
+      hr(),
+      h4("Advanced analysis"),
+      column(2,
+             GetIntensitiesModuleUI(ns("gi")))
+      ),
+    fluidRow(
+      hr(),
+      p("These analysis tools will use the current feature table to generate a new feature table with different properties."),
+      column(2,
+             PeakPickModuleUI(ns("pp"))
+      ),
+      column(2,
+             MZcalcModuleUI(ns("mzcalc"))
+      ))
+  )
+    
   })
   
-  observe({
+  output$seldbs <- renderUI({ 
+    selectizeInput(ns("selDB"), "select reference table for mz matching", 
+                   choices = list("SMID-DB negative" = system.file("db", "smid-db_neg.csv", package = "METABOseek"),
+                                  "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "METABOseek"),
+                                  "LipidBLAST negative" = system.file("db", "LipidBLAST_mz_trimmed_neg.csv", package = "METABOseek"),
+                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "METABOseek")),
+                   selected = internalValues$dbselected, multiple = T)
+  })
+  
+  observeEvent(input$selDB,{
     
-    toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
-    toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
-    toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+    internalValues$dbselected <- input$selDB
     
   })
+  
+
+  
+  observe({
+    toggle(id = 'seldbs', condition = "mzMatch" %in% internalValues$analysesSelected)
+    #toggle(id = "intensSettings", condition = !is.null(values$featureTables))
+    toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
+    toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
+   # toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+  #  toggle(id = 'getintmod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+    
+    toggle(id = 'advancedana', condition = !is.null(values$MainTable) && !is.null(values$featureTables))
+    
+  })
+  
+  IntensityGetter <- callModule(GetIntensitiesModule, "gi",
+                   values = reactiveValues(MSData = values$MSData,
+                                           featureTables = values$featureTables,
+                                           MainTable = values$MainTable,
+                                           GlobalOpts = values$GlobalOpts))
   
   PP <- callModule(PeakPickModule, "pp",
                    values = reactiveValues(MSData = values$MSData,
                                            featureTables = values$featureTables,
-                                           MainTable = values$MainTable))
+                                           MainTable = values$MainTable,
+                                           GlobalOpts = values$GlobalOpts))
   
+  MZcalc <- callModule(MZcalcModule, "mzcalc",
+                   values = reactiveValues(featureTables = values$featureTables,
+                                           MainTable = values$MainTable))
   
   
   
@@ -203,52 +286,43 @@ TableAnalysisModuleUI <- function(id){
     
     fluidRow(
       h4("Prepare data"),
-      column(4,
+      column(3,
              htmlOutput(ns('normDataCheck'))
       ),
-      column(4,
+      column(3,
              htmlOutput(ns('normDataUseCheck'))
-      ),
-      column(4,
-             htmlOutput(ns('logDataUseCheck'))
-      )
-      
-      ),
-    fluidRow(
-      h4("Basic analysis"),
-      column(4,
-             htmlOutput(ns('analysisSelect'))
       ),
       column(3,
              htmlOutput(ns('ctrlSelect'))
       ),
-      column(2,
-             htmlOutput(ns('peakpickMod'))
-             ),
       column(3,
-             htmlOutput(ns('claraClusters'))
+             htmlOutput(ns('logDataUseCheck'))
+      )
+      ),
+    fluidRow(
+      h4("Basic analysis"),
+      column(3,
+             htmlOutput(ns('analysisSelect'))
+      ),
+      column(3,
+             htmlOutput(ns('analysisSelect2'))
+      ),
+      column(3,
+             htmlOutput(ns('claraClusters'))),
+      column(3,
+             htmlOutput(ns('seldbs'))
       )
       
     ),
     fluidRow(
-      actionButton(ns('analyzeButton'),"Analyze data",style="color: #fff; background-color: #C41230; border-color: #595959")
-    )
-    # hr(),
-    # h3("Step 2: Advanced feature analysis"),
-    # hr(),
-    # h3("Step 3: Sample group analysis")
-    
-    
-    #,
-    # fluidRow(
-    #    column(6,
-    #densplotModuleUI("nonNormalizedPlot")
-    #    ),
-    #   column(6,
-    #densplotModuleUI("NormalizedPlot")
-    #   )
-    #)
-    
+      column(5),
+      column(2,
+      div(title = "Run all selected feature table normalization and analysis steps",
+      actionButton(ns('analyzeButton'),"Run selected analyses",style="color: #fff; background-color: #C41230; border-color: #595959")
+    )),
+    column(5))
+    ,
+    htmlOutput(ns("advancedana"))
   )
   
   

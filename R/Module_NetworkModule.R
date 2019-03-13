@@ -281,15 +281,20 @@ sliderInput(ns("seledges"), "Filter edges",
         if(is.numeric(edge_attr(internalValues$activelayout$graph,input$elabelsel))){
           round(edge_attr(internalValues$activelayout$graph,input$elabelsel),2)}
         else{edge_attr(internalValues$activelayout$graph,input$elabelsel)}
-      }else{rep(NA, times = vcount(internalValues$activelayout$graph))}
+      }else{rep(NA, times = ecount(internalValues$activelayout$graph))}
       
       #edge label color and font
-      elabc <- rep("blue", times = vcount(internalValues$activelayout$graph))
-      elabf <- rep(1, times = vcount(internalValues$activelayout$graph))
+      elabc <- rep("blue", times = ecount(internalValues$activelayout$graph))
+      elabf <- rep(1, times = ecount(internalValues$activelayout$graph))
       
       #vertex labels
       vlabs <- if(internalValues$vlabelcheck){
+        if(is.numeric(vertex_attr(internalValues$activelayout$graph,input$vlabelsel))){
+          as.character(round(vertex_attr(internalValues$activelayout$graph,input$vlabelsel), 5))
+          
+        }else{
         as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel))
+        }
       }else{rep(NA, times = vcount(internalValues$activelayout$graph))}
       
       #vertex label color and font
@@ -315,7 +320,10 @@ sliderInput(ns("seledges"), "Filter edges",
         elabc[edg] <- "blue"
         elabf[edg] <- 2
         
-        vlabs[c(sel,neigh)] <- as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[c(sel,neigh)])
+        vlabs[c(sel,neigh)] <- if(is.numeric(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[c(sel,neigh)])){
+          as.character(round(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[c(sel,neigh)], 5))
+          
+        }else{as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[c(sel,neigh)])}
         vlabc[c(sel,neigh)] <- "black"
         vlabf[sel] <- 4
       }
@@ -347,7 +355,10 @@ sliderInput(ns("seledges"), "Filter edges",
       #scale node width based on label width
       if(!internalValues$overview){
         scalingH <- max(420*max(strwidth(vlabs, units = "figure")),
-                        420*strwidth(as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1]), units = "figure"))
+                        #420*strwidth(as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1]),
+                         #            units = "figure")
+                        420*max(strwidth("A", units = "figure"))
+                        )
         scalingV <- 550*strheight(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1], units = "figure")
         
       }else{
@@ -385,6 +396,9 @@ sliderInput(ns("seledges"), "Filter edges",
            vertex.color = vc,
            vertex.shape = "rectangle",
            
+           #this alone does not improve plotting speed:
+          # edge.lty = if(length(elabs) > 5000){0}else{1},
+          
            edge.label= elabs,
            edge.label.family = "sans",
            edge.label.color = elabc,
@@ -546,10 +560,12 @@ sliderInput(ns("seledges"), "Filter edges",
         internalValues$hover$subgraph <- findsubgraph(V(internalValues$activelayout$graph)$fixed__id[internalValues$hover$vertex], internalValues$layouts$subgraphs)
       }
       #print("h5")
-      internalValues$markgroups <- if(internalValues$overview && !is.null(internalValues$hover)){
-        #print("h6")
+      
+      marktemp <- if(internalValues$overview && !is.null(internalValues$hover)){
         which(V(internalValues$activelayout$graph)$subcl == V(internalValues$activelayout$graph)$subcl[internalValues$hover$vertex])
       }else{NULL}
+      
+      internalValues$markgroups <- if(length(marktemp)>0){marktemp}else{NULL}
       #print("h7")
       
       

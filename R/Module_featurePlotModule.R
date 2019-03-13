@@ -11,7 +11,9 @@
 #' @import ggplot2
 #' 
 #' @export
-featurePlotModule <- function(input, output, session, FT, rname){
+featurePlotModule <- function(input, output, session, FT, rname,
+                              values = reactiveValues( featureTables = featureTables)
+){
   
   sam <- character(0)
   group <- character(0)
@@ -79,9 +81,9 @@ featurePlotModule <- function(input, output, session, FT, rname){
   output$info <- renderPrint({if(!is.null(rname())){
     summary(as.vector(mx2()$values))}   
   })
-  
-  Freeview <- callModule(PlotBrowserModule, "freeview",
-                         reactives = reactive({reactiveValues(PCAtable =FT()$df,
+
+    Freeview <- callModule(PlotBrowserModule, "freeview",
+                         reactives = reactive({reactiveValues(PCAtable =FT()$df[values$featureTables$row_filters,],
                                                               active = T)}),
                          values = NULL,
                          static = list(patterns = list(axis = "",

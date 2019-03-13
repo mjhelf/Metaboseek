@@ -152,23 +152,34 @@ TableModule2 <- function(input,output, session,
   
   
   output$sortC <- renderUI({
+    if(is.null(static$sort) || static$sort){
     checkboxInput(ns('sortCheck'), 'sort', value = internalValues$sortCheck)
+    }
   })
   
   observeEvent(input$sortCheck,{
+    if(is.null(static$sort) || static$sort){
+      
     internalValues$sortCheck <- input$sortCheck
+    }
   })
   
   output$decreasingC <- renderUI({
+    if(is.null(static$sort) || static$sort){
+      
     checkboxInput(ns('decreasingCheck'), 'decreasing', value = internalValues$decreasing)
+    }
   })
   
   observeEvent(input$decreasingCheck,{
+    if(is.null(static$sort) || static$sort){
+      
     internalValues$decreasing <- input$decreasingCheck
+    }
   })
   
   output$sortByC <- renderUI({
-    if(!is.null(internalValues$df)){
+    if(!is.null(internalValues$df) && (is.null(static$sort) || static$sort)){
 
   selectizeInput(ns('sortBy'), "Sort by column", choices = colnames(internalValues$df), selected = internalValues$sortBy)
     }
@@ -220,7 +231,9 @@ TableModule2 <- function(input,output, session,
                     row_highlight = 1,
                     #format = "0.0000",
                     highlightCol = TRUE,
-                    highlightRow = TRUE) %>%
+                    highlightRow = TRUE,
+                    autoWrapCol = FALSE,
+                    autoWrapRow = FALSE) %>%
         #  hot_cols(renderer = "
         #        function(instance, td, row, col, prop, value, cellProperties) {
         #               Handsontable.TextCell.renderer.apply(this, arguments);

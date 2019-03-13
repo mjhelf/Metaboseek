@@ -4,7 +4,7 @@
 \alias{listMS2scans}
 \title{listMS2scans}
 \usage{
-listMS2scans(mz, rt, ppm, rtw, MSData)
+listMS2scans(mz, rt, ppm, rtw, MSData, rtMatch = F)
 }
 \arguments{
 \item{mz}{expected target (parent) m/z}
@@ -16,6 +16,8 @@ listMS2scans(mz, rt, ppm, rtw, MSData)
 \item{rtw}{target (parent) rt tolerance in seconds}
 
 \item{MSData}{list of xcmsRaw objects}
+
+\item{rtMatch}{assign MS2 scans only to the matching feature with the closest rt}
 }
 \description{
 Searches for MS2 scans with a given parent m/z and directly ceonverts the resulting table into a single string
