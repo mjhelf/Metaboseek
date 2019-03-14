@@ -33,7 +33,7 @@ writeMS <- function(filename,
   
   write(paste(
     if(appending){"\n"}else{paste0('# Generated with MOSAiC version ',
-                                   packageVersion("Mosaic"),', timestamp: ', strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
+                                   packageVersion("METABOseek"),', timestamp: ', strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
     paste0(">compound ", splashtag),
     paste0(">parentmass ", parentmz),
     if(!is.null(ion)){paste0(">ion ", ion)}else{paste0(">charge ", charge)},
