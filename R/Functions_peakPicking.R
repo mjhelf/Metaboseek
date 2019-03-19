@@ -365,6 +365,7 @@ getpeaks2 <- function(EIC, findProps = list(SN = 1,
 #' @param ppm ppm tolerance for EIC construction
 #' @param retainColumns keep and copy these columns from the original df when making the result data.frame
 #' @param ... arguments passed to getpeaks2()
+#' @importFrom data.table is.data.table rbindlist
 #' 
 #' @export
 makeRTlist2 <- function(df, rawdata, ppm = 5, retainColumns = NULL, ...){
@@ -389,9 +390,9 @@ makeRTlist2 <- function(df, rawdata, ppm = 5, retainColumns = NULL, ...){
       
       pt <- allpeaks[[i]]
       
-      if(!is.data.frame(pt)){pt <- as.data.frame(pt)}
+      if(!is.data.frame(pt)  || is.data.table(pt)){pt <- as.data.frame(pt)}
       
-      pt <- pt[,colnames(pt) != "group", drop = F]
+      pt <- pt[,!colnames(pt) %in% c("group", "max", "start", "end", "npeaks") , drop = F]
       
       pt$mz <- df$mz[i]
       pt$mzmin <- df$mz[i]-ppm*1e-6*df$mz[i]

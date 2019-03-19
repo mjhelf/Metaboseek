@@ -56,6 +56,8 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
       tableProperties$row_order <- seq(nrow(set()$df))
       
       tableProperties$set <- set()
+      #force this table to behave like a regular data.frame
+      tableProperties$set$df <- as.data.frame(tableProperties$set$df)
       tableProperties$updating <- T
       tableProperties$selected_cols <- NULL
       tableProperties$selected_rows <- NULL
@@ -84,10 +86,11 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
       
       if(tableProperties$sortCheck && length(tableProperties$sortBy) > 0){
         tableProperties$row_order <- order(tableProperties$set$df[,tableProperties$sortBy], decreasing = tableProperties$decreasing)
+        
       }else{
         tableProperties$row_order <- seq(nrow(tableProperties$set$df))
       }
-      
+
       tableProperties$inpage <- if(is.null(set()$layout$perpage)){
         tableProperties$row_order}
       else if(tableProperties$page >= ceiling(length(tableProperties$row_order)/set()$layout$perpage)){
