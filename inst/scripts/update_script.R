@@ -12,7 +12,16 @@ tryCatch({
   }
   
 
-devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F)
+  tryCatch({
+devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F, dependencies = FALSE)
+},
+error = function(e){
+  message("Dependncies have to be installed...")
+  devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F)
+  
+   
+})
+
   message("Mseek version before update: ", oldver)
   message("Mseek version after update: ", packageVersion("METABOseek")[1])
   message(paste0("Update complete! (from ", commandArgs(trailingOnly=TRUE)[1], " branch on GitHub: https://github.com/mjhelf/METABOseek)"))
