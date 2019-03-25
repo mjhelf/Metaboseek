@@ -110,7 +110,6 @@ MainTableModule <- function(input,
                    }else{
                      internalValues$order <- which(values$featureTables$row_filters)
                    }
-                   
                    internalValues$inpage <- if(is.null(values$GlobalOpts$perPage)){
                      internalValues$order}
                    else if(internalValues$page >= ceiling(length(internalValues$order)/values$GlobalOpts$perPage)){
@@ -209,7 +208,10 @@ MainTableModule <- function(input,
   })
   
   observeEvent(input$page,{
+    if(!is.null(input$page) && !is.na(input$page)){
     internalValues$page <- input$page
+    }
+    
   })
   
   output$perPageI <- renderUI({

@@ -196,8 +196,10 @@ TableModule2 <- function(input,output, session,
   })
   
   observeEvent(input$page,{
+    if(!is.null(input$page) && !is.na(input$page)){
     internalValues$page <- input$page
-  })
+    }
+    })
   
   output$perPageI <- renderUI({
   if(!is.null(static$perpage)){
