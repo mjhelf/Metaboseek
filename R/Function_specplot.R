@@ -23,12 +23,13 @@ specplot <- function (x=sc[,1],
                       fileName = "title",
                       yrange = c(0,100),
                       xrange = range(x),
-                      maxi = max(y)
+                      maxi = max(y),
+                      mar = c(4,6,6,2)
 ){
   
   pd <- data.frame(x=x,y=y/norm)  
   par(#oma=c(0,2,0,0), 
-    mar = c(4,6,6,2),#changed mar[2] to 6 because oma was removed because of issues with interactive view
+    mar = mar,#changed mar[2] to 6 because oma was removed because of issues with interactive view
     xpd = FALSE, xaxs = "i", yaxs = "i")
   PlotWindow(cx, 
              ylim = yrange, 

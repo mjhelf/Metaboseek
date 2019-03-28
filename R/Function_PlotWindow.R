@@ -13,6 +13,7 @@
 #' @param relto show y axis values relative to relto if not NULL.
 #' @param ysci if TRUE, y axis label numbers are shown in scientific format
 #' @param textadj passed on to mtext adj for orientation of plot description/title text line
+#' @param ylabfactor factor to adjust the position of the y axis label
 #'
 #' @export
 PlotWindow <- function(cx = 1, 
@@ -27,7 +28,8 @@ PlotWindow <- function(cx = 1,
                        xlab = "RT (min)",
                        ysci = T,
                        liwi = 1,
-                       textadj = 0.5
+                       textadj = 0.5,
+                       ylabshift = 0
                        
 ){
   
@@ -73,7 +75,7 @@ PlotWindow <- function(cx = 1,
          labels = format(pretty(ylim, n =pn), scientific = F),
          mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
+    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7)-ylabshift, cex=par("cex")*1*cx)
   }
   else{
     #y axis
@@ -81,7 +83,7 @@ PlotWindow <- function(cx = 1,
          labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
          mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7), cex=par("cex")*1*cx)
+    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7)-ylabshift, cex=par("cex")*1*cx)
   }
   
   #fix axis to not have gaps at edges

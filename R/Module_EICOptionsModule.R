@@ -82,7 +82,9 @@ EICOptionsModule <- function(input,output, session,
   })
   observeEvent(input$plotYzoom,{
     values$GlobalOpts$plotYzoom <- input$plotYzoom
-    MseekOptions(plotYzoom=input$plotYzoom)
+    
+    #Don't want this to be a default setting when loading new session
+   # MseekOptions(plotYzoom=input$plotYzoom)
   })
   
   output$plotLw <- renderUI({

@@ -9,7 +9,7 @@
 #' @param rtmid vector of retention time values (not ranges)
 #' @param mzmid vector of mz values (not ranges)
 #' @param glist a named list of grouped file names (as supplied in $grouping of rawLayout objects)
-#' @param cols integer, number of colors generated
+#' @param cols integer, number of columns in plot. if NULL, grid can be defined externally
 #' @param colrange character(1), color range function used for line colors
 #' @param transparency numeric(1), alpha (range 0..1) for transparency of lines
 #' @param RTall if TRUE, entire RT range will be plotted
@@ -27,6 +27,7 @@
 #' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
 #' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
 #' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
+#' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -50,10 +51,15 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        RTcorrect = NULL,
                        importEIC = NULL,
                        globalYmax = NULL,
-                       subtitles = NULL
+                       subtitles = NULL,
+                       raise = F
 ){
   #number of plot rows
+  if(!is.null(cols)){
   rows <- ceiling(length(glist)/cols)
+  }else{
+    rows <-1}
+  
   
   #make color scales for each group, color shades based on group with most members
   colvec <- do.call(colrange,
@@ -96,6 +102,10 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   #optionally export to pdf
   if(!is.null(pdfFile)){
+    if(is.null(cols)){
+      rows <- ceiling(length(glist)/5)
+    
+      cols <-1}
     pdf(pdfFile,
         6*cols,
         6*ceiling(length(glist)/cols)+2
@@ -134,7 +144,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                                pdfHi = 6*rows,
                                pdfWi = 6*cols,
                                cx = cx,
-                               adductLabs = 0)
+                               adductLabs = 0),
+              raise
     )
   }
   
@@ -193,7 +204,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              pdfHi = 6*rows,
                              pdfWi = 6*cols,
                              cx = cx,
-                             adductLabs = adducts)
+                             adductLabs = adducts),
+            raise
   )
   if(!is.null(pdfFile)){dev.off()}
   
@@ -277,6 +289,7 @@ EICtitles <- function(mzs, rts, ppm){
 #' @param compProps.pdfWi pdf width in inches
 #' @param compProps.cx numeric(1) font size (character expansion) factor
 #' @param compProps.adductLabs adduct labels (nonfunctional)
+#' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
 #' 
 #' @export
 groupPlot <- function(EIClist = res,
@@ -298,7 +311,8 @@ groupPlot <- function(EIClist = res,
                                        pdfHi = 6,
                                        pdfWi = 12,
                                        cx = 1,
-                                       adductLabs = c("0","1","2"))
+                                       adductLabs = c("0","1","2")),
+                      raise = F
 ){
   
   #majoritem is the EIClist top level (typically by mz, but could be)
@@ -321,7 +335,11 @@ groupPlot <- function(EIClist = res,
     #adductLabs legend does not work yet
     #if(length(compProps$adductLabs)>1){compProps$mfrow[1] <- compProps$mfrow[1]+1}
     
-    par(mfrow=compProps$mfrow,
+    if(length(compProps$mfrow) > 1){
+      par(mfrow=compProps$mfrow)
+    }
+    
+    par(#mfrow=compProps$mfrow,
         oma=compProps$oma,
         xpd=compProps$xpd,
         bg=compProps$bg,
@@ -375,6 +393,8 @@ groupPlot <- function(EIClist = res,
         }
         ylimes = c(0,mm)
       }
+      
+      if(raise){ylimes[1] <- -0.02*max(ylimes)}
 
       EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
               ylim = ylimes, 
