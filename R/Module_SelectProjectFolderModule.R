@@ -21,9 +21,12 @@ SelectProjectFolderModule <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   
-  internalValues <- reactiveValues(msLoadTrigger = F)
+  internalValues <- reactiveValues(msLoadTrigger = F,
+                                   getRecent = NULL,
+                                   selRecent = .MseekOptions$recentProjects[1]
+                                   )
   
-  
+
   MSFolder <- callModule(FilePathModule, "pfolder",
                          filepaths = reactive({values$GlobalOpts$filePaths}),
                          label = "Load Project Folder", description= "Select an existing Mseek Project Folder (e.g. with xcms results)",
@@ -299,10 +302,46 @@ SelectProjectFolderModule <- function(input,output, session,
         values$MSData$layouts[[basename(values$projectData$projectFolder)]] <- constructRawLayout(temp_rawgrouptable, stem = "")
         values$MSData$index = unique(c(basename(values$projectData$projectFolder),values$MSData$index))
         values$MSData$active =basename(values$projectData$projectFolder)
+        values$GlobalOpts$recentProjects <- as.character(na.omit(unique(c(values$projectData$projectFolder, values$GlobalOpts$recentProjects))[1:10]))
+        MseekOptions(recentProjects = values$GlobalOpts$recentProjects)
       })
     }
 }
   }, ignoreInit = T)
+  
+  output$selrecent <- renderUI({
+    
+    
+  })
+  output$selrecent <- renderUI({
+    if(!is.null(values$GlobalOpts$recentProjects)){
+    folist <-  as.list(values$GlobalOpts$recentProjects)
+    names(folist) <- basename(values$GlobalOpts$recentProjects)
+    
+    div(title = internalValues$selRecent,
+        fluidRow(
+          column(8,
+    selectizeInput(ns("selRecent"),"Recent projects: ", 
+                   choices= folist,
+                   selected = internalValues$selRecent
+    )),
+    column(4,
+    actionButton(ns("loadRecent"),"Load recent")
+    ))
+    
+    )
+    
+    }
+  })
+  observeEvent(input$selRecent,{
+      internalValues$selRecent <- input$selRecent
+    
+  })
+  
+  observeEvent(input$loadRecent,{
+    MSFolder$dir <- input$selRecent
+    
+  })
   
 }
 
@@ -317,7 +356,11 @@ SelectProjectFolderModule <- function(input,output, session,
 SelectProjectFolderModuleUI <- function(id){
   
   ns <- NS(id)
- 
+ fluidPage(
+   fluidRow(
   FilePathModuleUI(ns("pfolder"))
-   
+   ),
+  fluidRow(
+    htmlOutput(ns('selrecent'))
+  ))
 }

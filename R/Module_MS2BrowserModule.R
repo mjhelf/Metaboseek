@@ -186,13 +186,13 @@ MS2BrowserModule <- function(input,output, session,
                if(!is.null(splashsource()$stab) && !is.null(values$GlobalOpts$siriusFolder)){
                list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
                     ms2 = splashsource()$MergedSpecs,
-                    instrument = Sirius$selInstrument,
+                    instrument = values$GlobalOpts$SiriusSelInstrument,
                     parentmz = mean(splashsource()$stab$parentMz),
                     rt = mean(splashsource()$stab$rt),
                     comments = "",
-                    ion = Sirius$selIon,
-                    charge= Sirius$selCharge,
-                    fingerid = Sirius$checkFinger,
+                    ion = values$GlobalOpts$SiriusSelIon,
+                    charge= if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
+                    fingerid = values$GlobalOpts$SiriusCheckFinger,
                     scanindices = saveScanlist(splashsource()$stab),
                     
                     sirpath = list.files(values$GlobalOpts$siriusFolder,
@@ -201,7 +201,7 @@ MS2BrowserModule <- function(input,output, session,
                                          full.names = T,
                                          recursive = T)[1],
                     
-                    moreOpts = paste0("-c 50 -e ", Sirius$elements))
+                    moreOpts = paste0("-c 50 -e ", values$GlobalOpts$SiriusElements))
                }else{
                  
                  NULL

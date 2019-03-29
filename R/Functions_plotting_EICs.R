@@ -28,6 +28,7 @@
 #' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
 #' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
 #' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
+#' @param relPlot if TRUE, y-axis will show relative intensities
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -52,7 +53,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        importEIC = NULL,
                        globalYmax = NULL,
                        subtitles = NULL,
-                       raise = F
+                       raise = F,
+                       relPlot = F
 ){
   #number of plot rows
   if(!is.null(cols)){
@@ -151,7 +153,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                                pdfWi = 6*cols,
                                cx = cx,
                                adductLabs = 0),
-              raise
+              raise,
+              relPlot
     )
   }
   
@@ -211,7 +214,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              pdfWi = 6*cols,
                              cx = cx,
                              adductLabs = adducts),
-            raise
+            raise,
+            relPlot
   )
   if(!is.null(pdfFile)){dev.off()}
   
@@ -296,6 +300,7 @@ EICtitles <- function(mzs, rts, ppm){
 #' @param compProps.cx numeric(1) font size (character expansion) factor
 #' @param compProps.adductLabs adduct labels (nonfunctional)
 #' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
+#' @param relPlot if TRUE, y-axis will show relative intensities
 #' 
 #' @export
 groupPlot <- function(EIClist = res,
@@ -318,7 +323,8 @@ groupPlot <- function(EIClist = res,
                                        pdfWi = 12,
                                        cx = 1,
                                        adductLabs = c("0","1","2")),
-                      raise = F
+                      raise = F,
+                      relPlot = F
 ){
   
   #majoritem is the EIClist top level (typically by mz, but could be)
@@ -410,7 +416,7 @@ groupPlot <- function(EIClist = res,
               legendtext = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
               else{paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]]))))},
               heading = names(grouping)[plotgroup],
-              relto = NULL,
+              relto = if(relPlot){max(ylimes)}else{NULL},
               TIC = plotProps$TIC,
               lw = plotProps$lw,
               midline = plotProps$midline[majoritem],
@@ -506,14 +512,16 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
     ylim[2] <- ylim[2]/yzoom
   }
   
-  if(!is.null(relto) && relto != 1 ){ylim[2] <- (ylim[2]/relto)*100}
+  if(!is.null(relto) && relto != 1 ){ylim <- (ylim/relto)*100}
   
   PlotWindow(cx, 
              ylim, 
              xlim,
              heading,
              single,
-             liwi = lw
+             ysci = if(!is.null(relto) && relto != 1){F}else{T},
+             liwi = lw,
+             ylab = if(!is.null(relto) && relto != 1){"Relative Intensity (%)"}else{"Intensity"}
   )
   
   if(length(midline)> 0 ){
@@ -526,7 +534,7 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
   addLines(EIClist = EICs,
            TIC,
            colr,
-           relto,
+           relto = relto,
            liwi = lw
   )    
   #fix axis to not have gaps at edges
@@ -585,8 +593,9 @@ addLines <- function(EIClist = EICsAdducts,
       int <- EIClist[[n]][,'intensity']
     }
     
-    if(!is.null(relto) && relto != 1 ){int <- lapply(lapply(int,"/",relto),"*",100)
-    maxint <- format(relto, digits =3, scientific = T)
+    if(!is.null(relto) && relto != 1 ){
+      int <- lapply(lapply(int,"/",relto),"*",100)
+   # maxint <- format(relto, digits =3, scientific = T)
     }
     
     #convert to minutes

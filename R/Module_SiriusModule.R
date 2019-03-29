@@ -56,7 +56,7 @@ SiriusModule <- function(input,output, session,
       
       tryCatch({
     internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
-       apply(internalValues$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
+       apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
                                         1, paste, collapse = "//"), sep = "//")
       },
     error = function(e){print(e); return(character(0))})
@@ -196,70 +196,27 @@ SiriusModule <- function(input,output, session,
     }
   })
   
-  output$controlSirius <- renderUI({
-    fluidRow(
-      column(4,
-             fluidRow(
-               column(3,
-                      selectizeInput(ns("selCharge"), "Charge:", choices = list("+1" = 1, "-1" = -1), selected = internalValues$selCharge)),
-               column(3,
-                      selectizeInput(ns("selIon"), "Ion", choices = list("?" = if(internalValues$selCharge ==1){"[M+?]+"}else{"[M+?]-"},
-                                                                         "[M+H]+" = "[M+H]+",
-                                                                         "[M+Na]+" = "[M+Na]+",
-                                                                         "[M-H}-" = "[M-H]-",
-                                                                         "[M+Cl]-" = "[M+Cl]-"), selected = internalValues$selIon)),
-               column(3,
-                      checkboxInput(ns("checkFinger"), "Get FingerID", value = internalValues$checkFinger))
-             ),
-             fluidRow(
-               column(6,
-                      selectizeInput(ns("selInstrument"), "Instrument", choices = list("Orbitrap" = "orbitrap", "QTOF" = "qtof", "FT-ICR" = "fticr"), selected = internalValues$selIon)),
-               column(6, 
-                      textInput(ns("elements"), "Allow elements:", value = internalValues$elements)))
-      ),
-      column(8,
-             if(!is.null(internalValues$siriusIndex)){
-               TableModule2UI(ns("sirbrowser"))
-             }else{
-               p("No SIRIUS results available")
-             })
-    )
-  })
   
   output$selectSirius <- renderUI({
     
-    bsCollapse(id = ns("collapseSiriusSearch"), open = "SIRIUS search settings",
-               bsCollapsePanel("SIRIUS search settings",
-                              htmlOutput(ns("controlSirius"))
+    bsCollapse(id = ns("collapseSiriusSearch"), open = NULL,
+               bsCollapsePanel("Browse SIRIUS searches",
+                               if(!is.null(internalValues$siriusIndex)){
+                                 
+                                 
+                                 TableModule2UI(ns("sirbrowser"))
+                                 
+                                 
+                               }else{
+                                 
+                                 
+                                 p("No SIRIUS results available")
+                                 
+                                 
+                               })
                                )
-    )
     
     
-  })
-  
-  observeEvent(input$selCharge,{
-    
-    internalValues$selCharge <- input$selCharge
-    
-  })
-  observeEvent(input$selIon,{
-    
-    internalValues$selIon <- input$selIon
-    
-  })
-  observeEvent(input$checkFinger,{
-    
-    internalValues$checkFinger <- input$checkFinger
-    
-  })
-  observeEvent(input$selInstrument,{
-    
-    internalValues$selInstrument <- input$selInstrument
-    
-  })
-  observeEvent(input$elements,{
-    
-    internalValues$elements <- input$elements
     
   })
   

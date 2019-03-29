@@ -80,13 +80,13 @@ LoadDataModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      column(3, style = "text-align:center;", htmlOutput(ns("showfolder"))
+      column(4, style = "text-align:center;", htmlOutput(ns("showfolder"))
       ),
-      column(3, style = "justify-content:center;display:flex", SelectProjectFolderModuleUI(ns("projectfolder"))
+      column(4, style = "justify-content:center;display:flex", SelectProjectFolderModuleUI(ns("projectfolder"))
              ),
-      column(3, style = "justify-content:center;display:flex", LoadTableModuleUI(ns("table"))
+      column(2, style = "justify-content:center;display:flex", LoadTableModuleUI(ns("table"))
              ),
-      column(3, style = "justify-content:center;display:flex", LoadMSDataModuleUI(ns("msdata"))
+      column(2, style = "justify-content:center;display:flex", LoadMSDataModuleUI(ns("msdata"))
              )
     )
       

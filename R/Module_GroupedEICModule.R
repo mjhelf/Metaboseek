@@ -90,7 +90,9 @@ GroupedEICModule <- function(input,output, session,
                  yzoom = values$GlobalOpts$plotYzoom,
                  RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
                  globalYmax = internalValues$reltoCheck,
-                 subtitles = subtitles
+                 subtitles = subtitles,
+                 relPlot = values$GlobalOpts$relPlotToggle,
+                 raise = values$GlobalOpts$raiseToggle
       )
     },
     
@@ -199,7 +201,9 @@ GroupedEICModule <- function(input,output, session,
                  RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
                  importEIC = EICcache[[values$MSData$active]],
                  globalYmax = internalValues$reltoCheck,
-                 subtitles
+                 subtitles,
+                 relPlot = values$GlobalOpts$relPlotToggle,
+                 raise = values$GlobalOpts$raiseToggle
       )
       
     }

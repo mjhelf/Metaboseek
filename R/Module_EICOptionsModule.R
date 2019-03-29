@@ -103,6 +103,23 @@ EICOptionsModule <- function(input,output, session,
     MseekOptions(MLtoggle=input$MLtoggle)
   })
   
+  output$raisetoggle <- renderUI({
+    checkboxInput(ns("raiseToggle"),"Raise EICs", value = values$GlobalOpts$raiseToggle)
+  })
+  observeEvent(input$raiseToggle,{
+    values$GlobalOpts$raiseToggle <- input$raiseToggle
+    MseekOptions(raiseToggle = values$GlobalOpts$raiseToggle)
+  })
+  
+  output$relplottoggle <- renderUI({
+    checkboxInput(ns("relPlotToggle"),"Relative intensities", value = values$GlobalOpts$relPlotToggle)
+  })
+  observeEvent(input$relPlotToggle,{
+    values$GlobalOpts$relPlotToggle <- input$relPlotToggle
+    MseekOptions(relPlotToggle= values$GlobalOpts$relPlotToggle)
+  })
+  
+  
   output$plotCx <- renderUI({
     numericInput(ns("plotCx"),"Font size: ", value = values$GlobalOpts$plotCx, min = 0.1, step = 0.1)
   })
@@ -186,9 +203,13 @@ EICOptionsModuleUI <- function(id){
       column(2,
              htmlOutput(ns("plotCols"))
       ),
-      column(2,
+      column(1,
              htmlOutput(ns("TICtoggle")
              )),
+      column(1,
+             htmlOutput(ns("relplottoggle")
+             )),
+      
       column(2,
              htmlOutput(ns("RTwindow"))
              #     HTML('
@@ -214,8 +235,10 @@ EICOptionsModuleUI <- function(id){
       column(2,
              htmlOutput(ns("plotLw"))),
       
-      column(2,
+      column(1,
              htmlOutput(ns("MLtoggle"))),
+      column(1,
+             htmlOutput(ns("raisetoggle"))),
       
       column(2,
              htmlOutput(ns("plotCx"))),
