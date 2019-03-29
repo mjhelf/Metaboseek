@@ -36,7 +36,9 @@ MseekOptions <- function(..., defaults = F){
                              plotCx = 1.6,
                              TICtoggle = F,
                              colorscheme = "Mseek.colors",
-                             plotTransparency = 0.8)
+                             plotTransparency = 0.8,
+                            groupBy = "grouping",
+                            colorBy = "file")
     
   }
   else{

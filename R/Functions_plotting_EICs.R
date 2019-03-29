@@ -60,16 +60,22 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   }else{
     rows <-1}
   
-  
+  if(!is.list(colrange)){
   #make color scales for each group, color shades based on group with most members
   colvec <- do.call(colrange,
                     list(n=max(sapply(glist,length)), alpha = transparency))
   colrs <- list()
   for(i in 1:length(glist)){
-    
-    colrs[[i]] <- colvec[1:length(glist[[i]])]
-    
+    colrs[[i]] <- data.frame(color = colvec[1:length(glist[[i]])],
+                             label = sub("^([^.]*).*", "\\1",basename(glist[[i]])),
+                             stringsAsFactors = FALSE)
+
+  }}
+  else{
+    colrs <- colrange
   }
+  
+ # print(colrs)
   
   #generate rt boundary df
   if(any(RTall, is.null(rtmid))){ # any can handle NULL, seems more flexible than ||
@@ -399,9 +405,10 @@ groupPlot <- function(EIClist = res,
       EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
               ylim = ylimes, 
               xlim = xlimes,
-              colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
+              colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]$color}
               else{plotProps$colr[1:nrow(minoritem$EIClist[[1]])]},
-              legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]])))),
+              legendtext = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
+              else{paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]]))))},
               heading = names(grouping)[plotgroup],
               relto = NULL,
               TIC = plotProps$TIC,
@@ -531,9 +538,16 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
        font = 2, cex=cx*1)
   
   if(!is.null(legendtext)){
+    if(is.list(legendtext)){
+      legendtext <- legendtext[!duplicated(legendtext),]
     legend("topright",
            # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
-           legend = legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=cx*0.7)
+           legend = legendtext$label, lty=1,lwd=2.5, col=legendtext$color, bty="n",  cex=cx*0.7)
+    }else{
+      legend("topright",
+             # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
+             legend = legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=cx*0.7)
+    }
   }
   
 }

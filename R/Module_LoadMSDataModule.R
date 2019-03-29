@@ -79,13 +79,19 @@ LoadMSDataModule <- function(input,output, session,
       values$MSData$data <- c(values$MSData$data,loadRawM(newfiles, workers = values$GlobalOpts$enabledCores))
       
       if(is.null(values$MSData$layouts)){
-        temp_rawgrouptable <- data.frame(File = values$MSData$filelist, Group = rep("Group 1", length(values$MSData$filelist)), stringsAsFactors = F)
+        temp_rawgrouptable <- data.frame(File = values$MSData$filelist, 
+                                         Group = rep("Group 1", length(values$MSData$filelist)),
+                                         Group2 = rep("Group 1", length(values$MSData$filelist)),
+                                         stringsAsFactors = F)
         values$MSData$layouts[["MS Files"]] <- constructRawLayout(temp_rawgrouptable, stem = "")
         values$MSData$index = unique(c("MS Files",values$MSData$index))
         values$MSData$active = "MS Files"
       }else{
         msfNum <- length(grep("MS Files",names(values$MSData$layouts)))
-        temp_rawgrouptable <- data.frame(File = values$MSData$filelist, Group = rep("Group 1", length(values$MSData$filelist)), stringsAsFactors = F)
+        temp_rawgrouptable <- data.frame(File = values$MSData$filelist,
+                                         Group = rep("Group 1", length(values$MSData$filelist)),
+                                         Group2 = rep("Group 1", length(values$MSData$filelist)),
+                                         stringsAsFactors = F)
         values$MSData$layouts[[paste0("MS Files ",msfNum+1)]] <- constructRawLayout(temp_rawgrouptable, stem = "")
         values$MSData$index = unique(c(paste0("MS Files ",msfNum+1),values$MSData$index))
         values$MSData$active = paste0("MS Files ",msfNum+1)

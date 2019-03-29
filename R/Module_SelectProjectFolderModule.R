@@ -56,6 +56,11 @@ SelectProjectFolderModule <- function(input,output, session,
         }
         #projectData$projectName <- basename(dirname(projectData$filegroupfiles))
         internalValues$filegroups <- read.csv(internalValues$filegroupsfile, stringsAsFactors = F, header = T)
+        
+        if(is.null(internalValues$filegroups$Group2)){
+          internalValues$filegroups$Group2 <- internalValues$filegroups$Group
+        }
+        
 
         temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$", recursive =  T, full.names = T)
         

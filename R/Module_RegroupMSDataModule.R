@@ -59,7 +59,7 @@ RegroupMSDataModule <- function(input,output, session,
   
   
   observeEvent(SelectMSGrouping$active,{
-    GroupingTable$df <- values$MSData$layouts[[SelectMSGrouping$active]]$rawgrouptable[,c("File", "Group")]
+    GroupingTable$df <- values$MSData$layouts[[SelectMSGrouping$active]]$rawgrouptable[,c("File", "Group", "Group2")]
     GroupingTable$update <- !GroupingTable$update
     
   })
@@ -159,6 +159,7 @@ RegroupMSDataModule <- function(input,output, session,
      
      grouptable <- data.frame(File = names(values$MSData$data),
                               Group = rep("G1", length(names(values$MSData$data))),
+                              Group2 = rep("G1", length(names(values$MSData$data))),
                               stringsAsFactors = F)
      
     values$MSData$layouts[[input$newgroupingname]] <-  constructRawLayout(grouptable, stem = NULL) 

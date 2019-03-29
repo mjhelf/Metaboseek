@@ -52,12 +52,29 @@ GroupedEICModule <- function(input,output, session,
 
 
      }
+     
+     if(!is.null(values$GlobalOpts$colorBy) 
+        && values$GlobalOpts$colorBy %in% c("grouping", "grouping2")
+        &&!is.null(values$GlobalOpts$groupBy)
+        && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){
+       
+       cr <-  makeColorscheme(maingroup = values$MSData$layouts[[values$MSData$active]][[values$GlobalOpts$groupBy]],
+                              colorgroup =values$MSData$layouts[[values$MSData$active]][[values$GlobalOpts$colorBy]],
+                              colrange = values$GlobalOpts$colorscheme,
+                              transparency = values$GlobalOpts$plotTransparency)
+       
+     }else{
+       cr <- values$GlobalOpts$colorscheme
+     }
+     
+     grp <- if(!is.null(values$GlobalOpts$groupBy)
+               && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
       
       EICgeneral(rtmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"rt"],
                  mzmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"mz"],
-                 glist = values$MSData$layouts[[values$MSData$active]]$grouping,
-                 cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]]$grouping)),
-                 colrange = values$GlobalOpts$colorscheme,
+                 glist = values$MSData$layouts[[values$MSData$active]][[grp]],
+                 cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
+                 colrange = cr,
                  transparency = values$GlobalOpts$plotTransparency,
                  RTall = values$GlobalOpts$RTtoggle,
                  rtw = values$GlobalOpts$RTwindow,
@@ -143,14 +160,29 @@ GroupedEICModule <- function(input,output, session,
         
 
       }
-
       
+      if(!is.null(values$GlobalOpts$colorBy) 
+         && values$GlobalOpts$colorBy %in% c("grouping", "grouping2")
+         &&!is.null(values$GlobalOpts$groupBy)
+         && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){
+        
+      cr <-  makeColorscheme(maingroup = values$MSData$layouts[[values$MSData$active]][[values$GlobalOpts$groupBy]],
+                                    colorgroup =values$MSData$layouts[[values$MSData$active]][[values$GlobalOpts$colorBy]],
+                                    colrange = values$GlobalOpts$colorscheme,
+                                    transparency = values$GlobalOpts$plotTransparency)
+        
+      }else{
+        cr <- values$GlobalOpts$colorscheme
+      }
+
+      grp <- if(!is.null(values$GlobalOpts$groupBy)
+                && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
       
       EICgeneral(rtmid,
                  mzmid,
-                 glist = values$MSData$layouts[[values$MSData$active]]$grouping,
-                 cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]]$grouping)),
-                 colrange = values$GlobalOpts$colorscheme,
+                 glist = values$MSData$layouts[[values$MSData$active]][[grp]],
+                 cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
+                 colrange = cr,
                  transparency = values$GlobalOpts$plotTransparency,
                  RTall = values$GlobalOpts$RTtoggle,
                  TICall = values$GlobalOpts$TICtoggle || is.null(values$MainTable$selected_rows),

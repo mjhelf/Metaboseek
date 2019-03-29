@@ -84,7 +84,7 @@ EICOptionsModule <- function(input,output, session,
     values$GlobalOpts$plotYzoom <- input$plotYzoom
     
     #Don't want this to be a default setting when loading new session
-   # MseekOptions(plotYzoom=input$plotYzoom)
+    # MseekOptions(plotYzoom=input$plotYzoom)
   })
   
   output$plotLw <- renderUI({
@@ -128,7 +128,41 @@ EICOptionsModule <- function(input,output, session,
     MseekOptions(colorscheme=input$colorscheme)
   })
   
+  output$groupby <- renderUI({
+    selectizeInput(ns("groupBy"),"Group by: ", 
+                   choices= list("Group"= "grouping",
+                              "Group2" = "grouping2"),
+                   selected = values$GlobalOpts$groupBy
+    )
+  })
+  # observeEvent(input$colorscheme,{
+  #   if(!is.null(MSData$active)){
+  #     MSData$layouts[[MSData$active]]$settings$colr <- input$colorscheme
+  #   }
+  # })
+  observeEvent(input$groupBy,{
+    values$GlobalOpts$groupBy <- input$groupBy
+    # MseekOptions(colorscheme=input$colorscheme)
+  })
   
+  output$colorby <- renderUI({
+    selectizeInput(ns("colorBy"),"Color by: ", 
+                   choices= list("File" = "file",
+                                 "Group"= "grouping",
+                                 "Group2" = "grouping2",
+                                 "Mass shift"),
+                   selected = values$GlobalOpts$colorBy
+    )
+  })
+  # observeEvent(input$colorscheme,{
+  #   if(!is.null(MSData$active)){
+  #     MSData$layouts[[MSData$active]]$settings$colr <- input$colorscheme
+  #   }
+  # })
+  observeEvent(input$colorBy,{
+    values$GlobalOpts$colorBy <- input$colorBy
+    # MseekOptions(colorscheme=input$colorscheme)
+  })
 }
 
 #' EICOptionsModuleUI
@@ -146,10 +180,10 @@ EICOptionsModuleUI <- function(id){
     title = "EIC Options Module",
     # htmlOutput(ns("TICtoggle")),
     fluidRow(
-      column(3,
+      column(2,
              htmlOutput(ns("PPMwindow"))
       ),
-      column(3,
+      column(2,
              htmlOutput(ns("plotCols"))
       ),
       column(2,
@@ -166,14 +200,18 @@ EICOptionsModuleUI <- function(id){
       ),
       column(2,
              htmlOutput(ns("RTtoggle"))
+      ),
+      
+      column(2,
+             htmlOutput(ns("groupby"))
       )
     ),
     
     fluidRow(
-      column(3,
+      column(2,
              htmlOutput(ns("plotYzoom"))),
       
-      column(3,
+      column(2,
              htmlOutput(ns("plotLw"))),
       
       column(2,
@@ -183,5 +221,9 @@ EICOptionsModuleUI <- function(id){
              htmlOutput(ns("plotCx"))),
       
       column(2,
-             htmlOutput(ns("colorscheme"))
-      )))}
+             htmlOutput(ns("colorscheme"))),
+      
+      column(2,
+             htmlOutput(ns("colorby"))
+      )
+    ))}

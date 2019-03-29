@@ -13,6 +13,10 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
     MSD$rawgrouptable <- rawgrouptable
     MSD$filelist <- paste0(stem, rawgrouptable$File)
     MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = rawgrouptable$Group))
+    
+    MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist, Group = if(!is.null(rawgrouptable$Group2)){rawgrouptable$Group2}else{rawgrouptable$Group}) )
+
+
     MSD$settings = list(rtw = 30,
                         ppm = 5,
                         cols = 1,
@@ -35,6 +39,9 @@ updateRawLayout <- function(MSD, new.stem=NULL){
     
     MSD$filelist <- gsub(MSD$stem,new.stem,MSD$filelist)
     MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = MSD$rawgrouptable$Group))
+    MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist,
+                                           Group = if(!is.null(MSD$rawgrouptable$Group2)){MSD$rawgrouptable$Group2}else{MSD$rawgrouptable$Group}))
+
     MSD$stem <- new.stem
     return(MSD)
 }
@@ -87,4 +94,39 @@ rawGrouping <- function(rawgrouptable){
     }
     
     return(colme)
+}
+
+#' makeColorscheme
+#'
+#' Use two grouing lists to generate a color scheme for groupPlot() and EICgeneral().
+#' 
+#' @param maingroup main plot grouping scheme (e.g. grouping in rawlayouts)
+#' @param colorgroup grouping to be used for coloring (e.g. grouping2 in rawlayouts)
+#' @param colrange function to use to make color range
+#' @param transparency setting for transparent coloring
+#'
+#'
+#' @export
+makeColorscheme <- function(maingroup = MSD$layouts[[MSD$active]]$grouping,
+                            colorgroup = MSD$layouts[[MSD$active]]$grouping,
+                            colrange = "Mseek.colors",
+                            transparency = 0.8){
+  
+  colvec <- do.call(colrange,
+                    list(n=length(colorgroup), alpha = transparency))
+  
+  labs <- unlist(sapply(seq(length(colorgroup)),function(n){rep(names(colorgroup)[n],length(colorgroup[[n]]))}))
+  colvec <- unlist(sapply(seq(length(colorgroup)),function(n){rep(colvec[n],length(colorgroup[[n]]))}))
+  srch <- unlist(colorgroup)
+  
+  colrs <- list()
+  for(i in 1:length(maingroup)){
+    
+    sel <- sapply(maingroup[[i]],function(s){match(s, srch)})
+    
+    colrs[[i]] <- data.frame(color = colvec[sel],
+                             label = labs[sel],
+                             stringsAsFactors = FALSE)
+  }
+  return(colrs)
 }
