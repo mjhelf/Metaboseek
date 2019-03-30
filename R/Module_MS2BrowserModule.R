@@ -201,7 +201,7 @@ MS2BrowserModule <- function(input,output, session,
                                          full.names = T,
                                          recursive = T)[1],
                     
-                    moreOpts = paste0("-c 50 -e ", values$GlobalOpts$SiriusElements))
+                    moreOpts = paste0("-c 50 --fingerid-db bio -e ", values$GlobalOpts$SiriusElements))
                }else{
                  
                  NULL

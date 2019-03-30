@@ -292,20 +292,117 @@ tableGrouping <- function(df=NULL, anagrouptable){
 }
 
 
+#' tableWriter
+#' 
+#' Writes a feature table to a file in a given format.
+#' 
+#' @param df feature table as data.frame, with mz and rt columns.
+#' @param fname file name
+#' @param format output format
+#' @param moreArgs additional arguments 
+#' @param instrument which instrument is this table for?
+#' @param listType "inclusion" or "exclusion"
+#' 
+#' @export
+tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"), moreArgs = list()){
+  
+  if(length(format)==0 || is.na(format)){
+    warning("File format selected was empty. Could not export data to file")
+   return(invisible(NULL)) 
+  }
+  
+  tryCatch({
+  
+  if(format[1] %in% c("csv","tsv")){
+  
+  switch(format[1],
+         
+         csv = {sep <- ","},
+           tsv = {sep <- "\t"})
+  
+  
+  fwrite(df,
+         fname,
+         sep = sep,
+         quote = T,
+         row.names = F
+  )
+  return(invisible(NULL))
+  }
+  
+  if(format[1] %in% c("instrumentList")){
+    
+      moreArgs <- moreArgs[names(moreArgs) %in% c("rtwin", "polarity","instrument", "listType", "restrictRT")]
+    
+    df <- do.call(asInclusionlist, c(list(parenttable = df), moreArgs))
+    
+    fwrite(df,
+           fname,
+           sep =  "\t",
+           quote = F,
+           row.names = F
+    )
+  
+    
+    return(fname)
+  }
+  
+  warning("Invalid file format selected. Could not export data to file")
+  },
+  error = function(e){
+    warning(paste0("An error occured while exporting a table: ", e))
+    })
+    
+}
 
-###Deprecated:
-#filterDF <- function(df,
- #                    filters = list()){
-  #  
-   #     cn <- names(filters)
-    #    whi= row.names(df)
-#
- #       for (i in cn[which(cn %in% colnames(df))]){
-  #          whi <- row.names(df[whi,])[which( as.numeric(df[whi,i]) >= as.numeric(filters[[i]]$min)
-   #                                      & as.numeric(df[whi,i]) <= as.numeric(filters[[i]]$max))]
-    #        
-     #   }
-        
-        
-      #  return(unique(whi))
-       # }
+#' asInclusionlist
+#' 
+#' Reformats a feature table into a format that can be imported into MS instruments as inclusion or exclusion lists.
+#' 
+#' @param parenttable feature table as data.frame, with mz and rt columns.
+#' @param rtwin retention time window (+/- df$rt) in seconds
+#' @param polarity "Positive" or "Negative" 
+#' @param instrument which instrument is this table for?
+#' @param listType "inclusion" or "exclusion"
+#' @param restrictRT use retention time column from parenttable and rtwin to restrict retention time in inclusion/exclusion list
+#' 
+#' @export
+asInclusionlist <- function(parenttable,
+                            rtwin=2.5,
+                            polarity = "Positive",
+                            instrument = c("QExactive", "QExactive-HF"),
+                            listType = "inclusion",
+                            restrictRT = F){
+  if(listType == "exclusion"){
+    out <- data.frame("Mass [m/z]" = parenttable$mz,
+                      "Formula [M]" = character(length(parenttable$mz)),
+                      "Formula type" = character(length(parenttable$mz)),
+                      Species = character(length(parenttable$mz)),
+                      "CS [z]" = character(length(parenttable$mz)),
+                      Polarity = as.character(rep(polarity,length(parenttable$mz))),
+                      "Start [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt-rtwin)/60,3))},
+                      "End [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt+rtwin)/60,3))},
+                      Comment = as.character(parenttable$comments),
+                      stringsAsFactors = F)
+  colnames(out) <- c("Mass [m/z]","Formula [M]", "Formula type", "Species", "CS [z]", "Polarity", "Start [min]", "End [min]", "Comment")
+  }else{
+  out <- data.frame("Mass [m/z]" = parenttable$mz,
+                    "Formula [M]" = character(length(parenttable$mz)),
+                    "Formula type" = character(length(parenttable$mz)),
+                    Species = character(length(parenttable$mz)),
+                    "CS [z]" = character(length(parenttable$mz)),
+                    Polarity = as.character(rep(polarity,length(parenttable$mz))),
+                    "Start [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt-rtwin)/60,3))},
+                    "End [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt+rtwin)/60,3))},
+                    "(N)CE" = character(length(parenttable$mz)),
+                    "(N)CE type" = character(length(parenttable$mz)),
+                    "MSX ID" = character(length(parenttable$mz)),
+                    Comment = as.character(parenttable$comments),
+                    stringsAsFactors = F)
+  colnames(out) <- c("Mass [m/z]","Formula [M]", "Formula type", 
+                     "Species", "CS [z]", "Polarity",
+                     "Start [min]", "End [min]", "(N)CE", "(N)CE type", "MSX ID", "Comment")
+  }
+  
+  return(out) 
+}

@@ -12,10 +12,10 @@
 #' 
 #' @export 
 SelectProjectFolderModule <- function(input,output, session,
-                            values = reactiveValues(projectData = projectData,
-                                                    featureTables = featureTables,
-                                                    MSData = MSData,
-                                                    GlobalOpts = GlobalOpts)
+                                      values = reactiveValues(projectData = projectData,
+                                                              featureTables = featureTables,
+                                                              MSData = MSData,
+                                                              GlobalOpts = GlobalOpts)
 ){
   
   ns <- NS(session$ns(NULL))
@@ -24,19 +24,19 @@ SelectProjectFolderModule <- function(input,output, session,
   internalValues <- reactiveValues(msLoadTrigger = F,
                                    getRecent = NULL,
                                    selRecent = .MseekOptions$recentProjects[1]
-                                   )
+  )
   
-
+  
   MSFolder <- callModule(FilePathModule, "pfolder",
                          filepaths = reactive({values$GlobalOpts$filePaths}),
-                         label = "Load Project Folder", description= "Select an existing Mseek Project Folder (e.g. with xcms results)",
+                         label = "Load other Project", description= "Select an existing Mseek Project Folder (e.g. with xcms results)",
                          displayFolder = F)
- 
+  
   
   AltFileFolder <- callModule(FilePathModule, "altfilefolder",
-                         filepaths = reactive({values$GlobalOpts$filePaths}),
-                         label = "MS File Folder", description= "Select a Folder containing the appropriate MS data files.",
-                         displayFolder = F)
+                              filepaths = reactive({values$GlobalOpts$filePaths}),
+                              label = "MS File Folder", description= "Select a Folder containing the appropriate MS data files.",
+                              displayFolder = F)
   
   observeEvent(MSFolder$dir,{
     if(length(MSFolder$dir)>0 && (is.null(values$projectData$projectFolder) || values$projectData$projectFolder != MSFolder$dir)){
@@ -64,18 +64,18 @@ SelectProjectFolderModule <- function(input,output, session,
           internalValues$filegroups$Group2 <- internalValues$filegroups$Group
         }
         
-
+        
         temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$", recursive =  T, full.names = T)
         
         temp <- temp[!basename(temp) %in% c("camera.csv",
-                                                              "centWave.csv",
-                                                              "filegroups.csv",
-                                                              "group.csv",
-                                                              "outputs.csv",
-                                                              "peakfilling.csv",
-                                                              "retcor.csv",
-                                                              "status.csv",
-                                                              "peaktable_all_unfilled.csv",
+                                            "centWave.csv",
+                                            "filegroups.csv",
+                                            "group.csv",
+                                            "outputs.csv",
+                                            "peakfilling.csv",
+                                            "retcor.csv",
+                                            "status.csv",
+                                            "peaktable_all_unfilled.csv",
                                             "analysis_groups.csv",
                                             "filegroups_base.csv")]
         
@@ -114,109 +114,109 @@ SelectProjectFolderModule <- function(input,output, session,
   
   observeEvent(input$projectLoadOk,{
     tryCatch({
-    withProgress(message = 'Please wait!', detail = "Importing Feature Table", value = 0.3, {
-      
-      if(input$checkModal){
-      
-      tabid <- paste0("table",length(values$featureTables$tables))
-      
-      feats <- as.data.frame(data.table::fread(input$modalSelect,
-                                               header = T,
-                                               stringsAsFactors = F,
-                                               quote = '"',
-                                               sep = ","),
-                             stringsAsFactors = F)
-      
-      # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings
-      # and a victim of type.convert - make them character vectors again
-      charCols <- sapply(feats,typeof) == "logical" & sapply(lapply(feats,is.na),all)
-      if(any(charCols)){
-        feats[,charCols] <- character(nrow(feats))
-      }
-     
-      ColumnNames <- gsub("-",".",paste0(basename(internalValues$filegroups$File),"__XIC"))
-      
-      ColumnNames2 <- ColumnNames
-        ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))])
-
-      intColRange <- grep("__XIC$",colnames(feats))
-      #look for a .tGrouping file in same folder as table and load it
-      if(file.exists(gsub("\\.csv$",".tGrouping",input$modalSelect))){
-        anagroup <-read.delim(gsub("\\.csv$",".tGrouping",input$modalSelect), stringsAsFactors = F, header = T, sep = "\t")
-      }
-      #look for a .tGrouping file for this table in the entire project folder and load the first match
-      else if(length(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)) > 0){
-        anagroup <- read.delim(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)[1], stringsAsFactors = F, header = T, sep = "\t")
-      }
-      #backwards compatibility
-      else if(file.exists(file.path(values$projectData$projectFolder, "analysis_groups.csv"))){
-        anagroup <- read.csv(file.path(values$projectData$projectFolder, "analysis_groups.csv"), stringsAsFactors = F, header = T)
+      withProgress(message = 'Please wait!', detail = "Importing Feature Table", value = 0.3, {
         
-      }else if(all(ColumnNames %in% colnames(feats))){
-      
-          anagroup <- data.frame(Column=ColumnNames,
-                                 Group = internalValues$filegroups$Group,
-                                 stringsAsFactors = F)
-      }else if(all(ColumnNames2 %in% colnames(feats))){
-        
-        anagroup <- data.frame(Column=ColumnNames2,
-                               Group = internalValues$filegroups$Group,
-                               stringsAsFactors = F)
-      }
-      #no __XIC columns? No automatic grouping suggestion
-      else if(length(intColRange)==0){
-        
-        anagroup <- NULL
-        
-      }
-      
-      else{
-        
-        anagroup <- data.frame(Column=colnames(feats)[intColRange],
-                               Group = rep("G1",(length(intColRange))),
-                               stringsAsFactors = F)
-      }
-      incProgress(0.3, detail = "Formatting Feature Table")
-      
-      values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
-                                                                    mzcol= "mz", #column in df with mz values (columnname)
-                                                                    rtcol= "rt", #column in df with mz values (columnname)
-                                                                    commentcol = "comments",
-                                                                    fragmentcol = "fragments",
-                                                                    rtFormat = "sec", # "sec" or "min" 
-                                                                    anagrouptable = anagroup,
-                                                                    tablename = basename(input$modalSelect),
-                                                                    editable = F)
-      values$featureTables$index <- updateFTIndex(values$featureTables$tables)
-      values$featureTables$active <- tabid
-   
-    }
-      removeModal()
-      
-   
-      incProgress(0.1, detail = "loading MS data")
-      
-      if(!all(file.exists(internalValues$filegroups$File))){
-        internalValues$missingFiles <-  internalValues$filegroups$File[!file.exists(internalValues$filegroups$File)]
-        showModal(modalDialog(
-          p("These MSData files were not found:"),
-          p(paste(internalValues$missingFiles, collapse = ", ")),
-          p("Please select a folder that contains these files. Mseek will search all subfolders for matching filenames and update the information in this project folder for the next time you load it."),
-          FilePathModuleUI(ns("altfilefolder")),
+        if(input$checkModal){
           
-          title = "File locations have changed",
-          easyClose = F,
-          fade = F,
-          size = "m",
-          footer = actionButton(ns("modalIgnore"), "Ignore") 
-        ))
-         
-      }else{
+          tabid <- paste0("table",length(values$featureTables$tables))
+          
+          feats <- as.data.frame(data.table::fread(input$modalSelect,
+                                                   header = T,
+                                                   stringsAsFactors = F,
+                                                   quote = '"',
+                                                   sep = ","),
+                                 stringsAsFactors = F)
+          
+          # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings
+          # and a victim of type.convert - make them character vectors again
+          charCols <- sapply(feats,typeof) == "logical" & sapply(lapply(feats,is.na),all)
+          if(any(charCols)){
+            feats[,charCols] <- character(nrow(feats))
+          }
+          
+          ColumnNames <- gsub("-",".",paste0(basename(internalValues$filegroups$File),"__XIC"))
+          
+          ColumnNames2 <- ColumnNames
+          ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))])
+          
+          intColRange <- grep("__XIC$",colnames(feats))
+          #look for a .tGrouping file in same folder as table and load it
+          if(file.exists(gsub("\\.csv$",".tGrouping",input$modalSelect))){
+            anagroup <-read.delim(gsub("\\.csv$",".tGrouping",input$modalSelect), stringsAsFactors = F, header = T, sep = "\t")
+          }
+          #look for a .tGrouping file for this table in the entire project folder and load the first match
+          else if(length(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)) > 0){
+            anagroup <- read.delim(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)[1], stringsAsFactors = F, header = T, sep = "\t")
+          }
+          #backwards compatibility
+          else if(file.exists(file.path(values$projectData$projectFolder, "analysis_groups.csv"))){
+            anagroup <- read.csv(file.path(values$projectData$projectFolder, "analysis_groups.csv"), stringsAsFactors = F, header = T)
+            
+          }else if(all(ColumnNames %in% colnames(feats))){
+            
+            anagroup <- data.frame(Column=ColumnNames,
+                                   Group = internalValues$filegroups$Group,
+                                   stringsAsFactors = F)
+          }else if(all(ColumnNames2 %in% colnames(feats))){
+            
+            anagroup <- data.frame(Column=ColumnNames2,
+                                   Group = internalValues$filegroups$Group,
+                                   stringsAsFactors = F)
+          }
+          #no __XIC columns? No automatic grouping suggestion
+          else if(length(intColRange)==0){
+            
+            anagroup <- NULL
+            
+          }
+          
+          else{
+            
+            anagroup <- data.frame(Column=colnames(feats)[intColRange],
+                                   Group = rep("G1",(length(intColRange))),
+                                   stringsAsFactors = F)
+          }
+          incProgress(0.3, detail = "Formatting Feature Table")
+          
+          values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
+                                                                        mzcol= "mz", #column in df with mz values (columnname)
+                                                                        rtcol= "rt", #column in df with mz values (columnname)
+                                                                        commentcol = "comments",
+                                                                        fragmentcol = "fragments",
+                                                                        rtFormat = "sec", # "sec" or "min" 
+                                                                        anagrouptable = anagroup,
+                                                                        tablename = basename(input$modalSelect),
+                                                                        editable = F)
+          values$featureTables$index <- updateFTIndex(values$featureTables$tables)
+          values$featureTables$active <- tabid
+          
+        }
+        removeModal()
+        
+        
+        incProgress(0.1, detail = "loading MS data")
+        
+        if(!all(file.exists(internalValues$filegroups$File))){
+          internalValues$missingFiles <-  internalValues$filegroups$File[!file.exists(internalValues$filegroups$File)]
+          showModal(modalDialog(
+            p("These MSData files were not found:"),
+            p(paste(internalValues$missingFiles, collapse = ", ")),
+            p("Please select a folder that contains these files. Mseek will search all subfolders for matching filenames and update the information in this project folder for the next time you load it."),
+            FilePathModuleUI(ns("altfilefolder")),
+            
+            title = "File locations have changed",
+            easyClose = F,
+            fade = F,
+            size = "m",
+            footer = actionButton(ns("modalIgnore"), "Ignore") 
+          ))
+          
+        }else{
+          
+          internalValues$msLoadTrigger <- !internalValues$msLoadTrigger
+        }
+      })
       
-        internalValues$msLoadTrigger <- !internalValues$msLoadTrigger
-      }
-    })
-    
     },
     error = function(e) {
       showNotification(paste("ERROR: Something went wrong, see console for details!"), type = "error", duration = 15)
@@ -225,11 +225,11 @@ SelectProjectFolderModule <- function(input,output, session,
     
     
   })
-   
+  
   
   observeEvent(c(AltFileFolder$dir),{
     #print(AltFileFolder$dir)
-   # print("dirTrigger")
+    # print("dirTrigger")
     if(length(AltFileFolder$dir) > 0){
       
       allFiles <- list.files(AltFileFolder$dir, pattern=.MseekOptions$filePattern, recursive = TRUE, full.names=T)
@@ -258,55 +258,55 @@ SelectProjectFolderModule <- function(input,output, session,
       
     }
     
-      
-       
-   
+    
+    
+    
     
   })
   
   observeEvent(c(input$modalIgnore),{
- # print(input$modalIgnore)
+    # print(input$modalIgnore)
     print("ignoremodal triggered")
-    }, ignoreInit = T)
+  }, ignoreInit = T)
   
   observeEvent(c(internalValues$msLoadTrigger),{
     
-   # print("msLoadTrigger triggered")
+    # print("msLoadTrigger triggered")
   }, ignoreInit = T)
   
   observeEvent(c(internalValues$msLoadTrigger,  input$modalIgnore),{
     if(is.null(input$modalIgnore) || (input$modalIgnore > 0 || length(AltFileFolder$dir) > 0)){
-    if(!is.null(is.null(input$modalIgnore))){
-    removeModal()
-    }
-    
-    
-    if(!all(file.exists(internalValues$filegroups$File))){
+      if(!is.null(is.null(input$modalIgnore))){
+        removeModal()
+      }
       
-      showNotification(paste0("The following files were not found and could not be loaded: ",
-                              paste0(basename(internalValues$filegroups$File[!file.exists(internalValues$filegroups$File)]),
-                                     collapse = ", ")), type = "error", duration = 0)
-     # print("updating filegroups")
       
-      internalValues$filegroups <- internalValues$filegroups[file.exists(internalValues$filegroups$File), ]
+      if(!all(file.exists(internalValues$filegroups$File))){
+        
+        showNotification(paste0("The following files were not found and could not be loaded: ",
+                                paste0(basename(internalValues$filegroups$File[!file.exists(internalValues$filegroups$File)]),
+                                       collapse = ", ")), type = "error", duration = 0)
+        # print("updating filegroups")
+        
+        internalValues$filegroups <- internalValues$filegroups[file.exists(internalValues$filegroups$File), ]
+      }
+      if(length(internalValues$filegroups$File) > 0 ){
+        #  print("loading MS data")
+        
+        withProgress(message = 'Please wait!', detail = "Loading MS data", value = 0.8, {
+          newfiles <- internalValues$filegroups$File
+          newfiles <- newfiles[which(!newfiles %in% values$MSData$filelist)]
+          values$MSData$filelist <- unique(c(values$MSData$filelist, newfiles))
+          values$MSData$data <- c(values$MSData$data,loadRawM(newfiles, workers = values$GlobalOpts$enabledCores))
+          temp_rawgrouptable <- internalValues$filegroups #probably to avoid feeding a pointer into constructRawLayout
+          values$MSData$layouts[[basename(values$projectData$projectFolder)]] <- constructRawLayout(temp_rawgrouptable, stem = "")
+          values$MSData$index = unique(c(basename(values$projectData$projectFolder),values$MSData$index))
+          values$MSData$active =basename(values$projectData$projectFolder)
+          values$GlobalOpts$recentProjects <- as.character(na.omit(unique(c(values$projectData$projectFolder, values$GlobalOpts$recentProjects))[1:10]))
+          MseekOptions(recentProjects = values$GlobalOpts$recentProjects)
+        })
+      }
     }
-    if(length(internalValues$filegroups$File) > 0 ){
-    #  print("loading MS data")
-
-      withProgress(message = 'Please wait!', detail = "Loading MS data", value = 0.8, {
-        newfiles <- internalValues$filegroups$File
-        newfiles <- newfiles[which(!newfiles %in% values$MSData$filelist)]
-        values$MSData$filelist <- unique(c(values$MSData$filelist, newfiles))
-        values$MSData$data <- c(values$MSData$data,loadRawM(newfiles, workers = values$GlobalOpts$enabledCores))
-        temp_rawgrouptable <- internalValues$filegroups #probably to avoid feeding a pointer into constructRawLayout
-        values$MSData$layouts[[basename(values$projectData$projectFolder)]] <- constructRawLayout(temp_rawgrouptable, stem = "")
-        values$MSData$index = unique(c(basename(values$projectData$projectFolder),values$MSData$index))
-        values$MSData$active =basename(values$projectData$projectFolder)
-        values$GlobalOpts$recentProjects <- as.character(na.omit(unique(c(values$projectData$projectFolder, values$GlobalOpts$recentProjects))[1:10]))
-        MseekOptions(recentProjects = values$GlobalOpts$recentProjects)
-      })
-    }
-}
   }, ignoreInit = T)
   
   output$selrecent <- renderUI({
@@ -315,26 +315,26 @@ SelectProjectFolderModule <- function(input,output, session,
   })
   output$selrecent <- renderUI({
     if(!is.null(values$GlobalOpts$recentProjects)){
-    folist <-  as.list(values$GlobalOpts$recentProjects)
-    names(folist) <- basename(values$GlobalOpts$recentProjects)
-    
-    div(title = internalValues$selRecent,
-        fluidRow(
-          column(8,
-    selectizeInput(ns("selRecent"),"Recent projects: ", 
-                   choices= folist,
-                   selected = internalValues$selRecent
-    )),
-    column(4,
-    actionButton(ns("loadRecent"),"Load recent")
-    ))
-    
-    )
-    
+      folist <-  as.list(values$GlobalOpts$recentProjects)
+      names(folist) <- basename(values$GlobalOpts$recentProjects)
+      
+      div(title = internalValues$selRecent,
+          # fluidRow(
+          #   column(8,
+          selectizeInput(ns("selRecent"),"Recent projects: ", 
+                         choices= folist,
+                         selected = internalValues$selRecent,
+                         width = "100%"
+          )
+          #),
+          #)
+          
+      )
+      
     }
   })
   observeEvent(input$selRecent,{
-      internalValues$selRecent <- input$selRecent
+    internalValues$selRecent <- input$selRecent
     
   })
   
@@ -356,11 +356,15 @@ SelectProjectFolderModule <- function(input,output, session,
 SelectProjectFolderModuleUI <- function(id){
   
   ns <- NS(id)
- fluidPage(
-   fluidRow(
-  FilePathModuleUI(ns("pfolder"))
-   ),
-  fluidRow(
-    htmlOutput(ns('selrecent'))
-  ))
+  fluidPage(
+    htmlOutput(ns('selrecent')),
+    fluidRow(
+      
+      column(6,
+             div(title = "Load the selected recent Project",
+             actionButton(ns("loadRecent"),"Load recent"))
+      ),
+      column(6,
+             FilePathModuleUI(ns("pfolder")))
+    ))
 }

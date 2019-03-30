@@ -8,7 +8,7 @@ SaveTableModule(input, output, session, reactives = reactive({
   list(df = NULL, filename = "table.csv") }),
   values = reactiveValues(projectData = projectData, featureTables =
   NULL, MainTable = NULL), static = list(tooltip = "Save", label =
-  "Save", format = c("tsv", "csv")))
+  "Save", format = c("tsv", "csv"), allowformats = NULL))
 }
 \arguments{
 \item{input}{}

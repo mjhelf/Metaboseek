@@ -59,7 +59,9 @@ MainTableModule <- function(input,
                                      MainTable = internalValues),
              static = list(tooltip = "Save the Feature Table",
                            label = "Save Table",
-                           format = c("csv"))
+                           format = c("csv"),
+                           allowformats = list("Comma separated (.csv)" = "csv",
+                                               "Inclusion/Exclusion list" = "instrumentList"))
   )
   
   observeEvent(c(internalValues$page,
