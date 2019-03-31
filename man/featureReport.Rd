@@ -6,7 +6,7 @@
 \usage{
 featureReport(pdf_settings = list(file = "testReport.pdf", width = NULL,
   height = NULL), layout_settings = 3, EICplots = NULL, MS1 = NULL,
-  MS2 = NULL, tree = NULL)
+  MS2 = NULL, tree = NULL, cx = 1)
 }
 \arguments{
 \item{pdf_settings}{if NULL, plot to current device, otherwise takes list with items file, height and width. If height and/ or width are NULL, plot to A4 format pdf with some safeguards increasing width and hieght as necessary}

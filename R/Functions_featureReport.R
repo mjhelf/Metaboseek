@@ -16,7 +16,8 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
                           EICplots = NULL,
                           MS1 = NULL,
                           MS2 = NULL,
-                          tree = NULL){
+                          tree = NULL,
+                          cx = 1){
   
   checknum <- function(x){if(length(x) == 0){0}else{max(x)}}
   
@@ -75,7 +76,7 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
     
     if(length(lv)>0){
       
-      layout_settings <- list(mat = matrix(lv, byrow = T, ncol = nc), heights = heights)
+      layout_settings <- list(mat = matrix(lv, byrow = T, ncol = nc), heights = lcm(heights))
     }else{
       layout_settings <- NULL
     }
@@ -105,16 +106,22 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   }
   
   if(!is.null(EICplots)){
+    EICplots$cx <- cx
+    
     do.call(EICgeneral, EICplots)
+    
   }
   
   if(!is.null(MS1)){
-    do.call(specplot2, MS1)
+    MS1$cx <- cx
+    MS1$mar <- c(2.7,2,4,0.5)
+    do.call(specplot, MS1)
   }
   
   if(!is.null(MS2)){
-    
-    do.call(specplot2, MS2)
+    MS2$cx <- cx
+    MS2$mar <- c(2.7,2,4,0.5)
+    do.call(specplot, MS2)
   }
   
   if(!is.null(tree)){

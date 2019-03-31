@@ -5,8 +5,7 @@
 \title{EICgeneral}
 \usage{
 EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
-  glist = MSData$layouts[[MSData$active]]$grouping,
-  cols = MSData$layouts[[MSData$active]]$settings$cols,
+  glist = MSData$layouts[[MSData$active]]$grouping, cols = NULL,
   colrange = MSData$layouts[[MSData$active]]$settings$colr,
   transparency = MSData$layouts[[MSData$active]]$settings$alpha,
   RTall = input$RTtoggle, TICall = input$TICtoggle,

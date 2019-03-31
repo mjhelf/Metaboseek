@@ -30,9 +30,11 @@ FeatureReportModule <- function(input,output, session,
     
     return(paste0(titleout,".pdf"))}, 
     content = function(file){
+      grp <- if(!is.null(values$GlobalOpts$groupBy)
+                && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
       
       featureReport(pdf_settings = list(file = file, width = NULL, height = NULL),
-                    layout_settings = 3,
+                    layout_settings = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
                     EICplots = plotEngine(),
                     MS1 = iSpec1()$plotArgs,
                     MS2 = NULL,
@@ -46,8 +48,8 @@ FeatureReportModule <- function(input,output, session,
   
   
  plotEngine <- reactive({
+
     if(!is.null(values$MSData$data) && !is.null(values$MSData$layouts[[values$MSData$active]]$grouping)){
-      
       rtmid <- if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
       mzmid <- if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]}
       RTall <- values$GlobalOpts$RTtoggle
@@ -123,7 +125,6 @@ FeatureReportModule <- function(input,output, session,
 
       grp <- if(!is.null(values$GlobalOpts$groupBy)
                 && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
-      
       list(rtmid = rtmid,
                  mzmid = mzmid,
                  glist = values$MSData$layouts[[values$MSData$active]][[grp]],

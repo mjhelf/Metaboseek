@@ -34,7 +34,7 @@
 EICgeneral <- function(rtmid = combino()[,"rt"],
                        mzmid = combino()[,"mz"],
                        glist = MSData$layouts[[MSData$active]]$grouping,
-                       cols = MSData$layouts[[MSData$active]]$settings$cols,
+                       cols = NULL,
                        colrange = MSData$layouts[[MSData$active]]$settings$colr,
                        transparency = MSData$layouts[[MSData$active]]$settings$alpha,
                        RTall = input$RTtoggle,
