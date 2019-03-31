@@ -6,7 +6,8 @@
 \usage{
 specplot(x = sc[, 1], y = sc[, 2], norm = max(y)/100, cx = 1.5,
   k = 10, fileName = "title", yrange = c(0, 100),
-  xrange = range(x), maxi = max(y), mar = c(4, 6, 6, 2))
+  xrange = range(x), maxi = max(y), labels = NULL, mar = c(4, 6, 6,
+  2), ylab = "Relative Intensity (\%)", ylabshift = 0)
 }
 \arguments{
 \item{x}{mz coordinates}
@@ -26,6 +27,14 @@ specplot(x = sc[, 1], y = sc[, 2], norm = max(y)/100, cx = 1.5,
 \item{xrange}{x axis range}
 
 \item{maxi}{max intensity to be plotted on side}
+
+\item{labels}{data.frame containing at least x and y coordinates, plus optional columns: label and color}
+
+\item{mar}{margins passed to par()}
+
+\item{ylab}{y axis label}
+
+\item{ylabshift}{shift horizontal position of y axis label}
 }
 \description{
 Plot an MS spectrum
