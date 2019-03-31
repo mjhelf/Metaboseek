@@ -43,18 +43,18 @@ MS2BrowserModule <- function(input,output, session,
     fluidRow(
       column(3,
              div(title = "m/z tolerance for MS2 scan search (ppm)",
-             numericInput(ns('ppmSearch'), "ppm", value = 5))),
+                 numericInput(ns('ppmSearch'), "ppm", value = 5))),
       column(3,
              div(title = "RT tolerance for MS2 scan search (seconds)",
                  
-             numericInput(ns('rtSearch'), "seconds", value = 60))
-             ),
+                 numericInput(ns('rtSearch'), "seconds", value = 60))
+      ),
       column(3,
              ShowSiriusModuleUI(ns("showSirius"))
-             ),
+      ),
       column(3,
              GetSiriusModuleUI(ns("getSirius"))
-             )
+      )
     )
   })
   
@@ -147,8 +147,8 @@ MS2BrowserModule <- function(input,output, session,
   
   
   Sirius <- callModule(SiriusModule,"sirius",
-                     values = reactiveValues(
-                       GlobalOpts = values$GlobalOpts))
+                       values = reactiveValues(
+                         GlobalOpts = values$GlobalOpts))
   
   
   
@@ -157,20 +157,20 @@ MS2BrowserModule <- function(input,output, session,
     res <- list()
     if(!is.null(internalValues$spectab)){
       if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
-      #print(internalValues$spectab)
-      res$stab <- internalValues$spectab
-    
+        #print(internalValues$spectab)
+        res$stab <- internalValues$spectab
+        
       }else{
         res$stab <- internalValues$spectab[selectScan()$props$selected_rows,]
-    }
-
+      }
+      
       AllSpecLists <- lapply(list(res$stab), getAllScans, values$MSData$data, removeNoise = 0)
       
       res$MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
       
       res$splashtag <- sapply(res$MergedSpecs, getSplash)
       
-      }
+    }
     else{
       res$splashtag <- NULL
     }
@@ -184,29 +184,29 @@ MS2BrowserModule <- function(input,output, session,
                                      GlobalOpts = values$GlobalOpts),
              reactives = reactive({
                if(!is.null(splashsource()$stab) && !is.null(values$GlobalOpts$siriusFolder)){
-               list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
-                    ms2 = splashsource()$MergedSpecs,
-                    instrument = values$GlobalOpts$SiriusSelInstrument,
-                    parentmz = mean(splashsource()$stab$parentMz),
-                    rt = mean(splashsource()$stab$rt),
-                    comments = "",
-                    ion = values$GlobalOpts$SiriusSelIon,
-                    charge= if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
-                    fingerid = values$GlobalOpts$SiriusCheckFinger,
-                    scanindices = saveScanlist(splashsource()$stab),
-                    
-                    sirpath = list.files(values$GlobalOpts$siriusFolder,
-                                         pattern = if(Sys.info()['sysname'] == "Windows"){
-                                           "^sirius-console"}else{"^sirius$"},
-                                         full.names = T,
-                                         recursive = T)[1],
-                    
-                    moreOpts = paste0("-c 50 --fingerid-db bio -e ", values$GlobalOpts$SiriusElements))
+                 list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
+                      ms2 = splashsource()$MergedSpecs,
+                      instrument = values$GlobalOpts$SiriusSelInstrument,
+                      parentmz = mean(splashsource()$stab$parentMz),
+                      rt = mean(splashsource()$stab$rt),
+                      comments = "",
+                      ion = values$GlobalOpts$SiriusSelIon,
+                      charge= if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
+                      fingerid = values$GlobalOpts$SiriusCheckFinger,
+                      scanindices = saveScanlist(splashsource()$stab),
+                      
+                      sirpath = list.files(values$GlobalOpts$siriusFolder,
+                                           pattern = if(Sys.info()['sysname'] == "Windows"){
+                                             "^sirius-console"}else{"^sirius$"},
+                                           full.names = T,
+                                           recursive = T)[1],
+                      
+                      moreOpts = paste0("-c 50 --fingerid-db bio -e ", values$GlobalOpts$SiriusElements))
                }else{
                  
                  NULL
                }
-              
+               
              }))
   
   callModule(ShowSiriusModule, "showSirius",
@@ -364,23 +364,42 @@ MS2BrowserModuleUI <-  function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      SiriusModuleUI(ns("sirius"))
-    ),
+      tabBox(title = "MS2 Browser",
+             id = ns("MS2Tabs"), width = 12, side = "left", selected = "Feature Report",
+             # tabsetPanel(id = ns("MS2Tabs"),
+             tabPanel("_"),
+             tabPanel("Feature Report",
+                      fluidPage(
+                        fluidRow(
+                          SiriusModuleUI(ns("sirius"))
+                        ))
+             ),
+             tabPanel("Compare MS2",
+                      fluidPage(
+                        fluidRow(
+                          column(7,
+                                 htmlOutput(ns("network"))),
+                          column(5,
+                                 box(width = 12, status= "primary",
+                                     MultiSpecmoduleUI(ns('Spec2'))))
+                        ))
+             )
+             
+      )),
+    
+    
     fluidRow(
-      column(6,
-             fluidRow(
-               htmlOutput(ns("network"))),
-             
-             htmlOutput(ns("searchcontrol")),
-             
-             fluidRow(
-               TableModuleUI(ns('scantab'))
-             )
-      ),
-      column(6,
-             fluidRow(
-               MultiSpecmoduleUI(ns('Spec2'))
-             )
+      box(width = 12, status= "primary",
+          
+          fluidPage(
+            
+            htmlOutput(ns("searchcontrol")),
+            fluidRow(
+              TableModuleUI(ns('scantab'))
+            )
+          )
+          
+          
       )
     )
   )
