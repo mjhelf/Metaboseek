@@ -150,6 +150,12 @@ MS2BrowserModule <- function(input,output, session,
                        values = reactiveValues(
                          GlobalOpts = values$GlobalOpts))
   
+  FReport <- callModule(FeatureReportModule, "freport",values = reactiveValues(MSData = values$MSData,
+                                                                               MainTable = values$MainTable,
+                                                                               featureTables = values$featureTables,
+                                                                               GlobalOpts = values$GlobalOpts),
+                        keys = reactive({keyin$keyd}))
+  
   
   
   
@@ -370,6 +376,9 @@ MS2BrowserModuleUI <-  function(id){
              tabPanel("_"),
              tabPanel("Feature Report",
                       fluidPage(
+                        fluidRow(
+                          FeatureReportModuleUI(ns("freport")) 
+                        ),
                         fluidRow(
                           SiriusModuleUI(ns("sirius"))
                         ))

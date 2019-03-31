@@ -45,6 +45,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         ymax = 100,
                                                         MSmerge = NULL,
                                                         fullplot = NULL),
+                                            
+                                                        plotArgs = NULL,
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
@@ -317,7 +319,16 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         }
       }else{""}
       
-      
+      selections$plots$plotArgs <- list(x=selections$plots$spec$data[,1],
+                                           y=selections$plots$spec$data[,2],
+                                           norm=selections$plots$spec$ymax/100,
+                                           cx=set()$layout$cex/1.5,
+                                           k = 20,
+                                           fileName = label,
+                                           yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
+                                           xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
+                                           maxi = selections$plots$spec$ymax
+      )
       
       specplot(x=selections$plots$spec$data[,1],
                y=selections$plots$spec$data[,2],
@@ -359,6 +370,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       selections$plots$spec$fullplot <- recordPlot()
       
+    }else{
+      selections$plots$plotArgs <- NULL 
     }
   })#, height = if(is.null(set()$layout$height)){550}else{set()$layout$height})
   

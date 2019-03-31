@@ -37,8 +37,11 @@ Imports: Biobase,
     VennDiagram,
     xcms (>= 3.0)
 Suggests: covr,
+    DiagrammeRsvg,
     knitr,
     rmarkdown,
+    rsvg,
     testthat,
-    shinytest
+    shinytest,
+    xml2
 VignetteBuilder: knitr
