@@ -249,7 +249,26 @@ MS2BrowserModule <- function(input,output, session,
     }
   })
   
-  specEngine <- reactive({list(spec = list(xrange = NULL,
+  specEngine <- reactive({
+    
+    moreArgs <- list(k = 20)
+    if(length(Sirius$activeMF)>0 && !is.null(Sirius$activeMF[["trees_json"]]) && length(Sirius$activeMF[["trees_json"]]$fragments)> 0){
+      fragments <- Sirius$activeMF[["trees_json"]]
+    
+      inttemp <- sapply(fragments$fragments,function(x){x$relativeIntensity})
+      mztemp <- sapply(fragments$fragments,function(x){x$mz})
+      labs <- paste0(format(round(mztemp,5),nsmall = 5, scientific = F), " (", sapply(fragments$fragments,function(x){x$molecularFormula}), ")")
+      
+      if(any(inttemp>0)){
+        moreArgs$labels <- data.frame(x = mztemp[inttemp>=0.02],
+                                 y = inttemp[inttemp>=0.02]*100,
+                                 label = labs[inttemp>=0.02],
+                                 stringsAsFactors = F)
+      }
+    
+    }
+    
+    list(spec = list(xrange = NULL,
                              yrange = NULL,
                              maxxrange = NULL,
                              maxyrange = NULL,
@@ -277,7 +296,10 @@ MS2BrowserModule <- function(input,output, session,
                                ){T}else{F},
                                highlights = NULL,
                                height = 350),
-                 msdata = values$MSData$data)
+                 msdata = values$MSData$data,
+                 moreArgs = moreArgs)
+    
+    
   })
   
   iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = ns("Spec2"),
@@ -291,6 +313,8 @@ MS2BrowserModule <- function(input,output, session,
                                                                                GlobalOpts = values$GlobalOpts),
                         MS2feed = specEngine,
                         tree = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_dot"]]}else{NULL}}),
+                        fragments = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_json"]]}else{NULL}}),
+                        
                         keys = reactive({keys()}))
   
   internalValues <- reactiveValues(iSpec2 = iSpec2,

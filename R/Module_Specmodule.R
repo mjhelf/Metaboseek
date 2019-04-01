@@ -28,7 +28,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                             active = T,
                                                                             highlights = NULL,
                                                                             height = 550),
-                                                              msdata = NULL),
+                                                              msdata = NULL,
+                                                              moreArgs = NULL),
                        keys){
   
   ns <- NS(tag)
@@ -320,7 +321,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         }
       }else{""}
       
-      selections$plots$plotArgs <- list(x=selections$plots$spec$data[,1],
+       tempArgs <- list(x=selections$plots$spec$data[,1],
                                            y=selections$plots$spec$data[,2],
                                            norm=selections$plots$spec$ymax/100,
                                            cx=set()$layout$cex/1.5,
@@ -331,16 +332,26 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                            maxi = selections$plots$spec$ymax
       )
       
-      specplot(x=selections$plots$spec$data[,1],
-               y=selections$plots$spec$data[,2],
-               norm=selections$plots$spec$ymax/100,
-               cx=set()$layout$cex/1.5,
-               k = 20,
-               fileName = label,
-               yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
-               xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
-               maxi = selections$plots$spec$ymax
-      ) 
+      if(!is.null(set()$moreArgs)){
+       
+        for(i in names(set()$moreArgs)){
+          tempArgs[[i]] <- set()$moreArgs[[i]]
+        }
+         
+      }
+      selections$plots$plotArgs <- tempArgs
+      do.call(specplot,tempArgs)
+        
+      #   specplot(x=selections$plots$spec$data[,1],
+      #          y=selections$plots$spec$data[,2],
+      #          norm=selections$plots$spec$ymax/100,
+      #          cx=set()$layout$cex/1.5,
+      #          k = 20,
+      #          fileName = label,
+      #          yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
+      #          xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
+      #          maxi = selections$plots$spec$ymax
+      # ) 
       
       par(xpd = FALSE)
       if(!is.null(selections$plots$spec$hover)){

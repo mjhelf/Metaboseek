@@ -18,6 +18,7 @@ FeatureReportModule <- function(input,output, session,
                                                            GlobalOpts = GlobalOpts),
                                 MS2feed = NULL,
                                 tree = NULL,
+                                fragments = NULL,
                              keys = reactive({keyin$keyd})
 ){
   
@@ -32,6 +33,10 @@ FeatureReportModule <- function(input,output, session,
     
     return(paste0(titleout,".pdf"))}, 
     content = function(file){
+      
+      # if(!is.null(fragments)){
+      #   print(fragments()$fragments)}
+      
       grp <- if(!is.null(values$GlobalOpts$groupBy)
                 && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
       
@@ -41,7 +46,14 @@ FeatureReportModule <- function(input,output, session,
                     MS1 = iSpec1()$plotArgs,
                     MS2 = MS2spec()$plotArgs,
                     tree = list(tree = tree(),
-                                resolution = 5000))
+                                resolution = 5000),
+                    fragments = if(!is.null(fragments)){
+                      fragments()
+                      }else{NULL},
+                    
+                    selectMS2 = if(is.null(MS2feed()$spec$sel)){NULL}
+                                else{names(values$MSData$data)[basename(names(values$MSData$data)) %in% basename(MS2feed()$spec$sel$File)]}
+                      )
       
     },
     
@@ -296,7 +308,8 @@ FeatureReportModule <- function(input,output, session,
                                               active = T, #input$ShowSpec,
                                               highlights = NULL,
                                               height = 350),
-                                msdata = values$MSData$data)
+                                msdata = values$MSData$data,
+                                moreArgs = list(k = 10))
                            
                            
                            

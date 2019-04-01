@@ -6,7 +6,8 @@
 \usage{
 featureReport(pdf_settings = list(file = "testReport.pdf", width = NULL,
   height = NULL), layout_settings = 3, EICplots = NULL, MS1 = NULL,
-  MS2 = NULL, tree = NULL, cx = 1)
+  MS2 = NULL, tree = NULL, fragments = NULL, cx = 1,
+  selectMS2 = NULL)
 }
 \arguments{
 \item{pdf_settings}{if NULL, plot to current device, otherwise takes list with items file, height and width. If height and/ or width are NULL, plot to A4 format pdf with some safeguards increasing width and hieght as necessary}
@@ -20,6 +21,8 @@ featureReport(pdf_settings = list(file = "testReport.pdf", width = NULL,
 \item{MS2}{list of arguments passed to specplot()}
 
 \item{tree}{list of arguments passed to plotTree()}
+
+\item{selectMS2}{if not NULL, and if one of the groups in EICplots is called "MS2", only the EIC for this file will be shown in the MS2 EIC group}
 }
 \description{
 featureReport

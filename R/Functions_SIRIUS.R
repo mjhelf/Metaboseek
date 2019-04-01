@@ -230,10 +230,10 @@ getSirius <- function(outfolder, splash, ts){
                                          full.names = T, recursive = T),
                               value = T)
   
-  # res[["trees_json"]] <-  grep(".json$",
-  #                              list.files(file.path(dirname(res[["summary"]]), "trees"),
-  #                                         full.names = T, recursive = T),
-  #                              value = T)
+  res[["trees_json"]] <-  grep(".json$",
+                               list.files(file.path(dirname(res[["summary"]]), "trees"),
+                                          full.names = T, recursive = T),
+                               value = T)
   
   res[["summary_fingerid"]] <-  grep(paste0("summary_csi_fingerid.csv"),res[["allfiles"]],value = T)
   
@@ -258,6 +258,7 @@ getSirius <- function(outfolder, splash, ts){
 #' @param formula molecular formula prediction to get details for
 #' 
 #' @importFrom data.table fread
+#' @importFrom jsonlite read_json
 #' 
 getSiriusTree <- function(paths, formula){
   
@@ -273,9 +274,9 @@ getSiriusTree <- function(paths, formula){
                                                paths[["trees_dot"]],
                                                value = T))
   
-  # res[["trees_json"]] <-   read_json(grep(paste0("_",formula,"_"),
-  #                                         paths[["trees_json"]],
-  #                                         value = T))
+  res[["trees_json"]] <-   read_json(grep(paste0("_",formula,"_"),
+                                          paths[["trees_json"]],
+                                          value = T))
   # 
   # res[["fingerids"]] <-  read.delim(grep(paste0("_",formula,"_"),
   #                                        paths[["fingerids"]],

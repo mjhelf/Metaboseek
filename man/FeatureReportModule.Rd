@@ -7,7 +7,8 @@
 FeatureReportModule(input, output, session,
   values = reactiveValues(MSData = MSData, MainTable = MainTable,
   featureTables = featureTables, GlobalOpts = GlobalOpts),
-  MS2feed = NULL, tree = NULL, keys = reactive({     keyin$keyd }))
+  MS2feed = NULL, tree = NULL, fragments = NULL, keys = reactive({ 
+     keyin$keyd }))
 }
 \arguments{
 \item{input}{}

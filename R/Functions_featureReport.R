@@ -7,6 +7,7 @@
 #' @param MS1 list of arguments passed to specplot()
 #' @param MS2 list of arguments passed to specplot()
 #' @param tree list of arguments passed to plotTree()
+#' @param selectMS2 if not NULL, and if one of the groups in EICplots is called "MS2", only the EIC for this file will be shown in the MS2 EIC group
 #' 
 #'
 #' @export
@@ -16,7 +17,9 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
                           MS1 = NULL,
                           MS2 = NULL,
                           tree = NULL,
-                          cx = 1){
+                          fragments = NULL,
+                          cx = 1,
+                          selectMS2 = NULL){
   
   checknum <- function(x){if(length(x) == 0){0}else{max(x)}}
   
@@ -109,6 +112,37 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   }
   
   if(!is.null(EICplots)){
+    
+    if(!is.null(selectMS2) && "MS2" %in% names(EICplots$glist)){
+      
+
+      MS2here <-  which(EICplots$glist$MS2 %in% selectMS2)
+      
+      #this way making sure all selected items were in original list
+      EICplots$glist$MS2 <- EICplots$glist$MS2[MS2here]
+      
+
+      if(is.list(EICplots$colrange)){
+        
+        #remove the group if no match
+        if(length(EICplots$glist$MS2) == 0){
+          EICplots$colrange <- EICplots$colrange[names(EICplots$colrange) != "MS2"]
+        }else{
+        
+        EICplots$colrange$MS2 <- EICplots$colrange$MS2[MS2here,]
+        EICplots$colrange$MS2$label <- sub("^([^.]*).*", "\\1",basename(EICplots$glist$MS2))
+        }
+      }
+      #remove the group if no match
+      if(length(EICplots$glist$MS2) == 0){
+        EICplots$glist <- EICplots$glist[names(EICplots$glist) != "MS2"]
+      }
+      
+     
+      
+    }
+    
+    
     EICplots$cx <- cx
     EICplots$margins <- c(2.7,2,4,0.5)
     EICplots$ylabshift <- 2.2
@@ -127,6 +161,22 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   }
   
   if(!is.null(MS2)){
+    
+    if(!is.null(fragments) && length(fragments$fragments)> 0){
+
+      inttemp <- sapply(fragments$fragments,function(x){x$relativeIntensity})
+      mztemp <- sapply(fragments$fragments,function(x){x$mz})
+      labs <- paste0(format(round(mztemp,5),nsmall = 5, scientific = F), " (", sapply(fragments$fragments,function(x){x$molecularFormula}), ")")
+      
+      if(any(inttemp>0)){
+      MS2$labels <- data.frame(x = mztemp[inttemp>=0.02],
+                               y = inttemp[inttemp>=0.02]*100,
+                               label = labs[inttemp>=0.02],
+                               stringsAsFactors = F)
+      }
+      
+                     }
+    
     MS2$cx <- cx
     MS2$mar <- c(2.7,2,4,0.5)
     MS1$ylabshift = 2.2
@@ -136,7 +186,7 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
     do.call(specplot, MS2)
   }
   
-  if(!is.null(tree)){
+  if(!is.null(tree) && !is.null(tree$tree)){
     do.call(plotTree, tree)
     
   }

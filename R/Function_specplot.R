@@ -101,7 +101,8 @@ specplot <- function (x=sc[,1],
     
     labs <- labs[!duplicated(round(labs$x,5)),]
   }
-  
+  print(labels)
+  print(labs)
   
   if(nrow(labs) > 0 ){
     par(xpd=NA)
