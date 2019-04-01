@@ -91,5 +91,9 @@ PlotWindow <- function(cx = 1,
   
   Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
   
-  title(main=heading, line=2, cex.main = cx, adj = textadj)
+  # text(max(xlim), max(ylim)+1.5*strheight("M"),
+  #      labels = heading, bty="n",
+  #      font = 2, cex=cx*1, adj = textadj)
+  # 
+ title(main=heading, line=2, cex.main = cx, adj = textadj)
 }

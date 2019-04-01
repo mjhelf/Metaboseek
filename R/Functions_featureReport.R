@@ -9,7 +9,6 @@
 #' @param tree list of arguments passed to plotTree()
 #' 
 #'
-#'
 #' @export
 featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = NULL, height = NULL),
                           layout_settings = 3,
@@ -57,7 +56,7 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
       }else{
         
         ms1w <- ceiling(nc/4)
-        ms2w <- nc - ms1w
+        ms2w <- max(1, nc - ms1w)
         lv <- c(lv, rep(checknum(lv)+1, ms1w), rep(checknum(lv)+2, ms2w))
         
         
@@ -69,14 +68,18 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
       lv <- c(lv, rep(checknum(lv)+1, nc))
     }
     
-    heights <- rep(5,length(lv)/nc)
+    heights <- rep(5.5,length(lv)/nc)
     if(!is.null(tree)){
-      heights[length(heights)] <- 10 
+      heights[length(heights)] <- 11 
     }
     
     if(length(lv)>0){
       
       layout_settings <- list(mat = matrix(lv, byrow = T, ncol = nc), heights = lcm(heights))
+      
+      #print(matrix(lv, byrow = T, ncol = nc))
+     # print(lcm(heights))
+      
     }else{
       layout_settings <- NULL
     }
@@ -107,6 +110,10 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   
   if(!is.null(EICplots)){
     EICplots$cx <- cx
+    EICplots$margins <- c(2.7,2,4,0.5)
+    EICplots$ylabshift <- 2.2
+    EICplots$relPlot = T
+    EICplots$raise = T
     
     do.call(EICgeneral, EICplots)
     
@@ -115,12 +122,17 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   if(!is.null(MS1)){
     MS1$cx <- cx
     MS1$mar <- c(2.7,2,4,0.5)
+    MS1$ylabshift = 2.2
     do.call(specplot, MS1)
   }
   
   if(!is.null(MS2)){
     MS2$cx <- cx
     MS2$mar <- c(2.7,2,4,0.5)
+    MS1$ylabshift = 2.2
+    if(!is.null(MS1)){
+      MS2$ylab = ""
+      }
     do.call(specplot, MS2)
   }
   
@@ -143,12 +155,14 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
 #' @param tree DiagrammeR::grViz output object
 #' @param resolution resolution  of the image along its longest edge
 #'
-plotTree <- function(tree, resolution = 2000){
+plotTree <- function(tree, resolution = 2000, filename= NULL){
   
   
-  fn <- paste0(digest("a", algo = "xxhash32", seed = runif(1)*10000),'_temp.png')
+#  fn <- paste0(digest("a", algo = "xxhash32", seed = runif(1)*10000),'_temp.png')
   
   cc <- (DiagrammeRsvg::export_svg(tree))
+  
+ 
   
   dat <- xml2::read_xml(cc)
   xml2::xml_ns_strip( dat )
@@ -157,7 +171,20 @@ plotTree <- function(tree, resolution = 2000){
   hi <- as.numeric(gsub("pt","",datdims[[1]]["height"]))
   ar <- hi/wi
   
-  rsvg::rsvg_png(charToRaw(cc),fn, width = resolution, height = ar*resolution)
+  
+   if(!is.null(filename)){
+     rsvg::rsvg_pdf(charToRaw(cc),
+                    file = filename,
+                    #fn,
+                    width = wi, height = hi)
+     
+    
+    }else{
+ cap <- rsvg::rsvg_png(charToRaw(cc),
+                       file = NULL,
+                       #fn,
+                       width = resolution, height = ar*resolution)
+ 
   
   par(#mfrow=c(1,2),
     #oma=c(0,2,0,0),
@@ -174,14 +201,10 @@ plotTree <- function(tree, resolution = 2000){
        type = "n", ann = FALSE, bty = "n", axes = F, asp = 1)
   
   
-  imp <- png::readPNG('test3.png')
-  
-  pic <- png::readPNG(fn)
-  if(file.exists(fn)){
-    cap <- file.remove(fn)
-  }
+  pic <- png::readPNG(cap)#fn)
+ 
   
   rasterImage(pic, 0, 0,wi,hi,interpolate = T)
-  
+    }
   
 }

@@ -14,7 +14,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   rdata = MSData$data, pdfFile = file, leadingTIC = T, lw = 1,
   adducts = c(0), cx = 1, midline = T, yzoom = 1,
   RTcorrect = NULL, importEIC = NULL, globalYmax = NULL,
-  subtitles = NULL, raise = F, relPlot = F)
+  subtitles = NULL, raise = F, relPlot = F, margins = NULL,
+  ylabshift = 0)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
@@ -60,6 +61,10 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 \item{raise}{if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.}
 
 \item{relPlot}{if TRUE, y-axis will show relative intensities}
+
+\item{margins}{manual setting for plot margins (par$mar)}
+
+\item{ylabshift}{shift horizontal position of y axis label}
 
 \item{exportmode}{if TRUE, $EIC list is exported along with $plot (as list)}
 }

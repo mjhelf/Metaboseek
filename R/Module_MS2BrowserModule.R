@@ -150,11 +150,7 @@ MS2BrowserModule <- function(input,output, session,
                        values = reactiveValues(
                          GlobalOpts = values$GlobalOpts))
   
-  FReport <- callModule(FeatureReportModule, "freport",values = reactiveValues(MSData = values$MSData,
-                                                                               MainTable = values$MainTable,
-                                                                               featureTables = values$featureTables,
-                                                                               GlobalOpts = values$GlobalOpts),
-                        keys = reactive({keyin$keyd}))
+ 
   
   
   
@@ -253,41 +249,49 @@ MS2BrowserModule <- function(input,output, session,
     }
   })
   
+  specEngine <- reactive({list(spec = list(xrange = NULL,
+                             yrange = NULL,
+                             maxxrange = NULL,
+                             maxyrange = NULL,
+                             sel = if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
+                               #print(internalValues$spectab)
+                               list(File = internalValues$spectab$file,
+                                    scan = internalValues$spectab$scan,
+                                    rt = internalValues$spectab$rt)
+                             }else{
+                               list(File = internalValues$spectab$file[selectScan()$props$selected_rows],
+                                    scan = internalValues$spectab$scan[selectScan()$props$selected_rows],
+                                    rt = internalValues$spectab$rt[selectScan()$props$selected_rows])
+                             },
+                             data = NULL,
+                             mz =  if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
+                               mean(internalValues$spectab$parentMz)}else{
+                                 internalValues$spectab$parentMz[selectScan()$props$selected_rows[1]]},
+                             MS2 = T),
+                 layout = list(lw = 1,
+                               cex = 1.5,
+                               controls = F,
+                               ppm = 5,
+                               active = if(!is.null(internalValues$spectab) 
+                                           #&& !is.null(selectScan()$props$selected_rows)
+                               ){T}else{F},
+                               highlights = NULL,
+                               height = 350),
+                 msdata = values$MSData$data)
+  })
   
   iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = ns("Spec2"),
-                       set = reactive({list(spec = list(xrange = NULL,
-                                                        yrange = NULL,
-                                                        maxxrange = NULL,
-                                                        maxyrange = NULL,
-                                                        sel = if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
-                                                          #print(internalValues$spectab)
-                                                          list(File = internalValues$spectab$file,
-                                                               scan = internalValues$spectab$scan,
-                                                               rt = internalValues$spectab$rt)
-                                                        }else{
-                                                          list(File = internalValues$spectab$file[selectScan()$props$selected_rows],
-                                                               scan = internalValues$spectab$scan[selectScan()$props$selected_rows],
-                                                               rt = internalValues$spectab$rt[selectScan()$props$selected_rows])
-                                                        },
-                                                        data = NULL,
-                                                        mz =  if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
-                                                          mean(internalValues$spectab$parentMz)}else{
-                                                            internalValues$spectab$parentMz[selectScan()$props$selected_rows[1]]},
-                                                        MS2 = T),
-                                            layout = list(lw = 1,
-                                                          cex = 1.5,
-                                                          controls = F,
-                                                          ppm = 5,
-                                                          active = if(!is.null(internalValues$spectab) 
-                                                                      #&& !is.null(selectScan()$props$selected_rows)
-                                                          ){T}else{F},
-                                                          highlights = NULL,
-                                                          height = 350),
-                                            msdata = values$MSData$data)
-                       }),
+                       set = specEngine,
                        keys = reactive({keys()}),
                        static = list(title = "MS2 spectra")
   )
+  FReport <- callModule(FeatureReportModule, "freport",values = reactiveValues(MSData = values$MSData,
+                                                                               MainTable = values$MainTable,
+                                                                               featureTables = values$featureTables,
+                                                                               GlobalOpts = values$GlobalOpts),
+                        MS2feed = specEngine,
+                        tree = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_dot"]]}else{NULL}}),
+                        keys = reactive({keys()}))
   
   internalValues <- reactiveValues(iSpec2 = iSpec2,
                                    selectScan = selectScan,

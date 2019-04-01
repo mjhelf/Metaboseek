@@ -4,7 +4,7 @@
 \alias{plotTree}
 \title{plotTree}
 \usage{
-plotTree(tree, resolution = 2000)
+plotTree(tree, resolution = 2000, filename = NULL)
 }
 \arguments{
 \item{tree}{DiagrammeR::grViz output object}

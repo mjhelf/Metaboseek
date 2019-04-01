@@ -29,6 +29,8 @@
 #' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
 #' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
 #' @param relPlot if TRUE, y-axis will show relative intensities
+#' @param margins manual setting for plot margins (par$mar)
+#' @param ylabshift shift horizontal position of y axis label 
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -54,7 +56,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        globalYmax = NULL,
                        subtitles = NULL,
                        raise = F,
-                       relPlot = F
+                       relPlot = F,
+                       margins = NULL,
+                       ylabshift = 0
 ){
   #number of plot rows
   if(!is.null(cols)){
@@ -154,7 +158,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                                cx = cx,
                                adductLabs = 0),
               raise,
-              relPlot
+              relPlot,
+              margins,
+              ylabshift
     )
   }
   
@@ -215,7 +221,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              cx = cx,
                              adductLabs = adducts),
             raise,
-            relPlot
+            relPlot,
+            margins,
+            ylabshift
   )
   if(!is.null(pdfFile)){dev.off()}
   
@@ -301,6 +309,8 @@ EICtitles <- function(mzs, rts, ppm){
 #' @param compProps.adductLabs adduct labels (nonfunctional)
 #' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
 #' @param relPlot if TRUE, y-axis will show relative intensities
+#' @param margins manual setting for plot margins (par$mar)
+#' @param ylabshift shift horizontal position of y axis label 
 #' 
 #' @export
 groupPlot <- function(EIClist = res,
@@ -324,7 +334,9 @@ groupPlot <- function(EIClist = res,
                                        cx = 1,
                                        adductLabs = c("0","1","2")),
                       raise = F,
-                      relPlot = F
+                      relPlot = F,
+                      margins = NULL,
+                      ylabshift = 0
 ){
   
   #majoritem is the EIClist top level (typically by mz, but could be)
@@ -355,7 +367,7 @@ groupPlot <- function(EIClist = res,
         oma=compProps$oma,
         xpd=compProps$xpd,
         bg=compProps$bg,
-        mar = c(2.6*(1+(compProps$cx-1)/2),4.1*(1+(compProps$cx-1)/4),4.1,2.1))
+        mar = if(is.null(margins) ){ c(2.6*(1+(compProps$cx-1)/2),4.1*(1+(compProps$cx-1)/4),4.1,2.1)}else{margins})
     # layout(t(as.matrix(c(1,2))))
     
     for(plotgroup in c(1:length(grouping))){
@@ -420,7 +432,8 @@ groupPlot <- function(EIClist = res,
               TIC = plotProps$TIC,
               lw = plotProps$lw,
               midline = plotProps$midline[majoritem],
-              yzoom = plotProps$yzoom
+              yzoom = plotProps$yzoom,
+              ylabshift = ylabshift
               #mfrow=c(1,2)
       ) 
       # }
@@ -476,6 +489,7 @@ groupPlot <- function(EIClist = res,
 #' @param midline numeric() of y-axis positions where a dotted vertical line should be plotted
 #' @param lw line width for plot lines
 #' @param yzoom zoom factor into y-axis
+#' @param ylabshift shift horizontal position of y axis label 
 #' 
 #' @export
 
@@ -491,7 +505,8 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
                     single = F,
                     midline = 100,
                     lw = 1,
-                    yzoom = 1
+                    yzoom = 1,
+                    ylabshift = 0
 ){
   
   suppressWarnings({
@@ -521,7 +536,8 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
              single,
              ysci = if(!is.null(relto) && relto != 1){F}else{T},
              liwi = lw,
-             ylab = if(!is.null(relto) && relto != 1){"Relative Intensity (%)"}else{"Intensity"}
+             ylab = if(!is.null(relto) && relto != 1){"Relative Intensity (%)"}else{"Intensity"},
+             ylabshift = ylabshift
   )
   
   if(length(midline)> 0 ){
@@ -541,7 +557,7 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
   abline(v=min(xlim), h=min(ylim))
   
   par(xpd=NA)
-  text(min(xlim), 1.05*max(ylim),
+  text(min(xlim), max(ylim)+1.5*strheight("M"),
        labels = maxint, bty="n",
        font = 2, cex=cx*1)
   

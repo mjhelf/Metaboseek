@@ -16,6 +16,8 @@ FeatureReportModule <- function(input,output, session,
                                                            MainTable = MainTable,
                                                            featureTables = featureTables,
                                                            GlobalOpts = GlobalOpts),
+                                MS2feed = NULL,
+                                tree = NULL,
                              keys = reactive({keyin$keyd})
 ){
   
@@ -37,8 +39,24 @@ FeatureReportModule <- function(input,output, session,
                     layout_settings = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
                     EICplots = plotEngine(),
                     MS1 = iSpec1()$plotArgs,
-                    MS2 = NULL,
-                    tree = NULL)
+                    MS2 = MS2spec()$plotArgs,
+                    tree = list(tree = tree(),
+                                resolution = 5000))
+      
+    },
+    
+    
+    
+    contentType = "application/pdf")
+  
+  output$pdfTree <- downloadHandler(filename= function(){
+    titleout <- "TreeOnly"
+    
+    return(paste0(titleout,".pdf"))}, 
+    content = function(file){
+      plotTree(tree = tree(),
+                                resolution = 5000,
+                                filename = file)
       
     },
     
@@ -206,24 +224,31 @@ FeatureReportModule <- function(input,output, session,
   })
   
   
-  iSpec1_feed <- eventReactive(EICcache[[values$MSData$active]],{
-    
-    if(!is.null(EICcache[[values$MSData$active]])){
-      maxI <- which.max(EICcache[[values$MSData$active]][[1]][,"intmax"])
-      maxsc <- which.max(EICcache[[values$MSData$active]][[1]][maxI,"intensity"][[1]])
-      return(list(File = row.names(EICcache[[values$MSData$active]][[1]])[maxI],
-                  scan = EICcache[[values$MSData$active]][[1]][maxI,"scan"][[1]][maxsc],
-                  rt = EICcache[[values$MSData$active]][[1]][maxI,"rt"][[1]][maxsc]
-                  
-      ))
-    }
-  })
+  # iSpec1_feed <- eventReactive(EICcache[[values$MSData$active]],{
+  #   
+  #   if(!is.null(EICcache[[values$MSData$active]])){
+  #     maxI <- which.max(EICcache[[values$MSData$active]][[1]][,"intmax"])
+  #     maxsc <- which.max(EICcache[[values$MSData$active]][[1]][maxI,"intensity"][[1]])
+  #     return(list(File = row.names(EICcache[[values$MSData$active]][[1]])[maxI],
+  #                 scan = EICcache[[values$MSData$active]][[1]][maxI,"scan"][[1]][maxsc],
+  #                 rt = EICcache[[values$MSData$active]][[1]][maxI,"rt"][[1]][maxsc]
+  #                 
+  #     ))
+  #   }
+  # })
   
-  
+  output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(tree) && !is.null(tree()) ){
+
+                           tree()
+
+  }  })
   
   
   iSpec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"), 
                        set = reactive({
+                         
+                         if(is.null(MS2spec()$plotArgs) || is.null(MS2feed()) || is.null(MS2feed()$spec$sel)){
+                         
                          
                          list(spec = list(xrange = if(is.null(values$MainTable$selected_rows)){NULL}else{c(values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-10,
                                                                                                            values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+10)},
@@ -239,9 +264,51 @@ FeatureReportModule <- function(input,output, session,
                                             cex = 1.5,
                                             controls = F,
                                             ppm = values$GlobalOpts$PPMwindow,
-                                            active = input$ShowSpec),
+                                            active = input$ShowSpec,
+                                            highlights = NULL,
+                                            height = 350),
                               msdata = values$MSData$data)
+                         
+                         }else{
+                           
+                           targets <- MS2feed()$spec$sel
+                           
+                         
+                           ms1targets <- list(File = targets$File)
+                           
+                           ms1targets$scan <- sapply(seq(length(targets$File)),function(n){ which.min(abs(values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime - targets$rt[n]))})
+                           
+                           ms1targets$rt <- sapply(seq(length(targets$File)),function(n){values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime[ms1targets$scan[n]]})
+                           
+                           
+                           list(spec = list(xrange = if(is.null(values$MainTable$selected_rows)){NULL}else{c(values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-3,
+                                                                                                             values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+7)},
+                                            yrange = NULL,
+                                            maxxrange = NULL,
+                                            maxyrange = NULL,
+                                            sel = ms1targets,
+                                            data = NULL,
+                                            mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]}),
+                                layout = list(lw = 1,
+                                              cex = 1.5,
+                                              controls = F,
+                                              ppm = values$GlobalOpts$PPMwindow,
+                                              active = T, #input$ShowSpec,
+                                              highlights = NULL,
+                                              height = 350),
+                                msdata = values$MSData$data)
+                           
+                           
+                           
+                           }
+                         
                        }), 
+                       keys = reactive({keys()})#,
+                      # static = list(title = "MS1 spectrum")
+  )
+  
+  MS2spec <- callModule(Specmodule,"ms2spec", tag = ns("ms2spec"), 
+                       set = reactive({MS2feed()}), 
                        keys = reactive({keys()})
   )
   
@@ -320,8 +387,11 @@ FeatureReportModuleUI <- function(id){
        column(2,
               htmlOutput(ns("subtitleSelect"))
        ),
-      column(2,
+      column(1,
              downloadButton(ns("pdfButton"), "Save Plot")
+      ),
+      column(1,
+             downloadButton(ns("pdfTree"), "Save Tree")
       ),
       
       column(4,
@@ -335,7 +405,14 @@ FeatureReportModuleUI <- function(id){
       htmlOutput(ns("mainPlotEICs"))),
     
     fluidRow(
+      column(6,
       SpecmoduleUI(ns("Spec1"))
-    )
+    ),
+    column(6,
+           SpecmoduleUI(ns("ms2spec"))
+    )),
+    fluidRow(
+      DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px")
+  )
   )  
 }

@@ -54,7 +54,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   # observeEvent(set(),{sc()})
   sc <- reactive({
     # observe({
-    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set, set()$spec )){
+    if(!is.null(set()) && set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set, set()$spec )){
       
       #select file based on basename rather than full path
       datasel <- which(basename(set()$spec$sel$File)  %in% basename(names(set()$msdata)))
@@ -170,18 +170,18 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   })
   
   observeEvent(set(),{
-    
+    if(!is.null(set())){
     if(length(set()$layout$highlights) > 0){
       selections$plots$spec$highlights <- set()$layout$highlights
     }else{
       selections$plots$spec$highlights <- NULL
       
     }
-    
+    }
   })
   
   output$specinfo <- renderUI({ 
-    if(set()$layout$active && !is.null(set()$spec$sel$File)){
+    if(!is.null(set()) && set()$layout$active && !is.null(set()$spec$sel$File)){
       
       
       
@@ -210,7 +210,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$specAll <- renderUI({
-    if(length(set()$layout$active) > 0 
+    if(!is.null(set())
+       && length(set()$layout$active) > 0 
        && set()$layout$active
        && length(set()$spec$sel) >1
     ){
@@ -265,7 +266,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$Mspec <- renderPlot({
-    if(set()$layout$active && !is.null(set()$spec$sel$File)){
+    if(!is.null(set()) && set()$layout$active && !is.null(set()$spec$sel$File)){
       sc()
       
       xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}

@@ -105,12 +105,12 @@ specplot <- function (x=sc[,1],
   
   if(nrow(labs) > 0 ){
     par(xpd=NA)
-    labs$xcorr <- spread.labs(labs[,1],1.05*strwidth("A"), maxiter=1000, min=min(labs[,1]), max=max(labs[,1]))
+    labs$xcorr <- suppressWarnings({spread.labs(labs[,1],1.05*strwidth("A"), maxiter=1000, min=min(labs[,1]), max=max(labs[,1]))})
     
     segments(labs[,1],labs[,2]+0.01*max(yrange),labs$xcorr,labs[,2]+0.05*max(yrange), col="olivedrab4", lwd=0.8)
     
     text(labs$xcorr,labs[,2]+0.055*max(yrange),labels=labs$label, col=labs$color, srt=90,adj=c(0,0.3), cex=1*cx)
-    text(min(xrange), 1.06*max(yrange),
+    text(min(xrange), max(yrange)+1.5*strheight("M"),
          labels = format(maxi*(max(labs$y)/100), scientific = T, digits =4), bty="n",
          font = 2, cex=cx*1)
     
