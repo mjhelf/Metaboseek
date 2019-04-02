@@ -85,9 +85,9 @@ specplot <- function (x=sc[,1],
   
   
   #merge the automatically annotated peaks with labels 
-  if(!is.null(labels)){
-    
-    if(is.null(labels$color)){
+  if(!is.null(labels) && nrow(labels)>0){
+    labels$y <- labels$y/norm
+        if(is.null(labels$color)){
       labels$color <- "red" 
     }
     

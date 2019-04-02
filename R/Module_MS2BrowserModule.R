@@ -276,13 +276,32 @@ MS2BrowserModule <- function(input,output, session,
   specEngine <- reactive({
     
     moreArgs <- list(k = 20)
-    if(length(Sirius$activeMF)>0 && !is.null(Sirius$activeMF[["trees_json"]]) && length(Sirius$activeMF[["trees_json"]]$fragments)> 0){
+    
+    sel <- if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
+      #print(internalValues$spectab)
+      list(File = internalValues$spectab$file,
+           scan = internalValues$spectab$scan,
+           rt = internalValues$spectab$rt)
+    }else if (!is.null(internalValues$spectab$file)){
+      list(File = internalValues$spectab$file[selectScan()$props$selected_rows],
+           scan = internalValues$spectab$scan[selectScan()$props$selected_rows],
+           rt = internalValues$spectab$rt[selectScan()$props$selected_rows])
+    }else{
+      NULL
+    }
+    
+    
+    if(length(Sirius$activeMF)>0 
+       && !is.null(Sirius$activeMF[["trees_json"]]) 
+       && length(Sirius$activeMF[["trees_json"]]$fragments)> 0){
+      
       fragments <- Sirius$activeMF[["trees_json"]]
     
       inttemp <- sapply(fragments$fragments,function(x){x$relativeIntensity})
       mztemp <- sapply(fragments$fragments,function(x){x$mz})
       labs <- paste0(format(round(mztemp,5),nsmall = 5, scientific = F), " (", sapply(fragments$fragments,function(x){x$molecularFormula}), ")")
       
+     
       if(any(inttemp>0)){
         moreArgs$labels <- data.frame(x = mztemp[inttemp>=0.02],
                                  y = inttemp[inttemp>=0.02]*100,
@@ -296,16 +315,7 @@ MS2BrowserModule <- function(input,output, session,
                              yrange = NULL,
                              maxxrange = NULL,
                              maxyrange = NULL,
-                             sel = if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
-                               #print(internalValues$spectab)
-                               list(File = internalValues$spectab$file,
-                                    scan = internalValues$spectab$scan,
-                                    rt = internalValues$spectab$rt)
-                             }else{
-                               list(File = internalValues$spectab$file[selectScan()$props$selected_rows],
-                                    scan = internalValues$spectab$scan[selectScan()$props$selected_rows],
-                                    rt = internalValues$spectab$rt[selectScan()$props$selected_rows])
-                             },
+                             sel = sel,
                              data = NULL,
                              mz =  if(length(selectScan()$props$selected_rows) == 0 && !is.null(internalValues$spectab$file)){
                                mean(internalValues$spectab$parentMz)}else{

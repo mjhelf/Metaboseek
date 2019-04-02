@@ -337,6 +337,15 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         for(i in names(set()$moreArgs)){
           tempArgs[[i]] <- set()$moreArgs[[i]]
         }
+        
+        if(!is.null(tempArgs$labels)){
+          
+          mzmatched <- match(round(tempArgs$labels$x,5), round(tempArgs$x,5))
+          
+          tempArgs$labels <- tempArgs$labels[!is.na(mzmatched),]
+          tempArgs$labels$y <- tempArgs$y[na.omit(mzmatched)]
+          
+        }
          
       }
       selections$plots$plotArgs <- tempArgs

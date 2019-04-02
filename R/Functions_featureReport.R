@@ -210,6 +210,24 @@ plotTree <- function(tree, resolution = 2000, filename= NULL){
   
 #  fn <- paste0(digest("a", algo = "xxhash32", seed = runif(1)*10000),'_temp.png')
   
+  checkpackages <- c("DiagrammeRsvg", "xml2", "rsvg", "png")
+  
+  missing <- checkpackages[which(is.na( match(checkpackages, rownames(installed.packages()))))]
+  
+  if(length(missing)>0){
+    
+    plot(numeric(0),
+         numeric(0),
+         ylim = c(0,1),
+         xlim = c(0,1),
+         type = "n", ann = FALSE, bty = "n", axes = F, asp = 1)
+    
+    text(0.5,0.5, labels = paste0("Please install missing packages: \n",
+                                  paste(missing, collapse = ", ")), adj = 0.5)
+    
+  }else{
+  
+  
   cc <- (DiagrammeRsvg::export_svg(tree))
   
  
@@ -256,5 +274,5 @@ plotTree <- function(tree, resolution = 2000, filename= NULL){
   
   rasterImage(pic, 0, 0,wi,hi,interpolate = T)
     }
-  
+  }
 }
