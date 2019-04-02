@@ -113,8 +113,9 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   
   if(!is.null(EICplots)){
     
+    
     if(!is.null(selectMS2) && "MS2" %in% names(EICplots$glist)){
-      
+
 
       MS2here <-  which(EICplots$glist$MS2 %in% selectMS2)
       
@@ -126,11 +127,16 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
         
         #remove the group if no match
         if(length(EICplots$glist$MS2) == 0){
-          EICplots$colrange <- EICplots$colrange[names(EICplots$colrange) != "MS2"]
+          #colrange does not have group names, so use info from glist!
+          EICplots$colrange <- EICplots$colrange[names(EICplots$glist) != "MS2"]
         }else{
+          
+          ind <- which(names(EICplots$glist) == "MS2")[1]
+
+        EICplots$colrange[[ind]] <- EICplots$colrange[[ind]][MS2here,]
         
-        EICplots$colrange$MS2 <- EICplots$colrange$MS2[MS2here,]
-        EICplots$colrange$MS2$label <- sub("^([^.]*).*", "\\1",basename(EICplots$glist$MS2))
+        EICplots$colrange[[ind]]$label <- sub("^([^.]*).*", "\\1",basename(EICplots$glist$MS2))
+        
         }
       }
       #remove the group if no match
@@ -142,6 +148,7 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
       
     }
     
+   
     
     EICplots$cx <- cx
     EICplots$margins <- c(2.7,2,4,0.5)
@@ -162,20 +169,20 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
   
   if(!is.null(MS2)){
     
-    if(!is.null(fragments) && length(fragments$fragments)> 0){
-
-      inttemp <- sapply(fragments$fragments,function(x){x$relativeIntensity})
-      mztemp <- sapply(fragments$fragments,function(x){x$mz})
-      labs <- paste0(format(round(mztemp,5),nsmall = 5, scientific = F), " (", sapply(fragments$fragments,function(x){x$molecularFormula}), ")")
-      
-      if(any(inttemp>0)){
-      MS2$labels <- data.frame(x = mztemp[inttemp>=0.02],
-                               y = inttemp[inttemp>=0.02]*100,
-                               label = labs[inttemp>=0.02],
-                               stringsAsFactors = F)
-      }
-      
-                     }
+    # if(!is.null(fragments) && length(fragments$fragments)> 0){
+    # 
+    #   inttemp <- sapply(fragments$fragments,function(x){x$relativeIntensity})
+    #   mztemp <- sapply(fragments$fragments,function(x){x$mz})
+    #   labs <- paste0(format(round(mztemp,5),nsmall = 5, scientific = F), " (", sapply(fragments$fragments,function(x){x$molecularFormula}), ")")
+    #   
+    #   if(any(inttemp>0)){
+    #   MS2$labels <- data.frame(x = mztemp[inttemp>=0.02],
+    #                            y = inttemp[inttemp>=0.02]*100,
+    #                            label = labs[inttemp>=0.02],
+    #                            stringsAsFactors = F)
+    #   }
+    #   
+    #                  }
     
     MS2$cx <- cx
     MS2$mar <- c(2.7,2,4,0.5)
@@ -214,8 +221,12 @@ plotTree <- function(tree, resolution = 2000, filename= NULL){
   
   missing <- checkpackages[which(is.na( match(checkpackages, rownames(installed.packages()))))]
   
+  #alternative solution:
+  #missing <- checkpackages[suppressWarnings({sapply(checkpackages,require, character.only = T, quietly = T)})]
+  
   if(length(missing)>0){
-    
+    if(!is.null(filename)){
+      pdf(file = filename)}
     plot(numeric(0),
          numeric(0),
          ylim = c(0,1),
@@ -224,6 +235,9 @@ plotTree <- function(tree, resolution = 2000, filename= NULL){
     
     text(0.5,0.5, labels = paste0("Please install missing packages: \n",
                                   paste(missing, collapse = ", ")), adj = 0.5)
+    
+    if(!is.null(filename)){
+      dev.off()}
     
   }else{
   

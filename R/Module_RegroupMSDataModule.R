@@ -59,7 +59,10 @@ RegroupMSDataModule <- function(input,output, session,
   
   
   observeEvent(SelectMSGrouping$active,{
-    GroupingTable$df <- values$MSData$layouts[[SelectMSGrouping$active]]$rawgrouptable[,c("File", "Group", "Group2")]
+
+          cn <- colnames(values$MSData$layouts[[SelectMSGrouping$active]]$rawgrouptable)
+    GroupingTable$df <- values$MSData$layouts[[SelectMSGrouping$active]]$rawgrouptable[,cn[cn %in% c("File", "Group", "Group2")]]
+    
     GroupingTable$update <- !GroupingTable$update
     
   })

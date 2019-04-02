@@ -11,6 +11,9 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
     MSD = list()
     MSD$stem <- stem
     MSD$rawgrouptable <- rawgrouptable
+    if(is.null(MSD$rawgrouptable$Group2)){
+      MSD$rawgrouptable$Group2 <- MSD$rawgrouptable$Group
+    }
     MSD$filelist <- paste0(stem, rawgrouptable$File)
     MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = rawgrouptable$Group))
     
