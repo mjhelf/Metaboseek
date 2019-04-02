@@ -259,7 +259,9 @@ FeatureReportModule <- function(input,output, session,
   iSpec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"), 
                        set = reactive({
                          
-                         if(is.null(MS2spec()$plotArgs) || is.null(MS2feed()) || is.null(MS2feed()$spec$sel)){
+                         
+                         
+                         if(is.null(MS2spec()$plotArgs) || is.null(MS2feed()) || is.null(MS2feed()$spec$sel) || length(MS2feed()$spec$sel$File) <1){
                          
                          
                          list(spec = list(xrange = if(is.null(values$MainTable$selected_rows)){NULL}else{c(values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-10,

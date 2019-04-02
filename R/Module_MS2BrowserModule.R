@@ -185,9 +185,33 @@ MS2BrowserModule <- function(input,output, session,
              values = reactiveValues(MSData = values$MSData,
                                      GlobalOpts = values$GlobalOpts),
              reactives = reactive({
+               
+               
+               
+               
                if(!is.null(splashsource()$stab) && !is.null(values$GlobalOpts$siriusFolder)){
+                 
+                 #get ONE corresponding MS1 scan 
+                 if(!is.null(specEngine()$spec)){
+                 targets <- specEngine()$spec$sel
+                 
+                 
+                 ms1targets <- list(File = targets$File)
+                 
+                 ms1targets$scan <- sapply(seq(length(targets$File)),function(n){ which.min(abs(values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime - targets$rt[n]))})
+                 
+                 ms1 <- getScan(values$MSData$data[[which(basename(names(values$MSData$data)) == ms1targets$File[1])[1]]],
+                                ms1targets$scan[1],
+                                mzrange = range(c(mean(splashsource()$stab$parentMz)-3,mean(splashsource()$stab$parentMz)+7)))
+                 
+                 }else{
+                   
+                   ms1 <- NULL
+                   }
+                 
                  list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
                       ms2 = splashsource()$MergedSpecs,
+                      ms1 = list(ms1),
                       instrument = values$GlobalOpts$SiriusSelInstrument,
                       parentmz = mean(splashsource()$stab$parentMz),
                       rt = mean(splashsource()$stab$rt),

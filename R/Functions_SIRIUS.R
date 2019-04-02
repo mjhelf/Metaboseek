@@ -19,6 +19,7 @@
 #' 
 writeMS <- function(filename,
                     ms2,
+                    ms1 = NULL,
                     parentmz,
                     comments = "",
                     rt = "",
@@ -46,8 +47,25 @@ writeMS <- function(filename,
     file = filename,
     append = appending
   )
-  fwrite(data.table(ms2), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
   
+  if(!is.null(ms1)){
+    write(
+      paste0(">ms1"),
+      file = filename,
+      append = T
+    )
+  fwrite(data.table(ms1), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  }
+  
+  if(!is.null(ms2)){
+    write(
+      paste0(">ms2"),
+      file = filename,
+      append = T
+    )
+  
+  fwrite(data.table(ms2), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  }
   
   
   
@@ -72,6 +90,7 @@ writeMS <- function(filename,
 #' @importFrom data.table fread fwrite
 #' 
 runSirius <- function(outfolder,
+                      ms1 = NULL,
                        ms2,
                        instrument,
                        parentmz,
@@ -139,6 +158,7 @@ runSirius <- function(outfolder,
 
   np <- mapply(writeMS,
                filename = filename,
+               ms1 = ms1,
                ms2 = ms2,
                parentmz = parentmz,
                scanindices = scanindices,

@@ -4,9 +4,9 @@
 \alias{runSirius}
 \title{runSirius}
 \usage{
-runSirius(outfolder, ms2, instrument, parentmz, comments = "", rt = "",
-  ion, charge = 1, fingerid = T, scanindices = NULL, sirpath,
-  moreOpts = "")
+runSirius(outfolder, ms1 = NULL, ms2, instrument, parentmz,
+  comments = "", rt = "", ion, charge = 1, fingerid = T,
+  scanindices = NULL, sirpath, moreOpts = "")
 }
 \arguments{
 \item{outfolder}{output folder for the SIRIUS results}

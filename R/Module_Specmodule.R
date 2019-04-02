@@ -217,7 +217,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
        && length(set()$spec$sel) >1
     ){
       
-      
+     
       #select file based on basename rather than full path
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
