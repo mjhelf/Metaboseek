@@ -15,7 +15,7 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   adducts = c(0), cx = 1, midline = T, yzoom = 1,
   RTcorrect = NULL, importEIC = NULL, globalYmax = NULL,
   subtitles = NULL, raise = F, relPlot = F, margins = NULL,
-  ylabshift = 0)
+  ylabshift = 0, RescaleExclude = NULL)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
@@ -65,6 +65,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 \item{margins}{manual setting for plot margins (par$mar)}
 
 \item{ylabshift}{shift horizontal position of y axis label}
+
+\item{RescaleExclude}{exclude this group from rescaling, or NULL to use all}
 
 \item{exportmode}{if TRUE, $EIC list is exported along with $plot (as list)}
 }

@@ -10,7 +10,7 @@ groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC =
   = c(1, 2), oma = c(0, 2, 8, 0), xpd = NA, bg = NA, header =
   paste0(names(res)), header2 = NULL, pdfFile = NULL, pdfHi = 6, pdfWi =
   12, cx = 1, adductLabs = c("0", "1", "2")), raise = F, relPlot = F,
-  margins = NULL, ylabshift = 0)
+  margins = NULL, ylabshift = 0, RescaleExclude = NULL)
 }
 \arguments{
 \item{EIClist}{list of EICs from METABOseek:multiEIC}

@@ -31,6 +31,7 @@
 #' @param relPlot if TRUE, y-axis will show relative intensities
 #' @param margins manual setting for plot margins (par$mar)
 #' @param ylabshift shift horizontal position of y axis label 
+#' @param RescaleExclude exclude this group from rescaling, or NULL to use all
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
@@ -58,7 +59,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        raise = F,
                        relPlot = F,
                        margins = NULL,
-                       ylabshift = 0
+                       ylabshift = 0,
+                       RescaleExclude = NULL
 ){
   #number of plot rows
   if(!is.null(cols)){
@@ -176,6 +178,17 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   else{
     EICs <- importEIC
   }
+  
+  if(!is.null(RescaleExclude) 
+     && length(na.omit(match(RescaleExclude,names(glist)))) > 0
+     && length(na.omit(match(RescaleExclude,names(glist)))) < length(glist)){
+   
+    excludedfiles <- unlist(glist[match(RescaleExclude,names(glist))])
+     
+  }else{
+    excludedfiles <- character(0)
+  }
+  
   if(TICall){
     if(is.null(rtx) || length(EICs) %% nrow(rtx) != 0 ){
       
@@ -190,10 +203,15 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     }else{
     #make sure the EICs all get scaled to their highest intensity across all adducts
     if(is.null(rtx)  || length(EICs) %% nrow(rtx) != 0  ){
-    maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
+    maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[which(!rownames(x) %in% excludedfiles),"intensity"])) }), ncol = length(adducts), byrow = F))
     }else{
       suppressWarnings({
-      maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){ max(unlist(x[,"intensity"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
+      maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){
+        
+        subsel <- which(!rownames(x) %in% excludedfiles)
+        max(unlist(x[subsel,"intensity"])[unlist(x[subsel,"rt"]) >= max(c(min(rt),min(unlist(x[subsel,"rt"])))) 
+                                    & unlist(x[subsel,"rt"]) <= min(c(max(rt),max(unlist(x[subsel,"rt"]))))])},
+        x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
       
       }) #warnings occur if all scans are out of given rt range
     }
@@ -223,7 +241,8 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
             raise,
             relPlot,
             margins,
-            ylabshift
+            ylabshift,
+            RescaleExclude
   )
   if(!is.null(pdfFile)){dev.off()}
   
@@ -336,7 +355,8 @@ groupPlot <- function(EIClist = res,
                       raise = F,
                       relPlot = F,
                       margins = NULL,
-                      ylabshift = 0
+                      ylabshift = 0,
+                      RescaleExclude = NULL
 ){
   
   #majoritem is the EIClist top level (typically by mz, but could be)
@@ -388,7 +408,7 @@ groupPlot <- function(EIClist = res,
       ### by default, only the visible part of the spectrum will be used to determine y-max
       
       
-      if(!is.null(plotProps$ylim)){
+      if(!is.null(plotProps$ylim) && !names(grouping)[plotgroup] %in% RescaleExclude){
         ylimes = c(0,1)
         try({
         ylimes = c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))
