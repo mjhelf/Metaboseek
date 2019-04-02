@@ -127,7 +127,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   #optionally plot TICs first (page 1 in pdf)
   if(leadingTIC){  
-    EICsTIC <- multiEIC(rawdata= rdata,
+    EICsTIC <- multiEIC(rawdata= rdata[basename(names(rdata)) %in% basename(unlist(glist))],
                         mz = mzx[1,],
                         rt = NULL,
                         rnames = "1", #major item names
@@ -167,7 +167,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   }
   
   if(is.null(importEIC)){
-  EICs <- multiEICplus(rawdata= rdata,
+  EICs <- multiEICplus(rawdata= rdata[basename(names(rdata)) %in% basename(unlist(glist))],
                        mz = mzx,
                        rt = if(is.null(RTcorrect)){rtx}else{NULL},
                        rnames = row.names(mzmid), #major item names
