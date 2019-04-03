@@ -25,19 +25,21 @@ output$controlSirius <- renderUI({
            fluidRow(
              # column(3,
              #        selectizeInput(ns("selCharge"), "Charge:", choices = list("+1" = 1, "-1" = -1), selected = values$GlobalOpts$selCharge)),
-             column(3,
+             column(2,
                     selectizeInput(ns("selIon"), "Ion", choices = list("[M+?]+" = "[M+?]+",
                                                                        "[M+?]-" = "[M+?]-",
                                                                        "[M+H]+" = "[M+H]+",
                                                                        "[M+Na]+" = "[M+Na]+",
                                                                        "[M-H}-" = "[M-H]-",
                                                                        "[M+Cl]-" = "[M+Cl]-"), selected = values$GlobalOpts$SiriusSelIon)),
-             column(3,
+             column(2,
                     checkboxInput(ns("checkFinger"), "Get FingerID", value = values$GlobalOpts$SiriusCheckFinger)),
+             column(2,
+                    checkboxInput(ns("useMS1"), "Use MS1 spectrum", value = values$GlobalOpts$SiriusUseMS1)),
            
-             column(3,
+             column(2,
                     selectizeInput(ns("selInstrument"), "Instrument", choices = list("Orbitrap" = "orbitrap", "QTOF" = "qtof", "FT-ICR" = "fticr"), selected = values$GlobalOpts$SiriusSelInstrument)),
-             column(3, 
+             column(2, 
                     textInput(ns("elements"), "Allow elements:", value = values$GlobalOpts$SiriusElements))
     )
 })
@@ -53,6 +55,14 @@ observeEvent(input$selIon,{
   values$GlobalOpts$SiriusSelIon <- input$selIon
   MseekOptions(SiriusSelIon = input$selIon)
 })
+
+observeEvent(input$useMS1,{
+  
+  values$GlobalOpts$SiriusUseMS1 <- input$useMS1
+ # MseekOptions(SiriusElements = input$elements)
+})
+
+
 observeEvent(input$checkFinger,{
   
   values$GlobalOpts$SiriusCheckFinger <- input$checkFinger

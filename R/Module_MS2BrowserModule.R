@@ -189,10 +189,11 @@ MS2BrowserModule <- function(input,output, session,
                
                
                
-               if(!is.null(splashsource()$stab) && !is.null(values$GlobalOpts$siriusFolder)){
+               if(!is.null(splashsource()$stab) 
+                  && !is.null(values$GlobalOpts$siriusFolder)){
                  
                  #get ONE corresponding MS1 scan 
-                 if(!is.null(specEngine()$spec)){
+                 if(!is.null(specEngine()$spec) && values$GlobalOpts$SiriusUseMS1){
                  targets <- specEngine()$spec$sel
                  
                  

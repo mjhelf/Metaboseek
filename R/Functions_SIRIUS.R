@@ -85,6 +85,7 @@ writeMS <- function(filename,
 #' @param scanindices which scans were averaged into this ms2 spectrum
 #' @param sirpath path to SIRIUS executable
 #' @param moreOpts character with additional options to be passed to SIRIUS
+#' @param force force calculation, even if same results should exist according to indexfile
 #' 
 #' @importFrom splashR getSplash
 #' @importFrom data.table fread fwrite
@@ -101,7 +102,8 @@ runSirius <- function(outfolder,
                        fingerid = T,
                        scanindices = NULL,
                        sirpath,
-                       moreOpts = ""){
+                       moreOpts = "",
+                      force = T){
 
   
   #write the MS2 data so sirius can read it
@@ -128,7 +130,7 @@ runSirius <- function(outfolder,
    newjobs$METABOseek_sirius_revision = 1
    
    indexfile <- file.path(outfolder, "index.csv")
-  if(file.exists(indexfile)){
+  if(file.exists(indexfile) && !force){
     
     jobindex <- as.data.frame(data.table::fread(indexfile, na.strings = NULL))
     # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings

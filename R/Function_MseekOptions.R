@@ -45,7 +45,8 @@ MseekOptions <- function(..., defaults = F){
                            SiriusSelIon = "[M+?]+",
                            SiriusCheckFinger = T,
                            SiriusSelInstrument = "orbitrap",
-                           SiriusElements = "CHNOP[5]S[5]"
+                           SiriusElements = "CHNOP[5]S[5]",
+                           SiriusUseMS1 = T
                            )
     
   }
