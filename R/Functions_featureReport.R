@@ -149,7 +149,7 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
     }
     
    
-    
+    EICplots$importEIC <- NULL
     EICplots$cx <- cx
     EICplots$margins <- c(2.7,2,4,0.5)
     EICplots$ylabshift <- 2.2
