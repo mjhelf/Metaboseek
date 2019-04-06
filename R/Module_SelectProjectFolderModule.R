@@ -298,8 +298,23 @@ SelectProjectFolderModule <- function(input,output, session,
           newfiles <- newfiles[which(!newfiles %in% values$MSData$filelist)]
           values$MSData$filelist <- unique(c(values$MSData$filelist, newfiles))
           values$MSData$data <- c(values$MSData$data,loadRawM(newfiles, workers = values$GlobalOpts$enabledCores))
+          
+          if(length(values$MSData$filelist)>0){
+            
+            if(is.null(values$MSData$MSnExp) || (!is.null(values$MSData$MSnExp) 
+                                                 && any(!values$MSData$filelist %in% as.character(values$MSData$MSnExp@phenoData@data$sampleNames)))){
+              
+              #will be overwritten every time there is a change in the filelist
+              values$MSData$MSnExp <- MSnbase::readMSData(values$MSData$filelist, pdata = NULL, verbose = F,
+                                                   centroided. = T,
+                                                   smoothed. = NA, mode = "onDisk")
+              
+              
+            }
+          }
+          
           temp_rawgrouptable <- internalValues$filegroups #probably to avoid feeding a pointer into constructRawLayout
-          values$MSData$layouts[[basename(values$projectData$projectFolder)]] <- constructRawLayout(temp_rawgrouptable, stem = "")
+          values$MSData$layouts[[basename(values$projectData$projectFolder)]] <- constructRawLayout(temp_rawgrouptable, stem = "", msnExp = values$MSData$MSnExp)
           values$MSData$index = unique(c(basename(values$projectData$projectFolder),values$MSData$index))
           values$MSData$active =basename(values$projectData$projectFolder)
           values$GlobalOpts$recentProjects <- as.character(na.omit(unique(c(values$projectData$projectFolder, values$GlobalOpts$recentProjects))[1:10]))

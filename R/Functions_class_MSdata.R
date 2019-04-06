@@ -6,7 +6,7 @@
 #' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
 #' 
 #' @export
-constructRawLayout <- function(rawgrouptable, stem=NULL){
+constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
     
     MSD = list()
     MSD$stem <- stem
@@ -25,6 +25,36 @@ constructRawLayout <- function(rawgrouptable, stem=NULL){
                         cols = 1,
                         colr = 'Mseek.colors',
                         alpha = 0.8)
+    
+    if(!is.null(msnExp)){
+      
+      findex <- match(MSD$filelist, as.character(msnExp@phenoData@data$sampleNames))
+      
+      if(!any(is.na(findex))){
+        
+        
+    MSD$MSnExp_summary <- data.frame(sampleNames = as.character(msnExp@phenoData@data$sampleNames[findex]),
+                                     stringsAsFactors = F)
+                                     
+    MSD$MSnExp_summary$bpmeans <- sapply(findex,
+                                    function(n){mean(msnExp@featureData@data$basePeakIntensity[msnExp@featureData@data$fileIdx == n 
+                                                                                                             & msnExp@featureData@data$msLevel == 1])})
+    MSD$MSnExp_summary$ticmeans <- sapply(findex,
+                                     function(n){mean(msnExp@featureData@data$totIonCurrent[msnExp@featureData@data$fileIdx == n  
+                                                                                                          & msnExp@featureData@data$msLevel == 1])})
+    
+    #calculate normalization factors for each file in this rawLayout
+    if(!any(MSD$MSnExp_summary$bpmeans ==0)){
+    MSD$MSnExp_summary$normfactor_bp <- mean( MSD$MSnExp_summary$bpmeans)/ MSD$MSnExp_summary$bpmeans
+    }
+    
+    
+    if(!any(MSD$MSnExp_summary$ticmeans ==0)){
+    MSD$MSnExp_summary$normfactor_tic <- mean( MSD$MSnExp_summary$ticmeans)/ MSD$MSnExp_summary$ticmeans
+    }
+    
+      }
+    }
     
     class(MSD) <- "rawLayout"
     return(MSD)
