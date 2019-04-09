@@ -36,7 +36,18 @@ MseekOptions <- function(..., defaults = F){
                              plotCx = 1.6,
                              TICtoggle = F,
                              colorscheme = "Mseek.colors",
-                             plotTransparency = 0.8)
+                             plotTransparency = 0.8,
+                            groupBy = "grouping",
+                            colorBy = "file",
+                            relPlotToggle = F,
+                            raiseToggle = F,
+                           recentProjects = system.file("extdata","examples", "example projectfolder", package = "METABOseek"),
+                           SiriusSelIon = "[M+?]+",
+                           SiriusCheckFinger = T,
+                           SiriusSelInstrument = "orbitrap",
+                           SiriusElements = "CHNOP[5]S[5]",
+                           SiriusUseMS1 = T
+                           )
     
   }
   else{

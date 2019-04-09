@@ -26,8 +26,16 @@ TableAnalysisModule <- function(input,output, session,
   
   ns <- NS(session$ns(NULL))
   
-  internalValues <- reactiveValues(normalize = TRUE,
-                                   useNormalized = TRUE,
+  FindMS2 <- callModule(FindMS2ScansModule, "findms2",
+                        values = reactiveValues(featureTables = values$featureTables,
+                                                MSData = values$MSData,
+                                                MainTable = values$MainTable),
+                        static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table",
+                                      label = "Find MS2 scans")
+  )
+  
+  internalValues <- reactiveValues(normalize = T,
+                                   useNormalized = T,
                                    logNormalized = F,
                                    controlGroups = NULL,
                                    analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test"),
@@ -41,6 +49,13 @@ TableAnalysisModule <- function(input,output, session,
                                    numClusters = 2,
                                    dbselected = system.file("db", "smid-db_pos.csv", package = "METABOseek")
   )
+  
+  observeEvent(values$featureTables,{
+    internalValues$normalize <- is.null(values$featureTables)
+    internalValues$useNormalized <- is.null(values$featureTables)
+    
+    
+  }, once = T)
   
   observeEvent(reactives()$fileGrouping,{
     if(!is.null(reactives()$fileGrouping)){
@@ -209,7 +224,9 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
       hr(),
       h4("Advanced analysis"),
       column(2,
-             GetIntensitiesModuleUI(ns("gi")))
+             GetIntensitiesModuleUI(ns("gi"))),
+      column(2,
+             FindMS2ScansModuleUI(ns("findms2")))
       ),
     fluidRow(
       hr(),

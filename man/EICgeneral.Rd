@@ -5,8 +5,7 @@
 \title{EICgeneral}
 \usage{
 EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
-  glist = MSData$layouts[[MSData$active]]$grouping,
-  cols = MSData$layouts[[MSData$active]]$settings$cols,
+  glist = MSData$layouts[[MSData$active]]$grouping, cols = NULL,
   colrange = MSData$layouts[[MSData$active]]$settings$colr,
   transparency = MSData$layouts[[MSData$active]]$settings$alpha,
   RTall = input$RTtoggle, TICall = input$TICtoggle,
@@ -15,7 +14,8 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
   rdata = MSData$data, pdfFile = file, leadingTIC = T, lw = 1,
   adducts = c(0), cx = 1, midline = T, yzoom = 1,
   RTcorrect = NULL, importEIC = NULL, globalYmax = NULL,
-  subtitles = NULL)
+  subtitles = NULL, raise = F, relPlot = F, margins = NULL,
+  ylabshift = 0, RescaleExclude = NULL)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges)}
@@ -24,7 +24,7 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 
 \item{glist}{a named list of grouped file names (as supplied in $grouping of rawLayout objects)}
 
-\item{cols}{integer, number of colors generated}
+\item{cols}{integer, number of columns in plot. if NULL, grid can be defined externally}
 
 \item{colrange}{character(1), color range function used for line colors}
 
@@ -57,6 +57,16 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 \item{RTcorrect}{if not NULL, this RTcorr object will be used to adjust retention times.}
 
 \item{subtitles}{subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL}
+
+\item{raise}{if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.}
+
+\item{relPlot}{if TRUE, y-axis will show relative intensities}
+
+\item{margins}{manual setting for plot margins (par$mar)}
+
+\item{ylabshift}{shift horizontal position of y axis label}
+
+\item{RescaleExclude}{exclude this group from rescaling, or NULL to use all}
 
 \item{exportmode}{if TRUE, $EIC list is exported along with $plot (as list)}
 }

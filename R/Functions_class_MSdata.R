@@ -6,18 +6,55 @@
 #' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
 #' 
 #' @export
-constructRawLayout <- function(rawgrouptable, stem=NULL){
+constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
     
     MSD = list()
     MSD$stem <- stem
     MSD$rawgrouptable <- rawgrouptable
+    if(is.null(MSD$rawgrouptable$Group2)){
+      MSD$rawgrouptable$Group2 <- MSD$rawgrouptable$Group
+    }
     MSD$filelist <- paste0(stem, rawgrouptable$File)
     MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = rawgrouptable$Group))
+    
+    MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist, Group = if(!is.null(rawgrouptable$Group2)){rawgrouptable$Group2}else{rawgrouptable$Group}) )
+
+
     MSD$settings = list(rtw = 30,
                         ppm = 5,
                         cols = 1,
                         colr = 'Mseek.colors',
                         alpha = 0.8)
+    
+    if(!is.null(msnExp)){
+      
+      findex <- match(MSD$filelist, as.character(msnExp@phenoData@data$sampleNames))
+      
+      if(!any(is.na(findex))){
+        
+        
+    MSD$MSnExp_summary <- data.frame(sampleNames = as.character(msnExp@phenoData@data$sampleNames[findex]),
+                                     stringsAsFactors = F)
+                                     
+    MSD$MSnExp_summary$bpmeans <- sapply(findex,
+                                    function(n){mean(msnExp@featureData@data$basePeakIntensity[msnExp@featureData@data$fileIdx == n 
+                                                                                                             & msnExp@featureData@data$msLevel == 1])})
+    MSD$MSnExp_summary$ticmeans <- sapply(findex,
+                                     function(n){mean(msnExp@featureData@data$totIonCurrent[msnExp@featureData@data$fileIdx == n  
+                                                                                                          & msnExp@featureData@data$msLevel == 1])})
+    
+    #calculate normalization factors for each file in this rawLayout
+    if(!any(MSD$MSnExp_summary$bpmeans ==0)){
+    MSD$MSnExp_summary$normfactor_bp <- mean( MSD$MSnExp_summary$bpmeans)/ MSD$MSnExp_summary$bpmeans
+    }
+    
+    
+    if(!any(MSD$MSnExp_summary$ticmeans ==0)){
+    MSD$MSnExp_summary$normfactor_tic <- mean( MSD$MSnExp_summary$ticmeans)/ MSD$MSnExp_summary$ticmeans
+    }
+    
+      }
+    }
     
     class(MSD) <- "rawLayout"
     return(MSD)
@@ -35,6 +72,9 @@ updateRawLayout <- function(MSD, new.stem=NULL){
     
     MSD$filelist <- gsub(MSD$stem,new.stem,MSD$filelist)
     MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = MSD$rawgrouptable$Group))
+    MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist,
+                                           Group = if(!is.null(MSD$rawgrouptable$Group2)){MSD$rawgrouptable$Group2}else{MSD$rawgrouptable$Group}))
+
     MSD$stem <- new.stem
     return(MSD)
 }
@@ -87,4 +127,39 @@ rawGrouping <- function(rawgrouptable){
     }
     
     return(colme)
+}
+
+#' makeColorscheme
+#'
+#' Use two grouing lists to generate a color scheme for groupPlot() and EICgeneral().
+#' 
+#' @param maingroup main plot grouping scheme (e.g. grouping in rawlayouts)
+#' @param colorgroup grouping to be used for coloring (e.g. grouping2 in rawlayouts)
+#' @param colrange function to use to make color range
+#' @param transparency setting for transparent coloring
+#'
+#'
+#' @export
+makeColorscheme <- function(maingroup = MSD$layouts[[MSD$active]]$grouping,
+                            colorgroup = MSD$layouts[[MSD$active]]$grouping,
+                            colrange = "Mseek.colors",
+                            transparency = 0.8){
+  
+  colvec <- do.call(colrange,
+                    list(n=length(colorgroup), alpha = transparency))
+  
+  labs <- unlist(sapply(seq(length(colorgroup)),function(n){rep(names(colorgroup)[n],length(colorgroup[[n]]))}))
+  colvec <- unlist(sapply(seq(length(colorgroup)),function(n){rep(colvec[n],length(colorgroup[[n]]))}))
+  srch <- unlist(colorgroup)
+  
+  colrs <- list()
+  for(i in 1:length(maingroup)){
+    
+    sel <- sapply(maingroup[[i]],function(s){match(s, srch)})
+    
+    colrs[[i]] <- data.frame(color = colvec[sel],
+                             label = labs[sel],
+                             stringsAsFactors = FALSE)
+  }
+  return(colrs)
 }

@@ -28,7 +28,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                                             active = T,
                                                                             highlights = NULL,
                                                                             height = 550),
-                                                              msdata = NULL),
+                                                              msdata = NULL,
+                                                              moreArgs = NULL),
                        keys){
   
   ns <- NS(tag)
@@ -45,6 +46,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         ymax = 100,
                                                         MSmerge = NULL,
                                                         fullplot = NULL),
+                                            
+                                                        plotArgs = NULL,
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
@@ -52,7 +55,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   # observeEvent(set(),{sc()})
   sc <- reactive({
     # observe({
-    if(set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set, set()$spec )){
+    if(!is.null(set()) && set()$layout$active && !is.null(set()$spec$sel$File) && !identical(selections$plots$set, set()$spec )){
       
       #select file based on basename rather than full path
       datasel <- which(basename(set()$spec$sel$File)  %in% basename(names(set()$msdata)))
@@ -168,18 +171,18 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   })
   
   observeEvent(set(),{
-    
+    if(!is.null(set())){
     if(length(set()$layout$highlights) > 0){
       selections$plots$spec$highlights <- set()$layout$highlights
     }else{
       selections$plots$spec$highlights <- NULL
       
     }
-    
+    }
   })
   
   output$specinfo <- renderUI({ 
-    if(set()$layout$active && !is.null(set()$spec$sel$File)){
+    if(!is.null(set()) && set()$layout$active && !is.null(set()$spec$sel$File)){
       
       
       
@@ -208,12 +211,13 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$specAll <- renderUI({
-    if(length(set()$layout$active) > 0 
+    if(!is.null(set())
+       && length(set()$layout$active) > 0 
        && set()$layout$active
        && length(set()$spec$sel) >1
     ){
       
-      
+     
       #select file based on basename rather than full path
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
@@ -263,7 +267,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   
   output$Mspec <- renderPlot({
-    if(set()$layout$active && !is.null(set()$spec$sel$File)){
+    if(!is.null(set()) && set()$layout$active && !is.null(set()$spec$sel$File)){
       sc()
       
       xr <- if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange}
@@ -317,18 +321,46 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         }
       }else{""}
       
+       tempArgs <- list(x=selections$plots$spec$data[,1],
+                                           y=selections$plots$spec$data[,2],
+                                           norm=selections$plots$spec$ymax/100,
+                                           cx=set()$layout$cex/1.5,
+                                           k = 20,
+                                           fileName = label,
+                                           yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
+                                           xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
+                                           maxi = selections$plots$spec$ymax
+      )
       
-      
-      specplot(x=selections$plots$spec$data[,1],
-               y=selections$plots$spec$data[,2],
-               norm=selections$plots$spec$ymax/100,
-               cx=set()$layout$cex/1.5,
-               k = 20,
-               fileName = label,
-               yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
-               xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
-               maxi = selections$plots$spec$ymax
-      ) 
+      if(!is.null(set()$moreArgs)){
+       
+        for(i in names(set()$moreArgs)){
+          tempArgs[[i]] <- set()$moreArgs[[i]]
+        }
+        
+        if(!is.null(tempArgs$labels)){
+          
+          mzmatched <- match(round(tempArgs$labels$x,5), round(tempArgs$x,5))
+          
+          tempArgs$labels <- tempArgs$labels[!is.na(mzmatched),]
+          tempArgs$labels$y <- tempArgs$y[na.omit(mzmatched)]
+          
+        }
+         
+      }
+      selections$plots$plotArgs <- tempArgs
+      do.call(specplot,tempArgs)
+        
+      #   specplot(x=selections$plots$spec$data[,1],
+      #          y=selections$plots$spec$data[,2],
+      #          norm=selections$plots$spec$ymax/100,
+      #          cx=set()$layout$cex/1.5,
+      #          k = 20,
+      #          fileName = label,
+      #          yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
+      #          xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
+      #          maxi = selections$plots$spec$ymax
+      # ) 
       
       par(xpd = FALSE)
       if(!is.null(selections$plots$spec$hover)){
@@ -359,6 +391,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       
       selections$plots$spec$fullplot <- recordPlot()
       
+    }else{
+      selections$plots$plotArgs <- NULL 
     }
   })#, height = if(is.null(set()$layout$height)){550}else{set()$layout$height})
   

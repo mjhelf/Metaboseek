@@ -4,8 +4,8 @@
 \alias{writeMS}
 \title{writeMS}
 \usage{
-writeMS(filename, ms2, parentmz, comments = "", rt = "", ion = NULL,
-  charge = 1, splashtag = NULL, scanindices = NULL)
+writeMS(filename, ms2, ms1 = NULL, parentmz, comments = "", rt = "",
+  ion = NULL, charge = 1, splashtag = NULL, scanindices = NULL)
 }
 \arguments{
 \item{filename}{path of file to write to}

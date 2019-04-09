@@ -386,6 +386,7 @@ foldChange <- function(mx,
       
       barename <- gsub("_$","",gsub("_XIC","",gsub("__(.*)","",i)))
       
+      out[[paste0(barename,"__minInt")]] <- rmins[,i]
       out[[paste0(barename,"__meanInt")]] <- rmeans[,i]
       if(!is.null(foldmode) && foldmode=="complex"){
         out[[paste0(barename,"__foldOver_")]] <- rmeans[,i]/rmeans[,which(colnames(rmeans)!=i)]

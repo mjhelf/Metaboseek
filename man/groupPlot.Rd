@@ -9,7 +9,8 @@ groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC =
   xlim = NULL, lw = 1, midline = 100, yzoom = 1), compProps = list(mfrow
   = c(1, 2), oma = c(0, 2, 8, 0), xpd = NA, bg = NA, header =
   paste0(names(res)), header2 = NULL, pdfFile = NULL, pdfHi = 6, pdfWi =
-  12, cx = 1, adductLabs = c("0", "1", "2")))
+  12, cx = 1, adductLabs = c("0", "1", "2")), raise = F, relPlot = F,
+  margins = NULL, ylabshift = 0, RescaleExclude = NULL)
 }
 \arguments{
 \item{EIClist}{list of EICs from METABOseek:multiEIC}
@@ -19,6 +20,14 @@ groupPlot(EIClist = res, grouping = grouping2, plotProps = list(TIC =
 \item{plotProps}{a list of settings for the individual plots}
 
 \item{compProps}{layoout options for the composite plot}
+
+\item{raise}{if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.}
+
+\item{relPlot}{if TRUE, y-axis will show relative intensities}
+
+\item{margins}{manual setting for plot margins (par$mar)}
+
+\item{ylabshift}{shift horizontal position of y axis label}
 
 \item{plotProps.TIC}{if TRUE, TIC instead of EIC}
 

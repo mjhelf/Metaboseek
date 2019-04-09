@@ -9,7 +9,7 @@
 #' @param rtmid vector of retention time values (not ranges)
 #' @param mzmid vector of mz values (not ranges)
 #' @param glist a named list of grouped file names (as supplied in $grouping of rawLayout objects)
-#' @param cols integer, number of colors generated
+#' @param cols integer, number of columns in plot. if NULL, grid can be defined externally
 #' @param colrange character(1), color range function used for line colors
 #' @param transparency numeric(1), alpha (range 0..1) for transparency of lines
 #' @param RTall if TRUE, entire RT range will be plotted
@@ -27,12 +27,17 @@
 #' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
 #' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
 #' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
+#' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
+#' @param relPlot if TRUE, y-axis will show relative intensities
+#' @param margins manual setting for plot margins (par$mar)
+#' @param ylabshift shift horizontal position of y axis label 
+#' @param RescaleExclude exclude this group from rescaling, or NULL to use all
 #' 
 #' @export
 EICgeneral <- function(rtmid = combino()[,"rt"],
                        mzmid = combino()[,"mz"],
                        glist = MSData$layouts[[MSData$active]]$grouping,
-                       cols = MSData$layouts[[MSData$active]]$settings$cols,
+                       cols = NULL,
                        colrange = MSData$layouts[[MSData$active]]$settings$colr,
                        transparency = MSData$layouts[[MSData$active]]$settings$alpha,
                        RTall = input$RTtoggle,
@@ -50,20 +55,35 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                        RTcorrect = NULL,
                        importEIC = NULL,
                        globalYmax = NULL,
-                       subtitles = NULL
+                       subtitles = NULL,
+                       raise = F,
+                       relPlot = F,
+                       margins = NULL,
+                       ylabshift = 0,
+                       RescaleExclude = NULL
 ){
   #number of plot rows
+  if(!is.null(cols)){
   rows <- ceiling(length(glist)/cols)
+  }else{
+    rows <-1}
   
+  if(!is.list(colrange)){
   #make color scales for each group, color shades based on group with most members
   colvec <- do.call(colrange,
                     list(n=max(sapply(glist,length)), alpha = transparency))
   colrs <- list()
   for(i in 1:length(glist)){
-    
-    colrs[[i]] <- colvec[1:length(glist[[i]])]
-    
+    colrs[[i]] <- data.frame(color = colvec[1:length(glist[[i]])],
+                             label = sub("^([^.]*).*", "\\1",basename(glist[[i]])),
+                             stringsAsFactors = FALSE)
+
+  }}
+  else{
+    colrs <- colrange
   }
+  
+ # print(colrs)
   
   #generate rt boundary df
   if(any(RTall, is.null(rtmid))){ # any can handle NULL, seems more flexible than ||
@@ -96,6 +116,10 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   #optionally export to pdf
   if(!is.null(pdfFile)){
+    if(is.null(cols)){
+      rows <- ceiling(length(glist)/5)
+    
+      cols <-1}
     pdf(pdfFile,
         6*cols,
         6*ceiling(length(glist)/cols)+2
@@ -103,7 +127,7 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   #optionally plot TICs first (page 1 in pdf)
   if(leadingTIC){  
-    EICsTIC <- multiEIC(rawdata= rdata,
+    EICsTIC <- multiEIC(rawdata= rdata[basename(names(rdata)) %in% basename(unlist(glist))],
                         mz = mzx[1,],
                         rt = NULL,
                         rnames = "1", #major item names
@@ -134,12 +158,16 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                                pdfHi = 6*rows,
                                pdfWi = 6*cols,
                                cx = cx,
-                               adductLabs = 0)
+                               adductLabs = 0),
+              raise,
+              relPlot,
+              margins,
+              ylabshift
     )
   }
   
   if(is.null(importEIC)){
-  EICs <- multiEICplus(rawdata= rdata,
+  EICs <- multiEICplus(rawdata= rdata[basename(names(rdata)) %in% basename(unlist(glist))],
                        mz = mzx,
                        rt = if(is.null(RTcorrect)){rtx}else{NULL},
                        rnames = row.names(mzmid), #major item names
@@ -150,6 +178,17 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   else{
     EICs <- importEIC
   }
+  
+  if(!is.null(RescaleExclude) 
+     && length(na.omit(match(RescaleExclude,names(glist)))) > 0
+     && length(na.omit(match(RescaleExclude,names(glist)))) < length(glist)){
+   
+    excludedfiles <- unlist(glist[match(RescaleExclude,names(glist))])
+     
+  }else{
+    excludedfiles <- character(0)
+  }
+  
   if(TICall){
     if(is.null(rtx) || length(EICs) %% nrow(rtx) != 0 ){
       
@@ -164,10 +203,15 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     }else{
     #make sure the EICs all get scaled to their highest intensity across all adducts
     if(is.null(rtx)  || length(EICs) %% nrow(rtx) != 0  ){
-    maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[,"intensity"])) }), ncol = length(adducts), byrow = F))
+    maxys <- Biobase::rowMax(matrix(sapply(EICs, function(x){ max(unlist(x[which(!rownames(x) %in% excludedfiles),"intensity"])) }), ncol = length(adducts), byrow = F))
     }else{
       suppressWarnings({
-      maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){ max(unlist(x[,"intensity"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
+      maxys <- Biobase::rowMax(matrix(mapply(function(x, rt){
+        
+        subsel <- which(!rownames(x) %in% excludedfiles)
+        max(unlist(x[subsel,"intensity"])[unlist(x[subsel,"rt"]) >= max(c(min(rt),min(unlist(x[subsel,"rt"])))) 
+                                    & unlist(x[subsel,"rt"]) <= min(c(max(rt),max(unlist(x[subsel,"rt"]))))])},
+        x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  ), ncol = length(adducts), byrow = F))
       
       }) #warnings occur if all scans are out of given rt range
     }
@@ -193,7 +237,12 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
                              pdfHi = 6*rows,
                              pdfWi = 6*cols,
                              cx = cx,
-                             adductLabs = adducts)
+                             adductLabs = adducts),
+            raise,
+            relPlot,
+            margins,
+            ylabshift,
+            RescaleExclude
   )
   if(!is.null(pdfFile)){dev.off()}
   
@@ -277,6 +326,10 @@ EICtitles <- function(mzs, rts, ppm){
 #' @param compProps.pdfWi pdf width in inches
 #' @param compProps.cx numeric(1) font size (character expansion) factor
 #' @param compProps.adductLabs adduct labels (nonfunctional)
+#' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
+#' @param relPlot if TRUE, y-axis will show relative intensities
+#' @param margins manual setting for plot margins (par$mar)
+#' @param ylabshift shift horizontal position of y axis label 
 #' 
 #' @export
 groupPlot <- function(EIClist = res,
@@ -298,7 +351,12 @@ groupPlot <- function(EIClist = res,
                                        pdfHi = 6,
                                        pdfWi = 12,
                                        cx = 1,
-                                       adductLabs = c("0","1","2"))
+                                       adductLabs = c("0","1","2")),
+                      raise = F,
+                      relPlot = F,
+                      margins = NULL,
+                      ylabshift = 0,
+                      RescaleExclude = NULL
 ){
   
   #majoritem is the EIClist top level (typically by mz, but could be)
@@ -321,11 +379,15 @@ groupPlot <- function(EIClist = res,
     #adductLabs legend does not work yet
     #if(length(compProps$adductLabs)>1){compProps$mfrow[1] <- compProps$mfrow[1]+1}
     
-    par(mfrow=compProps$mfrow,
+    if(length(compProps$mfrow) > 1){
+      par(mfrow=compProps$mfrow)
+    }
+    
+    par(#mfrow=compProps$mfrow,
         oma=compProps$oma,
         xpd=compProps$xpd,
         bg=compProps$bg,
-        mar = c(2.6*(1+(compProps$cx-1)/2),4.1*(1+(compProps$cx-1)/4),4.1,2.1))
+        mar = if(is.null(margins) ){ c(2.6*(1+(compProps$cx-1)/2),4.1*(1+(compProps$cx-1)/4),4.1,2.1)}else{margins})
     # layout(t(as.matrix(c(1,2))))
     
     for(plotgroup in c(1:length(grouping))){
@@ -346,7 +408,7 @@ groupPlot <- function(EIClist = res,
       ### by default, only the visible part of the spectrum will be used to determine y-max
       
       
-      if(!is.null(plotProps$ylim)){
+      if(!is.null(plotProps$ylim) && !names(grouping)[plotgroup] %in% RescaleExclude){
         ylimes = c(0,1)
         try({
         ylimes = c(min(plotProps$ylim[majoritem,]), max(plotProps$ylim[majoritem,]))
@@ -375,19 +437,23 @@ groupPlot <- function(EIClist = res,
         }
         ylimes = c(0,mm)
       }
+      
+      if(raise){ylimes[1] <- -0.02*max(ylimes)}
 
       EICplot(EICs = minoritem$EIClist, cx = plotProps$cx, 
               ylim = ylimes, 
               xlim = xlimes,
-              colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
+              colr = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]$color}
               else{plotProps$colr[1:nrow(minoritem$EIClist[[1]])]},
-              legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]])))),
+              legendtext = if(is.list(plotProps$colr)){plotProps$colr[[plotgroup]]}
+              else{paste(sub("^([^.]*).*", "\\1",basename(row.names(minoritem$EIClist[[1]]))))},
               heading = names(grouping)[plotgroup],
-              relto = NULL,
+              relto = if(relPlot){max(ylimes)}else{NULL},
               TIC = plotProps$TIC,
               lw = plotProps$lw,
               midline = plotProps$midline[majoritem],
-              yzoom = plotProps$yzoom
+              yzoom = plotProps$yzoom,
+              ylabshift = ylabshift
               #mfrow=c(1,2)
       ) 
       # }
@@ -443,6 +509,7 @@ groupPlot <- function(EIClist = res,
 #' @param midline numeric() of y-axis positions where a dotted vertical line should be plotted
 #' @param lw line width for plot lines
 #' @param yzoom zoom factor into y-axis
+#' @param ylabshift shift horizontal position of y axis label 
 #' 
 #' @export
 
@@ -458,7 +525,8 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
                     single = F,
                     midline = 100,
                     lw = 1,
-                    yzoom = 1
+                    yzoom = 1,
+                    ylabshift = 0
 ){
   
   suppressWarnings({
@@ -479,14 +547,17 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
     ylim[2] <- ylim[2]/yzoom
   }
   
-  if(!is.null(relto) && relto != 1 ){ylim[2] <- (ylim[2]/relto)*100}
+  if(!is.null(relto) && relto != 1 ){ylim <- (ylim/relto)*100}
   
   PlotWindow(cx, 
              ylim, 
              xlim,
              heading,
              single,
-             liwi = lw
+             ysci = if(!is.null(relto) && relto != 1){F}else{T},
+             liwi = lw,
+             ylab = if(!is.null(relto) && relto != 1){"Relative Intensity (%)"}else{"Intensity"},
+             ylabshift = ylabshift
   )
   
   if(length(midline)> 0 ){
@@ -499,21 +570,28 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
   addLines(EIClist = EICs,
            TIC,
            colr,
-           relto,
+           relto = relto,
            liwi = lw
   )    
   #fix axis to not have gaps at edges
   abline(v=min(xlim), h=min(ylim))
   
   par(xpd=NA)
-  text(min(xlim), 1.05*max(ylim),
+  text(min(xlim), max(ylim)+1.5*strheight("M"),
        labels = maxint, bty="n",
        font = 2, cex=cx*1)
   
   if(!is.null(legendtext)){
+    if(is.list(legendtext)){
+      legendtext <- legendtext[!duplicated(legendtext),]
     legend("topright",
            # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
-           legend = legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=cx*0.7)
+           legend = legendtext$label, lty=1,lwd=2.5, col=legendtext$color, bty="n",  cex=cx*0.7)
+    }else{
+      legend("topright",
+             # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
+             legend = legendtext, lty=1,lwd=2.5, col=colr, bty="n",  cex=cx*0.7)
+    }
   }
   
 }
@@ -551,8 +629,9 @@ addLines <- function(EIClist = EICsAdducts,
       int <- EIClist[[n]][,'intensity']
     }
     
-    if(!is.null(relto) && relto != 1 ){int <- lapply(lapply(int,"/",relto),"*",100)
-    maxint <- format(relto, digits =3, scientific = T)
+    if(!is.null(relto) && relto != 1 ){
+      int <- lapply(lapply(int,"/",relto),"*",100)
+   # maxint <- format(relto, digits =3, scientific = T)
     }
     
     #convert to minutes

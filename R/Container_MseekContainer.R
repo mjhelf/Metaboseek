@@ -12,7 +12,9 @@ MseekContainer <- function(input,output, session){
   
   ns <- NS(session$ns(NULL))
   
-  MseekMinimalServer(diagnostics = .MseekOptions$develMode, data = .MseekOptions$loadExampleData, tables = .MseekOptions$loadExampleTable)
+  MseekMinimalServer(diagnostics = .MseekOptions$develMode,
+                     data = .MseekOptions$loadExampleData,
+                     tables = .MseekOptions$loadExampleTable)
   
   StartPage <- callModule(WelcomePageModule,"startpage",
                           values = reactiveValues(projectData = projectData,
@@ -93,6 +95,8 @@ MseekContainer <- function(input,output, session){
      ))
    
  })
+ 
+ 
   
 }
 

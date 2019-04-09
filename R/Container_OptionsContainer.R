@@ -50,6 +50,9 @@ OptionsContainer <- function(input,output, session,
   
   callModule(EICOptionsModule, "eicopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
+  callModule(SiriusOptionsModule, "siriusopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
+  
+  
   # callModule(GlobalOptionsModule, "globalopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
   internalValues <- reactiveValues(
@@ -112,10 +115,10 @@ OptionsContainerUI <- function(id){
          
          tabPanel("Molecular formula prediction",
                   MzqueryModuleUI(ns("mzquery"))
-         )#,
-         # tabPanel("Global options",
-         #          GlobalOptionsModuleUI(ns("globalopts"))
-         # )
+         ),
+         tabPanel("Sirius options",
+                  SiriusOptionsModuleUI(ns("siriusopts"))
+         )
          
          )
   

@@ -19,6 +19,7 @@
 #' 
 writeMS <- function(filename,
                     ms2,
+                    ms1 = NULL,
                     parentmz,
                     comments = "",
                     rt = "",
@@ -46,8 +47,25 @@ writeMS <- function(filename,
     file = filename,
     append = appending
   )
-  fwrite(data.table(ms2), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
   
+  if(!is.null(ms1)){
+    write(
+      paste0(">ms1"),
+      file = filename,
+      append = T
+    )
+  fwrite(data.table(ms1), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  }
+  
+  if(!is.null(ms2)){
+    write(
+      paste0(">ms2"),
+      file = filename,
+      append = T
+    )
+  
+  fwrite(data.table(ms2), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  }
   
   
   
@@ -67,11 +85,13 @@ writeMS <- function(filename,
 #' @param scanindices which scans were averaged into this ms2 spectrum
 #' @param sirpath path to SIRIUS executable
 #' @param moreOpts character with additional options to be passed to SIRIUS
+#' @param force force calculation, even if same results should exist according to indexfile
 #' 
 #' @importFrom splashR getSplash
 #' @importFrom data.table fread fwrite
 #' 
 runSirius <- function(outfolder,
+                      ms1 = NULL,
                        ms2,
                        instrument,
                        parentmz,
@@ -82,7 +102,8 @@ runSirius <- function(outfolder,
                        fingerid = T,
                        scanindices = NULL,
                        sirpath,
-                       moreOpts = ""){
+                       moreOpts = "",
+                      force = T){
 
   
   #write the MS2 data so sirius can read it
@@ -109,7 +130,7 @@ runSirius <- function(outfolder,
    newjobs$METABOseek_sirius_revision = 1
    
    indexfile <- file.path(outfolder, "index.csv")
-  if(file.exists(indexfile)){
+  if(file.exists(indexfile) && !force){
     
     jobindex <- as.data.frame(data.table::fread(indexfile, na.strings = NULL))
     # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings
@@ -139,6 +160,7 @@ runSirius <- function(outfolder,
 
   np <- mapply(writeMS,
                filename = filename,
+               ms1 = ms1,
                ms2 = ms2,
                parentmz = parentmz,
                scanindices = scanindices,
@@ -230,10 +252,10 @@ getSirius <- function(outfolder, splash, ts){
                                          full.names = T, recursive = T),
                               value = T)
   
-  # res[["trees_json"]] <-  grep(".json$",
-  #                              list.files(file.path(dirname(res[["summary"]]), "trees"),
-  #                                         full.names = T, recursive = T),
-  #                              value = T)
+  res[["trees_json"]] <-  grep(".json$",
+                               list.files(file.path(dirname(res[["summary"]]), "trees"),
+                                          full.names = T, recursive = T),
+                               value = T)
   
   res[["summary_fingerid"]] <-  grep(paste0("summary_csi_fingerid.csv"),res[["allfiles"]],value = T)
   
@@ -258,6 +280,7 @@ getSirius <- function(outfolder, splash, ts){
 #' @param formula molecular formula prediction to get details for
 #' 
 #' @importFrom data.table fread
+#' @importFrom jsonlite read_json
 #' 
 getSiriusTree <- function(paths, formula){
   
@@ -273,9 +296,9 @@ getSiriusTree <- function(paths, formula){
                                                paths[["trees_dot"]],
                                                value = T))
   
-  # res[["trees_json"]] <-   read_json(grep(paste0("_",formula,"_"),
-  #                                         paths[["trees_json"]],
-  #                                         value = T))
+  res[["trees_json"]] <-   read_json(grep(paste0("_",formula,"_"),
+                                          paths[["trees_json"]],
+                                          value = T))
   # 
   # res[["fingerids"]] <-  read.delim(grep(paste0("_",formula,"_"),
   #                                        paths[["fingerids"]],
@@ -287,3 +310,4 @@ getSiriusTree <- function(paths, formula){
   return(res)
   
 }
+
