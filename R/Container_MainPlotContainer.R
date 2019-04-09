@@ -98,6 +98,7 @@ MainPlotContainer <- function(input,output, session,
   )
   
   VennDiagrams <- callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
+                                                                                        MainTable = values$MainTable,
                                                                            GlobalOpts = values$GlobalOpts))
   
   internalValues <- reactiveValues(RegroupMS = RegroupMS,
