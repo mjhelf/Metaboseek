@@ -4,9 +4,9 @@
 \alias{runSirius}
 \title{runSirius}
 \usage{
-runSirius(outfolder, ms2, instrument, parentmz, comments = "", rt = "",
-  ion, charge = 1, fingerid = T, scanindices = NULL, sirpath,
-  moreOpts = "")
+runSirius(outfolder, ms1 = NULL, ms2, instrument, parentmz,
+  comments = "", rt = "", ion, charge = 1, fingerid = T,
+  scanindices = NULL, sirpath, moreOpts = "", force = T)
 }
 \arguments{
 \item{outfolder}{output folder for the SIRIUS results}
@@ -28,6 +28,8 @@ runSirius(outfolder, ms2, instrument, parentmz, comments = "", rt = "",
 \item{sirpath}{path to SIRIUS executable}
 
 \item{moreOpts}{character with additional options to be passed to SIRIUS}
+
+\item{force}{force calculation, even if same results should exist according to indexfile}
 }
 \description{
 run SIRIUS externally for a list of ms2 spectra

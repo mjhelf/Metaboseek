@@ -58,10 +58,10 @@ ShowSiriusModule <- function(input,output, session,
 
       searchterm <- paste(round(reactives()$mz,4),
                           reactives()$splash,
-                          values$SiriusModule$selIon,
-                          values$SiriusModule$selCharge,
-                          values$SiriusModule$checkFinger,
-                          paste0("-e ",  values$SiriusModule$elements, " -p ", values$SiriusModule$selInstrument),
+                          values$GlobalOpts$SiriusSelIon,
+                          #values$SiriusModule$selCharge,
+                          values$GlobalOpts$SiriusCheckFinger,
+                          paste0("-c 50 --fingerid-db bio -e ",  values$GlobalOpts$SiriusElements, " -p ", values$GlobalOpts$SiriusSelInstrument),
                           c(REVISION = 1), sep = "//")
       
       # values$SiriusModule$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")]                    

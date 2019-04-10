@@ -56,7 +56,7 @@ SiriusModule <- function(input,output, session,
       
       tryCatch({
     internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
-       apply(internalValues$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
+       apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
                                         1, paste, collapse = "//"), sep = "//")
       },
     error = function(e){print(e); return(character(0))})
@@ -170,150 +170,112 @@ SiriusModule <- function(input,output, session,
 
 
 
-  output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(length(internalValues$activeMF)>0){
+  # output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(length(internalValues$activeMF)>0){
+  # 
+  #                          internalValues$activeMF[["trees_dot"]]
+  # 
+  # }  })
 
-                           internalValues$activeMF[["trees_dot"]]
-
-  }  })
-
-  output$fingerIDwindow <-  renderUI({
-    if(!is.null(internalValues$activeStructure)){
-
-      pcid <- internalValues$activeStructure$pubchemids
-      if(length(grep(";", pcid))>0){
-
-       pcid <-  strsplit(pcid,";")[[1]][1]
-
-      }
-
-    HTML('
-<iframe id="inlineFramePubchem"
-         title="webpage"
-         style="border:none;width:100%;height:500px;" ',
-         paste0('src="https://pubchem.ncbi.nlm.nih.gov/compound/', pcid,'">'),
-         '</iframe>
-         ')
-    }
-  })
+#   output$fingerIDwindow <-  renderUI({
+#     if(!is.null(internalValues$activeStructure)){
+# 
+#       pcid <- internalValues$activeStructure$pubchemids
+#       if(length(grep(";", pcid))>0){
+# 
+#        pcid <-  strsplit(pcid,";")[[1]][1]
+# 
+#       }
+# 
+#     HTML('
+# <iframe id="inlineFramePubchem"
+#          title="webpage"
+#          style="border:none;width:100%;height:500px;" ',
+#          paste0('src="https://pubchem.ncbi.nlm.nih.gov/compound/', pcid,'">'),
+#          '</iframe>
+#          ')
+#     }
+#   })
   
-  output$controlSirius <- renderUI({
-    fluidRow(
-      column(4,
-             fluidRow(
-               column(3,
-                      selectizeInput(ns("selCharge"), "Charge:", choices = list("+1" = 1, "-1" = -1), selected = internalValues$selCharge)),
-               column(3,
-                      selectizeInput(ns("selIon"), "Ion", choices = list("?" = if(internalValues$selCharge ==1){"[M+?]+"}else{"[M+?]-"},
-                                                                         "[M+H]+" = "[M+H]+",
-                                                                         "[M+Na]+" = "[M+Na]+",
-                                                                         "[M-H}-" = "[M-H]-",
-                                                                         "[M+Cl]-" = "[M+Cl]-"), selected = internalValues$selIon)),
-               column(3,
-                      checkboxInput(ns("checkFinger"), "Get FingerID", value = internalValues$checkFinger))
-             ),
-             fluidRow(
-               column(6,
-                      selectizeInput(ns("selInstrument"), "Instrument", choices = list("Orbitrap" = "orbitrap", "QTOF" = "qtof", "FT-ICR" = "fticr"), selected = internalValues$selIon)),
-               column(6, 
-                      textInput(ns("elements"), "Allow elements:", value = internalValues$elements)))
-      ),
-      column(8,
-             if(!is.null(internalValues$siriusIndex)){
-               TableModule2UI(ns("sirbrowser"))
-             }else{
-               p("No SIRIUS results available")
-             })
-    )
-  })
   
   output$selectSirius <- renderUI({
     
-    bsCollapse(id = ns("collapseSiriusSearch"), open = "SIRIUS search settings",
-               bsCollapsePanel("SIRIUS search settings",
-                              htmlOutput(ns("controlSirius"))
+    bsCollapse(id = ns("collapseSiriusSearch"), open = NULL,
+               bsCollapsePanel("Browse SIRIUS searches",
+                               if(!is.null(internalValues$siriusIndex)){
+                                 
+                                 
+                                 TableModule2UI(ns("sirbrowser"))
+                                 
+                                 
+                               }else{
+                                 
+                                 
+                                 p("No SIRIUS results available")
+                                 
+                                 
+                               })
                                )
-    )
     
     
-  })
-  
-  observeEvent(input$selCharge,{
-    
-    internalValues$selCharge <- input$selCharge
-    
-  })
-  observeEvent(input$selIon,{
-    
-    internalValues$selIon <- input$selIon
-    
-  })
-  observeEvent(input$checkFinger,{
-    
-    internalValues$checkFinger <- input$checkFinger
-    
-  })
-  observeEvent(input$selInstrument,{
-    
-    internalValues$selInstrument <- input$selInstrument
-    
-  })
-  observeEvent(input$elements,{
-    
-    internalValues$elements <- input$elements
     
   })
   
-  output$SiriusUIWrap <- renderUI({
-    fluidPage(
-      bsCollapse(id = ns("collapseAllSirius"), open = NULL,
-                 bsCollapsePanel("SIRIUS Module (click to open/close)",
-      htmlOutput(ns("allSirius"))
-    )))
+  output$selectResults <- renderUI({
     
-  })
-  
-  
-  output$allSirius <- renderUI({
-    fluidPage(
-    fluidRow(
-      htmlOutput(ns("selectSirius"))
-    ),
-      if(!is.null(internalValues$activeSirius)){
-        
-        selitem <- internalValues$siriusIndex[internalValues$siriusIndex$splash == internalValues$activeSirius$splash 
-                                              & internalValues$siriusIndex$timestamp == internalValues$activeSirius$timestamp,]
-        
-        tagList(
-          bsCollapse(id = ns("collapseSiriusMF"), open = NULL,
-                     bsCollapsePanel(paste0("SIRIUS results for m/z ", selitem$mz, " @ ", selitem$rt, "sec"), style = "success")),
-          
-          bsCollapse(id = ns("collapseSiriusMF"), open = "SIRIUS MF prediction",
-                     bsCollapsePanel("SIRIUS MF prediction",
-        fluidRow(
-          column(4,
-               TableModule2UI(ns("mfbrowser"))),
-               column(8,
-               DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px"))
-        )
-        )),
-        bsCollapse(id =  ns("collapseFingerIDs"), open = "FingerID structure matches",
-                   bsCollapsePanel("FingerID structure matches",
-                                   fluidRow(
-                                     column(4,
-        fluidRow(TableModule2UI(ns("structurebrowser")))),
-        column(8,
-               
-               fluidRow(htmlOutput(ns("fingerIDwindow")))
-               ))))
-  )
-      }else{
-        bsCollapse(id = ns("collapseSiriusMF"), open = NULL,
-                   bsCollapsePanel("No SIRIUS results available (yet) for selected spectrum", style = "danger",
+    if(!is.null(internalValues$activeSirius)){
+      
+      selitem <- internalValues$siriusIndex[internalValues$siriusIndex$splash == internalValues$activeSirius$splash 
+                                            & internalValues$siriusIndex$timestamp == internalValues$activeSirius$timestamp,]
+      
+      tagList(
+        bsCollapse(id = ns("collapseSiriusMF"), open = "main",
+                   bsCollapsePanel(paste0("SIRIUS results for m/z ", selitem$mz, " @ ", selitem$rt, "sec"),
+                                   fluidPage(
+                                     fluidRow(
+                                       column(6,
+                                              TableModule2UI(ns("mfbrowser"))),
+                                       column(6,
+                                              TableModule2UI(ns("structurebrowser")))
+                                     )
+                                   ),
+                                   style = "success",value = "main") 
                    
-                  p("No SIRIUS results available for selected spectrum, or calculation is still in progress.")
-         
-                   ))
-      }
+                   
+        )
+        
+        #        column(8,
+        #        DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px"))
+        # )
+        # 
+        # column(8,
+        #        
+        #        fluidRow(htmlOutput(ns("fingerIDwindow")))
+        #        ))
+      )
+    }else{
+      bsCollapse(id = ns("collapseSiriusMF"), open = NULL,
+                 bsCollapsePanel("No SIRIUS results selected.", style = "danger",
+                                 
+                                 p("No Siriusspectrum selected, or no SIRIUS results available for selected spectrum, or calculation is still in progress.")
+                                 
+                 ))
+    }
+    
+    
+    
+  })
+  
+ 
+  output$allSirius <- renderUI({
+         #print(internalValues$activeSirius)
+fluidPage(
+   fluidRow(
+     htmlOutput(ns("selectResults"))
+     
+     ),
+  fluidRow(
+    htmlOutput(ns("selectSirius"))
+  )
     )
   })
  
@@ -331,6 +293,6 @@ SiriusModule <- function(input,output, session,
 #' @export
 SiriusModuleUI <- function(id){
   ns <- NS(id)
-  htmlOutput(ns("SiriusUIWrap"))
+  htmlOutput(ns("allSirius"))
   
 }

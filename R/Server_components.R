@@ -25,6 +25,8 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
     GlobalOpts <- ListToReactiveValues(.MseekOptions)
     
     
+   
+    
   }))
   if(diagnostics){
     eval.parent(quote({
@@ -129,8 +131,8 @@ MseekExamplePreload <- function(tables = T, data = T){
     eval.parent(quote({
       rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "METABOseek"), stringsAsFactors = F)
       
-      MSD <- list(layouts = list(Group1 = constructRawLayout(rawgrouptable = rawgroups)), #List of rawfile paths (unsorted)
-                  rawgrouptable = NULL,
+
+      MSD <- list(rawgrouptable = NULL,
                   index = "Group1",
                   rootfolder = getwd(),
                   localfolders = character(0),
@@ -138,6 +140,12 @@ MseekExamplePreload <- function(tables = T, data = T){
                   active = "Group1",
                   filelist = rawgroups$File,
                   data = loadRawM(rawgroups$File))
+      
+      MSD$MSnExp <- MSnbase::readMSData(MSD$filelist, pdata = NULL, verbose = F,
+                                           centroided. = T,
+                                           smoothed. = NA, mode = "onDisk")
+      
+      MSD$layouts <- list(Group1 = constructRawLayout(rawgrouptable = rawgroups, msnExp = MSD$MSnExp))
     }))
   }
 }

@@ -82,7 +82,9 @@ EICOptionsModule <- function(input,output, session,
   })
   observeEvent(input$plotYzoom,{
     values$GlobalOpts$plotYzoom <- input$plotYzoom
-    MseekOptions(plotYzoom=input$plotYzoom)
+    
+    #Don't want this to be a default setting when loading new session
+    # MseekOptions(plotYzoom=input$plotYzoom)
   })
   
   output$plotLw <- renderUI({
@@ -100,6 +102,23 @@ EICOptionsModule <- function(input,output, session,
     values$GlobalOpts$MLtoggle <- input$MLtoggle
     MseekOptions(MLtoggle=input$MLtoggle)
   })
+  
+  output$raisetoggle <- renderUI({
+    checkboxInput(ns("raiseToggle"),"Raise EICs", value = values$GlobalOpts$raiseToggle)
+  })
+  observeEvent(input$raiseToggle,{
+    values$GlobalOpts$raiseToggle <- input$raiseToggle
+    MseekOptions(raiseToggle = values$GlobalOpts$raiseToggle)
+  })
+  
+  output$relplottoggle <- renderUI({
+    checkboxInput(ns("relPlotToggle"),"Relative intensities", value = values$GlobalOpts$relPlotToggle)
+  })
+  observeEvent(input$relPlotToggle,{
+    values$GlobalOpts$relPlotToggle <- input$relPlotToggle
+    MseekOptions(relPlotToggle= values$GlobalOpts$relPlotToggle)
+  })
+  
   
   output$plotCx <- renderUI({
     numericInput(ns("plotCx"),"Font size: ", value = values$GlobalOpts$plotCx, min = 0.1, step = 0.1)
@@ -126,7 +145,41 @@ EICOptionsModule <- function(input,output, session,
     MseekOptions(colorscheme=input$colorscheme)
   })
   
+  output$groupby <- renderUI({
+    selectizeInput(ns("groupBy"),"Group by: ", 
+                   choices= list("Group"= "grouping",
+                              "Group2" = "grouping2"),
+                   selected = values$GlobalOpts$groupBy
+    )
+  })
+  # observeEvent(input$colorscheme,{
+  #   if(!is.null(MSData$active)){
+  #     MSData$layouts[[MSData$active]]$settings$colr <- input$colorscheme
+  #   }
+  # })
+  observeEvent(input$groupBy,{
+    values$GlobalOpts$groupBy <- input$groupBy
+    # MseekOptions(colorscheme=input$colorscheme)
+  })
   
+  output$colorby <- renderUI({
+    selectizeInput(ns("colorBy"),"Color by: ", 
+                   choices= list("File" = "file",
+                                 "Group"= "grouping",
+                                 "Group2" = "grouping2",
+                                 "Mass shift"),
+                   selected = values$GlobalOpts$colorBy
+    )
+  })
+  # observeEvent(input$colorscheme,{
+  #   if(!is.null(MSData$active)){
+  #     MSData$layouts[[MSData$active]]$settings$colr <- input$colorscheme
+  #   }
+  # })
+  observeEvent(input$colorBy,{
+    values$GlobalOpts$colorBy <- input$colorBy
+    # MseekOptions(colorscheme=input$colorscheme)
+  })
 }
 
 #' EICOptionsModuleUI
@@ -144,15 +197,19 @@ EICOptionsModuleUI <- function(id){
     title = "EIC Options Module",
     # htmlOutput(ns("TICtoggle")),
     fluidRow(
-      column(3,
+      column(2,
              htmlOutput(ns("PPMwindow"))
       ),
-      column(3,
+      column(2,
              htmlOutput(ns("plotCols"))
       ),
-      column(2,
+      column(1,
              htmlOutput(ns("TICtoggle")
              )),
+      column(1,
+             htmlOutput(ns("relplottoggle")
+             )),
+      
       column(2,
              htmlOutput(ns("RTwindow"))
              #     HTML('
@@ -164,22 +221,32 @@ EICOptionsModuleUI <- function(id){
       ),
       column(2,
              htmlOutput(ns("RTtoggle"))
+      ),
+      
+      column(2,
+             htmlOutput(ns("groupby"))
       )
     ),
     
     fluidRow(
-      column(3,
+      column(2,
              htmlOutput(ns("plotYzoom"))),
       
-      column(3,
+      column(2,
              htmlOutput(ns("plotLw"))),
       
-      column(2,
+      column(1,
              htmlOutput(ns("MLtoggle"))),
+      column(1,
+             htmlOutput(ns("raisetoggle"))),
       
       column(2,
              htmlOutput(ns("plotCx"))),
       
       column(2,
-             htmlOutput(ns("colorscheme"))
-      )))}
+             htmlOutput(ns("colorscheme"))),
+      
+      column(2,
+             htmlOutput(ns("colorby"))
+      )
+    ))}

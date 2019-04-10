@@ -11,7 +11,7 @@ EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0,
   basename(row.names(sEICs$EIClist[[1]])))),
   colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha = 1),
   heading = "test", relto = NULL, TIC = F, single = F,
-  midline = 100, lw = 1, yzoom = 1)
+  midline = 100, lw = 1, yzoom = 1, ylabshift = 0)
 }
 \arguments{
 \item{ylim}{numeric(2) min and max visible rt value (in seconds)}
@@ -35,6 +35,8 @@ EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0,
 \item{lw}{line width for plot lines}
 
 \item{yzoom}{zoom factor into y-axis}
+
+\item{ylabshift}{shift horizontal position of y axis label}
 
 \item{EIClistItem}{item from a list of EICs from METABOseek:multiEIC}
 }

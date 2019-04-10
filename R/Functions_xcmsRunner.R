@@ -170,7 +170,7 @@ savetable <- function(xset,
     }
     
     write.csv(tb, file = gsub("\\.csv$","_unprocessed.csv",filename))
-    if(saveR){save(xset,file = paste0(filename,".Rdata"))}
+    if(saveR){saveRDS(xset,file = paste0(filename,".Rdata"))}
     
     
     if(!is.null(postProc)){
@@ -255,7 +255,7 @@ savetable <- function(xset,
     }
     
     write.csv(tbf, file = gsub("\\.csv$","_unprocessed.csv",fn))
-    if(saveR){save(xset,file = paste0(fn,".Rdata"))}
+    if(saveR){saveRDS(xset,file = paste0(fn,".Rdata"))}
     
     
     if(!is.null(postProc)){

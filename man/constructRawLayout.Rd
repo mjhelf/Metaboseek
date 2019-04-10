@@ -4,7 +4,7 @@
 \alias{constructRawLayout}
 \title{constructRawLayout}
 \usage{
-constructRawLayout(rawgrouptable, stem = NULL)
+constructRawLayout(rawgrouptable, stem = NULL, msnExp = NULL)
 }
 \arguments{
 \item{rawgrouptable}{a data.frame with columns File and Group , holding file paths and group names, respectively.}

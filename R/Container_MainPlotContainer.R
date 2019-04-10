@@ -36,13 +36,7 @@ MainPlotContainer <- function(input,output, session,
   #### MS2Browsewr #####
   
   
-  FindMS2 <- callModule(FindMS2ScansModule, "findms2",
-                        values = reactiveValues(featureTables = values$featureTables,
-                                                MSData = values$MSData,
-                                                MainTable = values$MainTable),
-                        static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table",
-                                      label = "Find MS2 scans")
-  )
+  
   
   
   MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
@@ -104,6 +98,7 @@ MainPlotContainer <- function(input,output, session,
   )
   
   VennDiagrams <- callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
+                                                                                        MainTable = values$MainTable,
                                                                            GlobalOpts = values$GlobalOpts))
   
   internalValues <- reactiveValues(RegroupMS = RegroupMS,
@@ -154,7 +149,7 @@ MainPlotContainerUI <- function(id){
                   PcaViewModuleUI(ns("pcaviewfeatures"))
          ),
          tabPanel("MS2 Browser",
-                  FindMS2ScansModuleUI(ns("findms2")),
+                 
                   MS2BrowserModuleUI(ns('MS2B'))
          )
          

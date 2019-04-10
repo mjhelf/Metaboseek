@@ -8,7 +8,7 @@ PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
   xlim = c(min(unlist(EIClistItem[, "rt"])), max(unlist(EIClistItem[,
   "rt"])))/60, heading = "test", single = F, par = T, relto = NULL,
   ylab = "Intensity", xlab = "RT (min)", ysci = T, liwi = 1,
-  textadj = 0.5)
+  textadj = 0.5, ylabshift = 0)
 }
 \arguments{
 \item{cx}{character expansion factor (font size)}
@@ -32,6 +32,8 @@ PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
 \item{ysci}{if TRUE, y axis label numbers are shown in scientific format}
 
 \item{textadj}{passed on to mtext adj for orientation of plot description/title text line}
+
+\item{ylabfactor}{factor to adjust the position of the y axis label}
 }
 \description{
 Initiate a plot and draw axes

@@ -1,4 +1,4 @@
-#' GroupedEICModule
+#' FeatureReportModule
 #' 
 #' 
 #' server module for loading a Project Folder
@@ -11,12 +11,14 @@
 #' @param static Import data from the shiny session
 #' 
 #' @export 
-GroupedEICModule <- function(input,output, session,
+FeatureReportModule <- function(input,output, session,
                                    values = reactiveValues(MSData = MSData,
                                                            MainTable = MainTable,
                                                            featureTables = featureTables,
-                                                           GlobalOpts = GlobalOpts,
-                                                           projectData = projectData),
+                                                           GlobalOpts = GlobalOpts),
+                                MS2feed = NULL,
+                                tree = NULL,
+                                fragments = NULL,
                              keys = reactive({keyin$keyd})
 ){
   
@@ -27,73 +29,47 @@ GroupedEICModule <- function(input,output, session,
   
   
   output$pdfButton <- downloadHandler(filename= function(){
-    titleout <- filenamemaker(values$projectData$projectName,values$featureTables)
+    titleout <- "featureReport"
     
     return(paste0(titleout,".pdf"))}, 
     content = function(file){
       
-      TableUpdateChunk()
+      # if(!is.null(fragments)){
+      #   print(fragments()$fragments)}
       
-     subtitles <- NULL
-
-     if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){
-
-       subtitles <- paste0(internalValues$subtitleColumns[1], ": ",
-                           values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),internalValues$subtitleColumns[1]])
-
-       if(length(internalValues$subtitleColumns) > 1){
-         for( i in 2:length(internalValues$subtitleColumns)){
-
-           subtitles <- paste0(subtitles, " ", internalValues$subtitleColumns[i], ": ",
-                               values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),internalValues$subtitleColumns[i]])
-
-         }
-       }
-
-
-     }
-     
-     if(!is.null(values$GlobalOpts$colorBy) 
-        && values$GlobalOpts$colorBy %in% c("grouping", "grouping2")
-        &&!is.null(values$GlobalOpts$groupBy)
-        && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){
-       
-       cr <-  makeColorscheme(maingroup = values$MSData$layouts[[values$MSData$active]][[values$GlobalOpts$groupBy]],
-                              colorgroup =values$MSData$layouts[[values$MSData$active]][[values$GlobalOpts$colorBy]],
-                              colrange = values$GlobalOpts$colorscheme,
-                              transparency = values$GlobalOpts$plotTransparency)
-       
-     }else{
-       cr <- values$GlobalOpts$colorscheme
-     }
-     
-     grp <- if(!is.null(values$GlobalOpts$groupBy)
-               && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
+      grp <- if(!is.null(values$GlobalOpts$groupBy)
+                && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
       
-      EICgeneral(rtmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"rt"],
-                 mzmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"mz"],
-                 glist = values$MSData$layouts[[values$MSData$active]][[grp]],
-                 cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
-                 colrange = cr,
-                 transparency = values$GlobalOpts$plotTransparency,
-                 RTall = values$GlobalOpts$RTtoggle,
-                 rtw = values$GlobalOpts$RTwindow,
-                 ppm = values$GlobalOpts$PPMwindow,
-                 rdata = values$MSData$data[basename(names(values$MSData$data)) %in% basename(values$MSData$layouts[[values$MSData$active]]$filelist)  ],
-                 pdfFile = file,
-                 leadingTIC = T,
-                 TICall = values$GlobalOpts$TICtoggle,
-                 lw = values$GlobalOpts$plotLw,
-                 adducts = if(is.null(values$MSData$massShifts$shifts)){0}else{values$MSData$massShifts$shifts},
-                 cx = values$GlobalOpts$plotCx,
-                 midline = values$GlobalOpts$MLtoggle,
-                 yzoom = values$GlobalOpts$plotYzoom,
-                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
-                 globalYmax = internalValues$reltoCheck,
-                 subtitles = subtitles,
-                 relPlot = values$GlobalOpts$relPlotToggle,
-                 raise = values$GlobalOpts$raiseToggle
-      )
+      featureReport(pdf_settings = list(file = file, width = NULL, height = NULL),
+                    layout_settings = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
+                    EICplots = plotEngine(),
+                    MS1 = iSpec1()$plotArgs,
+                    MS2 = MS2spec()$plotArgs,
+                    tree = list(tree = tree(),
+                                resolution = 5000),
+                    fragments = if(!is.null(fragments)){
+                      fragments()
+                      }else{NULL},
+                    
+                    selectMS2 = if(is.null(MS2feed()$spec$sel)){NULL}
+                                else{names(values$MSData$data)[basename(names(values$MSData$data)) %in% basename(MS2feed()$spec$sel$File)]}
+                      )
+      
+    },
+    
+    
+    
+    contentType = "application/pdf")
+  
+  output$pdfTree <- downloadHandler(filename= function(){
+    titleout <- "TreeOnly"
+    
+    return(paste0(titleout,".pdf"))}, 
+    content = function(file){
+      plotTree(tree = tree(),
+                                resolution = 5000,
+                                filename = file)
+      
     },
     
     
@@ -101,9 +77,9 @@ GroupedEICModule <- function(input,output, session,
     contentType = "application/pdf")
   
   
-  output$mainPlotEICsPre <- renderPlot({
+ plotEngine <- reactive({
+
     if(!is.null(values$MSData$data) && !is.null(values$MSData$layouts[[values$MSData$active]]$grouping)){
-      
       rtmid <- if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
       mzmid <- if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]}
       RTall <- values$GlobalOpts$RTtoggle
@@ -179,37 +155,49 @@ GroupedEICModule <- function(input,output, session,
 
       grp <- if(!is.null(values$GlobalOpts$groupBy)
                 && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
-      
-      EICgeneral(rtmid,
-                 mzmid,
-                 glist = values$MSData$layouts[[values$MSData$active]][[grp]],
-                 cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
-                 colrange = cr,
-                 transparency = values$GlobalOpts$plotTransparency,
-                 RTall = values$GlobalOpts$RTtoggle,
-                 TICall = values$GlobalOpts$TICtoggle || is.null(values$MainTable$selected_rows),
-                 rtw = values$GlobalOpts$RTwindow,
-                 ppm = values$GlobalOpts$PPMwindow,
-                 rdata = values$MSData$data[basename(names(values$MSData$data)) %in% basename(values$MSData$layouts[[values$MSData$active]]$filelist)  ],
-                 pdfFile = NULL,
-                 leadingTIC = F,
-                 lw = values$GlobalOpts$plotLw,
-                 adducts = if(is.null(values$MSData$massShifts$shifts)){0}else{values$MSData$massShifts$shifts},
-                 cx = values$GlobalOpts$plotCx,
-                 midline = values$GlobalOpts$MLtoggle,
-                 yzoom = values$GlobalOpts$plotYzoom,
-                 RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
-                 importEIC = EICcache[[values$MSData$active]],
-                 globalYmax = internalValues$reltoCheck,
-                 subtitles,
-                 relPlot = values$GlobalOpts$relPlotToggle,
-                 raise = values$GlobalOpts$raiseToggle
+      list(rtmid = rtmid,
+           mzmid = mzmid,
+           glist = values$MSData$layouts[[values$MSData$active]][[grp]],
+           cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
+           colrange = cr,
+           transparency = values$GlobalOpts$plotTransparency,
+           RTall = values$GlobalOpts$RTtoggle,
+           TICall = values$GlobalOpts$TICtoggle || is.null(values$MainTable$selected_rows),
+           rtw = values$GlobalOpts$RTwindow,
+           ppm = values$GlobalOpts$PPMwindow,
+           rdata = values$MSData$data[basename(names(values$MSData$data)) %in% basename(values$MSData$layouts[[values$MSData$active]]$filelist)  ],
+           pdfFile = NULL,
+           leadingTIC = F,
+           lw = values$GlobalOpts$plotLw,
+           adducts = if(is.null(values$MSData$massShifts$shifts)){0}else{values$MSData$massShifts$shifts},
+           cx = values$GlobalOpts$plotCx,
+           midline = values$GlobalOpts$MLtoggle,
+           yzoom = values$GlobalOpts$plotYzoom,
+           RTcorrect = if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr},
+           importEIC = EICcache[[values$MSData$active]],
+           globalYmax = internalValues$reltoCheck,
+           subtitles = subtitles,
+           relPlot = values$GlobalOpts$relPlotToggle,
+           raise = values$GlobalOpts$raiseToggle,
+           RescaleExclude = "MS2"
       )
+      
+    }else{
+      
+      NULL
+      }
+    
+  })
+  
+  output$mainPlotEICsPre <- renderPlot({
+    if(!is.null(plotEngine())){
+    
+      
+      do.call(EICgeneral, plotEngine())
       
     }
     
   }, bg = "white", execOnResize = T)
-  
  
   
   mainPlotHeight <- reactive({if(!is.null(values$MSData$active) && values$MSData$active != ""){
@@ -224,45 +212,11 @@ GroupedEICModule <- function(input,output, session,
   output$mainPlotEICs <- renderUI({
     if(!is.null(values$MSData$data)){
       plotOutput(ns("mainPlotEICsPre"),
-                 height = mainPlotHeight()#,
-                 #click = "spec2_click",
-                 #hover = "mainPlot_hover",
-                 #dblclick = "mainPlot_dblclick",
-                 #brush = brushOpts(
-                 #   id = "mainPlot_brush",
-                 #  direction = "x",
-                 # resetOnNew = TRUE)
+                 height = mainPlotHeight()
       )
     }
   })
   
-  
-   output$adductPlot <- renderUI({
-    if(length(values$MSData$massShifts$shifts) > 0 && (length(values$MSData$massShifts$shifts) > 1 || values$MSData$massShifts$shifts != 0)){
-      plotOutput(ns("adductLegend"), height = "30px")
-    }
-  })
-   
- 
-  
-  output$adductLegend <- renderPlot({
-    if(length(values$MSData$massShifts$shifts) > 0 && (length(values$MSData$massShifts$shifts) > 1 || values$MSData$massShifts$shifts != 0)){
-      
-      legendplot("center",
-                 legend = values$MSData$massShifts$labs,
-                 lty = 1:length(values$MSData$massShifts$labs),
-                 lwd = values$GlobalOpts$plotLw*1.2,
-                 col = "black", bty = "n", 
-                 cex = values$GlobalOpts$plotCx, horiz = T)
-    }
-    
-  }, height = 30)
-  
-  
-  
-  observe({
-    toggleState(id = "pdfButton", condition = !is.null(values$MSData$active))
-  })
   
   
   
@@ -281,22 +235,35 @@ GroupedEICModule <- function(input,output, session,
     EICcache$iSpec1_feed <- NULL
   }
   })
-  iSpec1_feed <- eventReactive(EICcache[[values$MSData$active]],{
-    
-    if(!is.null(EICcache[[values$MSData$active]])){
-      maxI <- which.max(EICcache[[values$MSData$active]][[1]][,"intmax"])
-      maxsc <- which.max(EICcache[[values$MSData$active]][[1]][maxI,"intensity"][[1]])
-      return(list(File = row.names(EICcache[[values$MSData$active]][[1]])[maxI],
-                  scan = EICcache[[values$MSData$active]][[1]][maxI,"scan"][[1]][maxsc],
-                  rt = EICcache[[values$MSData$active]][[1]][maxI,"rt"][[1]][maxsc]
-                  
-      ))
-    }
-  })
+  
+  
+  # iSpec1_feed <- eventReactive(EICcache[[values$MSData$active]],{
+  #   
+  #   if(!is.null(EICcache[[values$MSData$active]])){
+  #     maxI <- which.max(EICcache[[values$MSData$active]][[1]][,"intmax"])
+  #     maxsc <- which.max(EICcache[[values$MSData$active]][[1]][maxI,"intensity"][[1]])
+  #     return(list(File = row.names(EICcache[[values$MSData$active]][[1]])[maxI],
+  #                 scan = EICcache[[values$MSData$active]][[1]][maxI,"scan"][[1]][maxsc],
+  #                 rt = EICcache[[values$MSData$active]][[1]][maxI,"rt"][[1]][maxsc]
+  #                 
+  #     ))
+  #   }
+  # })
+  
+  output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(tree) && !is.null(tree()) ){
+
+                           tree()
+
+  }  })
   
   
   iSpec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"), 
                        set = reactive({
+                         
+                         
+                         
+                         if(is.null(MS2spec()$plotArgs) || is.null(MS2feed()) || is.null(MS2feed()$spec$sel) || length(MS2feed()$spec$sel$File) <1){
+                         
                          
                          list(spec = list(xrange = if(is.null(values$MainTable$selected_rows)){NULL}else{c(values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-10,
                                                                                                            values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+10)},
@@ -312,9 +279,52 @@ GroupedEICModule <- function(input,output, session,
                                             cex = 1.5,
                                             controls = F,
                                             ppm = values$GlobalOpts$PPMwindow,
-                                            active = input$ShowSpec),
+                                            active = input$ShowSpec,
+                                            highlights = NULL,
+                                            height = 350),
                               msdata = values$MSData$data)
+                         
+                         }else{
+                           
+                           targets <- MS2feed()$spec$sel
+                           
+                         
+                           ms1targets <- list(File = targets$File)
+                           
+                           ms1targets$scan <- sapply(seq(length(targets$File)),function(n){ which.min(abs(values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime - targets$rt[n]))})
+                           
+                           ms1targets$rt <- sapply(seq(length(targets$File)),function(n){values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime[ms1targets$scan[n]]})
+                           
+                           
+                           list(spec = list(xrange = if(is.null(values$MainTable$selected_rows)){NULL}else{c(values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-3,
+                                                                                                             values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+7)},
+                                            yrange = NULL,
+                                            maxxrange = NULL,
+                                            maxyrange = NULL,
+                                            sel = ms1targets,
+                                            data = NULL,
+                                            mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]}),
+                                layout = list(lw = 1,
+                                              cex = 1.5,
+                                              controls = F,
+                                              ppm = values$GlobalOpts$PPMwindow,
+                                              active = T, #input$ShowSpec,
+                                              highlights = NULL,
+                                              height = 350),
+                                msdata = values$MSData$data,
+                                moreArgs = list(k = 10))
+                           
+                           
+                           
+                           }
+                         
                        }), 
+                       keys = reactive({keys()})#,
+                      # static = list(title = "MS1 spectrum")
+  )
+  
+  MS2spec <- callModule(Specmodule,"ms2spec", tag = ns("ms2spec"), 
+                       set = reactive({MS2feed()}), 
                        keys = reactive({keys()})
   )
   
@@ -359,12 +369,12 @@ GroupedEICModule <- function(input,output, session,
 }
 
 
-#' GroupedEICModuleUI
+#' FeatureReportModuleUI
 #' 
 #' @param id id of the Module
 #' 
 #' @export 
-GroupedEICModuleUI <- function(id){
+FeatureReportModuleUI <- function(id){
   
   ns <- NS(id)
   
@@ -393,8 +403,11 @@ GroupedEICModuleUI <- function(id){
        column(2,
               htmlOutput(ns("subtitleSelect"))
        ),
-      column(2,
+      column(1,
              downloadButton(ns("pdfButton"), "Save Plot")
+      ),
+      column(1,
+             downloadButton(ns("pdfTree"), "Save Tree")
       ),
       
       column(4,
@@ -406,13 +419,16 @@ GroupedEICModuleUI <- function(id){
     fluidRow(
       #imageOutput("mainPlotPlaceholder"),
       htmlOutput(ns("mainPlotEICs"))),
-    #plotOutput("mainPlotEICsPre")
-    fluidRow(
-      htmlOutput(ns("adductPlot"))
-    ),
     
     fluidRow(
+      column(6,
       SpecmoduleUI(ns("Spec1"))
-    )
+    ),
+    column(6,
+           SpecmoduleUI(ns("ms2spec"))
+    )),
+    fluidRow(
+      DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px")
+  )
   )  
 }

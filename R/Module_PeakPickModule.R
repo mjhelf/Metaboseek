@@ -143,6 +143,16 @@ If this is selected, the rt window setting for peak intensity calculation starts
           
         }else if(input$getintensities){
             
+          mz <- lapply(values$MSData$layouts[[values$MSData$active]]$filelist,mzR::openMSfile)
+          
+          h <- lapply(mz, mzR::header)
+          
+          normby <- data.frame(file = MSD$filelist,
+                               ticmean = sapply(h,function(x){mean(x$basePeakIntensity[x$msLevel == 1])}),
+                               bpmean = sapply(h,function(x){mean(x$totIonCurrent[x$msLevel == 1])}))
+          normby$normfactor_bp <- mean(normby$bpmean)/normby$bpmean
+          normby$normfactor_tic <- mean(normby$ticmean)/normby$ticmean
+          
           intens <- as.data.frame(lapply(bplapply(values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist], 
                                                  METABOseek::exIntensities, 
                                                  mz = newdf$mz,
@@ -160,6 +170,20 @@ If this is selected, the rt window setting for peak intensity calculation starts
                                         unlist))
           
           colnames(intens) <- paste0(basename(values$MSData$layouts[[values$MSData$active]]$filelist),"__", input$intensSuffix)
+          
+          
+          
+          for(i in seq(ncol(intens))){
+            
+            intens[[paste0(colnames(intens)[i],"__bpnorm")]] <- intens[[i]]*normby$normfactor_bp[i]
+            
+          }
+          
+          for(i in seq(length(normby$normfactor_tic))){
+            
+            intens[[paste0(colnames(intens)[i],"__ticnorm")]] <- intens[[i]]*normby$normfactor_tic[i]
+            
+          }
           
           newdf <- updateDF(intens, newdf)
         }
