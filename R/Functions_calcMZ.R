@@ -48,7 +48,7 @@ consolidateSF <- function(x){
 }
 
 
-#''reformatSF
+#''makeSF
 #'
 #' Reformat a molecula formula string into an element count vector
 #' 

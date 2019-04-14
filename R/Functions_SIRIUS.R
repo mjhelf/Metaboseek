@@ -42,7 +42,6 @@ writeMS <- function(filename,
     paste0(">splash ", splashtag),
     paste0("# Comments: ", comments),
     paste0(">rt ", rt),
-    paste0(">ms2"),
     sep =  "\n"),
     file = filename,
     append = appending
