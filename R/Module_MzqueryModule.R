@@ -10,6 +10,7 @@
 #' @param set Import data from the shiny session
 #' 
 #' @importFrom MassTools calcMF
+#' @importFrom BiocParallel bpparam
 #' 
 #' @export 
 MzqueryModule <- function(input,output, session, 
@@ -90,8 +91,10 @@ output$mzUI <- renderUI({
       column(3,
              checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = FALSE),
              htmlOutput(ns("mzInfo"))),
-      column(3,
-                      actionButton(ns("mzButton"), "calculate"))
+      column(2,
+             actionButton(ns("mzButton"), "calculate")),
+      column(2,
+             actionButton(ns("mzButton2"), "calculate all"))
                
       )),
       
@@ -188,6 +191,55 @@ mztab <- eventReactive(input$mzButton,{
                 source = input$source))
   }
     })
+
+observeEvent(input$mzButton2,{
+  #print(input$source)
+ # if(length(input$source) > 0){
+   
+  tryCatch({
+    withProgress(message = 'Please wait!', detail = "calculating molecular formulas", value = 0.5, {
+    
+    
+    TableUpdateChunk()
+
+      res <- data.frame(predicted_MFs =if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$predicted_MFs)){
+        values$featureTables$tables[[values$featureTables$active]]$df$predicted_MFs}
+        else{
+          character(nrow(values$featureTables$tables[[values$featureTables$active]]$df))
+          },
+                        stringsAsFactors = F)
+    
+    res$predicted_MFs[values$featureTables$row_filters] <- calcMF(values$featureTables$tables[[values$featureTables$active]]$df$mz[values$featureTables$row_filters], 
+                               summarize = T,  
+                               z = input$mzcharge,
+                               ppm = input$mzppm,
+                               BPPARAM = bpparam(),
+                               Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
+                                              minElements = input$minelements,
+                                              maxElements = input$maxelements,
+                                              parity = input$selparity,
+                                              maxCounts = input$maxcounts,
+                                              SENIOR3 = if(input$valencefilter){0}else{NULL},
+                                              HCratio = input$hcratio,
+                                              moreRatios = input$moreratios,
+                                              elementHeuristic = input$elementheuristic))
+    
+    values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res)
+    
+
+    })
+    showNotification(paste("Molecula formula calculation completed."), duration = 10, type = "message")
+  },
+  error = function(e){
+    showNotification(paste("An error occured:", e), duration = NULL, type = "error")
+    
+  })
+  
+  
+  
+ # }
+})
+
 
 #render sum formula table
 output$hot1 <- renderRHandsontable({
