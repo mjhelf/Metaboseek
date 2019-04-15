@@ -12,32 +12,30 @@
 #' @importFrom MassTools calcMF
 #' 
 #' @export 
-MzqueryModule <- function(input,output, session, tag, 
-                          set = list(search = list(elements = NULL,
-                                                                          mz = NULL, 
-                                                                          data = NULL) # the entire spectrum data for isotope matching
-                                                                 )){
+MzqueryModule <- function(input,output, session, 
+                          values = reactiveValues(featureTables,
+                                                  MainTable,
+                                                  GlobalOpts),
+                          reactives = reactive({list(mz = NULL)})){
 ###Enter mz textInput
-  ns <- NS(tag)
-selections <- reactiveValues(search = list(            elements = "C0-100H0-202N0-15O0-20",
-                                                      mz = NULL, 
-                                                      data = NULL),
-                             sources = NULL,
-                                          set = NULL #copy of set() to check if set() has changed
-)
+  ns <- NS(session$ns(NULL))
+  
+  
+  internalValues <- reactiveValues(mz = NULL,
+                               sources = NULL,
+                               set = NULL #copy of set() to check if set() has changed
+  )
 
 observe({
-  if(!identical(selections$set, set())){
-  selections$search$elements <- set()$search$elements
-  selections$search$mz <- set()$search$mz
-  selections$search$data <- set()$search$data
-  
-  #if(!identical(names(selections$sources), selections$sources)){
-  selections$sources <- names(set()$search$mz)
+  if(!identical(internalValues$set, reactives())){
+  internalValues$mz <- reactives()$mz
+
+  #if(!identical(names(internalValues$sources), internalValues$sources)){
+  internalValues$sources <- names(reactives()$mz)
   #}
   
-  selections$set <- set()
-  #print(selections$search$mz)
+  internalValues$set <- reactives()
+  #print(internalValues$mz)
 }
     })
 
@@ -46,41 +44,58 @@ output$mzUI <- renderUI({
   fluidPage(
     fluidRow(
       h3("Molecular formula prediction"),
-      column(4,
+      column(5,
              fluidRow(
-               column(6,
-                      textInput(ns("mzspace"), label = "Select elements:", value = "C0-100H0-202N0-15O0-20")
+               column(3,
+                      textInput(ns("minelements"), label = "Minimum elements:", value = "C1H2N0O0")
                       ),
-               column(6,
-                      checkboxInput(ns("integUnsat"), label = "only integer unsaturation", value = FALSE))
+               column(3,
+                      textInput(ns("maxelements"), label = "Maximum elements:", value = "P3S3")),
+                      
+               column(3,
+                      selectizeInput(ns("selparity"), "Parity", choices = list("either" = NULL,
+                                                                               "odd" = "o",
+                                                                               "even" = "e"))),
+               column(3,
+                      checkboxInput(ns("maxcounts"), label = "Element filter", value = TRUE))
                ),
              fluidRow(
-               column(6,
+               column(3,
                       numericInput(ns("mzcharge"), "Charge", 1, step=1) 
                ),
-               column(6,
-                      numericInput(ns("mzppm"), "ppm", 5, step=0.1))
+               column(3,
+                      numericInput(ns("mzppm"), "ppm", 5, step=0.1)),
+               column(3,
+                      numericInput(ns("minUnsat"), "min. DBE", -5, step=1)),
+               column(3,
+                      numericInput(ns("maxUnsat"), "max. DBE", 40, step=1))
                ),
              fluidRow(
-               column(6,
-                      numericInput(ns("minUnsat"), "min. unsaturation", 0, step=1)),
-               column(6,
-                      numericInput(ns("maxUnsat"), "max. unsaturation", 40, step=1))
-               
-             )),
+               column(3,
+                      checkboxInput(ns("valencefilter"), label = "Valence filters", value = TRUE)),
+             column(3,
+                    checkboxInput(ns("hcratio"), label = "H/C ratio", value = T)),
       column(3,
-             selectizeInput(ns("source"), label = "source", choices = c(selections$sources, "custom") ),
-             textInput(ns("mzquery"), label = "custom m/z:", value = 0),
-             htmlOutput(ns("mzInfo")),
-             fluidRow(
-               column(4,
-                      actionButton(ns("mzButton"), "calculate")),
-               column(8,
-                      checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = FALSE))
-             )
-      ),
+             checkboxInput(ns("moreratios"), label = "NOPS/C ratio", value = T)),
+    column(3,
+           checkboxInput(ns("elementheuristic"), label = "Element filter 2", value = T))
+
+               
+             ),
+    fluidRow(
+      column(3,
+             selectizeInput(ns("source"), label = "source", choices = c(internalValues$sources, "custom") )),
+      column(3,
+             numericInput(ns("mzquery"), label = "custom m/z:", value = 0)),
+      column(3,
+             checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = FALSE),
+             htmlOutput(ns("mzInfo"))),
+      column(3,
+                      actionButton(ns("mzButton"), "calculate"))
+               
+      )),
       
-      column(5,
+      column(7,
              rHandsontableOutput(ns('hot1')),
              htmlOutput(ns("mzInfo2"))
       )
@@ -88,14 +103,14 @@ output$mzUI <- renderUI({
 }) 
 
 output$mzInfo <- renderUI({
-  #print(selections$search$mz[[input$source]])
+  #print(internalValues$mz[[input$source]])
    p(paste0("Calculate sum formulas for m/z ", 
-          if(length(input$source) > 0 && input$source != "custom"){round(as.numeric(selections$search$mz[[input$source]]),5)}else{round(as.numeric(input$mzquery),5)}
+          if(length(input$source) > 0 && input$source != "custom"){round(as.numeric(internalValues$mz[[input$source]]),5)}else{round(as.numeric(input$mzquery),5)}
          ))
 })
 
 output$mzInfo2 <- renderUI({
-  #print(selections$search$mz[[input$source]])
+  #print(internalValues$mz[[input$source]])
   if(!is.null(mzauto()) && !is.null(mzauto()$table)){
   p("Showing results for m/z ",
            strong(round(as.numeric(mzauto()$mz),5)),
@@ -109,7 +124,7 @@ output$mzInfo2 <- renderUI({
 
 mzauto <- reactive({
   if(length(input$source) > 0 && input$source != "custom" && input$autoCalc){
-    mzi <- as.numeric(selections$search$mz[[input$source]])
+    mzi <- as.numeric(internalValues$mz[[input$source]])
     
     return(list(table = calcMF(mzi, 
                                summarize = F,  
@@ -117,14 +132,14 @@ mzauto <- reactive({
                                ppm = input$mzppm,
                                BPPARAM = NULL,#bpparam(),
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
-                                              minElements = "C0H0P0S0N0O0",
-                                              maxElements = "C9999H9999P3S3N9999O9999",
-                                              parity = "e",
-                                              maxCounts = T,
-                                              SENIOR3 = 0,
-                                              HCratio = T,
-                                              moreRatios = T,
-                                              elementHeuristic = T)),
+                                              minElements = input$minelements,
+                                              maxElements = input$maxelements,
+                                              parity = input$selparity,
+                                              maxCounts = input$maxcounts,
+                                              SENIOR3 = if(input$valencefilter){0}else{NULL},
+                                              HCratio = input$hcratio,
+                                              moreRatios = input$moreratios,
+                                              elementHeuristic = input$elementheuristic)),
                 # massquery(mzi,
                 #                 elem = input$mzspace,
                 #                 ppm= input$mzppm,
@@ -145,7 +160,7 @@ mzauto <- reactive({
 mztab <- eventReactive(input$mzButton,{
   #print(input$source)
   if(length(input$source) > 0){
-    mzi <- if(input$source != "custom"){as.numeric(selections$search$mz[[input$source]])}else{as.numeric(input$mzquery)}
+    mzi <- if(input$source != "custom"){as.numeric(internalValues$mz[[input$source]])}else{as.numeric(input$mzquery)}
   
     return(list(table = calcMF(mzi, 
                                summarize = F,  
@@ -153,14 +168,14 @@ mztab <- eventReactive(input$mzButton,{
                                ppm = input$mzppm,
                                BPPARAM = NULL,#bpparam(),
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
-                                              minElements = "C0H0P0S0N0O0",
-                                              maxElements = "C9999H9999P3S3N9999O9999",
-                                              parity = "e",
-                                              maxCounts = T,
-                                              SENIOR3 = 0,
-                                              HCratio = T,
-                                              moreRatios = T,
-                                              elementHeuristic = T)),
+                                              minElements = input$minelements,
+                                              maxElements = input$maxelements,
+                                              parity = input$selparity,
+                                              maxCounts = input$maxcounts,
+                                              SENIOR3 = if(input$valencefilter){0}else{NULL},
+                                              HCratio = input$hcratio,
+                                              moreRatios = input$moreratios,
+                                              elementHeuristic = input$elementheuristic)),
                   
                   # massquery(mzi,
                   #                 elem = input$mzspace,
@@ -192,6 +207,8 @@ output$hot1 <- renderRHandsontable({
     hot_col("ppm",format="0.000")
   }
 })
+
+return(internalValues)
 
 }
 

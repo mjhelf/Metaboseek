@@ -21,15 +21,12 @@ OptionsContainer <- function(input,output, session,
   
   
   
-  callModule(MzqueryModule,"mzquery", tag = ns("mzquery"), 
-             set = reactive({list(search = list(elements = "C0-100H0-202N0-15O0-20",
-                                                mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                          "spectrum" =  internalValues$activeMZ # values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz#,
-                                                          #                                                        "interactive view" = iSpec2()$spec$marker$mz
-                                                ), 
-                                                data = values$MainPlotBox$GroupedEICs$iSpec1()$spec$data
-             ) # the entire spectrum data for isotope matching
-             )})
+  callModule(MzqueryModule,"mzquery",
+             values = reactiveValues(featureTables = values$featureTables,
+                                     GlobalOpts = values$GlobalOpts,
+                                     MainTable = values$MainTable),
+             reactives = reactive({list(mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
+                                                          "spectrum" =  internalValues$activeMZ ))})
   )
   
   MassShifts <- callModule(MassShiftsModule, "massshifts",
