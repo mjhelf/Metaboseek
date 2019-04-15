@@ -9,6 +9,8 @@
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
 #' 
+#' @importFrom MassTools calcMF
+#' 
 #' @export 
 MzqueryModule <- function(input,output, session, tag, 
                           set = list(search = list(elements = NULL,
@@ -80,8 +82,7 @@ output$mzUI <- renderUI({
       
       column(5,
              rHandsontableOutput(ns('hot1')),
-             htmlOutput(ns("mzInfo2")),
-             a("Search uses the chemcalc web service", href = "http://www.chemcalc.org/", target = "_blank")
+             htmlOutput(ns("mzInfo2"))
       )
     ))
 }) 
@@ -95,11 +96,14 @@ output$mzInfo <- renderUI({
 
 output$mzInfo2 <- renderUI({
   #print(selections$search$mz[[input$source]])
-  if(!is.null(mzauto())){
+  if(!is.null(mzauto()) && !is.null(mzauto()$table)){
   p("Showing results for m/z ",
            strong(round(as.numeric(mzauto()$mz),5)),
            "from ", mzauto()$source)
            
+  }else{
+    p("No molecular mormulas found for current query!")
+    
   }
 })
 
@@ -107,13 +111,27 @@ mzauto <- reactive({
   if(length(input$source) > 0 && input$source != "custom" && input$autoCalc){
     mzi <- as.numeric(selections$search$mz[[input$source]])
     
-    return(list(table = massquery(mzi,
-                                  elem = input$mzspace,
-                                  ppm= input$mzppm,
-                                  charge = input$mzcharge,
-                                  IntegerSaturation = input$integUnsat,
-                                  minUnsat = input$minUnsat,
-                                  maxUnsat = input$maxUnsat),
+    return(list(table = calcMF(mzi, 
+                               summarize = F,  
+                               z = input$mzcharge,
+                               ppm = input$mzppm,
+                               BPPARAM = NULL,#bpparam(),
+                               Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
+                                              minElements = "C0H0P0S0N0O0",
+                                              maxElements = "C9999H9999P3S3N9999O9999",
+                                              parity = "e",
+                                              maxCounts = T,
+                                              SENIOR3 = 0,
+                                              HCratio = T,
+                                              moreRatios = T,
+                                              elementHeuristic = T)),
+                # massquery(mzi,
+                #                 elem = input$mzspace,
+                #                 ppm= input$mzppm,
+                #                 charge = input$mzcharge,
+                #                 IntegerSaturation = input$integUnsat,
+                #                 minUnsat = input$minUnsat,
+                #                 maxUnsat = input$maxUnsat),
                 mz = mzi,
                 source = input$source))
   }
@@ -129,13 +147,28 @@ mztab <- eventReactive(input$mzButton,{
   if(length(input$source) > 0){
     mzi <- if(input$source != "custom"){as.numeric(selections$search$mz[[input$source]])}else{as.numeric(input$mzquery)}
   
-    return(list(table = massquery(mzi,
-                                  elem = input$mzspace,
-                                  ppm= input$mzppm,
-                                  charge = input$mzcharge,
-                                  IntegerSaturation = input$integUnsat,
-                                  minUnsat = input$minUnsat,
-                                  maxUnsat = input$maxUnsat),
+    return(list(table = calcMF(mzi, 
+                               summarize = F,  
+                               z = input$mzcharge,
+                               ppm = input$mzppm,
+                               BPPARAM = NULL,#bpparam(),
+                               Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
+                                              minElements = "C0H0P0S0N0O0",
+                                              maxElements = "C9999H9999P3S3N9999O9999",
+                                              parity = "e",
+                                              maxCounts = T,
+                                              SENIOR3 = 0,
+                                              HCratio = T,
+                                              moreRatios = T,
+                                              elementHeuristic = T)),
+                  
+                  # massquery(mzi,
+                  #                 elem = input$mzspace,
+                  #                 ppm= input$mzppm,
+                  #                 charge = input$mzcharge,
+                  #                 IntegerSaturation = input$integUnsat,
+                  #                 minUnsat = input$minUnsat,
+                  #                 maxUnsat = input$maxUnsat),
                 mz = mzi,
                 source = input$source))
   }
@@ -143,8 +176,9 @@ mztab <- eventReactive(input$mzButton,{
 
 #render sum formula table
 output$hot1 <- renderRHandsontable({
+  if(!is.null(mzauto()) && !is.null(mzauto()$table)){
   #options(digits=8)
-  rhandsontable(mzauto()$table[,which(colnames(mzauto()$table) != "info")],#format(mztab(),digits=10),
+  rhandsontable(mzauto()$table,#[,which(colnames(mzauto()$table) != "info")],#format(mztab(),digits=10),
                 #ftable1()[which(rownames(ftable1()) %in% input$selcol1),],
                 readOnly = TRUE,
                 contextMenu = FALSE,
@@ -153,10 +187,10 @@ output$hot1 <- renderRHandsontable({
               
                 digits=8) %>%
     hot_cols(columnSorting = TRUE,format="0.000000")%>%
-    hot_col("em",format="0.000000")%>%
+    hot_col("mz",format="0.000000")%>%
     hot_col("unsat",format="0.0")%>%
     hot_col("ppm",format="0.000")
-  
+  }
 })
 
 }

@@ -8,6 +8,7 @@
 #' @param diagnostics run diagnostics (shinyjs::runcodeServer()) code?
 #'   
 #' @importFrom shinyjs runcodeServer 
+#' @importFrom BiocParallel register bpstart SnowParam MulticoreParam
 #' 
 #' @export
 MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
@@ -24,7 +25,7 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
     
     GlobalOpts <- ListToReactiveValues(.MseekOptions)
     
-    
+    register(bpstart(if(Sys.info()['sysname'] == "Windows"){SnowParam(.MseekOptions$enabledCores)}else{MulticoreParam(.MseekOptions$enabledCores)}))
    
     
   }))

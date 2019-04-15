@@ -1,4 +1,4 @@
-#' Run Mseek
+#' RunMseek
 #' 
 #' Run Mseek in your webbrowser.
 #' 
@@ -14,6 +14,8 @@ runMseek <- function(...) {
   if (appDir == "") {
     stop("Could not find METABOseek directory. Try re-installing `METABOseek`.", call. = FALSE)
   }
+  
+
   
   shiny::runApp(appDir, ...)
 }
