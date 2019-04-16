@@ -230,7 +230,7 @@ MS2BrowserModule <- function(input,output, session,
                       
                       moreOpts = paste0("-c 50 ",
                                         if(!is.null(values$GlobalOpts$SiriusCheckFinger) 
-                                                     && values$GlobalOpts$SiriusCheckFinger){"--fingerid-db bio -e "}else{"-e "},
+                                                     && values$GlobalOpts$SiriusCheckFinger){"--fingerid-db SMID -e "}else{"-e "},
                                         values$GlobalOpts$SiriusElements))
                }else{
                  

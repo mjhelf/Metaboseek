@@ -7,6 +7,6 @@ library(shinytest)
 
 #test_dir("./tests/testthat/")
 
-test_check("Mseek")
+test_check("METABOseek")
 
 
