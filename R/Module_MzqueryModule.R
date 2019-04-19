@@ -11,6 +11,7 @@
 #' 
 #' @importFrom MassTools calcMF
 #' @importFrom BiocParallel bpparam
+#' @importFrom Rdisop initializeElements
 #' 
 #' @export 
 MzqueryModule <- function(input,output, session, 
@@ -48,29 +49,37 @@ output$mzUI <- renderUI({
       column(5,
              fluidRow(
                column(3,
+                      selectizeInput(ns("selelements"), "Elements",
+                                     choices = names(getOption("MassTools.elements")),
+                                     multiple = T,
+                                     selected =  c("C","H","N","O","P","S")
+                                     )),
+               column(2,
+                      numericInput(ns("mzcharge"), "Charge", 1, step=1) 
+               ),
+               column(2,
+                      numericInput(ns("mzppm"), "ppm", 5, step=0.1)),
+               column(2,
+                      numericInput(ns("minUnsat"), "min. DBE", -5, step=1)),
+               column(2,
+                      numericInput(ns("maxUnsat"), "max. DBE", 40, step=1))
+               ),
+             
+             fluidRow(
+               column(3,
                       textInput(ns("minelements"), label = "Minimum elements:", value = "C1H2N0O0")
                       ),
                column(3,
                       textInput(ns("maxelements"), label = "Maximum elements:", value = "P3S3")),
                       
                column(3,
-                      selectizeInput(ns("selparity"), "Parity", choices = list("either" = NULL,
+                      selectizeInput(ns("selparity"), "Parity", choices = list("either" = "either",
                                                                                "odd" = "o",
                                                                                "even" = "e"))),
                column(3,
                       checkboxInput(ns("maxcounts"), label = "Element filter", value = TRUE))
                ),
-             fluidRow(
-               column(3,
-                      numericInput(ns("mzcharge"), "Charge", 1, step=1) 
-               ),
-               column(3,
-                      numericInput(ns("mzppm"), "ppm", 5, step=0.1)),
-               column(3,
-                      numericInput(ns("minUnsat"), "min. DBE", -5, step=1)),
-               column(3,
-                      numericInput(ns("maxUnsat"), "max. DBE", 40, step=1))
-               ),
+             
              fluidRow(
                column(3,
                       checkboxInput(ns("valencefilter"), label = "Valence filters", value = TRUE)),
@@ -105,6 +114,39 @@ output$mzUI <- renderUI({
     ))
 }) 
 
+#make the mz query settings available everywhere:
+observeEvent(c(input$selelements, input$mzppm,
+               input$minUnsat, input$maxUnsat,
+               input$minelements, input$maxelements,
+               input$selparity, input$maxcounts,
+               input$valencefilter, input$hcratio,
+               input$moreratios, input$elementheuristic
+               ),{
+  
+  values$GlobalOpts$mzquery.elements <- input$selelements
+  values$GlobalOpts$mzquery.mzppm <- input$mzppm
+  
+  values$GlobalOpts$mzquery.minUnsat <- input$minUnsat
+  values$GlobalOpts$mzquery.maxUnsat <- input$maxUnsat
+  
+  values$GlobalOpts$mzquery.minElements <- input$minelements
+  values$GlobalOpts$mzquery.maxElements <- input$maxelements
+  
+  
+  values$GlobalOpts$mzquery.parity <- input$selparity
+  values$GlobalOpts$mzquery.maxcounts <- input$maxcounts
+  
+  values$GlobalOpts$mzquery.valencefilter <- input$valencefilter
+  values$GlobalOpts$mzquery.hcratio <- input$hcratio
+  
+  values$GlobalOpts$mzquery.moreratios <- input$moreratios
+  values$GlobalOpts$mzquery.elementheuristic <- input$elementheuristic
+  
+})
+
+
+
+
 output$mzInfo <- renderUI({
   #print(internalValues$mz[[input$source]])
    p(paste0("Calculate sum formulas for m/z ", 
@@ -126,18 +168,27 @@ output$mzInfo2 <- renderUI({
 })
 
 mzauto <- reactive({
-  if(length(input$source) > 0 && input$source != "custom" && input$autoCalc){
+  if(length(input$selelements) != 0 && length(input$source) > 0 && input$source != "custom" && input$autoCalc){
     mzi <- as.numeric(internalValues$mz[[input$source]])
+    
+    if(length(input$selelements) == 6
+              && all(input$selelements %in% c("C","H","N","O","P","S"))){
+     ele <-  NULL
+     }else{
+     ele <- initializeElements(input$selelements)
+      }
+    
     
     return(list(table = calcMF(mzi, 
                                summarize = F,  
                                z = input$mzcharge,
                                ppm = input$mzppm,
+                               elements = ele,
                                BPPARAM = NULL,#bpparam(),
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
                                               minElements = input$minelements,
                                               maxElements = input$maxelements,
-                                              parity = input$selparity,
+                                              parity = if(input$selparity == "either"){NULL}else{input$selparity},
                                               maxCounts = input$maxcounts,
                                               SENIOR3 = if(input$valencefilter){0}else{NULL},
                                               HCratio = input$hcratio,
@@ -162,18 +213,27 @@ mzauto <- reactive({
 #get sum formula table from ChemCalc
 mztab <- eventReactive(input$mzButton,{
   #print(input$source)
-  if(length(input$source) > 0){
+  if(length(input$selelements) != 0 && length(input$source) > 0){
     mzi <- if(input$source != "custom"){as.numeric(internalValues$mz[[input$source]])}else{as.numeric(input$mzquery)}
   
+    if(length(input$selelements) == 6
+       && all(input$selelements %in%  c("C","H","N","O","P","S"))){
+      ele <-  NULL
+    }else{
+      ele <- initializeElements(input$selelements)
+    }
+    
+    
     return(list(table = calcMF(mzi, 
                                summarize = F,  
                                z = input$mzcharge,
+                               elements = ele,
                                ppm = input$mzppm,
                                BPPARAM = NULL,#bpparam(),
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
                                               minElements = input$minelements,
                                               maxElements = input$maxelements,
-                                              parity = input$selparity,
+                                              parity = if(input$selparity == "either"){NULL}else{input$selparity},
                                               maxCounts = input$maxcounts,
                                               SENIOR3 = if(input$valencefilter){0}else{NULL},
                                               HCratio = input$hcratio,
@@ -199,6 +259,12 @@ observeEvent(input$mzButton2,{
   tryCatch({
     withProgress(message = 'Please wait!', detail = "calculating molecular formulas", value = 0.5, {
     
+      if(length(input$selelements) == 6
+         && all(input$selelements %in% c("C","H","N","O","P","S"))){
+        ele <-  NULL
+      }else{
+        ele <- initializeElements(input$selelements)
+      }
     
     TableUpdateChunk()
 
@@ -214,10 +280,11 @@ observeEvent(input$mzButton2,{
                                z = input$mzcharge,
                                ppm = input$mzppm,
                                BPPARAM = bpparam(),
+                               elements = ele,
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
                                               minElements = input$minelements,
                                               maxElements = input$maxelements,
-                                              parity = input$selparity,
+                                              parity = if(input$selparity == "either"){NULL}else{input$selparity},
                                               maxCounts = input$maxcounts,
                                               SENIOR3 = if(input$valencefilter){0}else{NULL},
                                               HCratio = input$hcratio,
