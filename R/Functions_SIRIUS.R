@@ -57,13 +57,21 @@ writeMS <- function(filename,
   }
   
   if(!is.null(ms2)){
-    write(
-      paste0(">ms2"),
+    
+    if(!is.list(ms2)){ms2 <- list(ms2)}
+    
+    lapply(seq(length(ms2)), function(n){
+    
+      
+      #expect collision energy to be in names, resulting in ">collision20", etc.
+      write(
+      if(is.null(names(ms2))){">ms2"}else{paste0(">",names(ms2)[n])},
       file = filename,
       append = T
     )
   
-  fwrite(data.table(ms2), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  fwrite(data.table(ms2[[n]]), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+    })
   }
   
   
@@ -75,7 +83,7 @@ writeMS <- function(filename,
 #' run SIRIUS externally for a list of ms2 spectra
 #' 
 #' @param outfolder output folder for the SIRIUS results
-#' @param ms2 a list of ms2 spectra (matrices with columns mz and intensity)
+#' @param ms2 a list (or list of lists) of ms2 spectra (matrices with columns mz and intensity)
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
@@ -86,8 +94,15 @@ writeMS <- function(filename,
 #' @param moreOpts character with additional options to be passed to SIRIUS
 #' @param force force calculation, even if same results should exist according to indexfile
 #' 
+#' @details 
+#' 
+#' \describe{
+#'    \item{ms2}{can be a list of matrices, or a list of list of matrices. In the latter case, the (optional) names of the nested list items are expected to be in the format "collisionXX", where XX denotes an integer collision energy.}
+#' }
+#' 
 #' @importFrom splashR getSplash
 #' @importFrom data.table fread fwrite
+#' @importFrom digest digest
 #' 
 runSirius <- function(outfolder,
                       ms1 = NULL,
@@ -107,7 +122,9 @@ runSirius <- function(outfolder,
   
   #write the MS2 data so sirius can read it
   dir.create(outfolder, showWarnings = F)
-  splashtag <- lapply(ms2, getSplash)
+  #splashtag <- lapply(ms2, getSplash)
+  splashtag <- lapply(ms2, digest, algo = "xxhash64")
+  
   
   ts <- strftime(Sys.time(),"%y%m%d_%H%M%S")
   
@@ -126,7 +143,7 @@ runSirius <- function(outfolder,
    newjobs$fingerid = fingerid
    newjobs$moreOpts = paste0(moreOpts, instrument)
    newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
-   newjobs$METABOseek_sirius_revision = 1
+   newjobs$METABOseek_sirius_revision = 2
    
    indexfile <- file.path(outfolder, "index.csv")
   if(file.exists(indexfile) && !force){
@@ -146,10 +163,8 @@ runSirius <- function(outfolder,
     
     dups <- duplicated.data.frame(checkme)[seq(nrow(jobindex)+1,nrow(checkme))]
     
-   # print(newjobs)
     newjobs <- newjobs[!dups,]
-   # print(newjobs)
-    
+
   }
   
    if(nrow(newjobs) > 0){

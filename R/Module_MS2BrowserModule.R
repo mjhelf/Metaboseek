@@ -166,11 +166,19 @@ MS2BrowserModule <- function(input,output, session,
         res$stab <- internalValues$spectab[selectScan()$props$selected_rows,]
       }
       
-      AllSpecLists <- lapply(list(res$stab), getAllScans, values$MSData$data, removeNoise = 0)
+      res$AllSpecLists <- lapply(list(res$stab), getAllScans, values$MSData$data, removeNoise = 0)
       
-      res$MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
+      names(res$AllSpecLists[[1]]) <- paste0("collision",
+                                        getScanInfo(basename(res$stab$file),
+                                                    res$stab$scan,
+                                                    data = values$MSData$MSnExp,
+                                                    type = "ms2")$collisionEnergy)
       
-      res$splashtag <- sapply(res$MergedSpecs, getSplash)
+     # MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
+      
+      res$splashtag <- digest(res$AllSpecLists, algo = "xxhash64")
+      
+      #res$splashtag <- sapply(res$MergedSpecs, getSplash)
       
     }
     else{
@@ -211,7 +219,7 @@ MS2BrowserModule <- function(input,output, session,
                    }
                  
                  list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
-                      ms2 = splashsource()$MergedSpecs,
+                      ms2 = splashsource()$AllSpecLists,
                       ms1 = list(ms1),
                       instrument = values$GlobalOpts$SiriusSelInstrument,
                       parentmz = mean(splashsource()$stab$parentMz),
@@ -230,7 +238,7 @@ MS2BrowserModule <- function(input,output, session,
                       
                       moreOpts = paste0("-c 50 ",
                                         if(!is.null(values$GlobalOpts$SiriusCheckFinger) 
-                                                     && values$GlobalOpts$SiriusCheckFinger){"--fingerid-db HMDB_SMID -e "}else{"-e "},
+                                            && values$GlobalOpts$SiriusCheckFinger){paste0("--fingerid-db ", values$GlobalOpts$SiriusDBselected," -e ")}else{"-e "},
                                         values$GlobalOpts$SiriusElements))
                }else{
                  

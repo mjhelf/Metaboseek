@@ -61,8 +61,12 @@ ShowSiriusModule <- function(input,output, session,
                           values$GlobalOpts$SiriusSelIon,
                           #values$SiriusModule$selCharge,
                           values$GlobalOpts$SiriusCheckFinger,
-                          paste0("-c 50 --fingerid-db bio -e ",  values$GlobalOpts$SiriusElements, " -p ", values$GlobalOpts$SiriusSelInstrument),
-                          c(REVISION = 1), sep = "//")
+                          paste0("-c 50 ",
+                                 if(!is.null(values$GlobalOpts$SiriusCheckFinger) 
+                                    && values$GlobalOpts$SiriusCheckFinger){paste0("--fingerid-db ", values$GlobalOpts$SiriusDBselected," -e ")}else{"-e "},
+                                 values$GlobalOpts$SiriusElements,
+                                 " -p ", values$GlobalOpts$SiriusSelInstrument),
+                          c(REVISION = 2), sep = "//")
       
       # values$SiriusModule$siriusIndex[,c("splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")]                    
       #                     

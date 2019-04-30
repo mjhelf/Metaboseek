@@ -47,7 +47,9 @@ MseekOptions <- function(..., defaults = F){
                            SiriusCheckFinger = T,
                            SiriusSelInstrument = "orbitrap",
                            SiriusElements = "CHNOP[5]S[5]",
-                           SiriusUseMS1 = T
+                           SiriusUseMS1 = T,
+                           SiriusDBoptions = c("bio", "PubChem", "hmdb", "kegg", "knapsack", "biocyc"),
+                           SiriusDBselected = "bio"
                            )
     
   }

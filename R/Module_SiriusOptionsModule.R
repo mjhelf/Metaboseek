@@ -23,8 +23,8 @@ SiriusOptionsModule <- function(input,output, session,
 output$controlSirius <- renderUI({
  
            fluidRow(
-             # column(3,
-             #        selectizeInput(ns("selCharge"), "Charge:", choices = list("+1" = 1, "-1" = -1), selected = values$GlobalOpts$selCharge)),
+             column(3,
+                    selectizeInput(ns("selDB"), "Database:", choices = values$GlobalOpts$SiriusDBoptions, selected = values$GlobalOpts$SiriusDBselected)),
              column(2,
                     selectizeInput(ns("selIon"), "Ion", choices = list("[M+?]+" = "[M+?]+",
                                                                        "[M+?]-" = "[M+?]-",
@@ -54,6 +54,12 @@ observeEvent(input$selIon,{
   
   values$GlobalOpts$SiriusSelIon <- input$selIon
   MseekOptions(SiriusSelIon = input$selIon)
+})
+
+observeEvent(input$selDB,{
+  
+  values$GlobalOpts$SiriusDBselected <- input$selDB
+  MseekOptions(SiriusDBselected = input$SiriusDBselected)
 })
 
 observeEvent(input$useMS1,{
