@@ -64,7 +64,7 @@ test_that("loadRawMfunction works",{
 #Tests for rawEicM, y[[1]] is an xcmsRaw object
 #is this correct? should all intensities be 0?
 test_that("rawEICm function works",{
-  u <- Mseek::rawEICm(y[[1]])
+  u <- METABOseek::rawEICm(y[[1]])
   expect_equal(class(u), "list")
   expect_equal(length(u$scan),570)
   expect_equal(u$intensity[10], 0)

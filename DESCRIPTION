@@ -35,7 +35,6 @@ Imports: Biobase,
     shinydashboard,
     shinyFiles,
     shinyjs,
-    splashR,
     TeachingDemos,
     VennDiagram,
     xcms (>= 3.0)

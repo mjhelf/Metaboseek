@@ -3,7 +3,7 @@ context("Run Mseek")
 
 
 #recordTest("./tests/testthat/FullMseek", loadTimeout = 120000)
-
+#testApp("./tests/testthat/FullMseek", "mytest.R", compareImages = FALSE, quiet = F)
 
 test_that("Mseek app starts up", {
   expect_pass(testApp("FullMseek", "mytest.R", compareImages = FALSE, quiet = T))

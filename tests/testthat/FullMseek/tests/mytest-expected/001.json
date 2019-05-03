@@ -1,32 +1,58 @@
 {
   "input": {
     "EICplots": "Grouped EICs",
+    "Mseek-globaloptshead": 0,
+    "Mseek-loadAll": 0,
     "Mseek-mainpagecontent-filtersort-colselector-mainSelgProps": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelgProps-selectized": "",
     "Mseek-mainpagecontent-filtersort-colselector-mainSelGroup": "",
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelGroup-selectized": "",
     "Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelIntensities-selectized": "",
     "Mseek-mainpagecontent-filtersort-colselector-mainSelOthers": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelOthers-selectized": "",
     "Mseek-mainpagecontent-filtersort-colselector-mainSelsProps": null,
+    "Mseek-mainpagecontent-filtersort-colselector-mainSelsProps-selectized": "",
+    "Mseek-mainpagecontent-filtersort-colselector-rtMin": false,
     "Mseek-mainpagecontent-filtersort-FilterBox": "Table Filter",
     "Mseek-mainpagecontent-filtersort-rowselector-addFilter": 0,
     "Mseek-mainpagecontent-filtersort-rowselector-applyfilter": 0,
     "Mseek-mainpagecontent-filtersort-rowselector-filter1-activecheck": false,
     "Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel": "mz",
+    "Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel-selectized": "",
     "Mseek-mainpagecontent-filtersort-rowselector-filter1-maxsel": 0,
     "Mseek-mainpagecontent-filtersort-rowselector-filter1-minsel": 0,
     "Mseek-mainpagecontent-mainplotbox-groupedeics-miniPlots": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-reltoCheck": false,
     "Mseek-mainpagecontent-mainplotbox-groupedeics-RtCorrActive": false,
     "Mseek-mainpagecontent-mainplotbox-groupedeics-ShowSpec": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-subtitleselect": "comments",
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-subtitleselect-selectized": "",
+    "Mseek-mainpagecontent-mainplotbox-MS2B-freport-miniPlots": false,
+    "Mseek-mainpagecontent-mainplotbox-MS2B-freport-RtCorrActive": false,
+    "Mseek-mainpagecontent-mainplotbox-MS2B-freport-ShowSpec": false,
+    "Mseek-mainpagecontent-mainplotbox-MS2B-MS2Tabs": "Feature Report",
     "Mseek-mainpagecontent-mainplotbox-quickplots-errorbar": "none",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-errorbar-selectized": "",
     "Mseek-mainpagecontent-mainplotbox-quickplots-gtype": "by group",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-gtype-selectized": "",
     "Mseek-mainpagecontent-mainplotbox-quickplots-log10": false,
     "Mseek-mainpagecontent-mainplotbox-quickplots-mark": "none",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-mark-selectized": "",
     "Mseek-mainpagecontent-mainplotbox-quickplots-multidata": false,
     "Mseek-mainpagecontent-mainplotbox-quickplots-pdots": true,
     "Mseek-mainpagecontent-mainplotbox-quickplots-ptype": "barplot",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-ptype-selectized": "",
     "Mseek-mainpagecontent-mainplotbox-quickplots-rot": false,
     "Mseek-mainpagecontent-mainplotbox-quickplots-usenorm": false,
     "Mseek-mainpagecontent-mainplotbox-regroupms-newGroup": 0,
     "Mseek-mainpagecontent-mainplotbox-regroupms-updateGroups": 0,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-eulerCheck": true,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-preFilter": true,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-scaleVenn": true,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-venn1-addFilter": 0,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-venn2-addFilter": 0,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-venn3-addFilter": 0,
     "Mseek-mainpagecontent-maintabbox-maintable-decreasingCheck": true,
     "Mseek-mainpagecontent-maintabbox-maintable-maintable": {
       "data": [
@@ -116,7 +142,7 @@
           {
             "type": "numeric",
             "numericFormat": {
-              "pattern": "0.000000"
+              "pattern": "0.000"
             },
             "readOnly": false,
             "default": null
@@ -126,7 +152,7 @@
             "readOnly": false,
             "default": null,
             "numericFormat": {
-              "pattern": "0.000000"
+              "pattern": "0.000"
             }
           }
         ],
@@ -170,27 +196,48 @@
           }
         },
         "outsideClickDeselects": false,
+        "autoWrapCol": false,
+        "autoWrapRow": false,
         "columnSorting": false,
         "fixedColumnsLeft": 3
       }
     },
     "Mseek-mainpagecontent-maintabbox-maintable-savetable-savetable": 0,
     "Mseek-mainpagecontent-maintabbox-maintable-sortBy": "mz",
+    "Mseek-mainpagecontent-maintabbox-maintable-sortBy-selectized": "",
     "Mseek-mainpagecontent-maintabbox-maintable-sortCheck": false,
     "Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable": "table0",
+    "Mseek-mainpagecontent-maintabbox-maintable-tablechange-activeTable-selectized": "",
     "Mseek-mainpagecontent-maintabbox-tabanalysis-analyzeButton": 0,
     "Mseek-mainpagecontent-maintabbox-tabgrouping-intcols": 0,
     "Mseek-mainpagecontent-maintabbox-tabgrouping-removeGroups": 0,
     "Mseek-mainpagecontent-maintabbox-tabgrouping-updateGroups": 0,
     "Mseek-mainpagecontent-maintabbox-TableBox": "View Table",
-    "Mseek-mainpagecontent-optionsbox-maindataload-msdata-loadMSDButton": 0,
-    "Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folder": 0,
-    "Mseek-mainpagecontent-optionsbox-maindataload-table-loadtable": 0,
+    "Mseek-mainpagecontent-optionsbox-eicopts-colorBy": "file",
+    "Mseek-mainpagecontent-optionsbox-eicopts-colorBy-selectized": "",
+    "Mseek-mainpagecontent-optionsbox-eicopts-colorscheme": "Mseek.colors",
+    "Mseek-mainpagecontent-optionsbox-eicopts-colorscheme-selectized": "",
+    "Mseek-mainpagecontent-optionsbox-eicopts-groupBy": "grouping",
+    "Mseek-mainpagecontent-optionsbox-eicopts-groupBy-selectized": "",
+    "Mseek-mainpagecontent-optionsbox-eicopts-MLtoggle": true,
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotCols": 5,
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotCx": 1.6,
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotLw": 1,
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotYzoom": 1,
+    "Mseek-mainpagecontent-optionsbox-eicopts-PPMwindow": 5,
+    "Mseek-mainpagecontent-optionsbox-eicopts-raiseToggle": false,
+    "Mseek-mainpagecontent-optionsbox-eicopts-relPlotToggle": false,
+    "Mseek-mainpagecontent-optionsbox-eicopts-RTtoggle": false,
+    "Mseek-mainpagecontent-optionsbox-eicopts-RTwindow": 30,
+    "Mseek-mainpagecontent-optionsbox-eicopts-TICtoggle": false,
     "Mseek-mainpagecontent-optionsbox-massshifts-updateshifts": 0,
     "Mseek-mainpagecontent-optionsbox-rtcorrviewer-RtCorrLoad": null,
     "Mseek-MseekSB": "exploredata",
     "Mseek-startpage-startdataload-msdata-loadMSDButton": 0,
+    "Mseek-startpage-startdataload-projectfolder-loadRecent": 0,
     "Mseek-startpage-startdataload-projectfolder-pfolder-folder": 0,
+    "Mseek-startpage-startdataload-projectfolder-selRecent": "C:/Users/mjh43/R libraries/R-3.5.0/METABOseek/extdata/examples/example projectfolder",
+    "Mseek-startpage-startdataload-projectfolder-selRecent-selectized": "",
     "Mseek-startpage-startdataload-table-loadtable": 0,
     "Mseek-xcmsMod-TabAnalysisXcms-analyzeButton": 0,
     "Mseek-xcmsMod-xcms_loadfolder": 0,
@@ -198,7 +245,7 @@
     "Mseek-xcmsMod-xcms_name": "xcms_run",
     "Mseek-xcmsMod-xcms_settingsLoad": null,
     "Mseek-xcmsMod-xcms_start": 0,
-    "PlotOpts": "Load Data",
+    "PlotOpts": "EIC options",
     "sidebarCollapsed": false,
     "sidebarItemExpanded": null,
     "xcms_settingsBox": "XCMS Settings"
@@ -224,7 +271,7 @@
       ]
     },
     "Mseek-mainpagecontent-filtersort-colselector-mainSelGroup": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\">Group of interest<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\" class=\"form-control\"><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\">{}<\/script>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"row\">\n  <div class=\"form-group shiny-input-container\">\n    <div class=\"checkbox\">\n      <label>\n        <input id=\"Mseek-mainpagecontent-filtersort-colselector-rtMin\" type=\"checkbox\"/>\n        <span>Show RT in minutes<\/span>\n      <\/label>\n    <\/div>\n  <\/div>\n<\/div>\n<div class=\"row\">\n  <div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n    <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\">Group of interest<\/label>\n    <div>\n      <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\" class=\"form-control\"><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelGroup\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -262,7 +309,7 @@
       ]
     },
     "Mseek-mainpagecontent-filtersort-colselector-mainSelOthers": {
-      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\">other columns<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Basic Stats\">\n\n<\/optgroup>\n<optgroup label=\"Others\">\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\">{}<\/script>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\">other columns<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\" class=\"form-control\" multiple=\"multiple\"><optgroup label=\"Basic Stats\">\n\n<\/optgroup>\n<optgroup label=\"Others\">\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<option value=\"rt_minutes\">rt_minutes<\/option>\n<\/optgroup><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-colselector-mainSelOthers\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -312,7 +359,7 @@
       ]
     },
     "Mseek-mainpagecontent-filtersort-rowselector-filter1-colSel": {
-      "html": "<div title=\"Numeric column, range:0 - 0, mean: 0, median: 0\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\">Filter<\/label>\n    <div>\n      <select id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div title=\"Numeric column, range:0 - 0, mean: 0, median: 0\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\">Filter<\/label>\n    <div>\n      <select id=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<option value=\"rt_minutes\">rt_minutes<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-filtersort-rowselector-filter1-colsel\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -350,8 +397,15 @@
 
       ]
     },
+    "Mseek-mainpagecontent-filtersort-rowselector-optionalHeader": null,
     "Mseek-mainpagecontent-mainplotbox-groupedeics-adductPlot": null,
     "Mseek-mainpagecontent-mainplotbox-groupedeics-mainPlotEICs": null,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-reltocheck": {
+      "html": "<div title=\"Plot EICs for all groups to the same scale (the highest intensity value in all EICs for a feature).\">\n  <div class=\"form-group shiny-input-container\">\n    <div class=\"checkbox\">\n      <label>\n        <input id=\"Mseek-mainpagecontent-mainplotbox-groupedeics-reltoCheck\" type=\"checkbox\"/>\n        <span>Rescale<\/span>\n      <\/label>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
     "Mseek-mainpagecontent-mainplotbox-groupedeics-selectLayout-activeTable": {
       "html": "<p>No MS data loaded<\/p>",
       "deps": [
@@ -359,6 +413,25 @@
       ]
     },
     "Mseek-mainpagecontent-mainplotbox-groupedeics-Spec1-specAll": null,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-subtitleSelect": {
+      "html": "<div title=\"Select columns to use for the plot subtitle. All columns currently selected for the main table can be used.\">\n  <div class=\"form-group shiny-input-container\">\n    <label class=\"control-label\" for=\"Mseek-mainpagecontent-mainplotbox-groupedeics-subtitleselect\">Subtitle content<\/label>\n    <div>\n      <select id=\"Mseek-mainpagecontent-mainplotbox-groupedeics-subtitleselect\" class=\"form-control\" multiple=\"multiple\"><option value=\"mz\">mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\" selected>comments<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-mainplotbox-groupedeics-subtitleselect\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
     "Mseek-mainpagecontent-maintabbox-maintable-decreasingC": {
       "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-maintabbox-maintable-decreasingCheck\" type=\"checkbox\" checked=\"checked\"/>\n      <span>decreasing<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
       "deps": [
@@ -433,7 +506,7 @@
           {
             "type": "numeric",
             "numericFormat": {
-              "pattern": "0.000000"
+              "pattern": "0.000"
             },
             "readOnly": false,
             "renderer": "customRenderer",
@@ -445,7 +518,7 @@
             "renderer": "customRenderer",
             "default": null,
             "numericFormat": {
-              "pattern": "0.000000"
+              "pattern": "0.000"
             }
           }
         ],
@@ -487,6 +560,8 @@
           }
         },
         "outsideClickDeselects": false,
+        "autoWrapCol": false,
+        "autoWrapRow": false,
         "columnSorting": false,
         "fixedColumnsLeft": 3
       },
@@ -511,7 +586,7 @@
       ]
     },
     "Mseek-mainpagecontent-maintabbox-maintable-sortByC": {
-      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\">Sort by column<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\">{}<\/script>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\">Sort by column<\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\" class=\"form-control\"><option value=\"mz\" selected>mz<\/option>\n<option value=\"rt\">rt<\/option>\n<option value=\"comments\">comments<\/option>\n<option value=\"fragments\">fragments<\/option>\n<option value=\"rt_minutes\">rt_minutes<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-maintabbox-maintable-sortBy\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",
@@ -579,12 +654,15 @@
         },
         {
           "name": "handsontable",
-          "version": "0.35.0",
+          "version": "6.1.1",
           "src": {
-            "href": "handsontable-0.35.0"
+            "href": "handsontable-6.1.1"
           },
           "meta": null,
-          "script": "handsontable.full.min.js",
+          "script": [
+            "handsontable.full.min.js",
+            "all.min.js"
+          ],
           "stylesheet": "handsontable.full.min.css",
           "head": null,
           "attachment": null,
@@ -593,12 +671,12 @@
         },
         {
           "name": "numbro.languages",
-          "version": "1.11.1",
+          "version": "2.0.6",
           "src": {
-            "href": "numbro.languages-1.11.1"
+            "href": "numbro.languages-2.0.6"
           },
           "meta": null,
-          "script": "languages.js",
+          "script": "languages.min.js",
           "stylesheet": null,
           "head": null,
           "attachment": null,
@@ -649,9 +727,9 @@
         },
         {
           "name": "rhandsontable",
-          "version": "0.3.6",
+          "version": "0.3.6.2",
           "src": {
-            "href": "rhandsontable-0.3.6"
+            "href": "rhandsontable-0.3.6.2"
           },
           "meta": null,
           "script": null,
@@ -663,9 +741,9 @@
         },
         {
           "name": "rhandsontable-binding",
-          "version": "0.3.6",
+          "version": "0.3.6.30",
           "src": {
-            "href": "rhandsontable-binding-0.3.6"
+            "href": "rhandsontable-binding-0.3.6.30"
           },
           "meta": null,
           "script": "rhandsontable.js",
@@ -677,64 +755,131 @@
         }
       ]
     },
-    "Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderButton": {
-      "html": "<div id=\"Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-div\" title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">\n  <button id=\"Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
-      "deps": [
-
-      ]
-    },
-    "Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderUI": {
-      "html": "<div class=\"container-fluid\">\n  <div id=\"Mseek-mainpagecontent-optionsbox-maindataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
+    "Mseek-mainpagecontent-optionsbox-eicopts-colorby": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-optionsbox-eicopts-colorBy\">Color by: <\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-optionsbox-eicopts-colorBy\" class=\"form-control\"><option value=\"file\" selected>File<\/option>\n<option value=\"grouping\">Group<\/option>\n<option value=\"grouping2\">Group2<\/option>\n<option value=\"Mass shift\">Mass shift<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-optionsbox-eicopts-colorBy\">{}<\/script>\n  <\/div>\n<\/div>",
       "deps": [
         {
-          "name": "bootstrap",
-          "version": "3.3.7",
+          "name": "selectize",
+          "version": "0.11.2",
           "src": {
-            "href": "shared/bootstrap"
-          },
-          "meta": {
-            "viewport": "width=device-width, initial-scale=1"
-          },
-          "script": [
-            "js/bootstrap.min.js",
-            "shim/html5shiv.min.js",
-            "shim/respond.min.js"
-          ],
-          "stylesheet": "css/bootstrap.min.css",
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        }
-      ]
-    },
-    "Mseek-mainpagecontent-optionsbox-maindataload-showfolder": {
-      "html": "<p>No Project Folder currently selected<\/p>",
-      "deps": [
-
-      ]
-    },
-    "Mseek-mainpagecontent-optionsbox-maindataload-table-loadTableButton": {
-      "html": "<button id=\"Mseek-mainpagecontent-optionsbox-maindataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
-      "deps": [
-        {
-          "name": "font-awesome",
-          "version": "4.7.0",
-          "src": {
-            "href": "shared/font-awesome"
+            "href": "shared/selectize"
           },
           "meta": null,
           "script": null,
-          "stylesheet": "css/font-awesome.min.css",
-          "head": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
           "attachment": null,
           "package": null,
           "all_files": true
         }
       ]
     },
+    "Mseek-mainpagecontent-optionsbox-eicopts-colorscheme": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-optionsbox-eicopts-colorscheme\">Color palette: <\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-optionsbox-eicopts-colorscheme\" class=\"form-control\"><option value=\"Mseek.colors\" selected>Mseek.colors<\/option>\n<option value=\"topo.colors\">topo.colors<\/option>\n<option value=\"rainbow\">rainbow<\/option>\n<option value=\"heat.colors\">heat.colors<\/option>\n<option value=\"terrain.colors\">terrain.colors<\/option>\n<option value=\"cm.colors\">cm.colors<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-optionsbox-eicopts-colorscheme\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-groupby": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label class=\"control-label\" for=\"Mseek-mainpagecontent-optionsbox-eicopts-groupBy\">Group by: <\/label>\n  <div>\n    <select id=\"Mseek-mainpagecontent-optionsbox-eicopts-groupBy\" class=\"form-control\"><option value=\"grouping\" selected>Group<\/option>\n<option value=\"grouping2\">Group2<\/option><\/select>\n    <script type=\"application/json\" data-for=\"Mseek-mainpagecontent-optionsbox-eicopts-groupBy\">{}<\/script>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-MLtoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-MLtoggle\" type=\"checkbox\" checked=\"checked\"/>\n      <span>Mark feature RT<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotCols": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"Mseek-mainpagecontent-optionsbox-eicopts-plotCols\">Plots per row: <\/label>\n  <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-plotCols\" type=\"number\" class=\"form-control\" value=\"5\" min=\"1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotCx": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"Mseek-mainpagecontent-optionsbox-eicopts-plotCx\">Font size: <\/label>\n  <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-plotCx\" type=\"number\" class=\"form-control\" value=\"1.6\" min=\"0.1\" step=\"0.1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotLw": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"Mseek-mainpagecontent-optionsbox-eicopts-plotLw\">Line width: <\/label>\n  <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-plotLw\" type=\"number\" class=\"form-control\" value=\"1\" min=\"1\" step=\"1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-plotYzoom": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"Mseek-mainpagecontent-optionsbox-eicopts-plotYzoom\">Y-axis zoom: <\/label>\n  <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-plotYzoom\" type=\"number\" class=\"form-control\" value=\"1\" min=\"0.1\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-PPMwindow": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <label for=\"Mseek-mainpagecontent-optionsbox-eicopts-PPMwindow\">Mass tol (ppm): <\/label>\n  <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-PPMwindow\" type=\"number\" class=\"form-control\" value=\"5\" min=\"0\"/>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-raisetoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-raiseToggle\" type=\"checkbox\"/>\n      <span>Raise EICs<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-relplottoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-relPlotToggle\" type=\"checkbox\"/>\n      <span>Relative intensities<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-RTtoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-RTtoggle\" type=\"checkbox\"/>\n      <span>Full RT range<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-RTwindow": {
+      "html": "<div title=\"Retention time window in EICs\">\n  <div class=\"form-group shiny-input-container\">\n    <label for=\"Mseek-mainpagecontent-optionsbox-eicopts-RTwindow\">RT window (sec):<\/label>\n    <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-RTwindow\" type=\"number\" class=\"form-control\" value=\"30\"/>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-mainpagecontent-optionsbox-eicopts-TICtoggle": {
+      "html": "<div class=\"form-group shiny-input-container\">\n  <div class=\"checkbox\">\n    <label>\n      <input id=\"Mseek-mainpagecontent-optionsbox-eicopts-TICtoggle\" type=\"checkbox\"/>\n      <span>TIC<\/span>\n    <\/label>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    },
     "Mseek-startpage-startdataload-projectfolder-pfolder-folderButton": {
-      "html": "<div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-div\" title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">\n  <button id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">Load Project Folder<\/button>\n<\/div>",
+      "html": "<div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-div\" title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">\n  <button id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">Load other Project<\/button>\n<\/div>",
       "deps": [
 
       ]
@@ -764,6 +909,25 @@
         }
       ]
     },
+    "Mseek-startpage-startdataload-projectfolder-selrecent": {
+      "html": "<div title=\"C:/Users/mjh43/R libraries/R-3.5.0/METABOseek/extdata/examples/example projectfolder\">\n  <div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n    <label class=\"control-label\" for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">Recent projects: <\/label>\n    <div>\n      <select id=\"Mseek-startpage-startdataload-projectfolder-selRecent\" class=\"form-control\"><option value=\"C:/Users/mjh43/R libraries/R-3.5.0/METABOseek/extdata/examples/example projectfolder\" selected>example projectfolder<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
     "Mseek-startpage-startdataload-showfolder": {
       "html": "<p>No Project Folder currently selected<\/p>",
       "deps": [
@@ -775,37 +939,25 @@
       "deps": [
         {
           "name": "font-awesome",
-          "version": "4.7.0",
+          "version": "5.3.1",
           "src": {
-            "href": "shared/font-awesome"
+            "href": "font-awesome-5.3.1"
           },
           "meta": null,
           "script": null,
-          "stylesheet": "css/font-awesome.min.css",
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
           "head": null,
           "attachment": null,
-          "package": null,
           "all_files": true
         }
       ]
     },
     "Mseek-startpage-web": {
-      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-3\"><\/div>\n    <div class=\"col-sm-6\">\n      <img src=\"/img/Mseek_logo.png\" alt=\"Mseek\" style=\"width:100%\"/>\n    <\/div>\n    <div class=\"col-sm-3\"><\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"box box-solid box-primary\">\n        <div class=\"box-header\">\n          <h3 class=\"box-title\">Welcome to METABOseek!<\/h3>\n        <\/div>\n        <div class=\"box-body\">\n          <div class=\"container-fluid\">\n            <div class=\"row\">\n              <p style=\"text-align:center;\">Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.<\/p>\n              <hr/>\n            <\/div>\n            <div class=\"row\">\n              <div class=\"container-fluid\">\n                <div class=\"row\">\n                  <div class=\"col-sm-3\" style=\"text-align:center;\">\n                    <div id=\"Mseek-startpage-startdataload-showfolder\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <head>\n                      <style>.FolderBox {\n word-wrap: break-word;\nbackground-color: azure;\npadding: 5px;\n\n} \n                            .ContextBox {\nbackground-color: gainsboro;\npadding: 5px;\n\n} \n                            <\/style>\n                    <\/head>\n                    <div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folderUI\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <div id=\"Mseek-startpage-startdataload-table-loadTableButton\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-3\" style=\"justify-content:center;display:flex\">\n                    <button id=\"Mseek-startpage-startdataload-msdata-loadMSDButton\" type=\"button\" class=\"btn btn-default action-button\">\n                      <i class=\"fa fa-folder-open\"><\/i>\n                      Load MS data\n                    <\/button>\n                  <\/div>\n                <\/div>\n              <\/div>\n            <\/div>\n            <div class=\"row\">\n              <div style=\"height:5px\"><\/div>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div style=\"height:4px;\"><\/div>\n  <div class=\"row\">\n<iframe id=\"inlineFrameExample\"\ntitle=\"webpage\" \nstyle=\"border:none;width:100%;height:500px;\"  src=\"http://Mseek.bti.cornell.edu/welcome/integrated/0.8.0\"> <\/iframe>\n              <\/div>\n<\/div>",
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"box box-solid box-primary\">\n        <div class=\"box-header\">\n          <h3 class=\"box-title\">Welcome to METABOseek!<\/h3>\n        <\/div>\n        <div class=\"box-body\">\n          <div class=\"container-fluid\">\n            <div class=\"row\">\n              <p style=\"text-align:center;\">Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.<\/p>\n              <hr/>\n            <\/div>\n            <div class=\"row\">\n              <div class=\"container-fluid\">\n                <div class=\"row\">\n                  <div class=\"col-sm-4\" style=\"text-align:center;\">\n                    <div id=\"Mseek-startpage-startdataload-showfolder\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-4\" style=\"justify-content:center;display:flex\">\n                    <div class=\"container-fluid\">\n                      <div id=\"Mseek-startpage-startdataload-projectfolder-selrecent\" class=\"shiny-html-output\"><\/div>\n                      <div class=\"row\">\n                        <div class=\"col-sm-6\">\n                          <div title=\"Load the selected recent Project\">\n                            <button id=\"Mseek-startpage-startdataload-projectfolder-loadRecent\" type=\"button\" class=\"btn btn-default action-button\">Load recent<\/button>\n                          <\/div>\n                        <\/div>\n                        <div class=\"col-sm-6\">\n                          <head>\n                            <style>.FolderBox {\n word-wrap: break-word;\nbackground-color: azure;\npadding: 5px;\n\n} \n                            .ContextBox {\nbackground-color: gainsboro;\npadding: 5px;\n\n} \n                            <\/style>\n                          <\/head>\n                          <div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folderUI\" class=\"shiny-html-output\"><\/div>\n                        <\/div>\n                      <\/div>\n                    <\/div>\n                  <\/div>\n                  <div class=\"col-sm-2\" style=\"justify-content:center;display:flex\">\n                    <div id=\"Mseek-startpage-startdataload-table-loadTableButton\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-2\" style=\"justify-content:center;display:flex\">\n                    <button id=\"Mseek-startpage-startdataload-msdata-loadMSDButton\" type=\"button\" class=\"btn btn-default action-button\">\n                      <i class=\"fa fa-folder-open\"><\/i>\n                      Load MS data\n                    <\/button>\n                  <\/div>\n                <\/div>\n              <\/div>\n            <\/div>\n            <div class=\"row\">\n              <div style=\"height:5px\"><\/div>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"box box-solid box-primary\">\n      <div class=\"box-header\">\n        <h3 class=\"box-title\">This is METABOseek version 0.9.3<\/h3>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div style=\"height:4px;\"><\/div>\n  <div class=\"row\"><\/div>\n<\/div>",
       "deps": [
-        {
-          "name": "font-awesome",
-          "version": "4.7.0",
-          "src": {
-            "href": "shared/font-awesome"
-          },
-          "meta": null,
-          "script": null,
-          "stylesheet": "css/font-awesome.min.css",
-          "head": null,
-          "attachment": null,
-          "package": null,
-          "all_files": true
-        },
         {
           "name": "bootstrap",
           "version": "3.3.7",
@@ -824,6 +976,22 @@
           "head": null,
           "attachment": null,
           "package": null,
+          "all_files": true
+        },
+        {
+          "name": "font-awesome",
+          "version": "5.3.1",
+          "src": {
+            "href": "font-awesome-5.3.1"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
+          "head": null,
+          "attachment": null,
           "all_files": true
         }
       ]

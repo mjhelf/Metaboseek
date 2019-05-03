@@ -6,8 +6,6 @@ cache: packages
 dist: trusty
 r:
 
-- release
-- bioc-release
 - bioc-devel
 
 warnings_are_errors: false
@@ -28,6 +26,11 @@ bioc_packages:
   - MSnbase
   - CAMERA
   - mzR
+
+r_github_packages:
+  - r-lib/covr
+  - mjhelf/MassTools
+  - mjhelf/Rdisop  
   
 apt_packages:
   - libnetcdf-dev
@@ -49,9 +52,6 @@ before_install:
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then hash -r; fi"
   - "phantomjs --version"
-
-r_github_packages:
-  - r-lib/covr
 
 after_success:
   - Rscript -e 'covr::codecov()'
