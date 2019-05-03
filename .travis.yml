@@ -29,8 +29,8 @@ bioc_packages:
 
 r_github_packages:
   - r-lib/covr
-  - mjhelf/MassTools
   - mjhelf/Rdisop  
+  - mjhelf/MassTools
   
 apt_packages:
   - libnetcdf-dev
