@@ -9,7 +9,6 @@
 #' @param reactives Import data from the shiny session
 #' 
 #' @importFrom shinyBS bsCollapse bsCollapsePanel updateCollapse
-#' @importFrom splashR getSplash
 #' @importFrom data.table fread
 #' 
 #' @export 

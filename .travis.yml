@@ -2,11 +2,16 @@
 
 language: r
 sudo: required
-cache: packages
-dist: trusty
+cache:
+  - packages
+  
+  
+dist:
+  - trusty
+  - xenial
+  
 r:
-
-- bioc-devel
+  - bioc-devel
 
 warnings_are_errors: false
 
@@ -14,21 +19,25 @@ bioc_required: true
 
 r_packages:
   - knitr
-  - XML
-  - plyr
-  - doParallel
-  - foreach
-  - iterators
+  - covr
+  - testthat
+  - knitr
+  - roxygen2
+#  - XML
+#  - plyr
+#  - doParallel
+#  - foreach
+#  - iterators
 
-bioc_packages: 
-  - xcms 
-  - Rgraphviz
-  - MSnbase
-  - CAMERA
-  - mzR
+#bioc_packages: 
+ # - xcms 
+#  - Rgraphviz
+ # - MSnbase
+#  - CAMERA
+#  - mzR
 
 r_github_packages:
-  - r-lib/covr
+  #- r-lib/covr
   - mjhelf/Rdisop  
   - mjhelf/MassTools
   

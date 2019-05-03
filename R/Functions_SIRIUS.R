@@ -13,8 +13,7 @@
 #' @param splashtag splash tag of the ms2 spectrum
 #' @param scanindices which scans were averaged into this ms2 spectrum
 #' 
-#' @importFrom splashR getSplash
-#' 
+#' @importFrom digest digest
 #' @importFrom data.table fwrite
 #' 
 writeMS <- function(filename,
@@ -28,7 +27,7 @@ writeMS <- function(filename,
                     splashtag = NULL,
                     scanindices = NULL){
   
-  if(is.null(splashtag)){splashtag <- getSplash(ms2)}
+  if(is.null(splashtag)){splashtag <-  digest(ms2, algo = "xxhash64")}
   
   appending <- file.exists(filename)
   
@@ -100,7 +99,6 @@ writeMS <- function(filename,
 #'    \item{ms2}{can be a list of matrices, or a list of list of matrices. In the latter case, the (optional) names of the nested list items are expected to be in the format "collisionXX", where XX denotes an integer collision energy.}
 #' }
 #' 
-#' @importFrom splashR getSplash
 #' @importFrom data.table fread fwrite
 #' @importFrom digest digest
 #' 
