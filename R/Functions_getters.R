@@ -1,3 +1,9 @@
+setMethod("getScanInfo", 
+          signature = c("character", "numeric", "MSnExp"),
+          function(f,n,d, ...){
+              getScanInfo(f,n,d, ...)
+          })
+
 #' getScanInfo
 #'
 #' get metadata for a scan or multiple scans
@@ -52,6 +58,76 @@ getScanInfo <- function(file, number, data, type = c("acquisition", "ms1", "ms2"
   return(res)
   
 }
+
+
+#' rawSpectrum2
+#'
+#' create a list of Spectrum (Spectrum1 and/or Spectrum2) objects from a list of xcmsRaw onjects if available
+#'
+#' 
+rawSpectrum2 <- function(index, MSnData, xcmsRawobject = NULL){
+    
+    if(!is(MSnData, "MSnExp")){
+        simpleError("No valid MSnExp object provided") 
+    }
+    
+    if(!is(MSnData, "OnDiskMSnExp")){
+        spectra(MSnData)[index] 
+    }
+    
+    if(is.null(xcmsRawobject)){
+        
+        #  return( spectra(MSnData)[index])
+        
+        res <- lapply(index, function(i){MSnData[[i]]} )
+        
+    }else{
+        res <-  lapply(index,function(i){
+            meta <- MSnData@featureData@data[i,]
+            
+            switch(meta$msLevel,
+                   {
+                       
+                       
+                       spec <- xcms::getScan(xcmsRawobject[[as.numeric(meta$fileIdx)]],
+                                             which(xcmsRawobject[[as.numeric(meta$fileIdx)]]@acquisitionNum == meta$acquisitionNum))
+                       
+                       MSnbase:::Spectrum1(peaksCount = length(spec[,1]), rt = meta$retentionTime,
+                                           acquisitionNum = meta$acquisitionNum, scanIndex = meta$spIdx,
+                                           tic = meta$totIonCurrent, mz = spec[,1], intensity = spec[,2],
+                                           fromFile = meta$fileIdx, centroided = meta$centroided,
+                                           smoothed = meta$smoothed,
+                                           polarity = meta$polarity)
+                   },
+                   { 
+                       spec <- xcms::getMsnScan(xcmsRawobject[[as.numeric(meta$fileIdx)]],
+                                                which(xcmsRawobject[[as.numeric(meta$fileIdx)]]@msnAcquisitionNum == meta$acquisitionNum))
+                       
+                       Spectrum2(msLevel = meta$msLevel, peaksCount = length(spec[,1]), rt = meta$retentionTime,
+                                 acquisitionNum = meta$acquisitionNum, scanIndex = meta$spIdx,
+                                 tic = meta$totIonCurrent, mz = spec[,1], intensity = spec[,2],
+                                 fromFile = meta$fileIdx, centroided = meta$centroided,
+                                 smoothed = meta$smoothed,
+                                 polarity = meta$polarity,
+                                 merged = meta$mergedScan,
+                                 precScanNum = meta$precursorScanNum,
+                                 precursorMz = meta$precursorMZ, precursorIntensity = meta$precursorIntensity,
+                                 precursorCharge = meta$precursorCharge,
+                                 collisionEnergy = meta$collisionEnergy)
+                       
+                   })
+            
+            
+            
+        })
+    }
+    
+    names(res) <- row.names(MSnData@featureData@data[index,])
+    
+    return(res)
+}
+
+
 
 
 #' getAllScans
