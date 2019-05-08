@@ -6,7 +6,7 @@ cache:
   - packages
   
   
-dist: xenial
+dist: trusty
   
 r:
   - bioc-devel

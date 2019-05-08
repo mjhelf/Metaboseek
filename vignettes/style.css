@@ -1,0 +1,56 @@
+
+body{ /* Normal  */
+      font-size: 16px;
+      background-color: #404040;
+      color: #000;
+  }
+
+td {  /* Table  */
+  font-size: 8px;
+}
+h1.title {
+  font-size: 33px;
+  color: #C41230;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+  color: #C41230;
+}
+h2 { /* Header 2 */
+    font-size: 22px;
+  color: #C41230;
+}
+h3 { /* Header 3 */
+  font-size: 20px;
+  /* font-family: "Times New Roman", Times, serif; */
+  color: #C41230;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+#TOC {
+  color: #fff; 
+}
+
+.tocify ul, .tocify li {
+  background-color: #595959;
+
+}
+
+.tocify-subheader .tocify-item {
+  background-color: #595959;
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #404040;
+}
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+  background-color: #ffffff;
+}

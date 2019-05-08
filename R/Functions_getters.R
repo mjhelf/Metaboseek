@@ -65,15 +65,17 @@ getScanInfo <- function(file, number, data, type = c("acquisition", "ms1", "ms2"
 #' create a list of Spectrum (Spectrum1 and/or Spectrum2) objects from a list of xcmsRaw onjects if available
 #'
 #' 
-rawSpectrum2 <- function(index, MSnData, xcmsRawobject = NULL){
-    
-    if(!is(MSnData, "MSnExp")){
-        simpleError("No valid MSnExp object provided") 
-    }
+getSpectra <- function(index, MSnData, xcmsRawobject = NULL){
     
     if(!is(MSnData, "OnDiskMSnExp")){
-        spectra(MSnData)[index] 
+        simpleError("No valid OnDiskMSnExp object provided") 
     }
+    
+    # if(!is(MSnData, "OnDiskMSnExp")){
+    #     spectra(MSnData)[index] 
+    #     simpleError("No valid OnDiskMSnExp object provided") 
+    #     
+    # }
     
     if(is.null(xcmsRawobject)){
         
