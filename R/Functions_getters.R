@@ -1,8 +1,10 @@
-setMethod("getScanInfo", 
-          signature = c("character", "numeric", "MSnExp"),
-          function(f,n,d, ...){
-              getScanInfo(f,n,d, ...)
-          })
+# setMethod("getScanInfo", 
+#           signature = c("character", "numeric", "MSnExp"),
+#           function(f,n,d, ...){
+#               getScanInfo(f,n,d, ...)
+#           })
+
+
 
 #' getScanInfo
 #'

@@ -22,7 +22,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-options(tinytex.verbose = TRUE)
 ```
 
 METABOseek is an interactive, browser-based tool to analyze and browse your mass spectrometry data. Here is a quick introduction to the basic functions.
