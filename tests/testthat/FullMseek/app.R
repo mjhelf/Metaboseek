@@ -5,3 +5,18 @@ library(METABOseek)
 MseekOptions(recentProjects = "",
              filePaths = c(test = "./"),
              testMode = T)
+
+
+ui <- function(request){
+    
+    MseekContainerUI("Mseek")
+    
+}
+
+server <- function(input, output, session) {
+    callModule(MseekContainer, "Mseek")
+}
+
+
+# Create Shiny app ----
+shinyApp(ui, server)
