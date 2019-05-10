@@ -17,7 +17,8 @@ MseekOptions <- function(..., defaults = F){
                              loadExampleData = FALSE,
                              loadExampleTable = FALSE,
                              enabledCores = 4,
-                             filePaths = c(examples = system.file("extdata","examples", package = "METABOseek"),  if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
+                             filePaths = c(examples = system.file("extdata","examples", package = "METABOseek"),
+                                           if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
                              filePattern = paste(
                                paste("\\.", 
                                      c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
@@ -49,7 +50,8 @@ MseekOptions <- function(..., defaults = F){
                            SiriusElements = "CHNOP[5]S[5]",
                            SiriusUseMS1 = T,
                            SiriusDBoptions = c("bio", "PubChem", "hmdb", "kegg", "knapsack", "biocyc"),
-                           SiriusDBselected = "bio"
+                           SiriusDBselected = "bio",
+                           testMode = F
                            )
     
   }
@@ -77,6 +79,8 @@ MseekOptions <- function(..., defaults = F){
   
   newSettings <- list(...)
   
+
+  
   for(i in names(newSettings)){
     
     .MseekOptions[[i]] <<- newSettings[[i]]
@@ -84,7 +88,7 @@ MseekOptions <- function(..., defaults = F){
   }
   
   #prevent saving config while building project
-  if(dirname(system.file(package = "METABOseek")) %in% .libPaths()){
+  if(dirname(system.file(package = "METABOseek")) %in% .libPaths() && !.MseekOptions$testMode){
     write(jsonlite::serializeJSON(.MseekOptions, pretty = T), file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))
   }
   

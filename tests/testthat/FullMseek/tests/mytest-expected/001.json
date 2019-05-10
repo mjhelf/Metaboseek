@@ -1,0 +1,184 @@
+{
+  "input": {
+    "EICplots": "Grouped EICs",
+    "Mseek-MseekSB": "start",
+    "Mseek-globaloptshead": 0,
+    "Mseek-loadAll": 0,
+    "Mseek-mainpagecontent-filtersort-FilterBox": "Table Filter",
+    "Mseek-mainpagecontent-filtersort-rowselector-addFilter": 0,
+    "Mseek-mainpagecontent-mainplotbox-MS2B-MS2Tabs": "Feature Report",
+    "Mseek-mainpagecontent-mainplotbox-MS2B-freport-RtCorrActive": false,
+    "Mseek-mainpagecontent-mainplotbox-MS2B-freport-ShowSpec": false,
+    "Mseek-mainpagecontent-mainplotbox-MS2B-freport-miniPlots": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-RtCorrActive": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-ShowSpec": false,
+    "Mseek-mainpagecontent-mainplotbox-groupedeics-miniPlots": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-errorbar": "none",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-errorbar-selectized": "",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-gtype": "by group",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-gtype-selectized": "",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-log10": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-mark": "none",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-mark-selectized": "",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-multidata": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-pdots": true,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-ptype": "barplot",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-ptype-selectized": "",
+    "Mseek-mainpagecontent-mainplotbox-quickplots-rot": false,
+    "Mseek-mainpagecontent-mainplotbox-quickplots-usenorm": false,
+    "Mseek-mainpagecontent-mainplotbox-regroupms-newGroup": 0,
+    "Mseek-mainpagecontent-mainplotbox-regroupms-updateGroups": 0,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-eulerCheck": true,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-preFilter": true,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-scaleVenn": true,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-venn1-addFilter": 0,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-venn2-addFilter": 0,
+    "Mseek-mainpagecontent-mainplotbox-venndiagrams-venn3-addFilter": 0,
+    "Mseek-mainpagecontent-maintabbox-TableBox": "View Table",
+    "Mseek-mainpagecontent-maintabbox-tabanalysis-analyzeButton": 0,
+    "Mseek-mainpagecontent-maintabbox-tabgrouping-intcols": 0,
+    "Mseek-mainpagecontent-maintabbox-tabgrouping-removeGroups": 0,
+    "Mseek-mainpagecontent-maintabbox-tabgrouping-updateGroups": 0,
+    "Mseek-mainpagecontent-optionsbox-massshifts-updateshifts": 0,
+    "Mseek-mainpagecontent-optionsbox-rtcorrviewer-RtCorrLoad": null,
+    "Mseek-startpage-startdataload-msdata-loadMSDButton": 0,
+    "Mseek-startpage-startdataload-projectfolder-loadRecent": 0,
+    "Mseek-startpage-startdataload-projectfolder-pfolder-folder": 0,
+    "Mseek-startpage-startdataload-projectfolder-selRecent": "",
+    "Mseek-startpage-startdataload-projectfolder-selRecent-selectized": "",
+    "Mseek-startpage-startdataload-table-loadtable": 0,
+    "Mseek-xcmsMod-TabAnalysisXcms-analyzeButton": 0,
+    "Mseek-xcmsMod-xcms_loadfolder": 0,
+    "Mseek-xcmsMod-xcms_loadfolderOffline": 0,
+    "Mseek-xcmsMod-xcms_name": "xcms_run",
+    "Mseek-xcmsMod-xcms_settingsLoad": null,
+    "Mseek-xcmsMod-xcms_start": 0,
+    "PlotOpts": "EIC options",
+    "sidebarCollapsed": false,
+    "sidebarItemExpanded": null,
+    "xcms_settingsBox": "XCMS Settings"
+  },
+  "output": {
+    "Mseek-startpage-startdataload-projectfolder-pfolder-folderButton": {
+      "html": "<div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-div\" title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">\n  <button id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folder\" type=\"button\" class=\"shinyDirectories btn btn-default action-button\" data-title=\"Select an existing Mseek Project Folder (e.g. with xcms results)\">Load other Project<\/button>\n<\/div>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-startpage-startdataload-projectfolder-pfolder-folderUI": {
+      "html": "<div class=\"container-fluid\">\n  <div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folderButton\" class=\"shiny-html-output\"><\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mseek-startpage-startdataload-projectfolder-selrecent": {
+      "html": "<div title=\"\">\n  <div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n    <label class=\"control-label\" for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">Recent projects: <\/label>\n    <div>\n      <select id=\"Mseek-startpage-startdataload-projectfolder-selRecent\" class=\"form-control\"><option value=\"\" selected><\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "selectize",
+          "version": "0.11.2",
+          "src": {
+            "href": "shared/selectize"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "css/selectize.bootstrap3.css",
+          "head": "<!--[if lt IE 9]>\n<script src=\"shared/selectize/js/es5-shim.min.js\"><\/script>\n<![endif]-->\n<script src=\"shared/selectize/js/selectize.min.js\"><\/script>",
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mseek-startpage-startdataload-showfolder": {
+      "html": "<p>No Project Folder currently selected<\/p>",
+      "deps": [
+
+      ]
+    },
+    "Mseek-startpage-startdataload-table-loadTableButton": {
+      "html": "<button id=\"Mseek-startpage-startdataload-table-loadtable\" type=\"button\" class=\"btn btn-default action-button\">\n  <i class=\"fa fa-folder-open\"><\/i>\n  Load Feature Table\n<\/button>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "5.3.1",
+          "src": {
+            "href": "font-awesome-5.3.1"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
+    "Mseek-startpage-web": {
+      "html": "<div class=\"container-fluid\">\n  <div class=\"row\">\n    <div class=\"col-sm-12\">\n      <div class=\"box box-solid box-primary\">\n        <div class=\"box-header\">\n          <h3 class=\"box-title\">Welcome to METABOseek!<\/h3>\n        <\/div>\n        <div class=\"box-body\">\n          <div class=\"container-fluid\">\n            <div class=\"row\">\n              <p style=\"text-align:center;\">Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.<\/p>\n              <hr/>\n            <\/div>\n            <div class=\"row\">\n              <div class=\"container-fluid\">\n                <div class=\"row\">\n                  <div class=\"col-sm-4\" style=\"text-align:center;\">\n                    <div id=\"Mseek-startpage-startdataload-showfolder\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-4\" style=\"justify-content:center;display:flex\">\n                    <div class=\"container-fluid\">\n                      <div id=\"Mseek-startpage-startdataload-projectfolder-selrecent\" class=\"shiny-html-output\"><\/div>\n                      <div class=\"row\">\n                        <div class=\"col-sm-6\">\n                          <div title=\"Load the selected recent Project\">\n                            <button id=\"Mseek-startpage-startdataload-projectfolder-loadRecent\" type=\"button\" class=\"btn btn-default action-button\">Load recent<\/button>\n                          <\/div>\n                        <\/div>\n                        <div class=\"col-sm-6\">\n                          <head>\n                            <style>.FolderBox {\n word-wrap: break-word;\nbackground-color: azure;\npadding: 5px;\n\n} \n                            .ContextBox {\nbackground-color: gainsboro;\npadding: 5px;\n\n} \n                            <\/style>\n                          <\/head>\n                          <div id=\"Mseek-startpage-startdataload-projectfolder-pfolder-folderUI\" class=\"shiny-html-output\"><\/div>\n                        <\/div>\n                      <\/div>\n                    <\/div>\n                  <\/div>\n                  <div class=\"col-sm-2\" style=\"justify-content:center;display:flex\">\n                    <div id=\"Mseek-startpage-startdataload-table-loadTableButton\" class=\"shiny-html-output\"><\/div>\n                  <\/div>\n                  <div class=\"col-sm-2\" style=\"justify-content:center;display:flex\">\n                    <button id=\"Mseek-startpage-startdataload-msdata-loadMSDButton\" type=\"button\" class=\"btn btn-default action-button\">\n                      <i class=\"fa fa-folder-open\"><\/i>\n                      Load MS data\n                    <\/button>\n                  <\/div>\n                <\/div>\n              <\/div>\n            <\/div>\n            <div class=\"row\">\n              <div style=\"height:5px\"><\/div>\n            <\/div>\n          <\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"box box-solid box-primary\">\n      <div class=\"box-header\">\n        <h3 class=\"box-title\">This is METABOseek version 0.9.3<\/h3>\n      <\/div>\n    <\/div>\n  <\/div>\n  <div style=\"height:4px;\"><\/div>\n  <div class=\"row\">\n<iframe id=\"inlineFrameWelcome\"\ntitle=\"webpage\" \nstyle=\"border:none;width:100%;height:500px;\"  src=\"http://metaboseek.com/integrated/0.9.3\"> <\/iframe>\n              <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "bootstrap",
+          "version": "3.3.7",
+          "src": {
+            "href": "shared/bootstrap"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1"
+          },
+          "script": [
+            "js/bootstrap.min.js",
+            "shim/html5shiv.min.js",
+            "shim/respond.min.js"
+          ],
+          "stylesheet": "css/bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "font-awesome",
+          "version": "5.3.1",
+          "src": {
+            "href": "font-awesome-5.3.1"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    }
+  },
+  "export": {
+
+  }
+}

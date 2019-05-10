@@ -2,4 +2,6 @@
 library(METABOseek)
 
 #load .MseekOptions in case they have been deleted from environment
-MseekOptions()
+MseekOptions(recentProjects = "",
+             filePaths = c(test = "./"),
+             testMode = T)
