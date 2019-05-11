@@ -51,7 +51,20 @@ MseekOptions <- function(..., defaults = F){
                            SiriusUseMS1 = T,
                            SiriusDBoptions = c("bio", "PubChem", "hmdb", "kegg", "knapsack", "biocyc"),
                            SiriusDBselected = "bio",
-                           testMode = F
+                           testMode = F,
+                           mzquery.elements = c("C","H","N","O","P","S"),
+                           mzquery.mzppm = 5,
+                           mzquery.mzcharge = 1,
+                           mzquery.minUnsat = -5,
+                           mzquery.maxUnsat = 40,
+                           mzquery.minElements = "C1H2",
+                           mzquery.maxElements = "P3S3",
+                           mzquery.parity = "either",
+                           mzquery.maxcounts = TRUE,
+                           mzquery.valencefilter = TRUE,
+                           mzquery.hcratio = TRUE,
+                           mzquery.moreratios = TRUE,
+                           mzquery.elementheuristic = TRUE
                            )
     
   }

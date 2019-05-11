@@ -44,7 +44,7 @@ SpecModule2 <- function(input,output, session,
 ){
   
   ns <- NS(session$ns(NULL))
-  internalValues <- reactiveValues(plotArgs = NULL,
+  internalValues <- reactiveValues(plotInitArgs = NULL,
                                    maxxrange = NULL, #maximum x axis range
                                    maxyrange = NULL, #maximum y axis range
                                    
@@ -173,10 +173,14 @@ SpecModule2 <- function(input,output, session,
         
         if(length(Mspec$hover$mz) !=0 
            && length(Mspec$marker$mz) != 0){
-        mfdist <- calcMF(as.numeric(Mspec$marker$mz[1]), 
+        mfdist <- calcMF(abs(as.numeric(Mspec$hover$mz[1]) - as.numeric(Mspec$marker$mz[1])), 
                          summarize = T,  
                          top = 3,
                          z = 0,
+                         moreRatios = FALSE,
+                         HCratio = FALSE,
+                         elementHeuristic = FALSE,
+                         SeniorRule = FALSE,
                          ppm =  values$GlobalOpts$mzquery.mzppm,
                          elements = values$GlobalOpts$mzquery.InitializedElements,
                          BPPARAM = NULL,#bpparam(),
@@ -197,8 +201,8 @@ SpecModule2 <- function(input,output, session,
                  ", Cursor on: ", round(as.numeric(Mspec$hover$mz[1]),5),
                  if(length(Mspec$hover$mz) !=0 && length(Mspec$marker$mz) != 0){
                    paste0(" (",
-                          if(as.numeric(Mspec$hover$mz) > as.numeric(Mspec$marker$mz[1])){"+"}else{""},
-                          round(as.numeric(Mspec$hover$mz[1]) - as.numeric(Mspec$marker$mz[1]),5), ")", mfdist)}else{""}))
+                          if(as.numeric(Mspec$hover$mz[1]) > as.numeric(Mspec$marker$mz[1])){"+"}else{""},
+                          round(as.numeric(Mspec$hover$mz[1]) - as.numeric(Mspec$marker$mz[1]),5), ")[", mfdist, "]")}else{""}))
         
       )
       
@@ -242,7 +246,7 @@ SpecModule2 <- function(input,output, session,
                       
                       layout = reactive({list(active = T,
                                               highlights = NULL,
-                                              height = 550,
+                                              height = 450,
                                               tooltip = "TEST",
                                               selectCallback = T)}),
                       keys = reactive({values$GlobalOpts$keyinput.keydown}))

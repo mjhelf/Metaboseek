@@ -52,43 +52,44 @@ output$mzUI <- renderUI({
                       selectizeInput(ns("selelements"), "Elements",
                                      choices = names(getOption("MassTools.elements")),
                                      multiple = T,
-                                     selected =  c("C","H","N","O","P","S")
+                                     selected =   values$GlobalOpts$mzquery.elements#c("C","H","N","O","P","S")
                                      )),
                column(2,
-                      numericInput(ns("mzcharge"), "Charge", 1, step=1) 
+                      numericInput(ns("mzcharge"), "Charge", value = values$GlobalOpts$mzquery.mzcharge, step=1) 
                ),
                column(2,
-                      numericInput(ns("mzppm"), "ppm", 5, step=0.1)),
+                      numericInput(ns("mzppm"), "ppm", value = values$GlobalOpts$mzquery.mzppm, step=0.1)),
                column(2,
-                      numericInput(ns("minUnsat"), "min. DBE", -5, step=1)),
+                      numericInput(ns("minUnsat"), "min. DBE", value = values$GlobalOpts$mzquery.minUnsat, step=1)),
                column(2,
-                      numericInput(ns("maxUnsat"), "max. DBE", 40, step=1))
+                      numericInput(ns("maxUnsat"), "max. DBE", value = values$GlobalOpts$mzquery.maxUnsat, step=1))
                ),
              
              fluidRow(
                column(3,
-                      textInput(ns("minelements"), label = "Minimum elements:", value = "C1H2N0O0")
+                      textInput(ns("minelements"), label = "Minimum elements:", value = values$GlobalOpts$mzquery.minElements)
                       ),
                column(3,
-                      textInput(ns("maxelements"), label = "Maximum elements:", value = "P3S3")),
+                      textInput(ns("maxelements"), label = "Maximum elements:", value = values$GlobalOpts$mzquery.maxElements)),
                       
                column(3,
                       selectizeInput(ns("selparity"), "Parity", choices = list("either" = "either",
                                                                                "odd" = "o",
-                                                                               "even" = "e"))),
+                                                                               "even" = "e"),
+                                     selected = values$GlobalOpts$mzquery.parity)),
                column(3,
-                      checkboxInput(ns("maxcounts"), label = "Element filter", value = TRUE))
+                      checkboxInput(ns("maxcounts"), label = "Element filter", value = values$GlobalOpts$mzquery.maxcounts))
                ),
              
              fluidRow(
                column(3,
-                      checkboxInput(ns("valencefilter"), label = "Valence filters", value = TRUE)),
+                      checkboxInput(ns("valencefilter"), label = "Valence filters", value = values$GlobalOpts$mzquery.valencefilter)),
              column(3,
-                    checkboxInput(ns("hcratio"), label = "H/C ratio", value = T)),
+                    checkboxInput(ns("hcratio"), label = "H/C ratio", value = values$GlobalOpts$mzquery.hcratio)),
       column(3,
-             checkboxInput(ns("moreratios"), label = "NOPS/C ratio", value = T)),
+             checkboxInput(ns("moreratios"), label = "NOPS/C ratio", value = values$GlobalOpts$mzquery.moreratios)),
     column(3,
-           checkboxInput(ns("elementheuristic"), label = "Element filter 2", value = T))
+           checkboxInput(ns("elementheuristic"), label = "Element filter 2", value = values$GlobalOpts$mzquery.elementheuristic))
 
                
              ),
@@ -126,7 +127,7 @@ observeEvent(c(input$selelements, input$mzppm, input$mzcharge,
                    
   if(length(input$selelements) >0 && (is.null(values$GlobalOpts$mzquery.elements) || input$selelements != values$GlobalOpts$mzquery.elements)){
   values$GlobalOpts$mzquery.elements <- input$selelements
-  values$GlobalOpts$mzquery.InitializedElements <- initializeElements(input$selelements)
+  
                    }
   
   values$GlobalOpts$mzquery.mzppm <- input$mzppm
@@ -150,7 +151,12 @@ observeEvent(c(input$selelements, input$mzppm, input$mzcharge,
   
 })
 
-
+observeEvent(values$GlobalOpts$mzquery.elements,{
+             if(length(values$GlobalOpts$mzquery.elements) >0 
+                && (is.null(values$GlobalOpts$mzquery.elements))){
+    values$GlobalOpts$mzquery.InitializedElements <- initializeElements(input$selelements)
+             }
+})
 
 
 output$mzInfo <- renderUI({

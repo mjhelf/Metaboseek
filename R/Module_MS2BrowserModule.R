@@ -365,8 +365,7 @@ MS2BrowserModule <- function(input,output, session,
                                          type = "ms2"))
                           }
                       }),
-                      values = reactiveValues(MSData = values$MSData,
-                                              GlobalOpts = values$GlobalOpts))
+                      values = values)
   
   
   
@@ -499,7 +498,7 @@ MS2BrowserModuleUI <-  function(id){
                 htmlOutput(ns("searchcontrol")),
               TableModuleUI(ns('scantab'))),
               column(6,
-                     SpecModule2UI("specview1")                
+                     SpecModule2UI(ns("specview1"))                
 )
             )
           )
