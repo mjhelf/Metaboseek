@@ -26,7 +26,8 @@ OptionsContainer <- function(input,output, session,
                                      GlobalOpts = values$GlobalOpts,
                                      MainTable = values$MainTable),
              reactives = reactive({list(mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                          "spectrum" =  internalValues$activeMZ ))})
+                                                          "spectrum" =  internalValues$activeMZ,
+                                                  "Spectrum2" = values$GlobalOpts$mzquery.SpectrumMz))})
   )
   
   MassShifts <- callModule(MassShiftsModule, "massshifts",

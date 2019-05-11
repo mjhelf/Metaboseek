@@ -353,6 +353,23 @@ MS2BrowserModule <- function(input,output, session,
                        keys = reactive({keys()}),
                        static = list(title = "MS2 spectra")
   )
+  
+  
+  SpecView1 <- callModule(SpecModule2, "specview1",
+                      reactives = reactive({
+                          if(is.null(specEngine()$spec$sel)
+                             && length(specEngine()$spec$sel$scan) > 0){NULL}else{
+                             return(list(scantable = data.frame(file = specEngine()$spec$sel$File,
+                                                                scan = specEngine()$spec$sel$scan,
+                                                                stringsAsFactors = F),
+                                         type = "ms2"))
+                          }
+                      }),
+                      values = reactiveValues(MSData = values$MSData,
+                                              GlobalOpts = values$GlobalOpts))
+  
+  
+  
   FReport <- callModule(FeatureReportModule, "freport",values = reactiveValues(MSData = values$MSData,
                                                                                MainTable = values$MainTable,
                                                                                featureTables = values$featureTables,
@@ -476,9 +493,14 @@ MS2BrowserModuleUI <-  function(id){
           
           fluidPage(
             
-            htmlOutput(ns("searchcontrol")),
+            
             fluidRow(
-              TableModuleUI(ns('scantab'))
+              column(6,
+                htmlOutput(ns("searchcontrol")),
+              TableModuleUI(ns('scantab'))),
+              column(6,
+                     SpecModule2UI("specview1")                
+)
             )
           )
           
