@@ -115,7 +115,7 @@ output$mzUI <- renderUI({
 }) 
 
 #make the mz query settings available everywhere:
-observeEvent(c(input$selelements, input$mzppm,
+observeEvent(c(input$selelements, input$mzppm, input$mzcharge,
                input$minUnsat, input$maxUnsat,
                input$minelements, input$maxelements,
                input$selparity, input$maxcounts,
@@ -123,8 +123,14 @@ observeEvent(c(input$selelements, input$mzppm,
                input$moreratios, input$elementheuristic
                ),{
   
+                   
+  if(length(input$selelements) >0 && (is.null(values$GlobalOpts$mzquery.elements) || input$selelements != values$GlobalOpts$mzquery.elements)){
   values$GlobalOpts$mzquery.elements <- input$selelements
+  values$GlobalOpts$mzquery.InitializedElements <- initializeElements(input$selelements)
+                   }
+  
   values$GlobalOpts$mzquery.mzppm <- input$mzppm
+  values$GlobalOpts$mzquery.mzcharge <- input$mzcharge
   
   values$GlobalOpts$mzquery.minUnsat <- input$minUnsat
   values$GlobalOpts$mzquery.maxUnsat <- input$maxUnsat
@@ -171,19 +177,13 @@ mzauto <- reactive({
   if(length(input$selelements) != 0 && length(input$source) > 0 && input$source != "custom" && input$autoCalc){
     mzi <- as.numeric(internalValues$mz[[input$source]])
     
-    if(length(input$selelements) == 6
-              && all(input$selelements %in% c("C","H","N","O","P","S"))){
-     ele <-  NULL
-     }else{
-     ele <- initializeElements(input$selelements)
-      }
-    
+   
     
     return(list(table = calcMF(mzi, 
                                summarize = F,  
                                z = input$mzcharge,
                                ppm = input$mzppm,
-                               elements = ele,
+                               elements = values$GlobalOpts$mzquery.InitializedElements,
                                BPPARAM = NULL,#bpparam(),
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),
                                               minElements = input$minelements,
@@ -216,18 +216,12 @@ mztab <- eventReactive(input$mzButton,{
   if(length(input$selelements) != 0 && length(input$source) > 0){
     mzi <- if(input$source != "custom"){as.numeric(internalValues$mz[[input$source]])}else{as.numeric(input$mzquery)}
   
-    if(length(input$selelements) == 6
-       && all(input$selelements %in%  c("C","H","N","O","P","S"))){
-      ele <-  NULL
-    }else{
-      ele <- initializeElements(input$selelements)
-    }
-    
+   
     
     return(list(table = calcMF(mzi, 
                                summarize = F,  
                                z = input$mzcharge,
-                               elements = ele,
+                               elements = values$GlobalOpts$mzquery.InitializedElements,
                                ppm = input$mzppm,
                                BPPARAM = NULL,#bpparam(),
                                Filters = list(DBErange = c(input$minUnsat,input$maxUnsat),

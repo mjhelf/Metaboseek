@@ -16,6 +16,12 @@ MseekContainer <- function(input,output, session){
                      data = .MseekOptions$loadExampleData,
                      tables = .MseekOptions$loadExampleTable)
   
+  observeEvent(keyin$keyd,{
+      
+      GlobalOpts$keyinput.keydown <- keyin$keyd
+      
+      })
+  
   StartPage <- callModule(WelcomePageModule,"startpage",
                           values = reactiveValues(projectData = projectData,
                                                   featureTables = featureTables,
