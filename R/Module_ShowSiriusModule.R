@@ -22,10 +22,10 @@ ShowSiriusModule <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   internalValues <- reactiveValues(siriusStatus = NULL)
   
-  observeEvent(internalValues$query,{# input$getSirius,{
+  observeEvent(internalValues$query,{# input$getSirius,{#
     if(is.null(internalValues$query)){
       values$SiriusModule$activeSirius<- NULL
-      
+
     }else{
       tryCatch({
         
@@ -35,23 +35,22 @@ ShowSiriusModule <- function(input,output, session,
 
       }, error = function(e){
         showNotification(paste("A problem occured and SIRIUS results were not found. Maybe they are not ready yet, try again in a minute."), type = "error", duration = 0)
-        
+          values$SiriusModule$activeSirius<- NULL
+          
       })
 }
     values$SiriusModule$activeMF <- NULL
     values$SiriusModule$activeStructure <- NULL
-  })
+  }, ignoreNULL = FALSE )
   
   
   output$getsiriusbutton <- renderUI({
-    
     if(is.null(values$SiriusModule$siriusIndex) 
        || is.null(reactives()$splash) 
        || !reactives()$splash %in% values$SiriusModule$siriusIndex$splash){
       st <- "color: #000000; background-color: #C41230; border-color: #595959"
       ti <- "SIRIUS results not (yet) available for this spectrum."
       internalValues$query <- NULL
-      
     }else{
       
       # fullquery  <- data.frame(mz = reactives()$mz,

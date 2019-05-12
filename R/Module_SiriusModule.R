@@ -32,7 +32,7 @@ SiriusModule <- function(input,output, session,
                                    
                                    siriusJob = NULL,
                                    quickLookup = character(0),
-                                   depictor = if(F && .MseekOptions$rcdk.installed){rcdk::get.depictor(width = 550, height = 550, zoom = 1.3, style = "cow", 
+                                   depictor = if(.MseekOptions$rcdk.installed){rcdk::get.depictor(width = 550, height = 550, zoom = 1.3, style = "cow", 
                                                                                                 annotate = "off", abbr = "on", suppressh = TRUE, 
                                                                                                 showTitle = FALSE, smaLimit = 100, sma = NULL) }else{NULL}
                                    )
@@ -172,17 +172,15 @@ SiriusModule <- function(input,output, session,
 
   })
 
-  output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(internalValues$activeMF) && !is.null(internalValues$activeMF[["trees_dot"]]) ){
+  output$siriusTreePlot <-  DiagrammeR::renderGrViz({
+      
+      if(!is.null(internalValues$activeMF) && !is.null(internalValues$activeMF[["trees_dot"]]) ){
       
       internalValues$activeMF[["trees_dot"]]
       
   }  })
 
-  # output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(length(internalValues$activeMF)>0){
-  # 
-  #                          internalValues$activeMF[["trees_dot"]]
-  # 
-  # }  })
+
 
 #   output$fingerIDwindow <-  renderUI({
 #     if(!is.null(internalValues$activeStructure)){
@@ -298,18 +296,27 @@ SiriusModule <- function(input,output, session,
       
       })
   
+  output$treeout <- renderUI({if(!is.null(internalValues$activeMF) && !is.null(internalValues$activeMF[["trees_dot"]]) ){
+      DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%",
+                                                      height = "500px")
+      }
+      })
+  
+  output$smileout <- renderUI({if(!is.null(internalValues$activeStructure) && !is.null(internalValues$activeStructure$smiles)){
+      plotOutput(ns("smileplot"), width = "100%",
+                 height = "500px")
+  }
+  })
  
   output$allSirius <- renderUI({
          #print(internalValues$activeSirius)
 fluidPage(
    fluidRow(
      column(8,
-            DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%",
-                                    height = if(!is.null(internalValues$activeMF) && !is.null(internalValues$activeMF[["trees_dot"]]) ){"500px"}else{"0px"})
+            htmlOutput(ns("treeout"))
      ),
      column(4,
-            plotOutput(ns("smileplot"), width = "100%",
-                       height = if(!is.null(internalValues$activeStructure) && !is.null(internalValues$activeStructure$smiles)){"500px"}else{"0px"})
+            htmlOutput(ns("smileout"))
             )
      ),
   fluidRow(

@@ -121,8 +121,8 @@ SpecplotWidget <- function(input,output, session, reactives = reactive({list(x=s
   })
   
   output$specPlotOnly <- renderUI({
-    if(
-      !is.null(layout()) && layout()$active
+    if(!is.null(internalValues$plotArgs)
+      && !is.null(layout()) && layout()$active
     ){
       scallback <- !is.null(layout()$selectCallback) && layout()$selectCallback
       

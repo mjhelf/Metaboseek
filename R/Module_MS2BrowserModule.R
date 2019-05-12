@@ -389,15 +389,12 @@ MS2BrowserModule <- function(input,output, session,
   
   #control highlights in network here
   observeEvent(values$MainTable$selected_rows,{
-    #print("i see")
     tryCatch({
       if(!is.null(NetMod$hoverActive) 
          && NetMod$hoverActive 
          && !is.null(values$MainTable$selected_rows)
          && !is.null(NetMod$activelayout$graph)){
-        #print("A")       
-        # print(vertex_attr(NetMod$activelayout$graph,"fixed__id"))
-        
+
         if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$fixed__id)){
           
           
