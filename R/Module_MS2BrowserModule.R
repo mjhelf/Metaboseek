@@ -176,8 +176,9 @@ MS2BrowserModule <- function(input,output, session,
       
      # MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
       
-      res$splashtag <- digest(res$AllSpecLists, algo = "xxhash64")
+      res$splashtag <- digest(res$AllSpecLists[[1]], algo = "xxhash64")
       
+      #print(paste("spechash:",res$splashtag))
       #res$splashtag <- sapply(res$MergedSpecs, getSplash)
       
     }

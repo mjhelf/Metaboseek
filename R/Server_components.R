@@ -50,6 +50,7 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                RTcorr = NULL,
                                active = "Group1",
                                filelist = MSD$filelist,
+                               MSnExp = MSD$MSnExp,
                                data = MSD$data,
                                selectedFeats = NULL) #rawfs
     }))

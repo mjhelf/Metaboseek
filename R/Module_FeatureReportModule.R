@@ -250,11 +250,11 @@ FeatureReportModule <- function(input,output, session,
   #   }
   # })
   
-  output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(tree) && !is.null(tree()) ){
-
-                           tree()
-
-  }  })
+  # output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(tree) && !is.null(tree()) ){
+  # 
+  #                          tree()
+  # 
+  # }  })
   
   
   iSpec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"), 
@@ -448,9 +448,9 @@ FeatureReportModuleUI <- function(id){
     ),
     column(6,
            SpecmoduleUI(ns("ms2spec"))
-    )),
-    fluidRow(
-      DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px")
-  )
+    ))#,
+  #  fluidRow(
+ #     DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px")
+ # )
   )  
 }

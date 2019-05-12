@@ -142,7 +142,9 @@ runSirius <- function(outfolder,
    newjobs$moreOpts = paste0(moreOpts, instrument)
    newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
    newjobs$METABOseek_sirius_revision = 2
+   newjobs$settingsHash <- apply(newjobs[,c("ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision"),drop = F], 1, digest, algo = "xxhash64")
    
+  
    indexfile <- file.path(outfolder, "index.csv")
   if(file.exists(indexfile) && !force){
     

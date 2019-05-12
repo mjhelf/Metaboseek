@@ -88,10 +88,15 @@ MseekOptions <- function(..., defaults = F){
     rawgroups$File <- file.path(system.file("extdata", "examples", package = "METABOseek"), rawgroups$File)
     write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "METABOseek"), "filegroups.csv"))
     
-   }
+  }
+  
+  #additional checks:
+  .MseekOptions$rcdk.installed <<- "rcdk" %in% rownames(installed.packages())
+    
+
+  
   
   newSettings <- list(...)
-  
 
   
   for(i in names(newSettings)){
