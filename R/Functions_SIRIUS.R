@@ -137,12 +137,13 @@ runSirius <- function(outfolder,
    newjobs$splash = unlist(splashtag)
    newjobs$timestamp = ts
    newjobs$ion = ion
+   newjobs$ms1splash = sapply(ms1, function(x){if(is.null(x)){""}else{digest(x,algo = "xxhash64")}})
    newjobs$charge = charge
    newjobs$fingerid = fingerid
    newjobs$moreOpts = paste0(moreOpts, instrument)
    newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
    newjobs$METABOseek_sirius_revision = 2
-   newjobs$settingsHash <- apply(newjobs[,c("ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision"),drop = F], 1, digest, algo = "xxhash64")
+   newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision"),drop = F], 1, digest, algo = "xxhash64")
    
   
    indexfile <- file.path(outfolder, "index.csv")

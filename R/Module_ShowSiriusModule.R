@@ -15,6 +15,7 @@ ShowSiriusModule <- function(input,output, session,
                                                   GlobalOpts = GlobalOpts),
                           reactives = reactive({
                             list(splash = NULL,
+                                 ms1splash = NULL,
                                  mz = NULL)
                           })
 ){
@@ -57,6 +58,7 @@ ShowSiriusModule <- function(input,output, session,
       #                                    stringsAsFactors = F)
 
       searchterm <- apply(data.frame(ion = values$GlobalOpts$SiriusSelIon,
+                                     ms1splash = reactives()$ms1splash,
                                      charge = values$SiriusModule$selCharge,
                                      fingerid = values$GlobalOpts$SiriusCheckFinger,
                                      moreOpts = paste0("-c 50 ",
