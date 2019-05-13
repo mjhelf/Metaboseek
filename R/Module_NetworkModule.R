@@ -268,7 +268,7 @@ sliderInput(ns("seledges"), "Filter edges",
         }
         }else{
           
-          vc <- assignColor(vertex_attr(internalValues$activelayout$graph,input$vlabelcol), internalValues$colscale)
+          vc <- assignColor(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)), internalValues$colscale)
           
         }
         
@@ -444,7 +444,7 @@ sliderInput(ns("seledges"), "Filter edges",
                  cex = 1, horiz = T)
       }else{
         
-        colorRampLegend(vertex_attr(internalValues$activelayout$graph,input$vlabelcol), internalValues$colscale, input$vlabelcol)
+        colorRampLegend(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)), internalValues$colscale, input$vlabelcol)
         
       }
       

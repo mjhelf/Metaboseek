@@ -35,7 +35,7 @@ ShowSiriusModule <- function(input,output, session,
                                                       ts = internalValues$query$timestamp)
 
       }, error = function(e){
-        showNotification(paste("A problem occured and SIRIUS results were not found. Maybe they are not ready yet, try again in a minute."), type = "error", duration = 0)
+        showNotification(paste("A problem occured and SIRIUS results were not found. Maybe they are not ready yet, try again in a minute."), type = "error", duration = 3)
           values$SiriusModule$activeSirius<- NULL
           
       })
