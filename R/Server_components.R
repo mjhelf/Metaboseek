@@ -13,17 +13,25 @@
 #' @export
 MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
   eval.parent(quote({
+  
+     #upload size limit
     options(shiny.maxRequestSize=10*1024*1024^2) 
-    keyin <- reactiveValues(keyd = "NO")
+  #  keyin <- reactiveValues(keyd = "NO")
+        GlobalOpts <- ListToReactiveValues(.MseekOptions)
+
+    observeEvent(input$keyd,{
+        
+        GlobalOpts$keyinput.keydown <- input$keyd
+        
+    })
     
-    observeEvent(input$keyd,{keyin$keyd <- input$keyd})
+   # observeEvent(input$keyd,{keyin$keyd <- input$keyd}, ignoreNULL = FALSE)
     
     projectData <- reactiveValues(filegroupfiles =NULL,
                                   csvfiles = NULL,
                                   filegroups = NULL,
                                   projectName = paste0("METABOseek_session_",strftime(Sys.time(),"%Y%m%d_%H%M%S")))
     
-    GlobalOpts <- ListToReactiveValues(.MseekOptions)
     
     register(bpstart(if(Sys.info()['sysname'] == "Windows"){SnowParam(.MseekOptions$enabledCores)}else{MulticoreParam(.MseekOptions$enabledCores)}))
    

@@ -16,11 +16,7 @@ MseekContainer <- function(input,output, session){
                      data = .MseekOptions$loadExampleData,
                      tables = .MseekOptions$loadExampleTable)
   
-  observeEvent(keyin$keyd,{
-      
-      GlobalOpts$keyinput.keydown <- keyin$keyd
-      
-      })
+  
   
   StartPage <- callModule(WelcomePageModule,"startpage",
                           values = reactiveValues(projectData = projectData,
@@ -34,7 +30,7 @@ MseekContainer <- function(input,output, session){
                                                    MSData = MSData,
                                                    GlobalOpts = GlobalOpts,
                                                    projectData = projectData),
-                           keys = reactive({keyin$keyd})
+                           keys = reactive({GlobalOpts$keyinput.keydown})
   )
   
   xcmsOut <- callModule(xcmsModule, "xcmsMod",

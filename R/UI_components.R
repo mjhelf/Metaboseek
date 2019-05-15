@@ -18,7 +18,7 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
   }
   
   if(!dashboard){
-    fluidPage(
+      tagList(
       tags$script(paste0('
                 $(document).on("keydown", function (e) {
                 Shiny.onInputChange("',keyid,'", e.which);
@@ -34,7 +34,7 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
                     height = NULL, includeShinyjs = FALSE),
           verbatimTextOutput('diag'))}
       else{
-        ... 
+        tagList(...) 
       }
     )}
   else{

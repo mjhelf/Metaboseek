@@ -17,6 +17,8 @@ MseekOptions <- function(..., defaults = F){
                              loadExampleData = FALSE,
                              loadExampleTable = FALSE,
                              enabledCores = 4,
+                            keyinput.down = "NO",
+                            
                              filePaths = c(examples = system.file("extdata","examples", package = "METABOseek"),
                                            if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
                              filePattern = paste(
