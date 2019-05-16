@@ -1,3 +1,42 @@
+#' getFeatureTable
+#' 
+#' @param values reactiveValues or list object with at least a values$featureTables$tables
+#' @param tableID table name
+#' 
+#' @export
+getFeatureTable <- function(values, tableID){
+    
+    if(missing(tableID)){
+        return(values$featureTables$tables[[values$featureTables$active]])
+    }else{
+        return(values$featureTables$tables[[tableID]])
+    }
+    
+}
+
+#' getFeatureTable
+#' 
+#' @param values reactiveValues or list object with at least a values$featureTables$tables
+#' @param tableID table name
+#' 
+#' @export
+setFeatureTable <- function(values, featureTable, tableID){
+    
+    if(!missing(featureTable) && !is.null(featureTable)){
+        if(missing(tableID)){
+            tableID <- values$featureTables$active
+        }
+        values$featureTables$tables[[tableID]] <- featureTable
+    }
+    
+}
+
+
+
+
+
+
+
 # setMethod("getScanInfo", 
 #           signature = c("character", "numeric", "MSnExp"),
 #           function(f,n,d, ...){

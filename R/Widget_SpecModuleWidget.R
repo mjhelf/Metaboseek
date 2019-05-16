@@ -25,7 +25,7 @@ SpecplotWidget <- function(input,output, session, reactives = reactive({list(x=s
                                          selectCallback = T)}),
                            
                            
-                       keys){
+                       keys  = reactive({"NO"})){
   
   ns <- NS(session$ns(NULL))
   internalValues <- reactiveValues(plotArgs = NULL,
