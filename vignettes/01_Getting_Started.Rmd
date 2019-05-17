@@ -1,20 +1,29 @@
 ---
 title: "Getting started with METABOseek"
 author: "Maximilian Helf"
+package: METABOseek
 date: "May 2019"
 output:
   html_document:
-    css: style.css
-    df_print: paged
-    number_sections: yes
-    theme: simplex
-    toc: yes
-    toc_depth: 3
-    toc_float:
-      collapsed: no
-      smooth_scroll: yes
+      self_contained: yes
+      #css: style.css
+      df_print: paged
+      number_sections: yes
+      theme: simplex
+      toc: yes
+      toc_depth: 2
+      toc_float:
+        collapsed: no
+        smooth_scroll: yes
+  rmarkdown::html_vignette:
+      toc: yes
+      toc_depth: 2
   pdf_document:
-    toc: yes
+      toc: yes
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Getting started with METABOseek}
+  %\VignetteEncoding{UTF-8}
 ---
 
 
@@ -41,7 +50,7 @@ We recommend computers with a monitor with at least full HD (1920 x 1080 pixels)
 All files are loaded into memory, so that browsing will be very quick: It is easy to look at extracted ion chromatograms (EICs) for many MS features of interest across dozens of files within a fraction of a second. However, the initial loading of the data will take some time, and you may experience issues if you load many files at a time. We strongly recommend using centroided data files, as they will have a smaller memory footprint. Loading 50 data files from 20-minute high resolution LC/MS data acquisition should not be a problem on a computer with 16 GB of RAM. 
 
 ## Use the web version
-If you have trouble installing METABOseek or want to just try it out with a restricted set of features (e.g. no xcms analysis), use the [web version.](https://metaboseek.com/)
+If you have trouble installing METABOseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
 
 
 ## Install on Windows
@@ -50,7 +59,7 @@ If you have trouble installing METABOseek or want to just try it out with a rest
 
 1. Download the installer of the most recent release version [here](https://github.com/mjhelf/METABOseek/releases)
 2. Follow the installation steps.
-3. METABOseek 0.9 should now be installed and can be launched like any other Windows program. WHen METABOseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the METABOseek command line window.
+3. METABOseek 0.9 should now be installed and can be launched like any other Windows program. When METABOseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the METABOseek command line window.
 
 ###Using a .zip file
 
@@ -68,15 +77,14 @@ Windows users can update METABOseek to the newest version from inside the METABO
 1.	[Download](https://cloud.r-project.org/) and install R.
 2.	Mac users: Get [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
 3.	Run R, enter this line:
-```
+```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_METABOseek.R") 
 ```
 
 
-5. To run METABOseek, enter these lines into your R console:
-```
-library(METABOseek)
-runMseek()
+5. To run METABOseek, enter this line into your R console:
+```{r, eval = FALSE}
+METABOseek::runMseek()
 ```
 
 
@@ -84,12 +92,12 @@ runMseek()
 ##	Experienced R users (Windows, Mac or Linux):
 If you have installed R (and the devtools package) already, you can install METABOseek like this:
 
-```
-devtools::install_github("mjhelf/METABOseek", ref="main")
+```{r, eval = FALSE}
+devtools::install_github("mjhelf/METABOseek", ref="master")
 ```
 If you want to make sure you get all the required packages, run the install script with this line:
 
-```
+```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_METABOseek.R") 
 ```	
 #Quickstart
@@ -122,7 +130,15 @@ At the heart of METABOseek is the interaction between data visualization in the 
 
 In most cases, the first thing you want to load is some LC/MS data to look at. You can load files from the `Start page`, or click on the "Load..." icon on the left side of the top navigation bar.
 
+### Supported file types {#supportedFiles}
 
+METABOseek uses the `MSnbase` and `xcms` packages to load MS data files of the following formats:
+
+* .cdf
+* .nc
+* .mzData
+* .mzML
+* .mzXML
 
 ####1. Select a folder with MS data files.{.unnumbered}
 All files with [supported file extensions](#supportedFiles) in the selected folders and all its subfolders will be imported, so it makes sense to pre-sort your files in a reasonable folder structure. Note that here, unlike for the [xcms analysis](#runXcms), you may want to include widely different samples (e.g. blanks, to visually confirm they do not contain a compound of interest).
@@ -175,12 +191,4 @@ The default is for highly similar LC/MS runs acquired at high resolution and hig
 4. You can save settings as a .zip file (on windows computers, 7-zip or other software allowing for the zip command line prompt must be installed), or load a .zip file with settings from a previous run.
  + Note that this will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
  
-## Supported file types {#supportedFiles}
 
-METABOseek uses the `MSnbase` and `xcms` packages to load files of the following formats:
-
-* .cdf
-* .nc
-* .mzData
-* .mzML
-* .mzXML

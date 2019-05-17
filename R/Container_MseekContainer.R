@@ -2,7 +2,9 @@
 #' 
 #' Module that contains the entire METABOseek program
 #' 
-#' @inheritParams MseekContainers
+#' @return The server module for this container returns nothing
+#' 
+#' @inherit MseekContainers
 #' @describeIn MseekContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
@@ -88,7 +90,7 @@ MseekContainer <- function(input,output, session){
   
 }
 
-#' @describeIn MseekContainer contains the UI for the entire METABOseek program
+#' @describeIn MseekContainer returns the \code{shiny} UI elements for the entire METABOseek program
 #' 
 #' @export
 MseekContainerUI <- function(id){

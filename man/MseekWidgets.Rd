@@ -10,13 +10,13 @@ MseekWidgets(input, output, session, reactives, ...)
 MseekWidgetsUI(id)
 }
 \arguments{
-\item{input, output, session}{arguments necessary for use with \link[shiny]{callModule}()}
+\item{input, output, session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{reactives}{a list, wrapped in a \link[shiny]{reactive}() expression with settings for this module. See \code{details}.}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} expression with settings for this module. See \code{details}.}
 
 \item{...}{additional arguments, as defined for the individual module. For example: constant layout options depending on the context that this module is used in}
 
-\item{id}{id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
 }
 \description{
 \code{MseekWidgets} should work in a "vanilla" shiny environment, i.e. any shiny app, making it
