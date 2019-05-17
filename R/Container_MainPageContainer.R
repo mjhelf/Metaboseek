@@ -12,9 +12,7 @@ MainPageContainer <- function(input,output, session,
                               values = reactiveValues(projectData = values$projectData,
                                                       featureTables = values$featureTables,
                                                       MSData = values$MSData,
-                                                      GlobalOpts = values$GlobalOpts),
-                              keys = reactive({keyin$keyd})
-){
+                                                      GlobalOpts = values$GlobalOpts)){
   
   ns <- NS(session$ns(NULL))
   
@@ -35,8 +33,7 @@ MainPageContainer <- function(input,output, session,
                                                     MainTable = MainTabBox$MainTable,
                                                     featureTables = values$featureTables,
                                                     MSData = values$MSData,
-                                                    GlobalOpts = values$GlobalOpts),
-                            keys = keys)
+                                                    GlobalOpts = values$GlobalOpts))
   
   MainTabBox <- callModule(FeatureTableContainer, "maintabbox",
                            values = reactiveValues(featureTables = values$featureTables,

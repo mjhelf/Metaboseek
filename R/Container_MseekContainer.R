@@ -2,10 +2,8 @@
 #' 
 #' Module that contains the entire METABOseek program
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inheritParams MseekContainers
+#' @describeIn MseekContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 MseekContainer <- function(input,output, session){
@@ -19,22 +17,13 @@ MseekContainer <- function(input,output, session){
   
   
   StartPage <- callModule(WelcomePageModule,"startpage",
-                          values = reactiveValues(projectData = projectData,
-                                                  featureTables = featureTables,
-                                                  MSData = MSData,
-                                                  GlobalOpts = GlobalOpts),
+                          values = values,
              show = reactive({T}))
   
-  MainPageContent <- callModule(MainPageContainer, "mainpagecontent",
-                           values = reactiveValues(featureTables = featureTables,
-                                                   MSData = MSData,
-                                                   GlobalOpts = GlobalOpts,
-                                                   projectData = projectData),
-                           keys = reactive({GlobalOpts$keyinput.keydown})
-  )
+  MainPageContent <- callModule(MainPageContainer, "mainpagecontent", values)
   
   xcmsOut <- callModule(xcmsModule, "xcmsMod",
-                        values = list(MSData = MSData),
+                        values = values,
                         static = list(servermode = .MseekOptions$serverMode,
                                       activateXCMS = .MseekOptions$activateXCMS,
                                       rootpath = .MseekOptions$filePaths,
@@ -55,13 +44,10 @@ MseekContainer <- function(input,output, session){
  })
  
  HeaderDataLoad <- callModule(LoadDataModule, "modaldataload",
-                             values = reactiveValues(projectData = projectData,
-                                                     featureTables = featureTables,
-                                                     MSData = MSData,
-                                                     GlobalOpts = GlobalOpts)
+                             values = values
  )
  
- callModule(GlobalOptionsModule, "globaloptshe", values = reactiveValues(GlobalOpts = GlobalOpts))
+ callModule(GlobalOptionsModule, "globaloptshe", values = values)#reactiveValues(GlobalOpts = GlobalOpts) )
  
     
  
@@ -102,11 +88,7 @@ MseekContainer <- function(input,output, session){
   
 }
 
-#' MseekContainerUI
-#' 
-#' Module that contains the entire METABOseek program
-#' 
-#' @param id
+#' @describeIn MseekContainer contains the UI for the entire METABOseek program
 #' 
 #' @export
 MseekContainerUI <- function(id){

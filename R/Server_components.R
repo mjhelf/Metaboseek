@@ -33,13 +33,21 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                   projectName = paste0("METABOseek_session_",strftime(Sys.time(),"%Y%m%d_%H%M%S")))
     
     
-    register(bpstart(if(Sys.info()['sysname'] == "Windows"){SnowParam(.MseekOptions$enabledCores)}else{MulticoreParam(.MseekOptions$enabledCores)}))
+    BiocParallel::register(
+        BiocParallel::bpstart(
+            if(Sys.info()['sysname'] == "Windows"){
+                BiocParallel::SnowParam(.MseekOptions$enabledCores)
+            }else{
+                BiocParallel::MulticoreParam(.MseekOptions$enabledCores)
+            }
+        )
+    )
    
     
   }))
   if(diagnostics){
     eval.parent(quote({
-      runcodeServer()
+      shinyjs::runcodeServer()
       
       
     }))
@@ -102,6 +110,15 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
       )
     }))
   }
+    
+    eval.parent(quote({
+    
+        values <- reactiveValues(featureTables = featureTables,
+                                 MSData = MSData,
+                                 GlobalOpts = GlobalOpts,
+                                 projectData = projectData)
+    
+    }))
 }
 
 #' MseekExamplePreload

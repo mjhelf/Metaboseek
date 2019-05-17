@@ -10,18 +10,28 @@ SpecplotWidget(input, output, session, reactives = reactive({     list(x
   "title", yrange = c(0, 100), xrange = range(x), maxi = max(y), labels =
   NULL, mar = c(4, 6, 6, 2), ylab = "Relative Intensity (\%)", ylabshift =
   0) }), layout = reactive({     list(active = T, height = 550,
-  selectCallback = T) }), keys)
+  selectCallback = T) }), keys = reactive({     "NO" }))
 
 SpecplotWidgetUI(id)
 }
 \arguments{
+\item{input}{arguments necessary for use with \link[shiny]{callModule}()}
+
+\item{output}{arguments necessary for use with \link[shiny]{callModule}()}
+
+\item{session}{arguments necessary for use with \link[shiny]{callModule}()}
+
 \item{keys}{a \link[shiny]{reactive} object registering keystrokes}
+
+\item{id}{id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)}
 }
 \description{
-server and UI module for interactive mass spectrum view
+Module for interactive mass spectrum view
 }
 \section{Functions}{
 \itemize{
+\item \code{SpecplotWidget}: Server module, to be called with \link[shiny]{callModule}()
+
 \item \code{SpecplotWidgetUI}: UI function for SpecplotWidget
 }}
 

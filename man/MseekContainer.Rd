@@ -2,19 +2,29 @@
 % Please edit documentation in R/Container_MseekContainer.R
 \name{MseekContainer}
 \alias{MseekContainer}
+\alias{MseekContainerUI}
 \title{MseekContainer}
 \usage{
 MseekContainer(input, output, session)
+
+MseekContainerUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \link[shiny]{callModule}()}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \link[shiny]{callModule}()}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \link[shiny]{callModule}()}
 
-\item{values}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)}
 }
 \description{
 Module that contains the entire METABOseek program
 }
+\section{Functions}{
+\itemize{
+\item \code{MseekContainer}: server logic module, to be called with \link[shiny]{callModule}()
+
+\item \code{MseekContainerUI}: contains the UI for the entire METABOseek program
+}}
+

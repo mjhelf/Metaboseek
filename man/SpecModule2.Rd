@@ -5,10 +5,9 @@
 \alias{SpecModule2UI}
 \title{SpecModule2}
 \usage{
-SpecModule2(input, output, session, values = reactiveValues(MSData =
-  MSData, GlobalOpts = GlobalOpts), reactives = reactive({    
-  list(scantable = NULL, type = "ms2", spectrum = NULL, specinfo = NULL,
-  xrange = NULL, markermz = NULL) }))
+SpecModule2(input, output, session, values = values,
+  reactives = reactive({     list(scantable = NULL, type = "ms2",
+  spectrum = NULL, specinfo = NULL, xrange = NULL, markermz = NULL) }))
 
 SpecModule2UI(id)
 }
@@ -40,6 +39,8 @@ a list with entries \code{spectrum} and \code{specinfo}.
 }
 \section{Functions}{
 \itemize{
+\item \code{SpecModule2}: Server module, to be called with \link[shiny]{callModule}()
+
 \item \code{SpecModule2UI}: UI function for SpecModule2
 }}
 

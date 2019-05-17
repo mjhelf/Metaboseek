@@ -4,7 +4,7 @@
 #' Module for interactive mass spectrum view
 #' @inheritParams SpecModule2
 #' @param keys a \link[shiny]{reactive} object registering keystrokes
-#' @decribeIn SpecplotWidget Server module, to be called with \link[shiny]{callModule}()
+#' @describeIn SpecplotWidget Server module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 SpecplotWidget <- function(input,output, session, reactives = reactive({list(x=sc[,1],

@@ -14,7 +14,7 @@ getFeatureTable <- function(values, tableID){
     
 }
 
-#' getFeatureTable
+#' setFeatureTable
 #' 
 #' @param values reactiveValues or list object with at least a values$featureTables$tables
 #' @param tableID table name

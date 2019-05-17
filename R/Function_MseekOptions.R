@@ -54,6 +54,7 @@ MseekOptions <- function(..., defaults = F){
                            SiriusDBoptions = c("bio", "PubChem", "hmdb", "kegg", "knapsack", "biocyc"),
                            SiriusDBselected = "bio",
                            testMode = F,
+                           
                            mzquery.elements = c("C","H","N","O","P","S"),
                            mzquery.mzppm = 5,
                            mzquery.mzcharge = 1,

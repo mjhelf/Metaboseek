@@ -8,7 +8,7 @@
 #' @param values a \link[shiny]{reactiveValues} object that in effect gives read and write access to external objects
 #' @param id id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)
 #' 
-#' @decribeIn SpecModule2 Server module, to be called with \link[shiny]{callModule}()
+#' @describeIn SpecModule2 Server module, to be called with \link[shiny]{callModule}()
 #' 
 #' @details 
 #' \subsection{reactives}{
@@ -30,8 +30,7 @@
 #' @importFrom MassTools mergeMS calcMF
 #' @export 
 SpecModule2 <- function(input,output, session,
-                        values = reactiveValues(MSData = MSData,
-                                                GlobalOpts = GlobalOpts),
+                        values = values,
                         reactives = reactive({
                           list(scantable = NULL,
                                type = "ms2",

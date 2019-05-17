@@ -13,9 +13,7 @@ MainPlotContainer <- function(input,output, session,
                                                       featureTables = featureTables,
                                                       MSData = MSData,
                                                       GlobalOpts = GlobalOpts,
-                                                      MainTable = MainTable),
-                              keys = reactive({keyin$keyd})
-){
+                                                      MainTable = MainTable)){
   
   ns <- NS(session$ns(NULL))
   
@@ -30,7 +28,7 @@ MainPlotContainer <- function(input,output, session,
                                                     MSData = values$MSData,
                                                     MainTable = values$MainTable,
                                                     GlobalOpts = values$GlobalOpts),
-                            keys = reactive({keys()})
+                            keys = reactive({values$GlobalOpts$keyinput.keydown})
   )
   
   #### MS2Browsewr #####
@@ -47,7 +45,7 @@ MainPlotContainer <- function(input,output, session,
                                                    MainTable = values$MainTable,
                                                    MSData = values$MSData,
                                                    GlobalOpts = values$GlobalOpts),
-                           keys = reactive({keys()}))
+                           keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   #### Quickplots #####
   callModule(featurePlotModule, "quickplots",
@@ -60,7 +58,7 @@ MainPlotContainer <- function(input,output, session,
   MultiEICout <- callModule(MultiEICmodule,"MultiE", values = reactiveValues(MSData = values$MSData,
                                                                                                      GlobalOpts = values$GlobalOpts,
                                                                                                      MainTable = values$MainTable),
-                            keys = reactive({keys()}))
+                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = ns("Spec2"), 
                        set = reactive({
@@ -89,7 +87,7 @@ MainPlotContainer <- function(input,output, session,
                                          height = 350),
                            msdata = values$MSData$data)
                        }), 
-                       keys = reactive({keys()}),
+                       keys = reactive({values$GlobalOpts$keyinput.keydown}),
                        static = list(title = "MS spectra")
   )
   

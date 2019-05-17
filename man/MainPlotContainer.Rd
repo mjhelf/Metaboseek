@@ -7,7 +7,7 @@
 MainPlotContainer(input, output, session,
   values = reactiveValues(projectData = projectData, featureTables =
   featureTables, MSData = MSData, GlobalOpts = GlobalOpts, MainTable =
-  MainTable), keys = reactive({     keyin$keyd }))
+  MainTable))
 }
 \arguments{
 \item{input}{}
