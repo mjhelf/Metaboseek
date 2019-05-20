@@ -55,7 +55,7 @@ shinyApp(ui, server)
 \seealso{
 \itemize{
 \item{General Information:} \code{\link{MseekContainers}}
-\item{Specific containers:} \code{\link{MseekContainer}} \code{\link{MainPageContainer}} 
+\item{Specific containers:} \code{\link{MseekContainer}}, \code{\link{MainPageContainer}} 
 \item{More on Shiny modules:} \url{http://shiny.rstudio.com/articles/modules.html}
 }
 }

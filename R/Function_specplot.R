@@ -228,7 +228,8 @@ specplot2 <- function (x=sc[,1],
                        highlights = NULL,
                        mar = c(3,4,6,1),
                        ylab = "Relative Intensity (%)",
-                       ylabshift = 2
+                       ylabshift = 2,
+                       parseLabels = F
 ){
     if(!missing(spectrum) && !is.null(spectrum)){
         
@@ -360,14 +361,14 @@ specplot2 <- function (x=sc[,1],
         ),, drop = F]
         if(nrow(labels)>0){
             
+            if(is.null(labels$label)){
+                labels$label <- format(round(labels[,1],5), nsmall = 5, scientific = F)
+            }
+            
             if(is.null(labels$color)){
                 labels$color <- "red" 
             }
             
-            
-            if(is.null(labels$label)){
-                labels$label <- format(round(labels[,1],5), nsmall = 5, scientific = F)
-            }
             
             if(all(colnames(spectrum) == colnames(labels))){
                 spectrum <- rbind(labels, spectrum)
@@ -387,11 +388,15 @@ specplot2 <- function (x=sc[,1],
         #                     ylim = yrange)#, col=spectrum$color, rotate90 = T)
         
         
-        xcorr <- suppressWarnings({spread.labs(spectrum[,1],1.05*strwidth("A"), maxiter=1000, min=min(spectrum[,1]), max=max(spectrum[,1]))})
+        xcorr <- suppressWarnings({spread.labs(spectrum[,1],1.08*strwidth("A", cex = cx), maxiter=1000, min=min(spectrum[,1]), max=max(spectrum[,1]))})
         
         segments(spectrum[,1],spectrum[,2]+0.01*max(yrange),xcorr,spectrum[,2]+0.05*max(yrange), col="olivedrab4", lwd=0.8)
         
-        text(xcorr,spectrum[,2]+0.055*max(yrange),labels=spectrum$label, col=spectrum$color, srt=90,adj=c(0,0.3), cex=1*cx)
+        
+        
+        if(parseLabels){filabs <- parse(text = spectrum$label)}else{filabs <- spectrum$label}
+        
+        text(xcorr,spectrum[,2]+0.055*max(yrange),labels=filabs, col=spectrum$color, srt=90,adj=c(0,0.3), cex=1*cx)
         
     }
     

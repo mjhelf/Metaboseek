@@ -291,7 +291,7 @@ pairCompare <- function(v1, v2, NAasZero = T, method = c("cosine", "pearson")){
     v2[selfeats[which(is.na(v2[selfeats]))]] <- 0
   }
   
-  if(method == "pearson"){
+  if(method[1] == "pearson"){
     cor(v1,v2, method = "pearson", use = "pairwise.complete.obs")
   }else{
     cosine(matrix(c(v1,v2),ncol = 2, byrow = F))[1,2]

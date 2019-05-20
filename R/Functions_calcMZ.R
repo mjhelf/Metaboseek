@@ -109,7 +109,7 @@ getMono <- function(mf){
 #' @param charges vector of positive or negative integers indicating the charge states to calculate
 #' @param carrier charge carrier - Molecular formula will be added to or removed from MFs for each charge
 #' @param monoisotopic if true, will calculate the monoisotopic mass m/z values, will calculate m/z of the most abundant isotope peak otherwise (will be slower but preferrable e.g. for large organic molecules)
-#' @param mf_column column in df that contains MFs
+#' @param mf_column name of column in df that contains MFs
 #' 
 #' @importFrom enviPat check_chemform isopattern
 #'
