@@ -17,13 +17,21 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
      #upload size limit
     options(shiny.maxRequestSize=10*1024*1024^2) 
   #  keyin <- reactiveValues(keyd = "NO")
-        GlobalOpts <- ListToReactiveValues(.MseekOptions)
+        GlobalOpts <- ListToReactiveValues(c(.MseekOptions,
+                                             list(project.filegroupfiles =NULL,
+                                                  project.csvfiles = NULL,
+                                                  project.filegroups = NULL,
+                                                  project.projectName = paste0("METABOseek_session_",
+                                                                               strftime(Sys.time(),
+                                                                                        "%Y%m%d_%H%M%S")))))
 
     observeEvent(input$keyd,{
         
         GlobalOpts$keyinput.keydown <- input$keyd
         
     })
+    
+    observe({})
     
    # observeEvent(input$keyd,{keyin$keyd <- input$keyd}, ignoreNULL = FALSE)
     
@@ -47,9 +55,9 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
   }))
   if(diagnostics){
     eval.parent(quote({
-      shinyjs::runcodeServer()
-      
-      
+       
+        shinyjs::runcodeServer()
+  
     }))
   }
   if(data){

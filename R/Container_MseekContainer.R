@@ -12,7 +12,8 @@ MseekContainer <- function(input,output, session){
   
   ns <- NS(session$ns(NULL))
   
-  MseekMinimalServer(diagnostics = .MseekOptions$develMode,
+  MseekMinimalServer(diagnostics = .MseekOptions$develMode, ## NOTE: server part of develMode now handled in server.R because of scoping issues with MseekContainer #.MseekOptions$develMode,
+                     
                      data = .MseekOptions$loadExampleData,
                      tables = .MseekOptions$loadExampleTable)
   

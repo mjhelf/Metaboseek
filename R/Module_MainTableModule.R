@@ -41,6 +41,11 @@ MainTableModule <- function(input,
                                    hasUpdates = F
   )
   
+  observeEvent(values,{
+  values$featureTables$Maintable <- internalValues
+  }, once = TRUE)
+  
+  
   observe({internalValues$hasUpdates <- !is.null(input$maintable$changes$changes)})
   
   callModule(SelectActiveTableModule, "tablechange", values = reactiveValues(featureTables = values$featureTables,

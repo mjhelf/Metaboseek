@@ -31,8 +31,22 @@ setFeatureTable <- function(values, featureTable, tableID){
     
 }
 
+'setFeatureTable2<-' <- function(x, value){
+    
+    UseMethod('setFeatureTable2<-', value)
+    
+}
 
-
+'setFeatureTable2<-.data.frame' <- function(x, value){
+    
+    if(!missing(value) && !is.null(value)){
+        #if(missing(tableID)){
+        tableID <- x$featureTables$active
+        # }
+        x$featureTables$tables[[tableID]]$df <- value
+    }
+    
+}
 
 
 
