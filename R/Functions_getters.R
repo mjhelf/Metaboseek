@@ -31,23 +31,77 @@ setFeatureTable <- function(values, featureTable, tableID){
     
 }
 
-'setFeatureTable2<-' <- function(x, value){
+
+
+#' FeatureTable
+#' 
+#' @param values reactiveValues or list object with at least a values$featureTables$tables
+#' @param tableID table name
+#' 
+#' @export
+FeatureTable <- function(x, ...){
     
-    UseMethod('setFeatureTable2<-', value)
+    UseMethod('FeatureTable', x)
     
 }
 
-'setFeatureTable2<-.data.frame' <- function(x, value){
+#' @export
+FeatureTable.reactivevalues <- function(x, tableID = NULL){
     
-    if(!missing(value) && !is.null(value)){
-        #if(missing(tableID)){
-        tableID <- x$featureTables$active
-        # }
-        x$featureTables$tables[[tableID]]$df <- value
+    if(is.null(tableID) || missing(tableID)){
+        return(x$featureTables$tables[[x$featureTables$active]])
+    }else{
+        return(x$featureTables$tables[[tableID]])
     }
     
 }
 
+
+
+
+#' FeatureTable<-
+#'
+#' Getter and setter methods to retireve a Feature Table from \code{values} 
+#'
+#'
+#' @param x the \code{values} object
+#' @param value the value that gets set
+#' @param replace
+#'
+#' @export
+'FeatureTable<-' <- function(x, value, ...){
+    
+    UseMethod('FeatureTable<-', value)
+    
+}
+
+#' @export
+'FeatureTable<-.data.frame' <- function(x, value, replace = F, tableID = NULL){
+    
+    if(!missing(value) && !is.null(value)){
+        if(is.null(tableID) || missing(tableID)){
+        tableID <- x$featureTables$active
+        }
+        if(replace){
+        x$featureTables$tables[[tableID]]$df <- value
+        }else{
+        x$featureTables$tables[[tableID]] <- updateFeatureTable(x$featureTables$tables[[tableID]], value)
+        }
+        }
+    
+}
+
+#' @export
+'FeatureTable<-.MseekFT' <- function(x, value, replace = T, tableID = NULL){
+    
+    if(!missing(value) && !is.null(value)){
+        if(is.null(tableID) || missing(tableID)){
+            tableID <- x$featureTables$active
+        }
+        x$featureTables$tables[[tableID]] <- value
+    }
+    
+}
 
 
 
