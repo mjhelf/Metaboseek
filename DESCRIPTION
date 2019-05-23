@@ -1,8 +1,8 @@
 Package: METABOseek
-Title: METABOseek platform
+Title: Metaboseek platform
 Version: 0.9.3
-Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
-BiocViews: MassSpectrometry, DataAnalysis
+Authors@R: person("Maximilian", "Helf", email = "maximilian.helf@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1393-3999"))
+biocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
 Depends: R (>= 3.3.0)
 License: GPL-3
@@ -23,7 +23,7 @@ Imports: Biobase,
     igraph,
     jsonlite,
     lsa,
-    MassTools,
+    MassTools (>= 0.2.1),
     MSnbase,
     plotly,
     qgraph,
