@@ -23,7 +23,7 @@ MseekContainer <- function(input,output, session){
                           values = values,
              show = reactive({T}))
   
-  MainPageContent <- callModule(MainPageContainer, "mainpagecontent", values)
+  callModule(MainPageContainer, "mainpagecontent", values)
   
   xcmsOut <- callModule(xcmsModule, "xcmsMod",
                         values = values,

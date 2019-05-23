@@ -82,7 +82,7 @@ MseekModulesUI <- function(id){
 #'   They should not contain any observers and are only here to pass \code{values} into modules,
 #'    or provide ways for individual Modules to interact with each other.
 #'    
-#' @return a \code{\link[shiny]{reactiveValues}()} object, giving access to the internalValues of this MseekContainer, see \code{Details}.
+#' @return The server module for this container returns nothing
 #' 
 #' @examples
 #' \dontrun{

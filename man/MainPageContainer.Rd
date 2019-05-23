@@ -2,22 +2,65 @@
 % Please edit documentation in R/Container_MainPageContainer.R
 \name{MainPageContainer}
 \alias{MainPageContainer}
+\alias{MainPageContainerUI}
 \title{MainPageContainer}
 \usage{
 MainPageContainer(input, output, session,
   values = reactiveValues(projectData = values$projectData, featureTables
   = values$featureTables, MSData = values$MSData, GlobalOpts =
   values$GlobalOpts))
+
+MainPageContainerUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}()} for the server Module)}
+}
+\value{
+The server module for this container returns nothing
 }
 \description{
-Module to apply filters to a featureTable (UI)
+Container for modules in the Metaboseek main page
+}
+\section{Functions}{
+\itemize{
+\item \code{MainPageContainer}: server logic module, to be called with \link[shiny]{callModule}()
+
+\item \code{MainPageContainerUI}: returns the \code{shiny} UI elements for the METABOseek main page
+}}
+
+\section{MseekContainers}{
+
+Containers are used to keep the code organised and can be characterized
+ as Modules which contain other Modules, but do not contain add any functionality themselves.
+  They should not contain any observers and are only here to pass \code{values} into modules,
+   or provide ways for individual Modules to interact with each other.
+}
+
+\examples{
+\dontrun{
+ui <- function(request){
+MseekContainerUI("Mseek")
+}
+server <- function(input, output, session) {
+   callModule(MseekContainer, "Mseek")
+}
+Create Shiny app ----
+shinyApp(ui, server)
+}
+
+}
+\seealso{
+\itemize{
+\item{General Information:} \code{\link{MseekContainers}}
+\item{Specific containers:} \code{\link{MseekContainer}}, \code{\link{MainPageContainer}} 
+\item{More on Shiny modules:} \url{http://shiny.rstudio.com/articles/modules.html}
+}
 }

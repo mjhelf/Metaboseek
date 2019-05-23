@@ -17,7 +17,7 @@ MseekContainersUI(id)
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}()} for the server Module)}
 }
 \value{
-a \code{\link[shiny]{reactiveValues}()} object, giving access to the internalValues of this MseekContainer, see \code{Details}.
+The server module for this container returns nothing
 }
 \description{
 This is the MseekContainer template

@@ -1,11 +1,10 @@
 #' MainPageContainer
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Container for modules in the Metaboseek main page
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' 
+#' @inherit MseekContainers
+#' @describeIn MainPageContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 MainPageContainer <- function(input,output, session,
@@ -42,23 +41,21 @@ MainPageContainer <- function(input,output, session,
                                                    projectData = values$projectData))
   
   
-  FilterSort <-  callModule(FilterContainer, "filtersort", values = reactiveValues(featureTables = values$featureTables,
+  #FilterSort <- 
+      callModule(FilterContainer, "filtersort", values = reactiveValues(featureTables = values$featureTables,
                                                                                    MainTable = MainTabBox$MainTable))
   
-  internalValues <- reactiveValues(OptionsBox = OptionsBox,
-                                   MainPlotBox = MainPlotBox,
-                                   MainTabBox = MainTabBox,
-                                   FilterSort = FilterSort)
+  # internalValues <- reactiveValues(
+  #                                  MainPlotBox = MainPlotBox,
+  #                                  MainTabBox = MainTabBox,
+  #                                  FilterSort = FilterSort)
   
-  return(internalValues)
+ # return(internalValues)
   
 }
 
-#' MainPageContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+
+#' @describeIn MainPageContainer returns the \code{shiny} UI elements for the METABOseek main page
 #' 
 #' @export
 MainPageContainerUI <- function(id){

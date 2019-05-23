@@ -1,11 +1,9 @@
 #' MainPlotContainer
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module that contains most plotting devices in Metaboseek
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekContainers
+#' @describeIn MainPlotContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 MainPlotContainer <- function(input,output, session,
@@ -18,7 +16,8 @@ MainPlotContainer <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   
-  RegroupMS <- callModule(RegroupMSDataModule, "regroupms",
+ # RegroupMS <- 
+      callModule(RegroupMSDataModule, "regroupms",
                           values = reactiveValues(MSData = values$MSData,
                                                   projectData = values$projectData))
   
@@ -91,31 +90,31 @@ MainPlotContainer <- function(input,output, session,
                        static = list(title = "MS spectra")
   )
   
-  PcaViewFeatures <- callModule(PcaViewModule, "pcaviewfeatures",
+  #PcaViewFeatures <- 
+  callModule(PcaViewModule, "pcaviewfeatures",
                                 values = reactiveValues(featureTables = values$featureTables)
   )
   
-  VennDiagrams <- callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
+  #VennDiagrams <- 
+      callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
                                                                                         MainTable = values$MainTable,
                                                                            GlobalOpts = values$GlobalOpts))
   
-  internalValues <- reactiveValues(RegroupMS = RegroupMS,
+  ###TODO: remove return values. currently returns modules with SpecModule for mzquerymodule
+  internalValues <- reactiveValues(#RegroupMS = RegroupMS,
                                    GroupedEICs = GroupedEICs,
                                    MS2Browser = MS2Browser,
-                                   MultiEICout = MultiEICout,
-                                   iSpec2 = iSpec2,
-                                   PcaViewFeatures = PcaViewFeatures,
-                                   VennDiagrams = VennDiagrams)
+                                   #MultiEICout = MultiEICout,
+                                   iSpec2 = iSpec2#,
+                                   #PcaViewFeatures = PcaViewFeatures,
+                                   #VennDiagrams = VennDiagrams
+                                   )
 
   return(internalValues)
   
 }
 
-#' MainPlotContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+#' @describeIn MainPlotContainer returns the \code{shiny} UI elements for the Main plot box ("Data viewer"), including the box
 #' 
 #' @export
 MainPlotContainerUI <- function(id){

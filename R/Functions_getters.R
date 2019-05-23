@@ -46,7 +46,14 @@ FeatureTable <- function(x, ...){
 }
 
 #' @export
-FeatureTable.reactivevalues <- function(x, tableID = NULL){
+FeatureTable.reactivevalues <- function(x, update = F, tableID = NULL){
+    
+    if(update){        
+        #make sure this part does not trigger the observer containing the setter function
+        isolate({
+            updateFT(x)
+        })
+    }
     
     if(is.null(tableID) || missing(tableID)){
         return(x$featureTables$tables[[x$featureTables$active]])
@@ -76,9 +83,18 @@ FeatureTable.reactivevalues <- function(x, tableID = NULL){
 }
 
 #' @export
-'FeatureTable<-.data.frame' <- function(x, value, replace = F, tableID = NULL){
+'FeatureTable<-.data.frame' <- function(x, value, replace = F, update = T, tableID = NULL){
     
     if(!missing(value) && !is.null(value)){
+        
+        if(update){        
+            #make sure this part does not trigger the observer containing the setter function
+            isolate({
+                  updateFT(x)
+                })
+        }
+        
+        
         if(is.null(tableID) || missing(tableID)){
         tableID <- x$featureTables$active
         }
@@ -87,6 +103,7 @@ FeatureTable.reactivevalues <- function(x, tableID = NULL){
         }else{
         x$featureTables$tables[[tableID]] <- updateFeatureTable(x$featureTables$tables[[tableID]], value)
         }
+        
         }
     
 }
@@ -104,6 +121,28 @@ FeatureTable.reactivevalues <- function(x, tableID = NULL){
 }
 
 
+
+#' updateFT
+#' 
+#' 
+#' @export
+updateFT <- function(values){
+ 
+    if(!is.null(values$featureTables) 
+       && values$featureTables$MainTable$hasUpdates
+    ){
+        if((!is.null(values$featureTables$tables[[values$featureTables$active]]$editable) 
+            && values$featureTables$tables[[values$featureTables$active]]$editable)
+           || is.null(values$featureTables$MainTable$liveView$comments) ){
+            values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$featureTables$MainTable$liveView),colnames(values$featureTables$MainTable$liveView)] <- values$featureTables$MainTable$liveView
+        }else{
+            values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$featureTables$MainTable$liveView),"comments"] <- values$featureTables$MainTable$liveView$comments
+        }
+    }   
+    
+}
+    
+    
 
 # setMethod("getScanInfo", 
 #           signature = c("character", "numeric", "MSnExp"),
