@@ -9,7 +9,6 @@
 #' @param reactives Import data from the shiny session
 #' 
 #' @importFrom shinyBS bsCollapse bsCollapsePanel updateCollapse
-#' @importFrom splashR getSplash
 #' @importFrom data.table fread
 #' 
 #' @export 
@@ -32,7 +31,10 @@ SiriusModule <- function(input,output, session,
                                    grabSettingsTrigger = T,
                                    
                                    siriusJob = NULL,
-                                   quickLookup = character(0)
+                                   quickLookup = character(0),
+                                   depictor = if(.MseekOptions$rcdk.installed){rcdk::get.depictor(width = 550, height = 550, zoom = 1.3, style = "cow", 
+                                                                                                annotate = "off", abbr = "on", suppressh = TRUE, 
+                                                                                                showTitle = FALSE, smaLimit = 100, sma = NULL) }else{NULL}
                                    )
   
   
@@ -51,22 +53,22 @@ SiriusModule <- function(input,output, session,
 }
   })
   
-  observeEvent(internalValues$siriusIndex,{
-    if(is.data.frame(internalValues$siriusIndex)  && nrow(internalValues$siriusIndex) > 0){
-      
-      tryCatch({
-    internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
-       apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
-                                        1, paste, collapse = "//"), sep = "//")
-      },
-    error = function(e){print(e); return(character(0))})
-    
-    }
-    else{
-      character(0)
-    }
-    
-  })
+  # observeEvent(internalValues$siriusIndex,{
+  #   if(is.data.frame(internalValues$siriusIndex)  && nrow(internalValues$siriusIndex) > 0){
+  #     
+  #     tryCatch({
+  #   internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
+  #      apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
+  #                                       1, paste, collapse = "//"), sep = "//")
+  #     },
+  #   error = function(e){print(e); return(character(0))})
+  #   
+  #   }
+  #   else{
+  #     character(0)
+  #   }
+  #   
+  # })
  
   SirBrowser <- callModule(TableModule2, "sirbrowser",
                            reactives = reactive({list(df = if(is.null(internalValues$siriusIndex)){NULL}else{internalValues$siriusIndex},
@@ -89,7 +91,9 @@ SiriusModule <- function(input,output, session,
     if(!is.null(SirBrowser$selected_rows) && !is.null(SirBrowser$liveView)){
 
       tryCatch({
-              internalValues$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "METABOseek"), splash = SirBrowser$liveView[SirBrowser$selected_rows[1],"splash"], ts = SirBrowser$liveView[SirBrowser$selected_rows[1],"timestamp"])
+              internalValues$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "METABOseek"),
+                                                       splash = SirBrowser$liveView[SirBrowser$selected_rows[1],"splash"],
+                                                       ts = SirBrowser$liveView[SirBrowser$selected_rows[1],"timestamp"])
 
       },
       error =  function(e){
@@ -168,13 +172,15 @@ SiriusModule <- function(input,output, session,
 
   })
 
+  output$siriusTreePlot <-  DiagrammeR::renderGrViz({
+      
+      if(!is.null(internalValues$activeMF) && !is.null(internalValues$activeMF[["trees_dot"]]) ){
+      
+      internalValues$activeMF[["trees_dot"]]
+      
+  }  })
 
 
-  # output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(length(internalValues$activeMF)>0){
-  # 
-  #                          internalValues$activeMF[["trees_dot"]]
-  # 
-  # }  })
 
 #   output$fingerIDwindow <-  renderUI({
 #     if(!is.null(internalValues$activeStructure)){
@@ -220,6 +226,13 @@ SiriusModule <- function(input,output, session,
     
   })
   
+  output$tablewrap <- renderUI({fluidRow(
+      column(6,
+             TableModule2UI(ns("mfbrowser"))),
+      column(6,
+             TableModule2UI(ns("structurebrowser")))
+  )})
+  
   output$selectResults <- renderUI({
     
     if(!is.null(internalValues$activeSirius)){
@@ -231,12 +244,7 @@ SiriusModule <- function(input,output, session,
         bsCollapse(id = ns("collapseSiriusMF"), open = "main",
                    bsCollapsePanel(paste0("SIRIUS results for m/z ", selitem$mz, " @ ", selitem$rt, "sec"),
                                    fluidPage(
-                                     fluidRow(
-                                       column(6,
-                                              TableModule2UI(ns("mfbrowser"))),
-                                       column(6,
-                                              TableModule2UI(ns("structurebrowser")))
-                                     )
+                                     htmlOutput(ns("tablewrap"))
                                    ),
                                    style = "success",value = "main") 
                    
@@ -265,14 +273,56 @@ SiriusModule <- function(input,output, session,
     
   })
   
+  output$smileplot <- renderPlot({
+      if(!is.null(internalValues$activeStructure)
+                  && !is.null(internalValues$activeStructure$smiles)){
+          
+
+          # 
+          #       pcid <- internalValues$activeStructure$pubchemids
+      if(values$GlobalOpts$rcdk.installed){
+      plotSMILE(internalValues$activeStructure$smiles, depictor = internalValues$depictor)
+          
+      }else{
+          plot(numeric(0),
+               numeric(0),
+               ylim = c(0,1),
+               xlim = c(0,1),
+               type = "n", ann = FALSE, bty = "n", axes = F, asp = 1)
+          
+          text(0.5,0.5, labels = "Please install package rcdk to plot molecular structures", adj = 0.5)    
+          }
+      }
+      
+      })
+  
+  output$treeout <- renderUI({if(!is.null(internalValues$activeMF) && !is.null(internalValues$activeMF[["trees_dot"]]) ){
+      DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%",
+                                                      height = "500px")
+      }
+      })
+  
+  output$smileout <- renderUI({if(!is.null(internalValues$activeStructure) && !is.null(internalValues$activeStructure$smiles)){
+      plotOutput(ns("smileplot"), width = "100%",
+                 height = "500px")
+  }
+  })
  
   output$allSirius <- renderUI({
          #print(internalValues$activeSirius)
 fluidPage(
    fluidRow(
-     htmlOutput(ns("selectResults"))
-     
+     column(8,
+            htmlOutput(ns("treeout"))
      ),
+     column(4,
+            htmlOutput(ns("smileout"))
+            )
+     ),
+  fluidRow(
+                  htmlOutput(ns("selectResults"))
+                  
+  ),
   fluidRow(
     htmlOutput(ns("selectSirius"))
   )

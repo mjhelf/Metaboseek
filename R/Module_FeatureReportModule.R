@@ -250,11 +250,11 @@ FeatureReportModule <- function(input,output, session,
   #   }
   # })
   
-  output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(tree) && !is.null(tree()) ){
-
-                           tree()
-
-  }  })
+  # output$siriusTreePlot <-  DiagrammeR::renderGrViz({ if(!is.null(tree) && !is.null(tree()) ){
+  # 
+  #                          tree()
+  # 
+  # }  })
   
   
   iSpec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"), 
@@ -285,7 +285,7 @@ FeatureReportModule <- function(input,output, session,
                               msdata = values$MSData$data)
                          
                          }else{
-                           
+                           tryCatch({
                            targets <- MS2feed()$spec$sel
                            
                          
@@ -313,7 +313,29 @@ FeatureReportModule <- function(input,output, session,
                                               height = 350),
                                 msdata = values$MSData$data,
                                 moreArgs = list(k = 10))
-                           
+                           },
+                           error = function(e){
+                             print("ERROR occurred")
+                             print(targets)
+                             
+                             list(spec = list(xrange = NULL,
+                                              yrange = NULL,
+                                              maxxrange = NULL,
+                                              maxyrange = NULL,
+                                              sel = NULL,
+                                              data = NULL,
+                                              mz = NULL),
+                                  layout = list(lw = 1,
+                                                cex = 1.5,
+                                                controls = F,
+                                                ppm = values$GlobalOpts$PPMwindow,
+                                                active = T, #input$ShowSpec,
+                                                highlights = NULL,
+                                                height = 350),
+                                  msdata = values$MSData$data,
+                                  moreArgs = list(k = 10))
+                             
+                           })
                            
                            
                            }
@@ -426,9 +448,9 @@ FeatureReportModuleUI <- function(id){
     ),
     column(6,
            SpecmoduleUI(ns("ms2spec"))
-    )),
-    fluidRow(
-      DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px")
-  )
+    ))#,
+  #  fluidRow(
+ #     DiagrammeR::grVizOutput(ns("siriusTreePlot"), width = "100%", height = "500px")
+ # )
   )  
 }

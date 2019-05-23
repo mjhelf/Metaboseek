@@ -170,3 +170,23 @@ reverselog_trans <- function(base = exp(1)) {
             log_breaks(base = base), 
             domain = c(1e-100, Inf))
 }
+
+#' safelog
+#' 
+#' aplly a log function to a numeric vector, but replaces zeros and uses abs values 
+#' 
+#' @param x numeric()
+#' @param base of log
+#' @param replaceZeros replace zeros with this value, if NULL will use smallest non-zero absolute value in x
+#' 
+#' @importFrom scales trans_new log_breaks
+#'
+safelog <- function(x, base = 10, replaceZeros = NULL){
+     if(!any(is.finite(x))){return(numeric(length(x))+1)}
+
+    x[x==0]   <- if(is.null(replaceZeros)){min(abs(x[x!=0]))}else{replaceZeros}
+    
+    x[!is.finite(x)] <- max(abs(x))
+    
+    return(log(abs(x), base))
+}

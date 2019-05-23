@@ -1,11 +1,9 @@
 #' MainPlotContainer
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module that contains most plotting devices in Metaboseek
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekContainers
+#' @describeIn MainPlotContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 MainPlotContainer <- function(input,output, session,
@@ -13,14 +11,13 @@ MainPlotContainer <- function(input,output, session,
                                                       featureTables = featureTables,
                                                       MSData = MSData,
                                                       GlobalOpts = GlobalOpts,
-                                                      MainTable = MainTable),
-                              keys = reactive({keyin$keyd})
-){
+                                                      MainTable = MainTable)){
   
   ns <- NS(session$ns(NULL))
   
   
-  RegroupMS <- callModule(RegroupMSDataModule, "regroupms",
+ # RegroupMS <- 
+      callModule(RegroupMSDataModule, "regroupms",
                           values = reactiveValues(MSData = values$MSData,
                                                   projectData = values$projectData))
   
@@ -30,7 +27,7 @@ MainPlotContainer <- function(input,output, session,
                                                     MSData = values$MSData,
                                                     MainTable = values$MainTable,
                                                     GlobalOpts = values$GlobalOpts),
-                            keys = reactive({keys()})
+                            keys = reactive({values$GlobalOpts$keyinput.keydown})
   )
   
   #### MS2Browsewr #####
@@ -47,7 +44,7 @@ MainPlotContainer <- function(input,output, session,
                                                    MainTable = values$MainTable,
                                                    MSData = values$MSData,
                                                    GlobalOpts = values$GlobalOpts),
-                           keys = reactive({keys()}))
+                           keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   #### Quickplots #####
   callModule(featurePlotModule, "quickplots",
@@ -60,7 +57,7 @@ MainPlotContainer <- function(input,output, session,
   MultiEICout <- callModule(MultiEICmodule,"MultiE", values = reactiveValues(MSData = values$MSData,
                                                                                                      GlobalOpts = values$GlobalOpts,
                                                                                                      MainTable = values$MainTable),
-                            keys = reactive({keys()}))
+                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = ns("Spec2"), 
                        set = reactive({
@@ -89,35 +86,35 @@ MainPlotContainer <- function(input,output, session,
                                          height = 350),
                            msdata = values$MSData$data)
                        }), 
-                       keys = reactive({keys()}),
+                       keys = reactive({values$GlobalOpts$keyinput.keydown}),
                        static = list(title = "MS spectra")
   )
   
-  PcaViewFeatures <- callModule(PcaViewModule, "pcaviewfeatures",
+  #PcaViewFeatures <- 
+  callModule(PcaViewModule, "pcaviewfeatures",
                                 values = reactiveValues(featureTables = values$featureTables)
   )
   
-  VennDiagrams <- callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
+  #VennDiagrams <- 
+      callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
                                                                                         MainTable = values$MainTable,
                                                                            GlobalOpts = values$GlobalOpts))
   
-  internalValues <- reactiveValues(RegroupMS = RegroupMS,
+  ###TODO: remove return values. currently returns modules with SpecModule for mzquerymodule
+  internalValues <- reactiveValues(#RegroupMS = RegroupMS,
                                    GroupedEICs = GroupedEICs,
                                    MS2Browser = MS2Browser,
-                                   MultiEICout = MultiEICout,
-                                   iSpec2 = iSpec2,
-                                   PcaViewFeatures = PcaViewFeatures,
-                                   VennDiagrams = VennDiagrams)
+                                   #MultiEICout = MultiEICout,
+                                   iSpec2 = iSpec2#,
+                                   #PcaViewFeatures = PcaViewFeatures,
+                                   #VennDiagrams = VennDiagrams
+                                   )
 
   return(internalValues)
   
 }
 
-#' MainPlotContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+#' @describeIn MainPlotContainer returns the \code{shiny} UI elements for the Main plot box ("Data viewer"), including the box
 #' 
 #' @export
 MainPlotContainerUI <- function(id){

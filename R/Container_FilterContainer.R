@@ -2,10 +2,8 @@
 #' 
 #' Module to apply filters to a featureTable (UI)
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekContainers
+#' @describeIn FilterContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 FilterContainer <- function(input,output, session,
@@ -15,28 +13,24 @@ FilterContainer <- function(input,output, session,
   
   
   
-  ColSelector <- callModule(ColumnSelModule, "colselector", values = reactiveValues(featureTables = values$featureTables,
+  callModule(ColumnSelModule, "colselector", values = reactiveValues(featureTables = values$featureTables,
                                                                                     MainTable = values$MainTable))
   
   
   
   
-  RowSelector <-  callModule(MultiFilterModule, "rowselector", values = reactiveValues(featureTables = values$featureTables,
+  callModule(MultiFilterModule, "rowselector", values = reactiveValues(featureTables = values$featureTables,
                                                                                        MainTable = values$MainTable))
   
   
-  internalValues <- reactiveValues(ColSelector = ColSelector,
-                                   RowSelector = RowSelector)
-  
-  return(internalValues)
+  # internalValues <- reactiveValues(ColSelector = ColSelector,
+  #                                  RowSelector = RowSelector)
+  # 
+  # return(internalValues)
   
 }
 
-#' FilterContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+#' @describeIn FilterContainer returns the \code{shiny} UI elements for the Main Table filters
 #' 
 #' @export
 FilterContainerUI <- function(id){

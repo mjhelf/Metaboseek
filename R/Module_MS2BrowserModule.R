@@ -166,11 +166,20 @@ MS2BrowserModule <- function(input,output, session,
         res$stab <- internalValues$spectab[selectScan()$props$selected_rows,]
       }
       
-      AllSpecLists <- lapply(list(res$stab), getAllScans, values$MSData$data, removeNoise = 0)
+      res$AllSpecLists <- lapply(list(res$stab), getAllScans, values$MSData$data, removeNoise = 0)
       
-      res$MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
+      names(res$AllSpecLists[[1]]) <- paste0("collision",
+                                        getScanInfo(basename(res$stab$file),
+                                                    res$stab$scan,
+                                                    data = values$MSData$MSnExp,
+                                                    type = "ms2")$collisionEnergy)
       
-      res$splashtag <- sapply(res$MergedSpecs, getSplash)
+     # MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = 0.005, removeNoise = 0)
+      
+      res$splashtag <- digest(res$AllSpecLists[[1]], algo = "xxhash64")
+      
+      #print(paste("spechash:",res$splashtag))
+      #res$splashtag <- sapply(res$MergedSpecs, getSplash)
       
     }
     else{
@@ -179,6 +188,36 @@ MS2BrowserModule <- function(input,output, session,
     return(res)
   })
   
+  
+  observeEvent(specEngine(),{
+      #get ONE corresponding MS1 scan 
+      
+      if(!is.null(specEngine()$spec) 
+         && values$GlobalOpts$SiriusUseMS1 
+         && !is.null(specEngine()$spec$sel) 
+         && length(specEngine()$spec$sel$File) > 0
+         &&!is.null(values$MSData$data)){
+          targets <- specEngine()$spec$sel
+          
+          
+          ms1targets <- list(File = targets$File)
+          
+          ms1targets$scan <- sapply(seq(length(targets$File)),function(n){ which.min(abs(values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime - targets$rt[n]))})
+          
+          
+          internalValues$ms1 <- getScan(values$MSData$data[[which(basename(names(values$MSData$data)) == ms1targets$File[1])[1]]],
+                         ms1targets$scan[1],
+                         mzrange = range(c(mean(splashsource()$stab$parentMz)-3,mean(splashsource()$stab$parentMz)+7)))
+          
+          internalValues$ms1splash <- digest(internalValues$ms1,algo = "xxhash64")
+          
+      }else{
+          internalValues$ms1splash <- ""
+          internalValues$ms1 <- NULL
+          
+      }
+      
+      }, ignoreNULL = FALSE)
   
   
   callModule(GetSiriusModule, "getSirius",
@@ -192,27 +231,11 @@ MS2BrowserModule <- function(input,output, session,
                if(!is.null(splashsource()$stab) 
                   && !is.null(values$GlobalOpts$siriusFolder)){
                  
-                 #get ONE corresponding MS1 scan 
-                 if(!is.null(specEngine()$spec) && values$GlobalOpts$SiriusUseMS1){
-                 targets <- specEngine()$spec$sel
-                 
-                 
-                 ms1targets <- list(File = targets$File)
-                 
-                 ms1targets$scan <- sapply(seq(length(targets$File)),function(n){ which.min(abs(values$MSData$data[[which(basename(names( values$MSData$data)) == targets$File[n])]]@scantime - targets$rt[n]))})
-                 
-                 ms1 <- getScan(values$MSData$data[[which(basename(names(values$MSData$data)) == ms1targets$File[1])[1]]],
-                                ms1targets$scan[1],
-                                mzrange = range(c(mean(splashsource()$stab$parentMz)-3,mean(splashsource()$stab$parentMz)+7)))
-                 
-                 }else{
-                   
-                   ms1 <- NULL
-                   }
+
                  
                  list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
-                      ms2 = splashsource()$MergedSpecs,
-                      ms1 = list(ms1),
+                      ms2 = splashsource()$AllSpecLists,
+                      ms1 = list(internalValues$ms1),
                       instrument = values$GlobalOpts$SiriusSelInstrument,
                       parentmz = mean(splashsource()$stab$parentMz),
                       rt = mean(splashsource()$stab$rt),
@@ -228,7 +251,10 @@ MS2BrowserModule <- function(input,output, session,
                                            full.names = T,
                                            recursive = T)[1],
                       
-                      moreOpts = paste0("-c 50 --fingerid-db bio -e ", values$GlobalOpts$SiriusElements))
+                      moreOpts = paste0("-c 50 ",
+                                        if(!is.null(values$GlobalOpts$SiriusCheckFinger) 
+                                            && values$GlobalOpts$SiriusCheckFinger){paste0("--fingerid-db ", values$GlobalOpts$SiriusDBselected," -e ")}else{"-e "},
+                                        values$GlobalOpts$SiriusElements))
                }else{
                  
                  NULL
@@ -241,6 +267,7 @@ MS2BrowserModule <- function(input,output, session,
                                      GlobalOpts = values$GlobalOpts),
              reactives = reactive({
                list(splash = splashsource()$splashtag,
+                    ms1splash = internalValues$ms1splash,
                     mz = mean(splashsource()$stab$parentMz))
                
              })
@@ -342,6 +369,22 @@ MS2BrowserModule <- function(input,output, session,
                        keys = reactive({keys()}),
                        static = list(title = "MS2 spectra")
   )
+  
+  
+  SpecView1 <- callModule(SpecModule2, "specview1",
+                      reactives = reactive({
+                          if(is.null(specEngine()$spec$sel)
+                             && length(specEngine()$spec$sel$scan) > 0){NULL}else{
+                             return(list(scantable = data.frame(file = specEngine()$spec$sel$File,
+                                                                scan = specEngine()$spec$sel$scan,
+                                                                stringsAsFactors = F),
+                                         type = "ms2"))
+                          }
+                      }),
+                      values = values)
+  
+  
+  
   FReport <- callModule(FeatureReportModule, "freport",values = reactiveValues(MSData = values$MSData,
                                                                                MainTable = values$MainTable,
                                                                                featureTables = values$featureTables,
@@ -361,15 +404,12 @@ MS2BrowserModule <- function(input,output, session,
   
   #control highlights in network here
   observeEvent(values$MainTable$selected_rows,{
-    #print("i see")
     tryCatch({
       if(!is.null(NetMod$hoverActive) 
          && NetMod$hoverActive 
          && !is.null(values$MainTable$selected_rows)
          && !is.null(NetMod$activelayout$graph)){
-        #print("A")       
-        # print(vertex_attr(NetMod$activelayout$graph,"fixed__id"))
-        
+
         if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$fixed__id)){
           
           
@@ -441,9 +481,6 @@ MS2BrowserModuleUI <-  function(id){
                       fluidPage(
                         fluidRow(
                           FeatureReportModuleUI(ns("freport")) 
-                        ),
-                        fluidRow(
-                          SiriusModuleUI(ns("sirius"))
                         ))
              ),
              tabPanel("Compare MS2",
@@ -454,7 +491,13 @@ MS2BrowserModuleUI <-  function(id){
                           column(5,
                                  box(width = 12, status= "primary",
                                      MultiSpecmoduleUI(ns('Spec2'))))
-                        ))
+                        ),
+                        fluidRow(
+                            SiriusModuleUI(ns("sirius"))
+                        )
+                        
+                        
+                        )
              )
              
       )),
@@ -465,9 +508,14 @@ MS2BrowserModuleUI <-  function(id){
           
           fluidPage(
             
-            htmlOutput(ns("searchcontrol")),
+            
             fluidRow(
-              TableModuleUI(ns('scantab'))
+              column(6,
+                htmlOutput(ns("searchcontrol")),
+              TableModuleUI(ns('scantab'))),
+              column(6,
+                     SpecModule2UI(ns("specview1"))                
+)
             )
           )
           

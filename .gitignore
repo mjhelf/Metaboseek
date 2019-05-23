@@ -6,3 +6,5 @@ inst/doc
 Mosaic.Rproj
 mosaic.Rproj
 inst/config/MseekOptions.json
+METABOseek.Rproj
+vignettes/*.log

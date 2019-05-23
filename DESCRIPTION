@@ -1,14 +1,14 @@
 Package: METABOseek
-Title: METABOseek platform
-Version: 0.9.2
-Authors@R: person("Maximilian", "Helf", email = "mjh438@cornell.edu", role = c("aut", "cre"))
-BiocViews: MassSpectrometry, DataAnalysis
+Title: Metaboseek platform
+Version: 0.9.3
+Authors@R: person("Maximilian", "Helf", email = "maximilian.helf@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1393-3999"))
+biocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
 Depends: R (>= 3.3.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Imports: Biobase,
     BiocGenerics,
     BiocParallel,
@@ -23,9 +23,11 @@ Imports: Biobase,
     igraph,
     jsonlite,
     lsa,
+    MassTools (>= 0.2.1),
     MSnbase,
     plotly,
     qgraph,
+    Rdisop,
     rhandsontable,
     scales,
     shiny,
@@ -33,7 +35,6 @@ Imports: Biobase,
     shinydashboard,
     shinyFiles,
     shinyjs,
-    splashR,
     TeachingDemos,
     VennDiagram,
     xcms (>= 3.0)
@@ -41,6 +42,7 @@ Suggests: covr,
     DiagrammeRsvg,
     knitr,
     png,
+    rcdk,
     rmarkdown,
     rsvg,
     testthat,

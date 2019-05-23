@@ -1,11 +1,11 @@
 #' OptionsContainer
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Container for modules in the Metaboseek Options box
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @return The server module for this container returns nothing
+#' 
+#' @inherit MseekContainers
+#' @describeIn OptionsContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 OptionsContainer <- function(input,output, session,
@@ -21,15 +21,13 @@ OptionsContainer <- function(input,output, session,
   
   
   
-  callModule(MzqueryModule,"mzquery", tag = ns("mzquery"), 
-             set = reactive({list(search = list(elements = "C0-100H0-202N0-15O0-20",
-                                                mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                          "spectrum" =  internalValues$activeMZ # values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz#,
-                                                          #                                                        "interactive view" = iSpec2()$spec$marker$mz
-                                                ), 
-                                                data = values$MainPlotBox$GroupedEICs$iSpec1()$spec$data
-             ) # the entire spectrum data for isotope matching
-             )})
+  callModule(MzqueryModule,"mzquery",
+             values = reactiveValues(featureTables = values$featureTables,
+                                     GlobalOpts = values$GlobalOpts,
+                                     MainTable = values$MainTable),
+             reactives = reactive({list(mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
+                                                          "spectrum" =  internalValues$activeMZ,
+                                                  "Spectrum2" = values$GlobalOpts$mzquery.SpectrumMz))})
   )
   
   MassShifts <- callModule(MassShiftsModule, "massshifts",
@@ -41,22 +39,13 @@ OptionsContainer <- function(input,output, session,
                                                      GlobalOpts = values$GlobalOpts)
   )
   
-  # MainDataLoad <- callModule(LoadDataModule, "maindataload",
-  #                            values = reactiveValues(projectData = values$projectData,
-  #                                                    featureTables = values$featureTables,
-  #                                                    MSData = values$MSData,
-  #                                                    GlobalOpts = values$GlobalOpts)
-  # )
   
   callModule(EICOptionsModule, "eicopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
   callModule(SiriusOptionsModule, "siriusopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
   
-  
-  # callModule(GlobalOptionsModule, "globalopts", values = reactiveValues(GlobalOpts = values$GlobalOpts))
-  
+  ###################TODO: REMOVE ALL CODE BELOW (Pending full SpecModule2 implementation)####
   internalValues <- reactiveValues(
-    #MainDataLoad = MainDataLoad
     )
   
   observeEvent(values$MainPlotBox$GroupedEICs$iSpec1()$spec$marker$mz,{
@@ -79,15 +68,11 @@ OptionsContainer <- function(input,output, session,
     }
     })
   
-  return(internalValues)
+ # return(internalValues)
   
 }
 
-#' OptionsContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+#' @describeIn OptionsContainer returns the \code{shiny} UI elements for the METABOseek options box, including the surrounding box
 #' 
 #' @export
 OptionsContainerUI <- function(id){
