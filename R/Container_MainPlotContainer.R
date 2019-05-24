@@ -52,9 +52,7 @@ MainPlotContainer <- function(input,output, session,
   )
   
   #### interactiveView #####
-  MultiEICout <- callModule(MultiEICmodule,"MultiE", values = reactiveValues(MSData = values$MSData,
-                                                                                                     GlobalOpts = values$GlobalOpts),
-                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
+  MultiEICout <- callModule(MultiEICmodule,"MultiE", values)
   
   iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = ns("Spec2"), 
                        set = reactive({

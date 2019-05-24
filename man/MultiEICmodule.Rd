@@ -5,7 +5,7 @@
 \title{MultiEICmodule}
 \usage{
 MultiEICmodule(input, output, session, values = reactiveValues(MSData =
-  MSData, GlobalOpts = GlobalOpts), keys)
+  MSData, GlobalOpts = GlobalOpts, featureTables = featureTables))
 }
 \arguments{
 \item{input}{}
