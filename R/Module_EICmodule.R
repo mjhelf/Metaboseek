@@ -11,8 +11,8 @@
 #' @export 
 EICmodule <- function(input, output, session, 
                       values = reactiveValues(MSData = MSData,
-                                              GlobalOpts = GlobalOpts,
-                                              MainTable = MainTable),
+                                              GlobalOpts = GlobalOpts
+                                              ),
                       keys){
   
   ####Initialization####
@@ -58,13 +58,13 @@ EICmodule <- function(input, output, session,
     }
   })
   
-  observeEvent(c(values$MainTable$selected_rows),{
+  observeEvent(c(values$featureTables$Maintable$selected_rows),{
     
-    if((is.null(input$hotl) || input$hotl)  && !is.null(values$MainTable$selected_rows)){
-      internalValues$controls$mz <- values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]
+    if((is.null(input$hotl) || input$hotl)  && !is.null(values$featureTables$Maintable$selected_rows)){
+      internalValues$controls$mz <- values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]
       
-      internalValues$controls$xrange <- c(max(0,values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] - values$GlobalOpts$RTwindow),
-                                          values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow)/60
+      internalValues$controls$xrange <- c(max(0,values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"] - values$GlobalOpts$RTwindow),
+                                          values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow)/60
       
     }
   })

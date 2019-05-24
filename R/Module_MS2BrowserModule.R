@@ -14,7 +14,6 @@ MS2BrowserModule <- function(input,output, session,
                              reactives = reactive({list(query = list(mz = NULL,
                                                                      rt = NULL))}),
                              values = reactiveValues(featureTables = featureTables,
-                                                     MainTable = MainTable,
                                                      MSData = MSData,
                                                      GlobalOpts = GlobalOpts),
                              keys = reactive({keys()})){
@@ -127,7 +126,6 @@ MS2BrowserModule <- function(input,output, session,
   })
   
   Networks <- callModule(LoadNetworkModule, "loadnetworks", values = reactiveValues(featureTables = values$featureTables,
-                                                                                    MainTable = values$MainTable,
                                                                                     MSData = values$MSData),
                          reactives = reactive({list(active = NetMod$active)}))
   
@@ -386,7 +384,6 @@ MS2BrowserModule <- function(input,output, session,
   
   
   FReport <- callModule(FeatureReportModule, "freport",values = reactiveValues(MSData = values$MSData,
-                                                                               MainTable = values$MainTable,
                                                                                featureTables = values$featureTables,
                                                                                GlobalOpts = values$GlobalOpts),
                         MS2feed = specEngine,
@@ -403,24 +400,24 @@ MS2BrowserModule <- function(input,output, session,
                                    SimplifyMod = SimplifyMod)
   
   #control highlights in network here
-  observeEvent(values$MainTable$selected_rows,{
+  observeEvent(values$featureTables$Maintable$selected_rows,{
     tryCatch({
       if(!is.null(NetMod$hoverActive) 
          && NetMod$hoverActive 
-         && !is.null(values$MainTable$selected_rows)
+         && !is.null(values$featureTables$Maintable$selected_rows)
          && !is.null(NetMod$activelayout$graph)){
 
         if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$fixed__id)){
           
           
           if(is.numeric(vertex_attr(NetMod$activelayout$graph,"fixed__id"))){
-            sel <- which(vertex_attr(NetMod$activelayout$graph,"fixed__id") == values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],]), "fixed__id"])
+            sel <- which(vertex_attr(NetMod$activelayout$graph,"fixed__id") == values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],]), "fixed__id"])
             
           }else{
             
             # note: \\b looks for word boundaries which can be whitespace or beginning/end of strings. Useful!
             
-            sel <- grep(paste0("\\b",values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],]), "fixed__id"],"\\b"), vertex_attr(NetMod$activelayout$graph,"fixed__id"))
+            sel <- grep(paste0("\\b",values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],]), "fixed__id"],"\\b"), vertex_attr(NetMod$activelayout$graph,"fixed__id"))
             
           }
           
@@ -431,10 +428,10 @@ MS2BrowserModule <- function(input,output, session,
           vrts <- vertex_attr(NetMod$activelayout$graph,"rt")
           
           
-          sel <- which(vmzs <= values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+1e-6*values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
-                       & vmzs >= values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-1e-6*values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
-                       & vrts <= values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow
-                       & vrts >= values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]- values$GlobalOpts$RTwindow                                 )
+          sel <- which(vmzs <= values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]+1e-6*values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
+                       & vmzs >= values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]-1e-6*values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]*values$GlobalOpts$PPMwindow
+                       & vrts <= values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"] + values$GlobalOpts$RTwindow
+                       & vrts >= values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"]- values$GlobalOpts$RTwindow                                 )
           
           #  print("selected by mz+rt")
           

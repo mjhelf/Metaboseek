@@ -14,11 +14,10 @@
 #' 
 #' @export 
 SaveTableModule <- function(input,output, session,
+                            values = reactiveValues(projectData = projectData,
+                                                    featureTables = NULL),
                             reactives = reactive({list(df = NULL,
                                                        filename = "table.csv")}),
-                            values = reactiveValues(projectData = projectData,
-                                                    featureTables = NULL,
-                                                    MainTable = NULL),
                             static = list(tooltip = "Save",
                                           label = "Save",
                                           format = c("tsv", "csv"),
@@ -77,8 +76,8 @@ SaveTableModule <- function(input,output, session,
         )
         ),
       fluidRow(
-        if(length(values$MainTable$order)>5000){
-        p("Warning: This table has",length(values$MainTable$order),"rows. Thermo software will only accept up to 5000 rows in an inclusion list.",
+        if(length(values$featureTables$Maintable$order)>5000){
+        p("Warning: This table has",length(values$featureTables$Maintable$order),"rows. Thermo software will only accept up to 5000 rows in an inclusion list.",
           style = "color:#ff1111;")
         }
       ))
@@ -134,7 +133,7 @@ SaveTableModule <- function(input,output, session,
                                           content = function(file){
                                             written <- tableWriter(if(is.null(values$featureTables)){reactives()$df}
                                                         else{
-                                                          values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]
+                                                          values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$Maintable$order,]
                                                         },
                                                         fname =  file,
                                                         format = if(static$format =="tsv"){"tsv"}else if(!is.null(input$selFormat)){input$selFormat}else{"csv"},
@@ -168,7 +167,7 @@ SaveTableModule <- function(input,output, session,
       
      written <- tableWriter(if(is.null(values$featureTables)){reactives()$df}
              else{
-                 values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]
+                 values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$Maintable$order,]
                  },
              fname =  file.path(values$projectData$projectFolder, 
                        file.path(dirname(reactives()$filename),
@@ -185,7 +184,7 @@ SaveTableModule <- function(input,output, session,
       # fwrite(if(is.null(values$featureTables)){reactives()$df}
       #             else{
       #               
-      #               values$featureTables$tables[[values$featureTables$active]]$df[values$MainTable$order,]
+      #               values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$Maintable$order,]
       #               
       #               },
       #             file.path(values$projectData$projectFolder, file.path(dirname(reactives()$filename),input$tabname)),

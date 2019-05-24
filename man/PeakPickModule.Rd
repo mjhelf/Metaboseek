@@ -5,7 +5,7 @@
 \title{PeakPickModule}
 \usage{
 PeakPickModule(input, output, session, values = reactiveValues(MSData =
-  MSData, featureTables = featureTables, MainTable = MainTable))
+  MSData, featureTables = featureTables))
 }
 \arguments{
 \item{input}{}

@@ -10,8 +10,8 @@ MainPlotContainer <- function(input,output, session,
                               values = reactiveValues(projectData = projectData,
                                                       featureTables = featureTables,
                                                       MSData = MSData,
-                                                      GlobalOpts = GlobalOpts,
-                                                      MainTable = MainTable)){
+                                                      GlobalOpts = GlobalOpts)
+                              ){
   
   ns <- NS(session$ns(NULL))
   
@@ -25,7 +25,6 @@ MainPlotContainer <- function(input,output, session,
                             values = reactiveValues(projectData = values$projectData,
                                                     featureTables = values$featureTables,
                                                     MSData = values$MSData,
-                                                    MainTable = values$MainTable,
                                                     GlobalOpts = values$GlobalOpts),
                             keys = reactive({values$GlobalOpts$keyinput.keydown})
   )
@@ -37,11 +36,10 @@ MainPlotContainer <- function(input,output, session,
   
   
   MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
-                           reactives = reactive({list(query = list(mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
-                                                                   rt = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
+                           reactives = reactive({list(query = list(mz = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]},
+                                                                   rt = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"]}
                            ))}),
                            values = reactiveValues(featureTables = values$featureTables,
-                                                   MainTable = values$MainTable,
                                                    MSData = values$MSData,
                                                    GlobalOpts = values$GlobalOpts),
                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
@@ -49,14 +47,13 @@ MainPlotContainer <- function(input,output, session,
   #### Quickplots #####
   callModule(featurePlotModule, "quickplots",
              FT = reactive({values$featureTables$tables[[values$featureTables$active]]}),
-             rname = reactive({row.names(values$MainTable$liveView[values$MainTable$selected_rows[1],])}),
+             rname = reactive({row.names(values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],])}),
              values = reactiveValues(featureTables  =  values$featureTables)
   )
   
   #### interactiveView #####
   MultiEICout <- callModule(MultiEICmodule,"MultiE", values = reactiveValues(MSData = values$MSData,
-                                                                                                     GlobalOpts = values$GlobalOpts,
-                                                                                                     MainTable = values$MainTable),
+                                                                                                     GlobalOpts = values$GlobalOpts),
                             keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   iSpec2 <- callModule(MultiSpecmodule,"Spec2", tag = ns("Spec2"), 
@@ -90,14 +87,11 @@ MainPlotContainer <- function(input,output, session,
                        static = list(title = "MS spectra")
   )
   
-  #PcaViewFeatures <- 
   callModule(PcaViewModule, "pcaviewfeatures",
                                 values = reactiveValues(featureTables = values$featureTables)
   )
   
-  #VennDiagrams <- 
       callModule(VennDiagramModule, "venndiagrams", values = reactiveValues(featureTables = values$featureTables,
-                                                                                        MainTable = values$MainTable,
                                                                            GlobalOpts = values$GlobalOpts))
   
   ###TODO: remove return values. currently returns modules with SpecModule for mzquerymodule

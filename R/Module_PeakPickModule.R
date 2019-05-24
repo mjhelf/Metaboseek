@@ -12,8 +12,8 @@
 #' @export 
 PeakPickModule <- function(input,output, session,
                            values = reactiveValues(MSData = MSData,
-                                                   featureTables = featureTables,
-                                                   MainTable = MainTable)){
+                                                   featureTables = featureTables
+                                                   )){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)

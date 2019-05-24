@@ -6,9 +6,8 @@
 \usage{
 MS2BrowserModule(input, output, session, reactives = reactive({    
   list(query = list(mz = NULL, rt = NULL)) }),
-  values = reactiveValues(featureTables = featureTables, MainTable =
-  MainTable, MSData = MSData, GlobalOpts = GlobalOpts), keys = reactive({
-      keys() }))
+  values = reactiveValues(featureTables = featureTables, MSData = MSData,
+  GlobalOpts = GlobalOpts), keys = reactive({     keys() }))
 }
 \arguments{
 \item{input}{}

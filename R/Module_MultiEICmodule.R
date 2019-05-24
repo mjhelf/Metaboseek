@@ -11,8 +11,7 @@
 #' @export 
 MultiEICmodule <- function(input, output, session, 
                            values = reactiveValues(MSData = MSData,
-                                                   GlobalOpts = GlobalOpts,
-                                                   MainTable = MainTable),
+                                                   GlobalOpts = GlobalOpts),
                            keys){
   
   ns <- NS(session$ns(NULL))

@@ -5,9 +5,8 @@
 \title{LoadNetworkModule}
 \usage{
 LoadNetworkModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MainTable =
-  MainTable, MSData = MSData), reactives = reactive({     list(active =
-  NetMod$active) }))
+  values = reactiveValues(featureTables = featureTables, MSData =
+  MSData), reactives = reactive({     list(active = NetMod$active) }))
 }
 \arguments{
 \item{input}{}

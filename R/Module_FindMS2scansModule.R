@@ -12,8 +12,7 @@
 #' @export 
 FindMS2ScansModule <- function(input,output, session,
                             values = reactiveValues(MSData = MSData,
-                                                    featureTables = featureTables,
-                                                    MainTable = MainTable),
+                                                    featureTables = featureTables),
                             static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table",
                                           label = "Find MS2 scans")
 ){
