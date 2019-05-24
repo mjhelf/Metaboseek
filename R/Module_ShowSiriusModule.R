@@ -23,7 +23,29 @@ ShowSiriusModule <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   internalValues <- reactiveValues(siriusStatus = NULL)
   
+  
+  #Don't show any SIRIUS results if the current query is NULL
+  #or if the new query is different from the previous selection
   observeEvent(internalValues$query,{# input$getSirius,{#
+      if(is.null(internalValues$query)
+         || (!is.null(values$SiriusModule$activeSirius) && internalValues$query$splash != values$SiriusModule$activeSirius$splash)
+         ){
+          values$SiriusModule$activeSirius<- NULL
+          
+      }
+  }, ignoreNULL = FALSE, ignoreInit = TRUE)
+  
+  #
+  observeEvent(internalValues$activeSirius,{# input$getSirius,{#
+      if(!is.null(internalValues$activeSirius) && internalValues$query$splash != values$SiriusModule$activeSirius$splash){
+          values$SiriusModule$activeSirius<- NULL
+          
+      }
+  }, ignoreNULL = FALSE, ignoreInit = TRUE)
+  
+ 
+  ###Show SIRIUS results on demand when clicking the show SIRIUS button
+  observeEvent(input$getSirius,{
     if(is.null(internalValues$query)){
       values$SiriusModule$activeSirius<- NULL
 
@@ -42,7 +64,7 @@ ShowSiriusModule <- function(input,output, session,
 }
     values$SiriusModule$activeMF <- NULL
     values$SiriusModule$activeStructure <- NULL
-  }, ignoreNULL = FALSE )
+  }, ignoreNULL = FALSE, ignoreInit = TRUE )
   
   
   output$getsiriusbutton <- renderUI({

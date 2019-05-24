@@ -6,7 +6,7 @@
 \usage{
 GetIntensitiesModule(input, output, session,
   values = reactiveValues(MSData = MSData, featureTables = featureTables,
-  MainTable = MainTable, GlobalOpts = GlobalOpts))
+  GlobalOpts = GlobalOpts))
 }
 \arguments{
 \item{input}{}

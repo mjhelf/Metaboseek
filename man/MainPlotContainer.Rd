@@ -7,8 +7,7 @@
 \usage{
 MainPlotContainer(input, output, session,
   values = reactiveValues(projectData = projectData, featureTables =
-  featureTables, MSData = MSData, GlobalOpts = GlobalOpts, MainTable =
-  MainTable))
+  featureTables, MSData = MSData, GlobalOpts = GlobalOpts))
 
 MainPlotContainerUI(id)
 }

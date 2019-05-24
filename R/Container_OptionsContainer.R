@@ -24,8 +24,8 @@ OptionsContainer <- function(input,output, session,
   callModule(MzqueryModule,"mzquery",
              values = reactiveValues(featureTables = values$featureTables,
                                      GlobalOpts = values$GlobalOpts,
-                                     MainTable = values$MainTable),
-             reactives = reactive({list(mz = list("feature table" = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]},
+                                     MainTable = values$featureTables$Maintable),
+             reactives = reactive({list(mz = list("feature table" = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]},
                                                           "spectrum" =  internalValues$activeMZ,
                                                   "Spectrum2" = values$GlobalOpts$mzquery.SpectrumMz))})
   )

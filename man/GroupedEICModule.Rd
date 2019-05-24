@@ -5,9 +5,8 @@
 \title{GroupedEICModule}
 \usage{
 GroupedEICModule(input, output, session, values = reactiveValues(MSData =
-  MSData, MainTable = MainTable, featureTables = featureTables, GlobalOpts
-  = GlobalOpts, projectData = projectData), keys = reactive({    
-  keyin$keyd }))
+  MSData, featureTables = featureTables, GlobalOpts = GlobalOpts,
+  projectData = projectData), keys = reactive({     keyin$keyd }))
 }
 \arguments{
 \item{input}{}

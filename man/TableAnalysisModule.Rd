@@ -4,10 +4,10 @@
 \alias{TableAnalysisModule}
 \title{TableAnalysisModule}
 \usage{
-TableAnalysisModule(input, output, session, reactives = reactive({    
-  list(fileGrouping = NULL) }), values = reactiveValues(featureTables =
-  featureTables, GlobalOpts = values$GlobalOpts, MSData = MSData, MainTable
-  = MainTable), static = list())
+TableAnalysisModule(input, output, session,
+  values = reactiveValues(featureTables = featureTables, GlobalOpts =
+  values$GlobalOpts, MSData = MSData), reactives = reactive({    
+  list(fileGrouping = NULL) }), static = list())
 }
 \arguments{
 \item{input}{}
@@ -16,9 +16,9 @@ TableAnalysisModule(input, output, session, reactives = reactive({
 
 \item{session}{}
 
-\item{reactives}{Import data from the shiny session}
-
 \item{values}{Import data from the shiny session}
+
+\item{reactives}{Import data from the shiny session}
 
 \item{static}{Import data from the shiny session}
 }

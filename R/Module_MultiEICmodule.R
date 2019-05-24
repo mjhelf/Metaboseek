@@ -12,15 +12,14 @@
 MultiEICmodule <- function(input, output, session, 
                            values = reactiveValues(MSData = MSData,
                                                    GlobalOpts = GlobalOpts,
-                                                   MainTable = MainTable),
-                           keys){
+                                                   featureTables = featureTables)){
   
   ns <- NS(session$ns(NULL))
   
   
   
   iEIC1 <- callModule(EICmodule,"EIC1", values = values,
-                      keys = keys
+                      keys = reactive({values$GlobalOpts$keyinput.keydown})
   )
   
   
@@ -43,7 +42,7 @@ MultiEICmodule <- function(input, output, session,
     internalValues[[paste0("EIC", internalValues$numEICs)]] <- callModule(EICmodule,
                                                                              paste0("EIC", internalValues$numEICs),
                                                                              values = values,
-                                                                          keys = keys)
+                                                                          keys = reactive({values$GlobalOpts$keyinput.keydown}))
     
     internalValues[[paste0("EIC", internalValues$numEICs)]]$removable <- T
   })

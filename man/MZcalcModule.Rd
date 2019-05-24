@@ -5,8 +5,7 @@
 \title{MZcalcModule}
 \usage{
 MZcalcModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MainTable =
-  MainTable))
+  values = reactiveValues(featureTables = featureTables))
 }
 \arguments{
 \item{input}{}

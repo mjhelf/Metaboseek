@@ -7,20 +7,19 @@
 #' 
 #' @export 
 FilterContainer <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables,
-                                                      MainTable = MainTable)
+                              values = reactiveValues(featureTables = featureTables)
 ){
   
   
   
   callModule(ColumnSelModule, "colselector", values = reactiveValues(featureTables = values$featureTables,
-                                                                                    MainTable = values$MainTable))
+                                                                                    MainTable = values$featureTables$Maintable))
   
   
   
   
   callModule(MultiFilterModule, "rowselector", values = reactiveValues(featureTables = values$featureTables,
-                                                                                       MainTable = values$MainTable))
+                                                                                       MainTable = values$featureTables$Maintable))
   
   
   # internalValues <- reactiveValues(ColSelector = ColSelector,

@@ -105,7 +105,7 @@ SiriusModule <- function(input,output, session,
       internalValues$activeStructure <- NULL
       }
 
-  })
+  }, ignoreNULL = FALSE, ignoreInit = TRUE)
   
   MFbrowser <- callModule(TableModule2, "mfbrowser",
                           reactives = reactive({

@@ -11,7 +11,6 @@
 #' 
 #' @export 
 LoadNetworkModule <- function(input,output, session, values = reactiveValues(featureTables = featureTables,
-                                                                             MainTable = MainTable,
                                                                              MSData = MSData),
                               reactives = reactive({list(active = NetMod$active)})){
   
@@ -119,8 +118,7 @@ LoadNetworkModule <- function(input,output, session, values = reactiveValues(fea
   
   FindMS2 <- callModule(FindMS2ScansModule, "findms2network",
                         values = reactiveValues(featureTables = values$featureTables,
-                                                MSData = values$MSData,
-                                                MainTable = values$MainTable),
+                                                MSData = values$MSData),
                         static = list(tooltip = "Make a new MS2 network from the current feature table",
                                       label = "New MS2 network")
   )

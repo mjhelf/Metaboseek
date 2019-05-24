@@ -12,46 +12,33 @@ MainPageContainer <- function(input,output, session,
                                                       featureTables = values$featureTables,
                                                       MSData = values$MSData,
                                                       GlobalOpts = values$GlobalOpts)){
-  
-  ns <- NS(session$ns(NULL))
-  
-  
-  
-  OptionsBox <- callModule(OptionsContainer, "optionsbox",
-                           values = reactiveValues(projectData = values$projectData,
-                                                   featureTables = values$featureTables,
-                                                   MainTable = MainTabBox$MainTable,
-                                                   MSData = values$MSData,
-                                                   GlobalOpts = values$GlobalOpts,
-                                                   MainPlotBox = MainPlotBox)
-  )
-  
-  
-  MainPlotBox <- callModule(MainPlotContainer, "mainplotbox",
-                            values = reactiveValues(projectData = values$projectData,
-                                                    MainTable = MainTabBox$MainTable,
-                                                    featureTables = values$featureTables,
-                                                    MSData = values$MSData,
-                                                    GlobalOpts = values$GlobalOpts))
-  
-  MainTabBox <- callModule(FeatureTableContainer, "maintabbox",
-                           values = reactiveValues(featureTables = values$featureTables,
-                                                   MSData = values$MSData,
-                                                   GlobalOpts = values$GlobalOpts,
-                                                   projectData = values$projectData))
-  
-  
-  #FilterSort <- 
-      callModule(FilterContainer, "filtersort", values = reactiveValues(featureTables = values$featureTables,
-                                                                                   MainTable = MainTabBox$MainTable))
-  
-  # internalValues <- reactiveValues(
-  #                                  MainPlotBox = MainPlotBox,
-  #                                  MainTabBox = MainTabBox,
-  #                                  FilterSort = FilterSort)
-  
- # return(internalValues)
-  
+    
+    ns <- NS(session$ns(NULL))
+    
+    
+    MainPlotBox <- callModule(MainPlotContainer, "mainplotbox",
+                              values = reactiveValues(projectData = values$projectData,
+                                                      featureTables = values$featureTables,
+                                                      MSData = values$MSData,
+                                                      GlobalOpts = values$GlobalOpts))
+    
+    callModule(OptionsContainer, "optionsbox",
+               values = reactiveValues(projectData = values$projectData,
+                                       featureTables = values$featureTables,
+                                       MSData = values$MSData,
+                                       GlobalOpts = values$GlobalOpts,
+                                       MainPlotBox = MainPlotBox))
+    
+    callModule(FeatureTableContainer, "maintabbox",
+               values = reactiveValues(featureTables = values$featureTables,
+                                       MSData = values$MSData,
+                                       GlobalOpts = values$GlobalOpts,
+                                       projectData = values$projectData))
+    
+    
+    callModule(FilterContainer, "filtersort", values)
+    
+    
 }
 
 
