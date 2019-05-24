@@ -7,19 +7,19 @@
 #' 
 #' This chunk requires:
 #' 
-#' values$MainTable - pointing to the MainTableObject
+#' values$featureTables$Maintable - pointing to the MainTableObject
 #' values$featureTables
 #' 
 #' 
 TableUpdateChunk <- function(){
   eval.parent(quote({
-    if(!is.null(values$featureTables) && values$MainTable$hasUpdates){
+    if(!is.null(values$featureTables) && values$featureTables$Maintable$hasUpdates){
       if((!is.null(values$featureTables$tables[[values$featureTables$active]]$editable) 
          && values$featureTables$tables[[values$featureTables$active]]$editable)
-         || is.null(values$MainTable$liveView$comments) ){
-        values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView),colnames(values$MainTable$liveView)] <- values$MainTable$liveView
+         || is.null(values$featureTables$Maintable$liveView$comments) ){
+        values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$featureTables$Maintable$liveView),colnames(values$featureTables$Maintable$liveView)] <- values$featureTables$Maintable$liveView
       }else{
-        values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$MainTable$liveView),"comments"] <- values$MainTable$liveView$comments
+        values$featureTables$tables[[values$featureTables$active]]$df[row.names(values$featureTables$Maintable$liveView),"comments"] <- values$featureTables$Maintable$liveView$comments
       }
     }
     

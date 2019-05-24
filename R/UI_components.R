@@ -1,3 +1,32 @@
+
+runcodeUIns <- function (code = "", type = c("text", "textarea", 
+                              "ace"), width = NULL, height = NULL, includeShinyjs = FALSE, id = NULL) 
+{
+    ns <- NS(id)
+    type <- match.arg(type)
+    if (type == "ace") {
+        if (!requireNamespace("shinyAce", quietly = TRUE)) {
+            errMsg("You need to install the 'shinyAce' package in order to use 'shinyAce' editor.")
+        }
+    }
+    placeholder <- "Enter R code"
+    shiny::singleton(shiny::tagList(if (includeShinyjs) 
+        useShinyjs(), if (type == "text") 
+            shiny::textInput(ns("runcode_expr"), label = NULL, 
+                             value = code, width = width, placeholder = placeholder), 
+        if (type == "textarea") 
+            shiny::textAreaInput(ns("runcode_expr"), label = NULL, 
+                                 value = code, width = width, height = height, 
+                                 placeholder = placeholder), if (type == "ace") 
+                                     shinyAce::aceEditor(ns("runcode_expr"), mode = "r", 
+                                                         value = code, height = height, theme = "github", 
+                                                         fontSize = 16), shiny::actionButton(ns("runcode_run"), 
+                                                                                             "Run", class = "btn-success"), shinyjs::hidden(shiny::div(id = ns("runcode_error"), 
+                                                                                                                                                       style = "color: red; font-weight: bold;", shiny::div("Oops, that resulted in an error! Try again."), 
+                                                                                                                                                       shiny::div("Error: ", shiny::br(), shiny::tags$i(shiny::span(id = ns("runcode_errorMsg"), 
+                                                                                                                                                                                                                    style = "margin-left: 10px;")))))))
+}
+
 # Define UI for dataset viewer app ----
 #' MseekMinimalUI
 #'
@@ -10,15 +39,15 @@
 #' @export
 MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
   
-  if(!is.null(id)){
+  #if(!is.null(id)){
     ns <- NS(id)
     keyid <- ns("keyd")
-  }else{
-    keyid <- "keyd"
-  }
+ # }else{
+  #  keyid <- "keyd"
+  #}
   
   if(!dashboard){
-    fluidPage(
+      tagList(
       tags$script(paste0('
                 $(document).on("keydown", function (e) {
                 Shiny.onInputChange("',keyid,'", e.which);
@@ -30,19 +59,19 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
       if(diagnostics){
         fluidPage(
           ...,
-          runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
-                    height = NULL, includeShinyjs = FALSE),
+          runcodeUIns(code = "", type = c("ace"), width = NULL,
+                    height = 500, includeShinyjs = FALSE, id = id),
           verbatimTextOutput('diag'))}
       else{
-        ... 
+        tagList(...) 
       }
     )}
   else{
     if(diagnostics){
       fluidPage(
         dashboardPage(...),
-        runcodeUI(code = "", type = c("text", "textarea", "ace"), width = NULL,
-                  height = NULL, includeShinyjs = FALSE),
+        runcodeUIns(code = "", type = c("ace"), width = NULL,
+                  height = 500, includeShinyjs = FALSE, id = id),
         verbatimTextOutput('diag')
       )
     }

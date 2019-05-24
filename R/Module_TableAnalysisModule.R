@@ -15,11 +15,10 @@
 #' 
 #' @export 
 TableAnalysisModule <- function(input,output, session,
-                                reactives = reactive({list(fileGrouping = NULL)}),
                                 values = reactiveValues(featureTables = featureTables,
                                                         GlobalOpts = values$GlobalOpts,
-                                                        MSData = MSData,
-                                                        MainTable = MainTable),
+                                                        MSData = MSData),       
+                                reactives = reactive({list(fileGrouping = NULL)}), ##TODO: reactives probably not needed
                                 static = list()
 ){
   #### Initialization ####
@@ -28,8 +27,7 @@ TableAnalysisModule <- function(input,output, session,
   
   FindMS2 <- callModule(FindMS2ScansModule, "findms2",
                         values = reactiveValues(featureTables = values$featureTables,
-                                                MSData = values$MSData,
-                                                MainTable = values$MainTable),
+                                                MSData = values$MSData),
                         static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table",
                                       label = "Find MS2 scans")
   )
@@ -246,7 +244,11 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                    choices = list("SMID-DB negative" = system.file("db", "smid-db_neg.csv", package = "METABOseek"),
                                   "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "METABOseek"),
                                   "LipidBLAST negative" = system.file("db", "LipidBLAST_mz_trimmed_neg.csv", package = "METABOseek"),
-                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "METABOseek")),
+                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "METABOseek"),
+                                  "HMDB negative (endogenous detected)" = system.file("db", "HMDB_detected_neg.csv", package = "METABOseek"),
+                                  "HMDB positive (endogenous detected)" = system.file("db", "HMDB_detected_pos.csv", package = "METABOseek")
+                                  
+                                  ),
                    selected = internalValues$dbselected, multiple = T)
   })
   
@@ -263,28 +265,18 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     #toggle(id = "intensSettings", condition = !is.null(values$featureTables))
     toggle(id = 'claraClusters', condition = "clara_cluster" %in% internalValues$analysesSelected)
     toggle(id = 'analyzeButton', condition = !is.null(values$featureTables))
-   # toggle(id = 'peakpickMod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
-  #  toggle(id = 'getintmod', condition = !is.null(values$MainTable) && !is.null(values$featureTables) && !is.null(values$MSData))
+   # toggle(id = 'peakpickMod', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables) && !is.null(values$MSData))
+  #  toggle(id = 'getintmod', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables) && !is.null(values$MSData))
     
-    toggle(id = 'advancedana', condition = !is.null(values$MainTable) && !is.null(values$featureTables))
+    toggle(id = 'advancedana', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables))
     
   })
   
-  IntensityGetter <- callModule(GetIntensitiesModule, "gi",
-                   values = reactiveValues(MSData = values$MSData,
-                                           featureTables = values$featureTables,
-                                           MainTable = values$MainTable,
-                                           GlobalOpts = values$GlobalOpts))
+  callModule(GetIntensitiesModule, "gi", values)
   
-  PP <- callModule(PeakPickModule, "pp",
-                   values = reactiveValues(MSData = values$MSData,
-                                           featureTables = values$featureTables,
-                                           MainTable = values$MainTable,
-                                           GlobalOpts = values$GlobalOpts))
+  callModule(PeakPickModule, "pp", values)
   
-  MZcalc <- callModule(MZcalcModule, "mzcalc",
-                   values = reactiveValues(featureTables = values$featureTables,
-                                           MainTable = values$MainTable))
+  callModule(MZcalcModule, "mzcalc", values)
   
   
   

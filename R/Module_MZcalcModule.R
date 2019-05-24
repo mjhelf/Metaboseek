@@ -11,8 +11,7 @@
 #' 
 #' @export 
 MZcalcModule <- function(input,output, session,
-                           values = reactiveValues(featureTables = featureTables,
-                                                   MainTable = MainTable)){
+                           values = reactiveValues(featureTables = featureTables)){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)

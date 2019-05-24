@@ -135,7 +135,7 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
                      
                      
                      if(length(complist) >0){
-                       comp <- mergeMS(complist)
+                       comp <- mergeMSold(complist)
                        
                        selections$plots$global$maxxrange <- range(comp$merged[,1]) + c(-1,1)
                        

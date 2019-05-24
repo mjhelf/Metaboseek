@@ -13,8 +13,7 @@
 #' @param splashtag splash tag of the ms2 spectrum
 #' @param scanindices which scans were averaged into this ms2 spectrum
 #' 
-#' @importFrom splashR getSplash
-#' 
+#' @importFrom digest digest
 #' @importFrom data.table fwrite
 #' 
 writeMS <- function(filename,
@@ -28,7 +27,7 @@ writeMS <- function(filename,
                     splashtag = NULL,
                     scanindices = NULL){
   
-  if(is.null(splashtag)){splashtag <- getSplash(ms2)}
+  if(is.null(splashtag)){splashtag <-  digest(ms2, algo = "xxhash64")}
   
   appending <- file.exists(filename)
   
@@ -42,7 +41,6 @@ writeMS <- function(filename,
     paste0(">splash ", splashtag),
     paste0("# Comments: ", comments),
     paste0(">rt ", rt),
-    paste0(">ms2"),
     sep =  "\n"),
     file = filename,
     append = appending
@@ -58,13 +56,21 @@ writeMS <- function(filename,
   }
   
   if(!is.null(ms2)){
-    write(
-      paste0(">ms2"),
+    
+    if(!is.list(ms2)){ms2 <- list(ms2)}
+    
+    lapply(seq(length(ms2)), function(n){
+    
+      
+      #expect collision energy to be in names, resulting in ">collision20", etc.
+      write(
+      if(is.null(names(ms2))){">ms2"}else{paste0(">",names(ms2)[n])},
       file = filename,
       append = T
     )
   
-  fwrite(data.table(ms2), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  fwrite(data.table(ms2[[n]]), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+    })
   }
   
   
@@ -76,7 +82,7 @@ writeMS <- function(filename,
 #' run SIRIUS externally for a list of ms2 spectra
 #' 
 #' @param outfolder output folder for the SIRIUS results
-#' @param ms2 a list of ms2 spectra (matrices with columns mz and intensity)
+#' @param ms2 a list (or list of lists) of ms2 spectra (matrices with columns mz and intensity)
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
@@ -87,8 +93,14 @@ writeMS <- function(filename,
 #' @param moreOpts character with additional options to be passed to SIRIUS
 #' @param force force calculation, even if same results should exist according to indexfile
 #' 
-#' @importFrom splashR getSplash
+#' @details 
+#' 
+#' \describe{
+#'    \item{ms2}{can be a list of matrices, or a list of list of matrices. In the latter case, the (optional) names of the nested list items are expected to be in the format "collisionXX", where XX denotes an integer collision energy.}
+#' }
+#' 
 #' @importFrom data.table fread fwrite
+#' @importFrom digest digest
 #' 
 runSirius <- function(outfolder,
                       ms1 = NULL,
@@ -108,7 +120,9 @@ runSirius <- function(outfolder,
   
   #write the MS2 data so sirius can read it
   dir.create(outfolder, showWarnings = F)
-  splashtag <- lapply(ms2, getSplash)
+  #splashtag <- lapply(ms2, getSplash)
+  splashtag <- lapply(ms2, digest, algo = "xxhash64")
+  
   
   ts <- strftime(Sys.time(),"%y%m%d_%H%M%S")
   
@@ -123,12 +137,15 @@ runSirius <- function(outfolder,
    newjobs$splash = unlist(splashtag)
    newjobs$timestamp = ts
    newjobs$ion = ion
+   newjobs$ms1splash = sapply(ms1, function(x){if(is.null(x)){""}else{digest(x,algo = "xxhash64")}})
    newjobs$charge = charge
    newjobs$fingerid = fingerid
    newjobs$moreOpts = paste0(moreOpts, instrument)
    newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
-   newjobs$METABOseek_sirius_revision = 1
+   newjobs$METABOseek_sirius_revision = 2
+   newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision"),drop = F], 1, digest, algo = "xxhash64")
    
+  
    indexfile <- file.path(outfolder, "index.csv")
   if(file.exists(indexfile) && !force){
     
@@ -147,10 +164,8 @@ runSirius <- function(outfolder,
     
     dups <- duplicated.data.frame(checkme)[seq(nrow(jobindex)+1,nrow(checkme))]
     
-   # print(newjobs)
     newjobs <- newjobs[!dups,]
-   # print(newjobs)
-    
+
   }
   
    if(nrow(newjobs) > 0){

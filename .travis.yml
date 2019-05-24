@@ -2,13 +2,14 @@
 
 language: r
 sudo: required
-cache: packages
+cache:
+  - packages
+  
+  
 dist: trusty
+  
 r:
-
-- release
-- bioc-release
-- bioc-devel
+  - bioc-devel
 
 warnings_are_errors: false
 
@@ -16,24 +17,35 @@ bioc_required: true
 
 r_packages:
   - knitr
-  - XML
-  - plyr
-  - doParallel
-  - foreach
-  - iterators
+  - covr
+  - testthat
+  - knitr
+  - roxygen2
+#  - XML
+#  - plyr
+#  - doParallel
+#  - foreach
+#  - iterators
 
-bioc_packages: 
-  - xcms 
-  - Rgraphviz
-  - MSnbase
-  - CAMERA
-  - mzR
+#bioc_packages: 
+ # - xcms 
+#  - Rgraphviz
+ # - MSnbase
+#  - CAMERA
+#  - mzR
+
+r_github_packages:
+  #- r-lib/covr
+  - mjhelf/Rdisop  
+  - mjhelf/MassTools
   
 apt_packages:
   - libnetcdf-dev
   - netcdf-bin
   - libhdf5-dev
   - libxml2-dev #for XML...
+  - libv8-dev #for V8
+  - valgrind #for V8
   
 # Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
 # Thanks to jimhester pointing this out!
@@ -49,9 +61,6 @@ before_install:
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then hash -r; fi"
   - "phantomjs --version"
-
-r_github_packages:
-  - r-lib/covr
 
 after_success:
   - Rscript -e 'covr::codecov()'

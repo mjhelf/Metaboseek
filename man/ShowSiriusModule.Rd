@@ -6,8 +6,8 @@
 \usage{
 ShowSiriusModule(input, output, session,
   values = reactiveValues(SiriusModule = SiriusModule, GlobalOpts =
-  GlobalOpts), reactives = reactive({     list(splash = NULL, mz = NULL)
-  }))
+  GlobalOpts), reactives = reactive({     list(splash = NULL, ms1splash =
+  NULL, mz = NULL) }))
 }
 \arguments{
 \item{input}{}

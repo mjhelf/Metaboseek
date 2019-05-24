@@ -13,7 +13,6 @@
 #' @export 
 GroupedEICModule <- function(input,output, session,
                                    values = reactiveValues(MSData = MSData,
-                                                           MainTable = MainTable,
                                                            featureTables = featureTables,
                                                            GlobalOpts = GlobalOpts,
                                                            projectData = projectData),
@@ -39,13 +38,13 @@ GroupedEICModule <- function(input,output, session,
      if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){
 
        subtitles <- paste0(internalValues$subtitleColumns[1], ": ",
-                           values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),internalValues$subtitleColumns[1]])
+                           values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$featureTables$Maintable$order[1:1000]),internalValues$subtitleColumns[1]])
 
        if(length(internalValues$subtitleColumns) > 1){
          for( i in 2:length(internalValues$subtitleColumns)){
 
            subtitles <- paste0(subtitles, " ", internalValues$subtitleColumns[i], ": ",
-                               values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),internalValues$subtitleColumns[i]])
+                               values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$featureTables$Maintable$order[1:1000]),internalValues$subtitleColumns[i]])
 
          }
        }
@@ -70,8 +69,8 @@ GroupedEICModule <- function(input,output, session,
      grp <- if(!is.null(values$GlobalOpts$groupBy)
                && values$GlobalOpts$groupBy %in% c("grouping", "grouping2")){values$GlobalOpts$groupBy}else{"grouping"}
       
-      EICgeneral(rtmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"rt"],
-                 mzmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$MainTable$order[1:1000]),"mz"],
+      EICgeneral(rtmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$featureTables$Maintable$order[1:1000]),"rt"],
+                 mzmid = values$featureTables$tables[[values$featureTables$active]]$df[na.omit(values$featureTables$Maintable$order[1:1000]),"mz"],
                  glist = values$MSData$layouts[[values$MSData$active]][[grp]],
                  cols = min(values$GlobalOpts$plotCols,length(values$MSData$layouts[[values$MSData$active]][[grp]])),
                  colrange = cr,
@@ -104,8 +103,8 @@ GroupedEICModule <- function(input,output, session,
   output$mainPlotEICsPre <- renderPlot({
     if(!is.null(values$MSData$data) && !is.null(values$MSData$layouts[[values$MSData$active]]$grouping)){
       
-      rtmid <- if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"rt"]}
-      mzmid <- if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]}
+      rtmid <- if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"]}
+      mzmid <- if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]}
       RTall <- values$GlobalOpts$RTtoggle
       adducts <- if(is.null(values$MSData$massShifts$shifts)){0}else{values$MSData$massShifts$shifts}
       RTcorrect <- if(is.null(input$RtCorrActive) || !input$RtCorrActive){NULL}else{values$MSData$RTcorr}
@@ -149,13 +148,13 @@ GroupedEICModule <- function(input,output, session,
       if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){
         
         subtitles <- paste0(internalValues$subtitleColumns[1], ": ",
-                       values$MainTable$liveView[values$MainTable$selected_rows[1],internalValues$subtitleColumns[1]])
+                       values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],internalValues$subtitleColumns[1]])
         
         if(length(internalValues$subtitleColumns) > 1){
         for( i in 2:length(internalValues$subtitleColumns)){
           
           subtitles <- paste0(subtitles, " ", internalValues$subtitleColumns[i], ": ",
-                              values$MainTable$liveView[values$MainTable$selected_rows[1],internalValues$subtitleColumns[i]])
+                              values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],internalValues$subtitleColumns[i]])
           
         }
         }
@@ -187,7 +186,7 @@ GroupedEICModule <- function(input,output, session,
                  colrange = cr,
                  transparency = values$GlobalOpts$plotTransparency,
                  RTall = values$GlobalOpts$RTtoggle,
-                 TICall = values$GlobalOpts$TICtoggle || is.null(values$MainTable$selected_rows),
+                 TICall = values$GlobalOpts$TICtoggle || is.null(values$featureTables$Maintable$selected_rows),
                  rtw = values$GlobalOpts$RTwindow,
                  ppm = values$GlobalOpts$PPMwindow,
                  rdata = values$MSData$data[basename(names(values$MSData$data)) %in% basename(values$MSData$layouts[[values$MSData$active]]$filelist)  ],
@@ -298,8 +297,8 @@ GroupedEICModule <- function(input,output, session,
   iSpec1 <- callModule(Specmodule,"Spec1", tag = ns("Spec1"), 
                        set = reactive({
                          
-                         list(spec = list(xrange = if(is.null(values$MainTable$selected_rows)){NULL}else{c(values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]-10,
-                                                                                                           values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]+10)},
+                         list(spec = list(xrange = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{c(values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]-10,
+                                                                                                           values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]+10)},
                                           yrange = NULL,
                                           maxxrange = NULL,
                                           maxyrange = NULL,
@@ -307,7 +306,7 @@ GroupedEICModule <- function(input,output, session,
                                                                                  scan = EICcache$iSpec1_feed$scan[[1]],
                                                                                  rt = EICcache$iSpec1_feed$rt[[1]])}else{NULL},
                                           data = NULL,
-                                          mz = if(is.null(values$MainTable$selected_rows)){NULL}else{values$MainTable$liveView[values$MainTable$selected_rows[1],"mz"]}),
+                                          mz = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]}),
                               layout = list(lw = 1,
                                             cex = 1.5,
                                             controls = F,
@@ -339,7 +338,7 @@ GroupedEICModule <- function(input,output, session,
     div(title = "Select columns to use for the plot subtitle. All columns currently selected for the main table can be used.",
            selectizeInput(ns("subtitleselect"), "Subtitle content", 
                           selected = internalValues$subtitleColumns, 
-                          choices = colnames(values$MainTable$liveView),
+                          choices = colnames(values$featureTables$Maintable$liveView),
                           multiple = TRUE)
 )
   })

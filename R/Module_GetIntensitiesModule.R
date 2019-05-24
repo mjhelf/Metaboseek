@@ -13,7 +13,6 @@
 GetIntensitiesModule <- function(input,output, session,
                            values = reactiveValues(MSData = MSData,
                                                    featureTables = featureTables,
-                                                   MainTable = MainTable,
                                                    GlobalOpts = GlobalOpts)){
   ns <- NS(session$ns(NULL))
   

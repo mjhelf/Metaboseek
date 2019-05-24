@@ -11,7 +11,7 @@ runSirius(outfolder, ms1 = NULL, ms2, instrument, parentmz,
 \arguments{
 \item{outfolder}{output folder for the SIRIUS results}
 
-\item{ms2}{a list of ms2 spectra (matrices with columns mz and intensity)}
+\item{ms2}{a list (or list of lists) of ms2 spectra (matrices with columns mz and intensity)}
 
 \item{parentmz}{numeric: parent ion m/z value}
 
@@ -33,4 +33,9 @@ runSirius(outfolder, ms1 = NULL, ms2, instrument, parentmz,
 }
 \description{
 run SIRIUS externally for a list of ms2 spectra
+}
+\details{
+\describe{
+   \item{ms2}{can be a list of matrices, or a list of list of matrices. In the latter case, the (optional) names of the nested list items are expected to be in the format "collisionXX", where XX denotes an integer collision energy.}
+}
 }

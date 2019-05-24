@@ -5,10 +5,9 @@
 \title{FeatureReportModule}
 \usage{
 FeatureReportModule(input, output, session,
-  values = reactiveValues(MSData = MSData, MainTable = MainTable,
-  featureTables = featureTables, GlobalOpts = GlobalOpts),
-  MS2feed = NULL, tree = NULL, fragments = NULL, keys = reactive({ 
-     keyin$keyd }))
+  values = reactiveValues(MSData = MSData, featureTables = featureTables,
+  GlobalOpts = GlobalOpts), MS2feed = NULL, tree = NULL,
+  fragments = NULL, keys = reactive({     keyin$keyd }))
 }
 \arguments{
 \item{input}{}

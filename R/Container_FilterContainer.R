@@ -2,41 +2,34 @@
 #' 
 #' Module to apply filters to a featureTable (UI)
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekContainers
+#' @describeIn FilterContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 FilterContainer <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables,
-                                                      MainTable = MainTable)
+                              values = reactiveValues(featureTables = featureTables)
 ){
   
   
   
-  ColSelector <- callModule(ColumnSelModule, "colselector", values = reactiveValues(featureTables = values$featureTables,
-                                                                                    MainTable = values$MainTable))
+  callModule(ColumnSelModule, "colselector", values = reactiveValues(featureTables = values$featureTables,
+                                                                                    MainTable = values$featureTables$Maintable))
   
   
   
   
-  RowSelector <-  callModule(MultiFilterModule, "rowselector", values = reactiveValues(featureTables = values$featureTables,
-                                                                                       MainTable = values$MainTable))
+  callModule(MultiFilterModule, "rowselector", values = reactiveValues(featureTables = values$featureTables,
+                                                                                       MainTable = values$featureTables$Maintable))
   
   
-  internalValues <- reactiveValues(ColSelector = ColSelector,
-                                   RowSelector = RowSelector)
-  
-  return(internalValues)
+  # internalValues <- reactiveValues(ColSelector = ColSelector,
+  #                                  RowSelector = RowSelector)
+  # 
+  # return(internalValues)
   
 }
 
-#' FilterContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+#' @describeIn FilterContainer returns the \code{shiny} UI elements for the Main Table filters
 #' 
 #' @export
 FilterContainerUI <- function(id){

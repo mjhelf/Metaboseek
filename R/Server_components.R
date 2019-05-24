@@ -8,31 +8,56 @@
 #' @param diagnostics run diagnostics (shinyjs::runcodeServer()) code?
 #'   
 #' @importFrom shinyjs runcodeServer 
+#' @importFrom BiocParallel register bpstart SnowParam MulticoreParam
 #' 
 #' @export
 MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
   eval.parent(quote({
+  
+     #upload size limit
     options(shiny.maxRequestSize=10*1024*1024^2) 
-    keyin <- reactiveValues(keyd = "NO")
+  #  keyin <- reactiveValues(keyd = "NO")
+        GlobalOpts <- ListToReactiveValues(c(.MseekOptions,
+                                             list(project.filegroupfiles =NULL,
+                                                  project.csvfiles = NULL,
+                                                  project.filegroups = NULL,
+                                                  project.projectName = paste0("METABOseek_session_",
+                                                                               strftime(Sys.time(),
+                                                                                        "%Y%m%d_%H%M%S")))))
+
+    observeEvent(input$keyd,{
+        
+        GlobalOpts$keyinput.keydown <- input$keyd
+        
+    })
     
-    observeEvent(input$keyd,{keyin$keyd <- input$keyd})
+    observe({})
+    
+   # observeEvent(input$keyd,{keyin$keyd <- input$keyd}, ignoreNULL = FALSE)
     
     projectData <- reactiveValues(filegroupfiles =NULL,
                                   csvfiles = NULL,
                                   filegroups = NULL,
                                   projectName = paste0("METABOseek_session_",strftime(Sys.time(),"%Y%m%d_%H%M%S")))
     
-    GlobalOpts <- ListToReactiveValues(.MseekOptions)
     
-    
+    BiocParallel::register(
+        BiocParallel::bpstart(
+            if(Sys.info()['sysname'] == "Windows"){
+                BiocParallel::SnowParam(.MseekOptions$enabledCores)
+            }else{
+                BiocParallel::MulticoreParam(.MseekOptions$enabledCores)
+            }
+        )
+    )
    
     
   }))
   if(diagnostics){
     eval.parent(quote({
-      runcodeServer()
-      
-      
+       
+        shinyjs::runcodeServer()
+  
     }))
   }
   if(data){
@@ -49,6 +74,7 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                RTcorr = NULL,
                                active = "Group1",
                                filelist = MSD$filelist,
+                               MSnExp = MSD$MSnExp,
                                data = MSD$data,
                                selectedFeats = NULL) #rawfs
     }))
@@ -92,6 +118,15 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
       )
     }))
   }
+    
+    eval.parent(quote({
+    
+        values <- reactiveValues(featureTables = featureTables,
+                                 MSData = MSData,
+                                 GlobalOpts = GlobalOpts,
+                                 projectData = projectData)
+    
+    }))
 }
 
 #' MseekExamplePreload

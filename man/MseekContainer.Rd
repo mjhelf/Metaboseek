@@ -2,19 +2,60 @@
 % Please edit documentation in R/Container_MseekContainer.R
 \name{MseekContainer}
 \alias{MseekContainer}
+\alias{MseekContainerUI}
 \title{MseekContainer}
 \usage{
 MseekContainer(input, output, session)
+
+MseekContainerUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}()} for the server Module)}
+}
+\value{
+The server module for this container returns nothing
 }
 \description{
 Module that contains the entire METABOseek program
+}
+\section{Functions}{
+\itemize{
+\item \code{MseekContainer}: server logic module, to be called with \link[shiny]{callModule}()
+
+\item \code{MseekContainerUI}: returns the \code{shiny} UI elements for the entire METABOseek program
+}}
+
+\section{MseekContainers}{
+
+Containers are used to keep the code organised and can be characterized
+ as Modules which contain other Modules, but do not contain add any functionality themselves.
+  They should not contain any observers and are only here to pass \code{values} into modules,
+   or provide ways for individual Modules to interact with each other.
+}
+
+\examples{
+\dontrun{
+ui <- function(request){
+MseekContainerUI("Mseek")
+}
+server <- function(input, output, session) {
+   callModule(MseekContainer, "Mseek")
+}
+Create Shiny app ----
+shinyApp(ui, server)
+}
+
+}
+\seealso{
+\itemize{
+\item{General Information:} \code{\link{MseekContainers}}
+\item{Specific containers:} \code{\link{MseekContainer}}, \code{\link{MainPageContainer}} 
+\item{More on Shiny modules:} \url{http://shiny.rstudio.com/articles/modules.html}
+}
 }

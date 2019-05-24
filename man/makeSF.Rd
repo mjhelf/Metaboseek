@@ -2,7 +2,7 @@
 % Please edit documentation in R/Functions_calcMZ.R
 \name{makeSF}
 \alias{makeSF}
-\title{'reformatSF}
+\title{'makeSF}
 \usage{
 makeSF(s)
 }

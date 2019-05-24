@@ -16,7 +16,7 @@ calcMZs(df, charges = c(1), carrier = "H", monoisotopic = T,
 
 \item{monoisotopic}{if true, will calculate the monoisotopic mass m/z values, will calculate m/z of the most abundant isotope peak otherwise (will be slower but preferrable e.g. for large organic molecules)}
 
-\item{mf_column}{column in df that contains MFs}
+\item{mf_column}{name of column in df that contains MFs}
 }
 \description{
 Calculate charge-to-mass ratios for molecula formulas in a data.frame, retaining the dataframes columns, but overriding columns mz, charge and ion

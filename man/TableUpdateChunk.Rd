@@ -14,6 +14,6 @@ Chunks are evaluated in their parent environment, and therefore require all obje
 \details{
 This chunk requires:
 
-values$MainTable - pointing to the MainTableObject
+values$featureTables$Maintable - pointing to the MainTableObject
 values$featureTables
 }

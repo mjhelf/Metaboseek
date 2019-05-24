@@ -268,7 +268,7 @@ sliderInput(ns("seledges"), "Filter edges",
         }
         }else{
           
-          vc <- assignColor(vertex_attr(internalValues$activelayout$graph,input$vlabelcol), internalValues$colscale)
+          vc <- assignColor(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)), internalValues$colscale)
           
         }
         
@@ -354,13 +354,18 @@ sliderInput(ns("seledges"), "Filter edges",
       
       #scale node width based on label width
       if(!internalValues$overview){
-        scalingH <- max(420*max(strwidth(vlabs, units = "figure")),
-                        #420*strwidth(as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1]),
-                         #            units = "figure")
-                        420*max(strwidth("A", units = "figure"))
-                        )
-        scalingV <- 550*strheight(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1], units = "figure")
         
+        scalingH <- 70/sqrt(vcount(internalValues$activelayout$graph))
+        scalingV <- (70/sqrt(vcount(internalValues$activelayout$graph)))/1.414
+        
+        
+        # scalingH <- max(420*max(strwidth(vlabs, units = "figure")),
+        #                 #420*strwidth(as.character(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1]),
+        #                  #            units = "figure")
+        #                 420*max(strwidth("A", units = "figure"))
+        #                 )
+        # scalingV <- 550*strheight(vertex_attr(internalValues$activelayout$graph,input$vlabelsel)[1], units = "figure")
+        # 
       }else{
         #in overview mode, just show squares with pleasant aspect ratio
         scalingH <- 70/sqrt(vcount(internalValues$activelayout$graph))
@@ -394,7 +399,7 @@ sliderInput(ns("seledges"), "Filter edges",
            vertex.size2 = scalingV,
            vertex.frame.color = fc,
            vertex.color = vc,
-           vertex.shape = "rectangle",
+           vertex.shape = "circle",#"rectangle",
            
            #this alone does not improve plotting speed:
           # edge.lty = if(length(elabs) > 5000){0}else{1},
@@ -439,7 +444,7 @@ sliderInput(ns("seledges"), "Filter edges",
                  cex = 1, horiz = T)
       }else{
         
-        colorRampLegend(vertex_attr(internalValues$activelayout$graph,input$vlabelcol), internalValues$colscale, input$vlabelcol)
+        colorRampLegend(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)), internalValues$colscale, input$vlabelcol)
         
       }
       

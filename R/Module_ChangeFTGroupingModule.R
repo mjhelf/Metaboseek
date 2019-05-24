@@ -64,9 +64,7 @@ ChangeFTGroupingModule <- function(input,output, session,
   observeEvent(values$featureTables$active,{
     GroupingTable$df <- values$featureTables$tables[[values$featureTables$active]]$anagrouptable
     GroupingTable$update <- !GroupingTable$update
-    # Preview$df <- values$featureTables$tables[[values$featureTables$active]]$df[1:(min(10,nrow(values$featureTables$tables[[values$featureTables$active]]$df))),]
-    # Preview$update <- !Preview$update
-  })
+     })
   
   observeEvent(TableLoader$df,{
    

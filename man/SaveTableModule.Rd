@@ -4,11 +4,11 @@
 \alias{SaveTableModule}
 \title{SaveTableModule}
 \usage{
-SaveTableModule(input, output, session, reactives = reactive({    
-  list(df = NULL, filename = "table.csv") }),
+SaveTableModule(input, output, session,
   values = reactiveValues(projectData = projectData, featureTables =
-  NULL, MainTable = NULL), static = list(tooltip = "Save", label =
-  "Save", format = c("tsv", "csv"), allowformats = NULL))
+  NULL), reactives = reactive({     list(df = NULL, filename =
+  "table.csv") }), static = list(tooltip = "Save", label = "Save", format
+  = c("tsv", "csv"), allowformats = NULL))
 }
 \arguments{
 \item{input}{}
@@ -17,9 +17,9 @@ SaveTableModule(input, output, session, reactives = reactive({
 
 \item{session}{}
 
-\item{reactives}{Import data from the shiny session}
-
 \item{values}{Import data from the shiny session}
+
+\item{reactives}{Import data from the shiny session}
 
 \item{static}{Import data from the shiny session}
 }

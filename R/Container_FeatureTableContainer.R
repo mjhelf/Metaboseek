@@ -1,11 +1,9 @@
 #' FeatureTableContainer
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module containing the MainTableModule
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekContainers
+#' @describeIn FeatureTableContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
 FeatureTableContainer <- function(input,output, session,
@@ -15,10 +13,8 @@ FeatureTableContainer <- function(input,output, session,
                                                     projectData = projectData)
 ){
   
-  MainTable <- callModule(MainTableModule, "maintable",
-                          values = reactiveValues(featureTables = values$featureTables,
-                                                  GlobalOpts = values$GlobalOpts,
-                                                  projectData = values$projectData),
+  callModule(MainTableModule, "maintable",
+                          values,
                           static = list(height = 300,
                                         readOnly = T,
                                         contextMenu = T,
@@ -28,7 +24,10 @@ FeatureTableContainer <- function(input,output, session,
                                         format = list(col = NULL,
                                                       format = NULL)))
   
-  TabGrouping <- callModule(ChangeFTGroupingModule, "tabgrouping",
+  
+  ####TODO move these modules out of this container and make the feature table box more compact/ not a tabBox
+  #TabGrouping <- 
+      callModule(ChangeFTGroupingModule, "tabgrouping",
                           reactives = reactive({list()}),
                           values = reactiveValues(fileGrouping = NULL,
                                                   featureTables = values$featureTables,
@@ -39,28 +38,20 @@ FeatureTableContainer <- function(input,output, session,
   
 
   
-  TabAnalysis <- callModule(TableAnalysisModule, "tabanalysis",
-                          reactives = reactive({list()}),
-                          values = reactiveValues(fileGrouping = NULL,
-                                                  GlobalOpts = values$GlobalOpts,
-                                                  featureTables = values$featureTables,
-                                                  MSData= values$MSData,
-                                                  MainTable = MainTable))
+      callModule(TableAnalysisModule, "tabanalysis", values,
+                          reactives = reactive({list()}))
 
     
-  internalValues <- reactiveValues(MainTable = MainTable,
-                                   TabGrouping = TabGrouping,
-                                   TabAnalysis = TabAnalysis)
-  
-  return(internalValues)
+  # internalValues <- reactiveValues(MainTable = MainTable#,
+  #                                 # TabGrouping = TabGrouping,
+  #                                  #TabAnalysis = TabAnalysis
+  #                                  )
+  # 
+  # return(internalValues)
   
 }
 
-#' FeatureTableContainerUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
+#' @describeIn FeatureTableContainer returns the \code{shiny} UI elements for the Main Table - containing box
 #' 
 #' @export
 FeatureTableContainerUI <- function(id){

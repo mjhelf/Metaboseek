@@ -7,7 +7,7 @@ source("https://bioconductor.org/biocLite.R")
 biocLite(c("xcms", "CAMERA","BiocParallel"), ask = F)
 
 
-devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
+#devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
 
 devtools::install_github("mjhelf/METABOseek",
                          dependencies = TRUE,

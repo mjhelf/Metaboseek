@@ -41,6 +41,11 @@ MainTableModule <- function(input,
                                    hasUpdates = F
   )
   
+  observeEvent(values,{
+  values$featureTables$Maintable <- internalValues
+  }, once = TRUE)
+  
+  
   observe({internalValues$hasUpdates <- !is.null(input$maintable$changes$changes)})
   
   callModule(SelectActiveTableModule, "tablechange", values = reactiveValues(featureTables = values$featureTables,
@@ -55,8 +60,7 @@ MainTableModule <- function(input,
                                                                     ".csv"))
              )}),
              values = reactiveValues(projectData = values$projectData,
-                                     featureTables = values$featureTables,
-                                     MainTable = internalValues),
+                                     featureTables = values$featureTables),
              static = list(tooltip = "Save the Feature Table",
                            label = "Save Table",
                            format = c("csv"),
