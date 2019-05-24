@@ -2,12 +2,17 @@ install.packages("devtools")
 
 try({remove.packages("BiocInstaller")})
 
+if (!requireNamespace("BiocManager", quietly = TRUE)){
+install.packages("BiocManager")}
 
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("xcms", "CAMERA","BiocParallel"), ask = F)
-
+BiocManager::install(c("xcms", "CAMERA","BiocParallel"))
 
 #devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
+devtools::install_github("mjhelf/Rdisop")  ##forked from "sneumann/Rdisop"; forked version will not change and should always work. Will change once new Rdisop version is in bioc-release
+devtools::install_github("mjhelf/MassTools")
+
+install.packages("shinyFiles")
+
 
 devtools::install_github("mjhelf/METABOseek",
                          dependencies = TRUE,
@@ -17,11 +22,8 @@ devtools::install_github("mjhelf/METABOseek",
                            "master"
                          })
 
-devtools::install_github("thomasp85/shinyFiles", ref = "master")
 
-## Start Mosaic; this is all you need to run once you have installed Mosaic.
+## Start Metaboseek; this is all you need to run once you have installed Mosaic.
 library(METABOseek)
-
-## run this line if you are using Linux or MacOS - replace by whichever folder contains your MS data (or any of its parent folders)
 
 runMseek(launch.browser = T)

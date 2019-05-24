@@ -94,7 +94,7 @@ MseekOptions <- function(..., defaults = F){
   }
   
   #additional checks:
-  .MseekOptions$rcdk.installed <<- "rcdk" %in% rownames(installed.packages())
+  .MseekOptions$rcdk.installed <<- "rcdk" %in% rownames(utils::installed.packages())
     
 
   
