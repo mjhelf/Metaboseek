@@ -6,7 +6,7 @@ date: "May 2019"
 output:
   html_document:
       self_contained: yes
-      #css: style.css
+      css: style.css
       df_print: paged
       number_sections: yes
       theme: simplex
@@ -64,9 +64,8 @@ If you have trouble installing METABOseek and want to just try it out with an ex
 ###Using a .zip file
 
 1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/METABOseek/releases)
-2. Unzip the file on your computer.
-   + This may take a while!
-3. Run METABOseek by executing runMETABOseek.bat In the unzipped folder.
+2. Unzip the file on your computer (this may take a while!)
+3. Run METABOseek by executing runMETABOseek.exe In the unzipped folder.
 
 ###Updating METABOseek for Windows
 
@@ -102,24 +101,20 @@ source("http://metaboseek.com/files/install_METABOseek.R")
 ```	
 #Quickstart
 
-A two-minute video demonstrating some data analysis with METABOseek.
-
 #Data analysis with METABOseek
 
 With METABOseek, you can quickly visualize data from batches of high-resolution LC/MS data files and find differences between groups of samples. It is not necessary to do any analysis before looking at your data, but a typical workflow starts with a data analysis step:
 
 * Detection of MS features (defined by m/z and retention time) with the [xcms analysis module](#runXcms)
   + alternatively, you can use an MS feature list that you generated elsewhere.
-* Molecular networking of MS2 spectra on the [GNPS website](https://gnps.ucsd.edu/) to be used in the METABOseek MS2 browser.
+* Molecular networking of MS2 spectra
+* Structure prediction using [SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/)
 
-Then, use METABOseek to browse the data, find molecular features of interest, predict the molecular formula and make structure predictions based on MS2 data.
+Then, you can use METABOseek to browse the data, find molecular features of interest, predict the molecular formula and make structure predictions based on MS2 data.
 
 
 ## Overview
 METABOseek is structured into two major sections, the `Data Explorer` section for visualization and statistical analysis tasks, and the `XCMS analysis` to identify LC/MS features in MS data files. You can switch between these sections with the navigation menu on the left of the screen. 
-Inside each section, contents are arranged in boxes
-starts up on the data explorer page, so that you can quickly load MS data upon startup. To get to the XCMS  
-
 
 
 ## Data Explorer
@@ -149,8 +144,6 @@ When you run [xcms through METABOseek](#runXcms), the program generates a projec
 
 ###Load feature tables
 
-###Load a GNPS MS2 data network {#loadGNPS}
-
 ###Visualize EICs
 
 ###Interactive MS data view
@@ -163,12 +156,21 @@ If you have [loaded MS data files](#loadMSData) which contain MS/MS data, go to 
 
 When you select one (or multiple) entries in the `Feature Table`, METABOseek will find any MS/MS scans that have a parent mass matching the selected `Feature Table` entry (e.g. within 5 ppm and 200 seconds, customizable).
 
-####2. Use a GNPS network{.unnumbered}
+####2. Use the molecular network viewer{.unnumbered}
 
-If you have [loaded or generated a molecular network](#loadGNPS), you can also display spectra for each network node, as long as the files used to generate the network are [loaded into METABOseek.](#loadMSData) Navigate from the network overview to a contingent network cluster (or "subgraph") by clicking on it while holding the `SHIFT` key. The view will now zoom in on the subgraph. You can use the control menu above the network to show node and edge labels of your choice (e.g. Parent m/z and m/z difference between nodes ("deltaMZ")), and apply a coloring scheme (e.g. color by default groups). To select a node and display all MS/MS spectra associated with it, click on a node while holding the `SHIFT` key.
+If you have loaded or generated a molecular network, you can also display spectra for each network node, as long as the files used to generate the network are [loaded into METABOseek.](#loadMSData) Navigate from the network overview to a contingent network cluster (or "subgraph") by clicking on it while holding the `SHIFT` key. The view will now zoom in on the subgraph. You can use the control menu above the network to show node and edge labels of your choice (e.g. Parent m/z and m/z difference between nodes ("deltaMZ")), and apply a coloring scheme (e.g. color by default groups). To select a node and display all MS/MS spectra associated with it, click on a node while holding the `SHIFT` key.
 
-You can move nodes by dragging them with your mouse while holding the `CTRL` key (this helps make all labels visible in a dense network). Return back to the network overview by clicking on the graph while holding the `Z` key.
+You can move nodes by dragging them with your mouse while holding the `CTRL` key (this helps make all labels visible in a dense network). Return back to the network overview by double clicking on the graph.
 
+
+###Get structure predictions with SIRIUS
+
+[SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/) is a stand-alone software developed in the Boecker lab at the University of Jena that can use MS/MS data to predict the molecular formulas of fragment and parent ion peaks. It also offers an interface to CSI:FingerID to match fragmentation patterns with structure databases.
+
+MS2 data can be analyzed with SIRIUS from inside the Metaboseek app. For this to work, you first need to tell Metaboseek where the SIRIUS executable is located. Click on the "Global settings for Metaboseek" button at the top of the app (gear symbol, next to the "Open..." button). Select the SIRIUS folder. Metaboseek will generate a new folder there to store results from Sirius runs.
+
+To run Sirius, use the "Run SIRIUS" Button above the MS2 scan table. Make sure to select appropriate options in the "Sirius options" section at the top of the app (Options box).
+The results can be accessed through Metaboseek as soon as a Sirius analysis run finishes by clicking "Show SIRIUS". Select items in the tables that show up to view fragmentation trees and proposed structures.
 
 ####Manage and compare MS2 spectra{.unnumbered}
 
