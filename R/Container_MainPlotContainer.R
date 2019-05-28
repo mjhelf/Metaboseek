@@ -36,9 +36,9 @@ MainPlotContainer <- function(input,output, session,
   
   
   MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
-                           reactives = reactive({list(query = list(mz = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]},
-                                                                   rt = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"]}
-                           ))}),
+                           #reactives = reactive({list(query = list(mz = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]},
+                            #                                       rt = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"]}
+                           #))}),
                            values = reactiveValues(featureTables = values$featureTables,
                                                    MSData = values$MSData,
                                                    GlobalOpts = values$GlobalOpts),

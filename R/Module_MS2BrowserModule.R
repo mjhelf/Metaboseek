@@ -11,8 +11,7 @@
 #' 
 #' @export 
 MS2BrowserModule <- function(input,output, session, 
-                             reactives = reactive({list(query = list(mz = NULL,
-                                                                     rt = NULL))}),
+                             reactives = reactive({}),
                              values = reactiveValues(featureTables = featureTables,
                                                      MSData = MSData,
                                                      GlobalOpts = GlobalOpts),
@@ -37,12 +36,16 @@ MS2BrowserModule <- function(input,output, session,
                                                                                                 invertReadOnly = NULL
                                                                                             ))})
   )
-  observeEvent(c(input$ppmSearch,input$rtSearch,reactives()$query),{ 
-      if(length(reactives()$query$mz) > 0 ){
-          internalValues$spectab <- Parentsearch(values$MSData$data, mz = reactives()$query$mz, rt = reactives()$query$rt, ppm = input$ppmSearch, rtw = input$rtSearch)
+  observeEvent(c(input$ppmSearch,input$rtSearch,values$featureTables$Maintable$selected_rows),{ 
+      if(length(values$featureTables$Maintable$selected_rows) > 0 ){
+          internalValues$spectab <- Parentsearch(values$MSData$data,
+                                                 mz = values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"],
+                                                 rt = values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"],
+                                                 ppm = input$ppmSearch,
+                                                 rtw = input$rtSearch)
           
       }
-  })
+  }, ignoreInit = T)
   
   output$searchcontrol <- renderUI({
     fluidRow(

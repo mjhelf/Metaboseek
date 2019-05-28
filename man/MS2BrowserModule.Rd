@@ -4,8 +4,7 @@
 \alias{MS2BrowserModule}
 \title{MS2BrowserModule}
 \usage{
-MS2BrowserModule(input, output, session, reactives = reactive({    
-  list(query = list(mz = NULL, rt = NULL)) }),
+MS2BrowserModule(input, output, session, reactives = reactive({ }),
   values = reactiveValues(featureTables = featureTables, MSData = MSData,
   GlobalOpts = GlobalOpts), keys = reactive({     keys() }))
 }

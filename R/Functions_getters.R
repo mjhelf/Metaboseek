@@ -104,7 +104,13 @@ FeatureTable.reactivevalues <- function(x, update = F, tableID = NULL){
         x$featureTables$tables[[tableID]] <- updateFeatureTable(x$featureTables$tables[[tableID]], value)
         }
         
-        }
+    }
+    
+    #if x is not returned, values becomes value in the local environment of the observer,
+    #breaking any line of code expecting the MseekValues type values inside the observer 
+    return(x)
+    
+    
     
 }
 
@@ -117,6 +123,9 @@ FeatureTable.reactivevalues <- function(x, update = F, tableID = NULL){
         }
         x$featureTables$tables[[tableID]] <- value
     }
+    #if x is not returned, values becomes value in the local environment of the observer,
+    #breaking any line of code expecting the MseekValues type values inside the observer 
+    return(x)
     
 }
 
