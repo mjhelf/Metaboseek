@@ -116,18 +116,35 @@ updateFT <- function(values){
     
 }
 
-FTselection <- function(x){
+#' FTselection
+#'
+#' get the rows that are currently selected in MainTable window.
+#' Note: by default, will get its data from the underlying Feature Table,
+#'  not using changes (such as comments) made immediately prior to selection, 
+#'  but including all columns, including those not visible in the current table view.
+#'
+#' @param x a MseekValues (reactivevalues) object
+#' @param liveView if TRUE, will get data from the liveView of the MainTable directly (default: FALSE)
+#'
+#' @export
+FTselection <- function(x, ...){
 
     UseMethod('FTselection', x)
     
     
     }
-    
-FTselection.reactivevalues <- function(x){
-    
+
+#' @export
+FTselection.reactivevalues <- function(x, liveView = F){
+    if(liveView){
     return(
-    FeatureTable(x)$df[row.names(x$featureTables$Maintable$liveView)[x$featureTables$Maintable$selected_rows],]
+    x$featureTables$Maintable$liveView[x$featureTables$Maintable$selected_rows,]
     )
+    }else{
+        return(
+            FeatureTable(x)$df[row.names(x$featureTables$Maintable$liveView)[x$featureTables$Maintable$selected_rows],]
+        )  
+    }
     
 }
 
@@ -137,18 +154,40 @@ FTselection.reactivevalues <- function(x){
 #               getScanInfo(f,n,d, ...)
 #           })
 
-findMSnScans <- function(x, ...){
+
+#' findMSnScans
+#'
+#' Get a list of MS scans based on parent m/z and retention time
+#' Will return all scans with parentMZ within mz +/- ppm OR mzwid, AND retentionTime within rt +/- rtwid.
+#' 
+#'   
+#' @param data an OnDiskMSnExp or MseekValues (reactivevalues) object
+#' @param mz parentMZ value to search for. mz and rt can be vectors, but need to be of equal length
+#' @param rt retention time to search for. mz and rt can be vectors, but need to be of equal length
+#' @param ppm mz tolerance in ppm
+#' @param mzwid mz tolerance in absolute mz values 
+#' @param rtwid rt tolerance in seconds
+#' @param MSlevel which mz level to 
+#' 
+#' @rdname findMSnScans
+#'
+#' @export
+findMSnScans <- function(data, ...){
     
-    UseMethod('findMSnScans', x)
+    UseMethod('findMSnScans', data)
     
 }
 
+#' @rdname findMSnScans
+#' @export
 findMSnScans.reactivevalues <- function(data, ...){
     
     findMSnScans(data$MSData$MSnExp, ...)
     
     }
 
+#' @rdname findMSnScans
+#' @export
 findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 30, MSlevel = 2){
     
     
@@ -164,7 +203,7 @@ findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 
        res <- data@featureData@data[presel,][sel,][rtsel,]
        
     }else{
-        if(length(mz) == length(rt)){warning("mz and rt were not of equal length in call to METABOseek::findMSnScans")}
+        if(length(mz) != length(rt)){warning("mz and rt were not of equal length in call to METABOseek::findMSnScans")}
         
     sel <- (data@featureData@data$msLevel == MSlevel 
             & (abs(data@featureData@data$precursorMZ - mz[1])/mz[1] <= ppm*1e-6*mz[1] | abs(data@featureData@data$precursorMZ - mz[1]) <= mzwid )
@@ -234,33 +273,53 @@ getScanInfo <- function(file, number, data, type = c("acquisition", "ms1", "ms2"
   
 }
 
-
-#' rawSpectrum2
+#' getSpectra
 #'
-#' create a list of Spectrum (Spectrum1 and/or Spectrum2) objects from a list of xcmsRaw onjects if available
-#'
+#' get a list of spectra using indices from the OnDiskMSnExp object
 #' 
-getSpectra <- function(index, MSnData, xcmsRawobject = NULL){
+#' @param data an OnDiskMSnExp or MseekValues (reactivevalues) object
+#' @param scanlist as returned by makeScanlist2()
+#' @param index a numeric vector of scan indices
+#' @param xcmsRawobject list of xcmsRaw objects
+#' @param SpectrumClass if TRUE, will return a list of Spectum class objects, 
+#' otherwise will return a list of matrices with mz and intensity values
+#'
+#' @rdname getSpectra
+#' @export
+getSpectra <- function(data, ...){
     
-    if(!is(MSnData, "OnDiskMSnExp")){
+    UseMethod('getSpectra', data)
+    
+}
+
+#' @rdname getSpectra
+#' @export
+getSpectra.reactivevalues <- function(data, ...){
+    
+    getSpectra(data = data$MSData$MSnExp, xcmsRawobject = data$MSData$data, ...)
+    
+}
+
+#' @rdname getSpectra
+#' @export
+getSpectra.OnDiskMSnExp <- function(data, index, xcmsRawobject = NULL, SpectrumClass = F){
+    
+    if(!is(data, "OnDiskMSnExp")){
         simpleError("No valid OnDiskMSnExp object provided") 
     }
     
-    # if(!is(MSnData, "OnDiskMSnExp")){
-    #     spectra(MSnData)[index] 
-    #     simpleError("No valid OnDiskMSnExp object provided") 
-    #     
-    # }
-    
     if(is.null(xcmsRawobject)){
         
-        #  return( spectra(MSnData)[index])
+        #  return( spectra(data)[index])
         
-        res <- lapply(index, function(i){MSnData[[i]]} )
+        res <- lapply(index, function(i){data[[i]]} )
+        if(!SpectrumClass){
+            res <- lapply(res,function(x){matrix(c(x@mz, x@intensity),ncol = 2, dimnames = list(NULL, c("mz", "intensity")))})
+        }
         
     }else{
         res <-  lapply(index,function(i){
-            meta <- MSnData@featureData@data[i,]
+            meta <- data@featureData@data[i,]
             
             switch(meta$msLevel,
                    {
@@ -269,17 +328,21 @@ getSpectra <- function(index, MSnData, xcmsRawobject = NULL){
                        spec <- xcms::getScan(xcmsRawobject[[as.numeric(meta$fileIdx)]],
                                              which(xcmsRawobject[[as.numeric(meta$fileIdx)]]@acquisitionNum == meta$acquisitionNum))
                        
+                       if(SpectrumClass){
                        MSnbase:::Spectrum1(peaksCount = length(spec[,1]), rt = meta$retentionTime,
                                            acquisitionNum = meta$acquisitionNum, scanIndex = meta$spIdx,
                                            tic = meta$totIonCurrent, mz = spec[,1], intensity = spec[,2],
                                            fromFile = meta$fileIdx, centroided = meta$centroided,
                                            smoothed = meta$smoothed,
                                            polarity = meta$polarity)
+                       }else{return(spec)}
                    },
                    { 
                        spec <- xcms::getMsnScan(xcmsRawobject[[as.numeric(meta$fileIdx)]],
                                                 which(xcmsRawobject[[as.numeric(meta$fileIdx)]]@msnAcquisitionNum == meta$acquisitionNum))
                        
+                       if(SpectrumClass){
+                           
                        Spectrum2(msLevel = meta$msLevel, peaksCount = length(spec[,1]), rt = meta$retentionTime,
                                  acquisitionNum = meta$acquisitionNum, scanIndex = meta$spIdx,
                                  tic = meta$totIonCurrent, mz = spec[,1], intensity = spec[,2],
@@ -291,7 +354,7 @@ getSpectra <- function(index, MSnData, xcmsRawobject = NULL){
                                  precursorMz = meta$precursorMZ, precursorIntensity = meta$precursorIntensity,
                                  precursorCharge = meta$precursorCharge,
                                  collisionEnergy = meta$collisionEnergy)
-                       
+                       }else{return(spec)}
                    })
             
             
@@ -299,7 +362,7 @@ getSpectra <- function(index, MSnData, xcmsRawobject = NULL){
         })
     }
     
-    names(res) <- row.names(MSnData@featureData@data[index,])
+    names(res) <- row.names(data@featureData@data[index,])
     
     return(res)
 }

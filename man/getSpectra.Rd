@@ -2,10 +2,29 @@
 % Please edit documentation in R/Functions_getters.R
 \name{getSpectra}
 \alias{getSpectra}
-\title{rawSpectrum2}
+\alias{getSpectra.reactivevalues}
+\alias{getSpectra.OnDiskMSnExp}
+\title{getSpectra}
 \usage{
-getSpectra(index, MSnData, xcmsRawobject = NULL)
+getSpectra(data, ...)
+
+\method{getSpectra}{reactivevalues}(data, ...)
+
+\method{getSpectra}{OnDiskMSnExp}(data, index, xcmsRawobject = NULL,
+  SpectrumClass = F)
+}
+\arguments{
+\item{data}{an OnDiskMSnExp or MseekValues (reactivevalues) object}
+
+\item{index}{a numeric vector of scan indices}
+
+\item{xcmsRawobject}{list of xcmsRaw objects}
+
+\item{SpectrumClass}{if TRUE, will return a list of Spectum class objects, 
+otherwise will return a list of matrices with mz and intensity values}
+
+\item{scanlist}{as returned by makeScanlist2()}
 }
 \description{
-create a list of Spectrum (Spectrum1 and/or Spectrum2) objects from a list of xcmsRaw onjects if available
+get a list of spectra using indices from the OnDiskMSnExp object
 }
