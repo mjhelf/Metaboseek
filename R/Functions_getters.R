@@ -1,38 +1,3 @@
-#' getFeatureTable
-#' 
-#' @param values reactiveValues or list object with at least a values$featureTables$tables
-#' @param tableID table name
-#' 
-#' @export
-getFeatureTable <- function(values, tableID){
-    
-    if(missing(tableID)){
-        return(values$featureTables$tables[[values$featureTables$active]])
-    }else{
-        return(values$featureTables$tables[[tableID]])
-    }
-    
-}
-
-#' setFeatureTable
-#' 
-#' @param values reactiveValues or list object with at least a values$featureTables$tables
-#' @param tableID table name
-#' 
-#' @export
-setFeatureTable <- function(values, featureTable, tableID){
-    
-    if(!missing(featureTable) && !is.null(featureTable)){
-        if(missing(tableID)){
-            tableID <- values$featureTables$active
-        }
-        values$featureTables$tables[[tableID]] <- featureTable
-    }
-    
-}
-
-
-
 #' FeatureTable
 #' 
 #' @param values reactiveValues or list object with at least a values$featureTables$tables
@@ -150,8 +115,21 @@ updateFT <- function(values){
     }   
     
 }
+
+FTselection <- function(x){
+
+    UseMethod('FTselection', x)
     
     
+    }
+    
+FTselection.reactivevalues <- function(x){
+    
+    return(
+    FeatureTable(x)$df[row.names(x$featureTables$Maintable$liveView)[x$featureTables$Maintable$selected_rows],]
+    )
+    
+}
 
 # setMethod("getScanInfo", 
 #           signature = c("character", "numeric", "MSnExp"),
@@ -159,7 +137,47 @@ updateFT <- function(values){
 #               getScanInfo(f,n,d, ...)
 #           })
 
+findMSnScans <- function(x, ...){
+    
+    UseMethod('findMSnScans', x)
+    
+}
 
+findMSnScans.reactivevalues <- function(data, ...){
+    
+    findMSnScans(data$MSData$MSnExp, ...)
+    
+    }
+
+findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 30, MSlevel = 2){
+    
+    
+    if(length(mz) > 1 && length(mz) == length(rt)){
+        presel <- data@featureData@data$msLevel == MSlevel &  data@featureData@data$retentionTime
+        
+       allmzdiffs <-  abs(outer(mz, data@featureData@data$precursorMZ[presel], "-"))
+        
+       sel <- unique(which(allmzdiffs/mz <= ppm*1e-6*mz | allmzdiffs <= mzwid, arr.ind = T)[,2])
+       
+       rtsel <- unique(which(abs(outer(rt, data@featureData@data$retentionTime[presel][sel], "-")) <= rtwid, arr.ind = T)[,2])
+       
+       res <- data@featureData@data[presel,][sel,][rtsel,]
+       
+    }else{
+        if(length(mz) == length(rt)){warning("mz and rt were not of equal length in call to METABOseek::findMSnScans")}
+        
+    sel <- (data@featureData@data$msLevel == MSlevel 
+            & (abs(data@featureData@data$precursorMZ - mz[1])/mz[1] <= ppm*1e-6*mz[1] | abs(data@featureData@data$precursorMZ - mz[1]) <= mzwid )
+            & abs(data@featureData@data$retentionTime - rt[1]) <= rtwid)
+
+            res <- data@featureData@data[sel,]
+    }
+    
+    res$filename <- as.character(data@phenoData@data$sampleNames)[res$fileIdx]
+    
+    return(res)
+    
+}
 
 #' getScanInfo
 #'
