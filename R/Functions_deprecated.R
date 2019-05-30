@@ -1,3 +1,74 @@
+
+#' getAllScans
+#'
+#' get a list of all scans in a scanlist
+#' 
+#' @param scanlist as returned by makeScanlist2()
+#' @param MSData list of xcmsRaw objects
+#' @inheritParams getScanInfo
+#'
+#'
+#' @export
+getAllScans <- function(scanlist, MSData, removeNoise = NULL, type = c("ms2", "ms1", "acquisition")){
+    
+    
+    
+    
+    makeSpeclist <- function(bnames,scannums,MSData, MS2 = T, removeNoise = NULL){
+        
+        
+        fx <- function(MSfile, scan, MS2, removeNoise = NULL){
+            # print(MSfile@filepath)
+            tryCatch({
+                if(MS2){
+                    if(!is.null(removeNoise)){
+                        s <- xcms::getMsnScan(MSfile, scan)
+                        
+                        sel <- which(s[,2] >= removeNoise*max(s[,2]))
+                        return(s[sel,, drop = F])
+                        
+                    }
+                    return(xcms::getMsnScan(MSfile, scan))
+                }else{
+                    if(!is.null(removeNoise)){
+                        s <- xcms::getScan(MSfile, scan)
+                        
+                        sel <- which(s[,2] >= removeNoise*max(s[,2]))
+                        return(s[sel,, drop = F])
+                    }
+                    return(xcms::getScan(MSfile, scan))
+                }
+            },
+            error = function(e){NULL})
+            
+        }
+        
+        speclist <- mapply(fx,
+                           MSfile = MSData[match(basename(bnames),basename(names(MSData)))],
+                           scan = scannums,
+                           MoreArgs = list(MS2 = MS2,
+                                           removeNoise = removeNoise),
+                           SIMPLIFY = F
+        )
+        
+        #remove NULL results (from errors)
+        speclist <- speclist[which(!sapply(speclist, is.null))]
+        
+        return(speclist)
+    }
+    
+    
+    return(
+        mapply(makeSpeclist,
+               bnames =  scanlist$file,
+               scannums = scanlist$scan,
+               MoreArgs = list(MSData = MSData,
+                               MS2 = (type[1] == "ms2"),
+                               removeNoise = removeNoise),
+               SIMPLIFY = T)
+    )
+}
+
 #' mergeMSold
 #' 
 #' Merge MS spectra by combining peaks that are within a ppm distance
