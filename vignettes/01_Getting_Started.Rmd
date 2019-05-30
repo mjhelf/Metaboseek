@@ -49,11 +49,17 @@ We recommend computers with a monitor with at least full HD (1920 x 1080 pixels)
 
 All files are loaded into memory, so that browsing will be very quick: It is easy to look at extracted ion chromatograms (EICs) for many MS features of interest across dozens of files within a fraction of a second. However, the initial loading of the data will take some time, and you may experience issues if you load many files at a time. We strongly recommend using centroided data files, as they will have a smaller memory footprint. Loading 50 data files from 20-minute high resolution LC/MS data acquisition should not be a problem on a computer with 16 GB of RAM. 
 
+### JAVA {#javainfo}
+Metaboseek version 0.9.3 requires java for full functionality. Make sure to install 32-bit Java  (the default version you get from java.com) if you are running 32-bit R, or 64-bit Java if you are running 64-bit R. [Get 64-bit Java from here](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html). At the time of writing, this page is not only difficult to find, but also requires you to register to download..
+
+
 ## Use the web version
 If you have trouble installing METABOseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
 
 
 ## Install on Windows
+
+You will need to get the [appropriate java version](#javainfo), which in the case of the .zip file and the installer, is 64-bit.
 
 ###Using the installer
 
