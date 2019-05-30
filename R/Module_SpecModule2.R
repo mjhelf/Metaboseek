@@ -216,11 +216,11 @@ SpecModule2 <- function(input,output, session,
       
       
       fluidPage(
-        fluidRow(downloadButton(ns('pdfButton'), "Save as pdf"),
-                 downloadButton(ns('peaklistButton'), "Save as table"),
-                 htmlOutput(ns("predictionselection"))
-                 
-        ),
+        # fluidRow(downloadButton(ns('pdfButton'), "Save as pdf"),
+        #          downloadButton(ns('peaklistButton'), "Save as table"),
+        #          htmlOutput(ns("predictionselection"))
+        #          
+        # ),
         fluidRow(SpecplotWidgetUI(ns("specp"))),
         htmlOutput(ns("specinfo"))
         

@@ -196,7 +196,7 @@ findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 
         
        allmzdiffs <-  abs(outer(mz, data@featureData@data$precursorMZ[presel], "-"))
         
-       sel <- unique(which(allmzdiffs/mz <= ppm*1e-6*mz | allmzdiffs <= mzwid, arr.ind = T)[,2])
+       sel <- unique(which(allmzdiffs/mz <= ppm*1e-6 | allmzdiffs <= mzwid, arr.ind = T)[,2])
        
        rtsel <- unique(which(abs(outer(rt, data@featureData@data$retentionTime[presel][sel], "-")) <= rtwid, arr.ind = T)[,2])
        

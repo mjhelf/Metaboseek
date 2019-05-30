@@ -369,15 +369,20 @@ specplot2 <- function (x=sc[,1],
                 labels$color <- "red" 
             }
             
-            
-            if(all(colnames(spectrum) == colnames(labels))){
-                spectrum <- rbind(labels, spectrum)
+            if(nrow(spectrum) == 0){
+                
+                spectrum <- labels
+                
+            }else{
+                
+                colnames(labels)[1:2] <- colnames(spectrum)[1:2]
+                
+                spectrum <- rbind(labels[,c(colnames(labels)[1:2], "label", "color")], spectrum[,c(colnames(labels)[1:2], "label", "color")])
                 
                 spectrum <- spectrum[!duplicated(round(spectrum[,1],5)),]
             }
         }
     }
-    
     
     if(nrow(spectrum) > 0 ){
         par(xpd=NA)
