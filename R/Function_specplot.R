@@ -152,7 +152,7 @@ parseTitle <- function(scanInfo){
                    scanInfo$acquisitionNum,
                    " (", round(scanInfo$retentionTime/60,3), " min)",
                    if(scanInfo$precursorMZ != 0){
-                       paste0("\nParent m/z: ", round(scanInfo$precursorMZ,5))}else{""},
+                       paste0("\nParent m/z: ", format(round(scanInfo$precursorMZ,5), nsmall = 5, scientific = F))}else{""},
                    collapse = " ")
         )
         

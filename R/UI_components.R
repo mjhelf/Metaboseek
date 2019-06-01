@@ -120,11 +120,11 @@ dashboardHeaderM <- function (..., title = NULL, titleWidth = NULL, disable = FA
 #' @export
 MseekHeader <- function(..., id = NULL){
   
-  if(!is.null(id)){
+  #if(!is.null(id)){
     ns <- NS(id)
-  }else{
-    ns <- function(id){return(id)}
-  }
+ # }else{
+#    ns <- function(id){return(id)}
+ # }
   
   dashboardHeaderM(title = "METABOseek",
                    #style = "width:95%",
@@ -165,14 +165,14 @@ MseekHeader <- function(..., id = NULL){
 #' 
 #' @export
 MseekSidebar <- function(..., id = NULL){
-  if(!is.null(id)){
+ # if(!is.null(id)){
     ns <- NS(id)
     keyid <- ns("keyd")
     SBid <- ns("MseekSB")
-  }else{
-    keyid <- "keyd"
-    SBid <- "MseekSB"
-  }
+  # }else{
+  #   keyid <- "keyd"
+  #   SBid <- "MseekSB"
+  # }
   
   dashboardSidebar(
     
