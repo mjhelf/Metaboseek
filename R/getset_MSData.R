@@ -144,6 +144,7 @@ findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 
     }else{
         if(length(mz) != length(rt)){warning("mz and rt were not of equal length in call to METABOseek::findMSnScans")}
         
+        
         sel <- (data@featureData@data$msLevel == MSlevel 
                 & (abs(data@featureData@data$precursorMZ - mz[1])/mz[1] <= ppm*1e-6 | abs(data@featureData@data$precursorMZ - mz[1]) <= mzwid )
                 & abs(data@featureData@data$retentionTime - rt[1]) <= rtwid)

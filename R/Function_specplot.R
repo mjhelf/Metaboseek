@@ -393,7 +393,7 @@ specplot2 <- function (x=sc[,1],
         #                     ylim = yrange)#, col=spectrum$color, rotate90 = T)
         
         
-        xcorr <- suppressWarnings({spread.labs(spectrum[,1],1.08*strwidth("A", cex = cx), maxiter=1000, min=min(spectrum[,1]), max=max(spectrum[,1]))})
+        xcorr <- suppressWarnings({spread.labs(spectrum[,1],1.13*strwidth("A", cex = cx), maxiter=1000, min=min(spectrum[,1]), max=max(spectrum[,1]))})
         
         segments(spectrum[,1],spectrum[,2]+0.01*max(yrange),xcorr,spectrum[,2]+0.05*max(yrange), col="olivedrab4", lwd=0.8)
         
