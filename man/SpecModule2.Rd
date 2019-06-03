@@ -12,16 +12,23 @@ SpecModule2(input, output, session, values = values,
 SpecModule2UI(id)
 }
 \arguments{
-\item{input, output, session}{arguments necessary for use with \link[shiny]{callModule}()}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{values}{a \link[shiny]{reactiveValues} object that in effect gives read and write access to external objects}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{id}{id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{reactive}{a \link[shiny]{reactive} object with settings for this module. See \code{details}.}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
+
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+}
+\value{
+If the server module for this Module returns something, it is described in \code{Details}.
 }
 \description{
-server module for interactive mass spectrum view
+Module for interactive mass spectrum view
 }
 \details{
 \subsection{reactives}{
