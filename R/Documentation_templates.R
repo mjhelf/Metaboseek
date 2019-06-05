@@ -1,3 +1,36 @@
+#' @title values
+#' 
+#' @description \code{values} is a reactivevalues object with a defined structure
+#' 
+#' @section Object structure:
+#' The \code{values} object is a \code{\link[shiny]{reactiveValues}} object,
+#' containing three other \code{reactiveValues} objects, each 
+#' \subsection{values$featureTables}{
+#' contains objects related to feature tables
+#' }
+#' \subsection{values$MSData}{
+#' contains object related to MS data
+#'\describe{
+#'  \item{values$MSData$MS2.selectTable}{data.frame listing metadata for all MS2 spectra matching criteria}
+#'  \item{values$MSData$MS2.selected}{list with three items:
+#'  \itemize{
+#'  \item{spectra:} list of selected MS2 spectra as matrices
+#'  \item{mergedSpectrum:} result of merging all selected spectra as a matrix
+#'  \item{specInfo:} data.frame listing metadata for all selected MS2 spectra
+#' }}
+#' }
+#' 
+#' }
+#' \subsection{values$GlobalOpts}{
+#' GlobalOpts loads the current MseekOptions into the current session as
+#' \code{reactiveValues}, and is also used by many modules to make values
+#'  accessible app-wide.
+#' }
+#' @name values
+#' 
+NULL
+
+
 #' @title MseekWidgets
 #'
 #' @description \code{MseekWidgets} should work in a "vanilla" shiny environment, i.e. any shiny app, making it
@@ -49,6 +82,9 @@ MseekWidgetsUI <- function(id){
 #' @param id id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)
 #' @param ... additional arguments, as defined for the individual module. For example: constant layout options depending on the context that this module is used in
 #' 
+#' @seealso 
+#' \code{\link{values}} for a description of the \code{values} object
+#' 
 #' @describeIn MseekModules generic server logic example for MseekModules
 MseekModules <- function(input,output, session, values, reactives, ...){
     
@@ -99,6 +135,7 @@ MseekModulesUI <- function(id){
 #' }
 #' 
 #' @seealso 
+#' \code{\link{values}} for a description of the \code{values} object
 #' \itemize{
 #' \item{General Information:} \code{\link{MseekContainers}}
 #' \item{Specific containers:} \code{\link{MseekContainer}}, \code{\link{MainPageContainer}} 

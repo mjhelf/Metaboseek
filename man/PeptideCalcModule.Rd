@@ -29,6 +29,17 @@ and charges specified in the current FeatureTable, and also applies variable and
 }
 \details{
 Does not return anything, but
+\subsection{requires}{
+\code{PeptideModificationsModule}
+}
+\subsection{modifies}{
+\code{FeatureTable()}, \code{activeFT(values)}
+}
+\subsection{reads}{
+\code{values$GlobalOpts$Peptides.variableMods},
+ \code{values$GlobalOpts$Peptides.fixedMods},
+ \code{FeatureTable(values)$df}
+}
 }
 \section{Functions}{
 \itemize{
@@ -37,3 +48,6 @@ Does not return anything, but
 \item \code{PeptideCalcModuleUI}: UI elements for PeptideCalcModule
 }}
 
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
+}

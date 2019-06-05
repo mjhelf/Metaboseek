@@ -29,6 +29,22 @@ applied in peptide-related calculations (fragment annotation and peptide mass ca
 }
 \details{
 Does not return anything, but
+\subsection{requires}{
+\code{PeptideModificationsModule},
+ \code{SelectMS2Module},
+ \code{MainTableModule}
+} 
+\subsection{initiates}{
+nothing
+}
+\subsection{reads}{
+\code{values$GlobalOpts$Peptides.variableMods},
+ \code{values$GlobalOpts$Peptides.fixedMods},
+ \code{FTselection()}
+}
+\subsection{modifies}{
+\code{values$MSData$MS2.selected}
+}
 }
 \section{Functions}{
 \itemize{
@@ -37,3 +53,6 @@ Does not return anything, but
 \item \code{PeptideAnnotationModuleUI}: UI elements for PeptideAnnotationModule
 }}
 
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
+}

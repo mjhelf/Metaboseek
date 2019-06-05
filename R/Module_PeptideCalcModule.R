@@ -4,17 +4,19 @@
 #' and charges specified in the current FeatureTable, and also applies variable and fixed peptide modifications.
 #' 
 #' @inherit MseekModules
-#' @details Does not return anything, but
-#' 
-#' @subsection requires
+#' @details 
+#' Does not return anything, but
+#' \subsection{requires}{
 #' \code{PeptideModificationsModule}
-#' 
-#' @subsection reads
-#' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
-#' 
-#' @subsection modifies
+#' }
+#' \subsection{modifies}{
 #' \code{FeatureTable()}, \code{activeFT(values)}
-#' 
+#' }
+#' \subsection{reads}{
+#' \code{values$GlobalOpts$Peptides.variableMods},
+#'  \code{values$GlobalOpts$Peptides.fixedMods},
+#'  \code{FeatureTable(values)$df}
+#' }
 #' 
 #' @describeIn PeptideCalcModule server logic for PeptideCalcModule
 #'

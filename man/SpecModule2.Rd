@@ -51,3 +51,6 @@ a list with entries \code{spectrum} and \code{specinfo}.
 \item \code{SpecModule2UI}: UI function for SpecModule2
 }}
 
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
+}

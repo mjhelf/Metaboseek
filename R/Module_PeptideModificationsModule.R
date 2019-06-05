@@ -4,16 +4,15 @@
 #' applied in peptide-related calculations (fragment annotation and peptide mass calculations)
 #' 
 #' @details Does not return anything, but
-#' 
-#' @subsection initiates
+#' \subsection{initiates}{
 #' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
-#' 
-#' @subsection reads
+#' }
+#' \subsection{modifies}{
 #' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
-#' 
-#' @subsection modifies
+#' }
+#' \subsection{reads}{
 #' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
-#' 
+#' }
 #' @inherit MseekModules
 #' 
 #' @describeIn PeptideModificationsModule server logic for PeptideModificationsModule

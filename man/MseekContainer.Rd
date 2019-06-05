@@ -53,6 +53,7 @@ shinyApp(ui, server)
 
 }
 \seealso{
+\code{\link{values}} for a description of the \code{values} object
 \itemize{
 \item{General Information:} \code{\link{MseekContainers}}
 \item{Specific containers:} \code{\link{MseekContainer}}, \code{\link{MainPageContainer}} 

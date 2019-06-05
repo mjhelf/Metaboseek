@@ -29,6 +29,15 @@ applied in peptide-related calculations (fragment annotation and peptide mass ca
 }
 \details{
 Does not return anything, but
+\subsection{initiates}{
+\code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
+}
+\subsection{modifies}{
+\code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
+}
+\subsection{reads}{
+\code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
+}
 }
 \section{Functions}{
 \itemize{
@@ -37,3 +46,6 @@ Does not return anything, but
 \item \code{PeptideModificationsModuleUI}: UI elements for PeptideModificationsModule
 }}
 
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
+}

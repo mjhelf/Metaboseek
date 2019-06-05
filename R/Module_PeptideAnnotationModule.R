@@ -3,16 +3,25 @@
 #' This module allows setting fixed and variable peptide modifications to be 
 #' applied in peptide-related calculations (fragment annotation and peptide mass calculations)
 #' 
-#' @details Does not return anything, but
+#' @details 
+#' Does not return anything, but
+#' \subsection{requires}{
+#' \code{PeptideModificationsModule},
+#'  \code{SelectMS2Module},
+#'  \code{MainTableModule}
+#' } 
+#' \subsection{initiates}{
+#' nothing
+#' }
+#' \subsection{reads}{
+#' \code{values$GlobalOpts$Peptides.variableMods},
+#'  \code{values$GlobalOpts$Peptides.fixedMods},
+#'  \code{FTselection()}
+#' }
+#' \subsection{modifies}{
+#' \code{values$MSData$MS2.selected}
+#' }
 #' 
-#' @subsection initiates
-#' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
-#' 
-#' @subsection reads
-#' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
-#' 
-#' @subsection modifies
-#' \code{values$GlobalOpts$Peptides.variableMods}, \code{values$GlobalOpts$Peptides.fixedMods}
 #' 
 #' @inherit MseekModules
 #' 

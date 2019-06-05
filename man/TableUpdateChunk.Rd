@@ -7,13 +7,23 @@
 TableUpdateChunk()
 }
 \description{
-Code chunk to update the active Feature Table before triggering a rerendering of the rhandsontable object.
- 
-Chunks are evaluated in their parent environment, and therefore require all objects they work on to be present under their correct names.
+TableUpdateChunk
 }
 \details{
-This chunk requires:
+\subsection{requires}{
 
 values$featureTables$Maintable - pointing to the MainTableObject
 values$featureTables
 }
+}
+\section{NOTE}{
+
+This function is deprecated. Use \code{\link{updateFT}} instead!
+
+Code chunk to update the active Feature Table before triggering a
+ rerendering of the rhandsontable object.
+ 
+Chunks are evaluated in their parent environment, and therefore require
+ all objects they work on to be present under their correct names.
+}
+

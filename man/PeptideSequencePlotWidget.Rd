@@ -2,11 +2,14 @@
 % Please edit documentation in R/Widget_PeptideSequencePlotWidget.R
 \name{PeptideSequencePlotWidget}
 \alias{PeptideSequencePlotWidget}
+\alias{PeptideSequencePlotWidgetUI}
 \title{PeptideSequencePlotWidget}
 \usage{
 PeptideSequencePlotWidget(input, output, session, reactives = reactive({ 
      list() }), layout = reactive({     list(active = T, height = 550)
   }))
+
+PeptideSequencePlotWidgetUI(id)
 }
 \arguments{
 \item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
@@ -20,10 +23,16 @@ PeptideSequencePlotWidget(input, output, session, reactives = reactive({
 inside of shiny::reactive()}
 
 \item{layout}{list of layout options (active: logical, and height: numeric)}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+}
+\value{
+nothing; generates a specialized \code{\link[shiny]{plotOutput}}
 }
 \description{
 This module allows setting fixed and variable peptide modifications to be 
-applied in peptide-related calculations (fragment annotation and peptide mass calculations)
+applied in peptide-related calculations (fragment annotation and peptide
+ mass calculations)
 }
 \details{
 Plots with MassTools::plotAnnotatedPeptide
@@ -31,5 +40,7 @@ Plots with MassTools::plotAnnotatedPeptide
 \section{Functions}{
 \itemize{
 \item \code{PeptideSequencePlotWidget}: server logic for PeptideSequencePlotWidget
+
+\item \code{PeptideSequencePlotWidgetUI}: UI elements for PeptideSequencePlotWidget
 }}
 

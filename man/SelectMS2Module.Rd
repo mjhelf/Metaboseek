@@ -29,14 +29,19 @@ Module for selection of MS2 spectra. Will search for MS2 spectra matching the
  and will make the selection available app-wide.
  
  @details Does not return anything, but will modify values:
- \itemize{
- \item{values$MSData$MS2.selectTable:} data.frame listing metadata for all MS2 spectra matching criteria
- \item{values$MSData$MS2.selected:} list with three items: 
- \itemize{
- \item{spectra:} list of selected MS2 spectra as matrices
- \item{mergedSpectrum:} result of merging all selected spectra as a matrix
- \item{specInfo:} data.frame listing metadata for all selected MS2 spectra
-}}
+\subsection{requires}{
+ \code{MainTableModule}
+} 
+\subsection{initiates}{
+\code{values$MSData$MS2.selectTable}, \code{values$MSData$MS2.selected}
+}
+\subsection{modifies}{
+\code{values$MSData$MS2.selectTable}, \code{values$MSData$MS2.selected}
+}
+\subsection{reads}{
+\code{values$MSData$MS2.selectTable}, \code{values$MSData$MS2.selected},
+ \code{FTselection()}
+}
 }
 \section{Functions}{
 \itemize{
@@ -45,3 +50,6 @@ Module for selection of MS2 spectra. Will search for MS2 spectra matching the
 \item \code{SelectMS2ModuleUI}: UI elements for SelectMS2Module
 }}
 
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
+}
