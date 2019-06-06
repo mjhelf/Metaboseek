@@ -14,6 +14,9 @@ getAllScans(scanlist, MSData, removeNoise = NULL, type = c("ms2",
 
 \item{type}{specify what the scan number represents, either "acquisition", "ms1" or "ms2".}
 }
+\value{
+a list of MS spectra (each in matrix format)
+}
 \description{
 get a list of all scans in a scanlist
 }

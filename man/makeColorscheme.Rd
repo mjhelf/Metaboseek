@@ -4,19 +4,25 @@
 \alias{makeColorscheme}
 \title{makeColorscheme}
 \usage{
-makeColorscheme(maingroup = MSD$layouts[[MSD$active]]$grouping,
-  colorgroup = MSD$layouts[[MSD$active]]$grouping,
-  colrange = "Mseek.colors", transparency = 0.8)
+makeColorscheme(maingroup, colorgroup, colrange = "Mseek.colors",
+  transparency = 0.8)
 }
 \arguments{
-\item{maingroup}{main plot grouping scheme (e.g. grouping in rawlayouts)}
+\item{maingroup}{a named list defining the main plot grouping scheme
+(e.g. grouping in rawlayouts)}
 
-\item{colorgroup}{grouping to be used for coloring (e.g. grouping2 in rawlayouts)}
+\item{colorgroup}{a named list defining the grouping to be used for coloring 
+(e.g. grouping2 in rawlayouts)}
 
-\item{colrange}{function to use to make color range}
+\item{colrange}{name of the function to use to make color range}
 
 \item{transparency}{setting for transparent coloring}
 }
+\value{
+a named list of data.frames with color values and labels
+}
 \description{
-Use two grouing lists to generate a color scheme for groupPlot() and EICgeneral().
+Use two grouping lists to generate a color scheme
+that can be passed as an argument for \code{\link{groupPlot}()}
+ and \code{\link{EICgeneral}()}.
 }
