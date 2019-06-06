@@ -14,11 +14,11 @@ tableWriter(df, fname, format = c("csv", "tsv", "instrumentList"),
 
 \item{format}{output format}
 
-\item{moreArgs}{additional arguments}
-
-\item{instrument}{which instrument is this table for?}
-
-\item{listType}{"inclusion" or "exclusion"}
+\item{moreArgs}{named list of additional arguments to be 
+passed to \code{\link{asInclusionlist}}}
+}
+\value{
+Returns nothing, but writes a file to disk
 }
 \description{
 Writes a feature table to a file in a given format.

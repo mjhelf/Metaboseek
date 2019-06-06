@@ -11,8 +11,12 @@ updateDF(a, b)
 
 \item{b}{target data.frame}
 }
+\value{
+Returns the updated data.frame b
+}
 \description{
 Update dataframe b with data from dataframe a; must have equal number of rows
-Existing data in b will be overridden if columns by the same name exist in a, and retained otherwise.
-Additional columns in a will be transferred to b. Returns an updated data.frame b.
+Existing data in b will be overridden if columns by the same name exist in a,
+ and retained otherwise.
+Additional columns in a will be transferred to b.
 }

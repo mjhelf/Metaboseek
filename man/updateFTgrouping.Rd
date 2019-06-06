@@ -9,7 +9,12 @@ updateFTgrouping(FT, anagrouptable)
 \arguments{
 \item{FT}{MseekFT object}
 
-\item{anagrouptable}{Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column")}
+\item{anagrouptable}{Analysis grouping table: a data.frame with columns 
+"Column" (containing column names from df with intensity values) and 
+"Group" (defining a group for each entry in "Column")}
+}
+\value{
+An updated \code{MseekFT} object
 }
 \description{
 update or construct grouping information of a MseekFT object

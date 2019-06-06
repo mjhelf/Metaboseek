@@ -9,8 +9,21 @@ tableGrouping(df = NULL, anagrouptable)
 \arguments{
 \item{df}{feature table as data.frame, with intensity values.}
 
-\item{anagrouptable}{Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column")}
+\item{anagrouptable}{Analysis grouping table: a data.frame with columns 
+\code{Column} (containing column names from df with intensity values) and 
+\code{Group} (defining a group for each entry in "Column")}
+}
+\value{
+A named list, see \code{details}
 }
 \description{
-Groups a anagrouptable into a named list. Helper function to reformat Table analysis grouping tables
+Groups a anagrouptable into a named list. Helper function to
+ reformat Table analysis grouping tables
+}
+\details{
+Will return a named list with two list items
+ \itemize{
+ \item\code{anagroupnames} named list of intensity column names
+\item\code{anagroupnums} named list of intensity column numbers
+}
 }

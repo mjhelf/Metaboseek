@@ -2,7 +2,7 @@
 % Please edit documentation in R/Functions_class_featureTable.R
 \name{updateFeatureTable}
 \alias{updateFeatureTable}
-\title{updateDF}
+\title{updateFeatureTable}
 \usage{
 updateFeatureTable(FT, df)
 }
@@ -11,6 +11,11 @@ updateFeatureTable(FT, df)
 
 \item{df}{source data.frame}
 }
+\value{
+An updated \code{MseekFT} object
+}
 \description{
-update an existing MseekFT with new data frame columns (leaving intensitiy tables and constants in effect)
+update an existing MseekFT with new data.frame columns (leaving intensitiy
+ column names and constants in effect, but updating information on which 
+ "other" columns are present)
 }
