@@ -6,10 +6,13 @@
 #' @param scanlist as returned by makeScanlist2()
 #' @param MSData list of xcmsRaw objects
 #' @inheritParams getScanInfo
+#' 
+#' @return a list of MS spectra (each in matrix format)
 #'
 #'
 #' @export
-getAllScans <- function(scanlist, MSData, removeNoise = NULL, type = c("ms2", "ms1", "acquisition")){
+getAllScans <- function(scanlist, MSData, removeNoise = NULL,
+                        type = c("ms2", "ms1", "acquisition")){
     
     
     
@@ -173,14 +176,22 @@ specplot <- function (x=sc[,1],
     
     if(nrow(labs) > 0 ){
         par(xpd=NA)
-        labs$xcorr <- suppressWarnings({spread.labs(labs[,1],1.05*strwidth("A"), maxiter=1000, min=min(labs[,1]), max=max(labs[,1]))})
+        labs$xcorr <- suppressWarnings({spread.labs(labs[,1],
+                                                    1.05*strwidth("A"),
+                                                    maxiter=1000,
+                                                    min=min(labs[,1]),
+                                                    max=max(labs[,1]))})
         
-        segments(labs[,1],labs[,2]+0.01*max(yrange),labs$xcorr,labs[,2]+0.05*max(yrange), col="olivedrab4", lwd=0.8)
+        segments(labs[,1],labs[,2]+0.01*max(yrange),
+                 labs$xcorr,labs[,2]+0.05*max(yrange),
+                 col="olivedrab4", lwd=0.8)
         
-        text(labs$xcorr,labs[,2]+0.055*max(yrange),labels=labs$label, col=labs$color, srt=90,adj=c(0,0.3), cex=1*cx)
+        text(labs$xcorr,labs[,2]+0.055*max(yrange),labels=labs$label,
+             col=labs$color, srt=90,adj=c(0,0.3), cex=1*cx)
         text(min(xrange), max(yrange)+1.5*strheight("M"),
-             labels = format(maxi*(max(labs$y)/100), scientific = T, digits =4), bty="n",
-             font = 2, cex=cx*1)
+             labels = format(maxi*(max(labs$y)/100),
+                             scientific = T, digits =4),
+             bty="n",font = 2, cex=cx*1)
         
         
         
@@ -192,9 +203,11 @@ specplot <- function (x=sc[,1],
 #' 
 #' Merge MS spectra by combining peaks that are within a ppm distance
 #' 
-#' NOTE: If multiple peaks inside a spectrum match another spectrum, only the one with higher(?) mz will be retained
+#' NOTE: If multiple peaks inside a spectrum match another spectrum,
+#'  only the one with higher(?) mz will be retained
 #' 
-#' @param speclist data.frame or matrix containing mz and intensity values of a spectrum (mz in column 1)
+#' @param speclist data.frame or matrix containing mz and intensity 
+#' values of a spectrum (mz in column 1)
 #' @param ppm accuracy
 #' @param mergeOnly if TRUE, only the merged spectrum is returned
 #' 

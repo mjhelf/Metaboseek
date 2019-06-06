@@ -3,14 +3,12 @@
 #' 
 #' server module for interactive mass spectrum view
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @inherit MseekModules
 #' 
 #' @importFrom shinyBS bsCollapse bsCollapsePanel updateCollapse
 #' @importFrom data.table fread
 #' 
+#' @describeIn SiriusModule server logic for SiriusModule
 #' @export 
 SiriusModule <- function(input,output, session, 
                           values = reactiveValues(
@@ -333,13 +331,8 @@ fluidPage(
   return(internalValues)
 }
 
-#' SiriusModuleUI
-#' 
-#' 
-#' UI module for interactive SIRIUS interface
-#' 
-#' @param id id to be used in ns()
-#' 
+
+#' @describeIn SiriusModule UI for interactive SIRIUS interface
 #' @export
 SiriusModuleUI <- function(id){
   ns <- NS(id)
