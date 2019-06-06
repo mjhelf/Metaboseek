@@ -63,7 +63,7 @@ PeptideAnnotationModule <- function(input,output, session, values){
                                                               modifications = values$GlobalOpts$Peptides.fixedMods,
                                                               z = 1)
                     
-                    fragments <- permutatePeptideMass(unmodfrags, values$GlobalOpts$Peptides.variableMods )
+                    fragments <- MassTools::permutatePeptideMass(unmodfrags, values$GlobalOpts$Peptides.variableMods )
                     
                     #this caching will be worth it if there are many variable modifications
                     internalValues$fragmentCache <- list(fragments = fragments,
@@ -183,7 +183,7 @@ PeptideAnnotationModule <- function(input,output, session, values){
                                                                       modifications = values$GlobalOpts$Peptides.fixedMods,
                                                                       z = 1)
                             
-                            fragments <- permutatePeptideMass(unmodfrags, values$GlobalOpts$Peptides.variableMods )
+                            fragments <- MassTools::permutatePeptideMass(unmodfrags, values$GlobalOpts$Peptides.variableMods )
                             
                             #this caching will be worth it if there are many variable modifications
                             internalValues$fragmentCache <- list(fragments = fragments,

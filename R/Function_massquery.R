@@ -50,7 +50,8 @@ massquery <- function(mz, range=0.01, ppm=5,
   res <- jsonlite::fromJSON(mzq)
   
   if(length(res$results) == 0){
-    return(data.frame(em = "", mf= "", unsat = "", error = "", ppm = "", stringsAsFactors = F))
+    return(data.frame(em = "", mf= "", unsat = "",
+                      error = "", ppm = "", stringsAsFactors = F))
   }
   
   return(res$results)}

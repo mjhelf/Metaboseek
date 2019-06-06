@@ -67,7 +67,9 @@ MZcalcModule <- function(input,output, session,
         tabid <- paste0("table",length(values$featureTables$index))
         names(tabid) <- paste0("mzcalc_", paste(input$chargesel, collapse = "_"), values$featureTables$tables[[values$featureTables$active]]$tablename)
         
-        newdf <-  calcMZs(values$featureTables$tables[[values$featureTables$active]]$df, charges = as.integer(input$chargesel), carrier = "H", monoisotopic = T, mf_column = input$formulacolumn)
+        newdf <-  calcMZs(values$featureTables$tables[[values$featureTables$active]]$df,
+                          charges = as.integer(input$chargesel), carrier = "H",
+                          monoisotopic = T, mf_column = input$formulacolumn)
 
         
         if(is.null(newdf) || nrow(newdf) == 0){
