@@ -45,11 +45,7 @@ MainPlotContainer <- function(input,output, session,
                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   #### Quickplots #####
-  callModule(featurePlotModule, "quickplots",
-             FT = reactive({values$featureTables$tables[[values$featureTables$active]]}),
-             rname = reactive({row.names(values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],])}),
-             values = reactiveValues(featureTables  =  values$featureTables)
-  )
+  callModule(QuickPlotsModule, "quickplots", values)
   
   #### interactiveView #####
   MultiEICout <- callModule(MultiEICmodule,"MultiE", values)
@@ -129,7 +125,7 @@ MainPlotContainerUI <- function(id){
                   )
          ),
          tabPanel("Quickplots",
-                  featurePlotModuleUI(ns("quickplots"))
+                  QuickPlotsModuleUI(ns("quickplots"))
          ),
          tabPanel("Venn Diagrams",
                   VennDiagramModuleUI(ns("venndiagrams"))

@@ -40,6 +40,10 @@ adjust retention times.}
 reject any peaks with a signal-to-noise ratio than this (intensity range 
 within observed rt window, MAX/ MEAN INTENSITY!)}
 }
+\value{
+a list of extracted ion chromatograms that can be read 
+by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}}
+}
 \description{
 Extract EICs from multiple files for multiple features.
 }

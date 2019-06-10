@@ -10,5 +10,6 @@ getgauss(y, pval = 1)
 \item{y}{numeric() to fit the curve}
 }
 \description{
-fit a gauss curve into a curve (numeric vector). Note that results will be skewed if scanrate is low or heterogeneous (e.g. ddMS2 experiments).
+fit a gauss curve into a curve (numeric vector). Note that results will be skewed 
+if scanrate is low or heterogeneous (e.g. ddMS2 experiments).
 }

@@ -23,6 +23,9 @@
 #' reject any peaks with a signal-to-noise ratio than this (intensity range 
 #' within observed rt window, MAX/ MEAN INTENSITY!)
 #' 
+#' @return a list of extracted ion chromatograms that can be read 
+#' by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}}
+#' 
 #' @export
 multiEIC <- function (rawdata,
                         mz,
@@ -413,7 +416,8 @@ peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate =
 
 #' getgauss
 #' 
-#' fit a gauss curve into a curve (numeric vector). Note that results will be skewed if scanrate is low or heterogeneous (e.g. ddMS2 experiments).
+#' fit a gauss curve into a curve (numeric vector). Note that results will be skewed 
+#' if scanrate is low or heterogeneous (e.g. ddMS2 experiments).
 #' 
 #' @param y numeric() to fit the curve
 #' 
