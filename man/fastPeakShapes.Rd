@@ -7,14 +7,21 @@
 fastPeakShapes(rawdata, mz, ppm, rtw, workers = 1)
 }
 \arguments{
+\item{rawdata}{an xcmsRaw object}
+
 \item{mz}{numeric (): m/z values (same length as nrow(rtw)).}
 
 \item{ppm}{m/z width (+/- ppm from values defined in mz)}
 
 \item{rtw}{a data.frame with minimum (column 1) and maximum (column 2) retention time values (in seconds) in each row.}
 
-\item{rawfile}{an xcmsRaw object}
+\item{workers}{number of wprkers to use in parallel processing}
+}
+\value{
+numeric vector with peak quality estimates for each feature 
+defined by \code{mz} and \code{rt}
 }
 \description{
-Calculate peak quality for features in a feature table across a set of MS data files
+Calculate peak quality for features in a feature table across a set of MS data files.
+Will only try fitting a curve in the sample with highest intensity for each molecular feature.
 }

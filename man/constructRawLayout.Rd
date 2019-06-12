@@ -15,7 +15,7 @@ holding file paths and group names, respectively.}
  this should be the path of the working directory.}
 
 \item{msnExp}{if not NULL, must be an \code{OnDiskMSnExp} object,
-see \coe{details}}
+see \code{details}}
 }
 \value{
 a \code{rawLayout} object

@@ -9,7 +9,7 @@
 #'  (e.g. subdirectories of the working directory),
 #'   this should be the path of the working directory.
 #' @param msnExp if not NULL, must be an \code{OnDiskMSnExp} object,
-#'  see \coe{details}
+#'  see \code{details}
 #'  
 #' @return a \code{rawLayout} object
 #' 

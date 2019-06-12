@@ -2,24 +2,41 @@
 % Please edit documentation in R/Module_FindMS2scansModule.R
 \name{FindMS2ScansModule}
 \alias{FindMS2ScansModule}
+\alias{FindMS2ScansModuleUI}
 \title{FindMS2ScansModule}
 \usage{
 FindMS2ScansModule(input, output, session, values = reactiveValues(MSData
   = MSData, featureTables = featureTables), static = list(tooltip =
   "Find MS2 scans for all parent m/zs in feature table", label =
   "Find MS2 scans"))
+
+FindMS2ScansModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
 
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+}
+\value{
+If the server module for this Module returns something, it is described in \code{Details}.
 }
 \description{
-server module for saving Tables
+A one-button modue to enrich a Feature Table with information about available 
+MS2 scans for each molecular feature
+}
+\section{Functions}{
+\itemize{
+\item \code{FindMS2ScansModule}: server logic
+
+\item \code{FindMS2ScansModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

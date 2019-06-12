@@ -2,7 +2,7 @@
 #' 
 #' Plot density of a vector or matrix
 #' 
-#' @inherit MseekWidget
+#' @inherit MseekWidgets
 #' @param reactives list of arguments passed to \code{\link{densplot}}
 #' 
 #' @describeIn densPlotWidget server logic for densplotWidget

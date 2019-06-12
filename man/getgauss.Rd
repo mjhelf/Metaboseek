@@ -8,8 +8,16 @@ getgauss(y, pval = 1)
 }
 \arguments{
 \item{y}{numeric() to fit the curve}
+
+\item{pval}{if p.values of fit is larger than this, will return 0}
+}
+\value{
+a numeric fit estimate as returned by \code{\link[stats]{cor.test}()}
 }
 \description{
+NOTE: function is deprecated, use \code{\link{peakFitter}} where possible
+}
+\details{
 fit a gauss curve into a curve (numeric vector). Note that results will be skewed 
 if scanrate is low or heterogeneous (e.g. ddMS2 experiments).
 }

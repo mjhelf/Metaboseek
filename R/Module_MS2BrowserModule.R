@@ -156,9 +156,7 @@ MS2BrowserModule <- function(input,output, session,
                                                                                GlobalOpts = values$GlobalOpts),
                         MS2feed = specEngine,
                         tree = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_dot"]]}else{NULL}}),
-                        fragments = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_json"]]}else{NULL}}),
-                        
-                        keys = reactive({keys()}))
+                        fragments = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_json"]]}else{NULL}}))
   
   
   ####NETWORK RELATED

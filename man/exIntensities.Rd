@@ -4,8 +4,7 @@
 \alias{exIntensities}
 \title{exIntensities}
 \usage{
-exIntensities(rawfile = rawdata[[1]], mz = tb$mz, ppm = 5,
-  rtw = data.frame(rta[[1]]$rtmin - 5, rta[[1]]$rtmax + 5),
+exIntensities(rawfile, mz, ppm = 5, rtw = data.frame(0, 10),
   baselineSubtract = T, SN = NULL, areaMode = F)
 }
 \arguments{
@@ -20,6 +19,12 @@ exIntensities(rawfile = rawdata[[1]], mz = tb$mz, ppm = 5,
 \item{baselineSubtract}{subtract baseline when calculating intensities}
 
 \item{SN}{signal to noise ratio. If not NULL, all peaks with max/min peak intensity below this will be reported as intensity 0. Requires Baselinesubstraction to be off.}
+
+\item{areaMode}{if TRUE, will calculate peak areas rather than mean intensities}
+}
+\value{
+numeric vector with intensity values for all features defined by 
+\code{mz} and \code{rt} in \code{rawfile}
 }
 \description{
 Lightweight variant of multiEIC to extract average in a file, more suitable for large featuretables.

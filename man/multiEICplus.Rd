@@ -9,7 +9,12 @@ multiEICplus(adducts = c(0, 1, 2, 3), mz, rt, ...)
 \arguments{
 \item{adducts}{numeric() of mass shifts}
 
-\item{...}{all other arguments passed on to multiEIC}
+\item{...}{all other arguments passed on to \code{\link{multiEIC}()}}
+}
+\value{
+a list of extracted ion chromatograms that can be read 
+by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}},
+extended with EICs of adduct species
 }
 \description{
 get EICs for adducts, isotopes and neutral loss masses

@@ -1,25 +1,28 @@
 #' FeatureReportModule
 #' 
+#' Module for visualization of MS1 and MS2 spectra along with EICs, plus option 
+#' to plot them together with SIRIUS results in a pdf
 #' 
-#' server module for loading a Project Folder
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' 
+#' @param MS2feed  temporary solution to feed current MS2 scan in from MS2BrowserModule
+#' @param tree feed SIRIUS fragmentation tree in from MS2BrowserModule
+#' @param fragments feed SIRIUS fragmentation annotation for the MS2 scan
+#' 
+#' @return 
+#' Returns its internalValues
+#' 
+#' @describeIn FeatureReportModule server logic
 #' 
 #' @export 
 FeatureReportModule <- function(input,output, session,
                                    values = reactiveValues(MSData = MSData,
                                                            featureTables = featureTables,
                                                            GlobalOpts = GlobalOpts),
-                                MS2feed = NULL,
-                                tree = NULL,
-                                fragments = NULL,
-                             keys = reactive({keyin$keyd})
-){
+                                MS2feed = NULL,                                #TODO: simplify inputs
+                                tree = reactive({}),
+                                fragments = NULL){
   
   ns <- NS(session$ns(NULL))
   
@@ -340,13 +343,13 @@ FeatureReportModule <- function(input,output, session,
                            }
                          
                        }), 
-                       keys = reactive({keys()})#,
+                       keys = reactive({values$GlobalOpts$keyinput.keydown})#,
                       # static = list(title = "MS1 spectrum")
   )
   
   MS2spec <- callModule(Specmodule,"ms2spec", tag = ns("ms2spec"), 
                        set = reactive({MS2feed()}), 
-                       keys = reactive({keys()})
+                       keys = reactive({values$GlobalOpts$keyinput.keydown})
   )
   
   SelectMSGrouping <- callModule(SelectMSGroupingModule, "selectLayout",
@@ -390,10 +393,7 @@ FeatureReportModule <- function(input,output, session,
 }
 
 
-#' FeatureReportModuleUI
-#' 
-#' @param id id of the Module
-#' 
+#' @describeIn FeatureReportModule UI elements
 #' @export 
 FeatureReportModuleUI <- function(id){
   

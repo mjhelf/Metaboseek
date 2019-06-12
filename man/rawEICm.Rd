@@ -18,6 +18,9 @@ rawEICm(object, mzrange = numeric(), rtrange = numeric(),
 
 \item{viewermode}{True to change handling of out of range rt values for the Mseek viewer. DEPRECATED (always used)}
 }
+\value{
+a list with elements \code{scan} and \code{intensity}, representing intensity for an m/z range across scans
+}
 \description{
 EICs from an xcmsRaw object, modified version of xcms::rawEIC xcmsRaw method.
 Major difference: Handling of cases where no scan is in rt range.

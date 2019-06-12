@@ -4,8 +4,7 @@
 \alias{Parentsearch}
 \title{Parentsearch}
 \usage{
-Parentsearch(xcmsRaws, mz = c(499.11085), rt = c(366.65), ppm = 5,
-  rtw = 200)
+Parentsearch(xcmsRaws, mz, rt, ppm = 5, rtw = 200)
 }
 \arguments{
 \item{xcmsRaws}{list of xcmsRaw objects}
@@ -17,6 +16,9 @@ Parentsearch(xcmsRaws, mz = c(499.11085), rt = c(366.65), ppm = 5,
 \item{ppm}{parent mz tolerance in ppm}
 
 \item{rtw}{parent rt tolerance in seconds}
+}
+\value{
+a data.frame with metadata for MS2 scans that match the request
 }
 \description{
 Make a list of all MS2 scans with the defined parent masses at a given retention time

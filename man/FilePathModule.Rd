@@ -2,19 +2,22 @@
 % Please edit documentation in R/Module_FilePathModule.R
 \name{FilePathModule}
 \alias{FilePathModule}
+\alias{FilePathModuleUI}
 \title{FilePathModule}
 \usage{
 FilePathModule(input, output, session, filepaths = reactive({    
   .MseekOptions$filePaths }), label = "Select Folder",
   description = "Select Folder", displayFolder = F, selectFile = F,
   pattern = "")
+
+FilePathModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
 \item{filepaths}{Named character vector of parent folder locations}
 
@@ -23,7 +26,25 @@ FilePathModule(input, output, session, filepaths = reactive({
 \item{description}{button description on hover}
 
 \item{displayFolder}{show filepath (boolean)}
+
+\item{selectFile}{if TRUE, will show menu to select files instead of a folder}
+
+\item{pattern}{file pattern, see \code{\link[shinyFiles]{shinyFileChoose}()}}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+}
+\value{
+a reactivevalues object with one element, either \code{files} or \code{dir},
+specifying the selected files or folder
 }
 \description{
-module to find filepaths for select directory operations, can display just a button or a button with a displayof the filepath.
+module to find filepaths for select directory operations, can display just
+ a button or a button with a display of the filepath.
 }
+\section{Functions}{
+\itemize{
+\item \code{FilePathModule}: server logic
+
+\item \code{FilePathModuleUI}: UI elements
+}}
+

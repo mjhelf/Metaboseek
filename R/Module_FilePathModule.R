@@ -1,16 +1,22 @@
 #' FilePathModule
 #' 
 #' 
-#' module to find filepaths for select directory operations, can display just a button or a button with a displayof the filepath.
+#' module to find filepaths for select directory operations, can display just
+#'  a button or a button with a display of the filepath.
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
+#' @inherit MseekWidgets
+#' 
 #' @param filepaths Named character vector of parent folder locations
 #' @param label button label
 #' @param description button description on hover
 #' @param displayFolder show filepath (boolean)
+#' @param selectFile if TRUE, will show menu to select files instead of a folder
+#' @param pattern file pattern, see \code{\link[shinyFiles]{shinyFileChoose}()}
 #' 
+#' @return a reactivevalues object with one element, either \code{files} or \code{dir},
+#' specifying the selected files or folder
+#' 
+#' @describeIn FilePathModule server logic
 #' 
 #' @import shiny shinyFiles
 #' 
@@ -106,11 +112,7 @@ FilePathModule <- function(input, output, session,
   return(internalValues)
 }
   
-#' FilePathModuleUI
-#' 
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn FilePathModule UI elements
 #' @export
 FilePathModuleUI <- function(id){
   ns <- NS(id)
