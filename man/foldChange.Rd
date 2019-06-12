@@ -10,17 +10,21 @@ foldChange(mx, groups, ctrl = NULL, calc = "mean", topgroup = T,
 \arguments{
 \item{mx}{a matrix of numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied 
+by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
 
 \item{ctrl}{character() naming the control group(s)}
 
-\item{calc}{currently has to be "mean", compare rowMeans of one group vs. rowMeans of other groups (and optionally rowMeans of controls only)}
+\item{calc}{currently has to be "mean", compare rowMeans of one group vs. 
+rowMeans of other groups (and optionally rowMeans of controls only)}
 
 \item{topgroup}{if TRUE, return group with highest intensity for each feature}
 
-\item{maxFold}{if TRUE, make a column with maximum fold change between any two groups for each feature}
+\item{maxFold}{if TRUE, make a column with maximum fold change between 
+any two groups for each feature}
 
-\item{foldMaxK}{if not NULL, make column with fold change of highest group value over foldMaxK largest group value.}
+\item{foldMaxK}{if not NULL, make column with fold change of highest 
+group value over foldMaxK largest group value.}
 
 \item{foldmode}{if "complex", gives ratios between all groups}
 }

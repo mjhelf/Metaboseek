@@ -19,8 +19,12 @@ listMS2scans(mz, rt, ppm, rtw, MSData, rtMatch = F)
 
 \item{rtMatch}{assign MS2 scans only to the matching feature with the closest rt}
 }
+\value{
+a character vector
+}
 \description{
-Searches for MS2 scans with a given parent m/z and directly ceonverts the resulting table into a single string
+Searches for MS2 scans with a given parent m/z and directly converts the
+ resulting table into a single string
 }
 \details{
 Also, see \code{\link{Parentsearch}}

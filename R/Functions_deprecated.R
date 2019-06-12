@@ -233,6 +233,125 @@ specplot <- function (x=sc[,1],
     
 }
 
+
+#' quickMergeMS
+#'
+#'
+#' NOTE: This function is deprecated, use MassTools::mergeMS !
+#' 
+#' Merge MS spectra, best used with noise-free spectra. Will merge all peaks 
+#' that are EITHER within ppm OR within mzdiff range (mzdiff typically used 
+#' to allow larger ppm difference in low mz range)
+#'
+#' Replacement for mergeMS(..., mergeOnly = T)
+#' 
+#' @param speclist list of spectra (matrix with mz and intensity values)
+#' @param ppm min difference between peaks in ppm
+#' @param mzdiff min difference between peaks in m/z
+#' @param removeNoise if not Null, will remove peaks with intensities below this fraction of maximum intensity
+#' @param count if true, will count number of peaks that were merged into each 
+#' peak in the resulting spectrum (will return a 3-column matrix)
+#' 
+#' @return a merged mass spectrum as a matrix with mz and intensity values 
+#'
+#' @export
+quickMergeMS <- function(speclist, ppm =5, mzdiff = 0.0005,
+                         removeNoise = NULL, count = F){
+  
+  if(length(speclist) == 0){return(NULL)}
+  
+  if(is.list(speclist)){
+    aspec <- do.call(rbind,speclist)
+  }else{
+    aspec <- speclist
+    
+  }
+  
+  #lots of safeguards
+  if(is.null(aspec)){return(NULL)}
+  
+  
+  #remove 0 intensity peaks because they will produce NaN mz values downstream
+  
+  aspecsel <- aspec[,2] != 0
+  
+  if(sum(aspecsel) == 0){return(NULL)}
+  
+  if(sum(aspecsel) == 1){
+    
+    if(count){
+      res_mx <- t(as.matrix(c(aspec[aspecsel,], 1)))
+      colnames(res_mx) <- c("mz", "intensity", "count")
+      
+      return(res_mx)
+      
+    }else{
+      return(t(as.matrix(aspec[aspecsel,])))
+    }
+    
+  }
+  else{
+    aspec <- aspec[aspec[,2] != 0,]
+  }
+  
+  
+  if(is.null(aspec)){return(NULL)}
+  
+  
+  if(nrow(aspec) != 1){
+    aspec <- aspec[order(aspec[,1]),]
+  }
+  
+  
+  margins <- diff(aspec[,1])
+  
+  
+  margins_ppm <- margins/aspec[-nrow(aspec),1]/(1e-6)
+  
+  groups <- c(0, cumsum(!(margins < mzdiff | margins_ppm < ppm)))
+  
+  
+  res_mx <- sapply(unique(groups), function(g,ag,as, count){
+    
+    sel <- which(ag == g)
+    if(count){
+      
+      return(c(sum(as[sel,1]*as[sel,2])/sum(as[sel,2]), mean(as[sel,2]), length(sel)))
+      
+    }
+    return(c(sum(as[sel,1]*as[sel,2])/sum(as[sel,2]), mean(as[sel,2])))
+    
+  }, as = aspec, ag = groups, count)
+  
+  
+  
+  
+  res_mx <- t(res_mx)
+  if(count){
+    if(!is.null(removeNoise) && nrow(res_mx) > 1){
+      
+      res_mx <- matrix(res_mx[res_mx[,2] > removeNoise*max(res_mx[,2]),], ncol = 3)
+    }
+    colnames(res_mx) <- c("mz", "intensity", "count")
+    
+    return(res_mx)
+    
+    
+  }
+  if(!is.null(removeNoise) && nrow(res_mx) > 1){
+    
+    res_mx <- matrix(res_mx[res_mx[,2] > removeNoise*max(res_mx[,2]),], ncol = 2)
+  }
+  colnames(res_mx) <- c("mz", "intensity")
+  
+  return(res_mx)
+  
+}
+
+
+
+
+
 #' mergeMSold
 #' 
 #' Merge MS spectra by combining peaks that are within a ppm distance

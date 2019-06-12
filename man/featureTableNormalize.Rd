@@ -10,15 +10,23 @@ featureTableNormalize(mx, raiseZeros = NULL, log = NULL,
 \arguments{
 \item{mx}{a matrix of numeric (intensity) values}
 
-\item{raiseZeros}{if not NULL, values of 0 will be raised to a level defined by a character string. "min" will raise all zeros to the lowest non-zero value in mx.}
+\item{raiseZeros}{if not NULL, values of 0 will be raised to a level 
+defined by a character string. "min" will raise all zeros to the lowest
+ non-zero value in mx.}
 
 \item{log}{if not NULL, log10 will be applied to values in mx}
 
-\item{normalize}{if not NULL, column values will be normalized by column averages}
+\item{normalize}{if not NULL, column values will be normalized by 
+column averages}
 
 \item{threshold}{numeric(1).}
 
-\item{thresholdMethod}{if not NULL, removes all rows in mx in which no value is above threshold}
+\item{thresholdMethod}{if not NULL, removes all rows in mx in which 
+no value is above threshold}
+}
+\value{
+\code{mx}, normalized so that all columns have the same mean value 
+which is also the mean of all values in \code{mx}
 }
 \description{
 Function to normalize data in a matrix.

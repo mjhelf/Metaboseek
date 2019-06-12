@@ -9,6 +9,8 @@
 #' @param xcmsRawobject list of xcmsRaw objects
 #' @param SpectrumClass if TRUE, will return a list of Spectum class objects, 
 #' otherwise will return a list of matrices with mz and intensity values
+#' 
+#' @return a list of Spectrum1 or Spectrum2 objects
 #'
 #' @rdname getSpectra
 #' @export

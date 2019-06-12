@@ -375,9 +375,7 @@ MS2BrowserModule <- function(input,output, session,
       }, ignoreNULL = FALSE)
   
   
-  callModule(GetSiriusModule, "getSirius",
-             values = reactiveValues(MSData = values$MSData,
-                                     GlobalOpts = values$GlobalOpts),
+  callModule(GetSiriusWidget, "getSirius",
              reactives = reactive({
                
                

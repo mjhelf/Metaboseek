@@ -11,6 +11,9 @@ plotTree(tree, resolution = 2000, filename = NULL)
 
 \item{resolution}{resolution  of the image along its longest edge}
 }
+\value{
+plots a grViz- generated tree in an R plotting device
+}
 \description{
 plot a grViz- generated tree in an R plotting device
 }

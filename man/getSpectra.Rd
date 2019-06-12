@@ -25,6 +25,9 @@ otherwise will return a list of matrices with mz and intensity values}
 
 \item{scanlist}{as returned by makeScanlist2()}
 }
+\value{
+a list of Spectrum1 or Spectrum2 objects
+}
 \description{
 get a list of spectra using indices from the OnDiskMSnExp object
 }

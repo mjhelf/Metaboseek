@@ -84,13 +84,7 @@ SelectMS2Module <- function(input,output, session,
                    div(title = "search in entire RT range",
                        
                        checkboxInput(ns('rtcheck'), "entire RT range", value = T))
-            )#,
-            # column(3,
-            #        ShowSiriusModuleUI(ns("showSirius"))
-            # ),
-            # column(3,
-            #        GetSiriusModuleUI(ns("getSirius"))
-            # )
+            )
         )
     })
     
