@@ -94,7 +94,7 @@ TableAnalysisModule <- function(input,output, session,
   output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
                                                 choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{reactives()$fileGrouping$Group},
                                                 selected = if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups},
-                                                multiple = T)})
+                                                multiple = F)})
   observeEvent(input$selctrl,{
     if(!is.null(values$featureTables)){
       values$featureTables$tables[[values$featureTables$active]]$ctrlGroups <- input$selctrl}

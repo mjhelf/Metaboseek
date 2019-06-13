@@ -18,5 +18,4 @@ multittest(df = as.data.frame(mx), groups, ttest = T,
 }
 \description{
 Calculate per-row t-test between grouped columns of a data.frame.
-Note that for column groups with less than 2 members, a pseudo-ttest will be calculated via Mseek::ttestx to avoid throwing errors.
 }

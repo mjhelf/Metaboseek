@@ -12,7 +12,8 @@ featureTableNormalize(mx, raiseZeros = NULL, log = NULL,
 
 \item{raiseZeros}{if not NULL, values of 0 will be raised to a level 
 defined by a character string. "min" will raise all zeros to the lowest
- non-zero value in mx.}
+ non-zero value in mx - normalization is done after this step so that the 
+ zero-replacement values will ary across samples (which is needed for t-tests, etc.)}
 
 \item{log}{if not NULL, log10 will be applied to values in mx}
 

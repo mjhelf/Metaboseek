@@ -268,7 +268,8 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 #' @param mx a matrix of numeric (intensity) values
 #' @param raiseZeros if not NULL, values of 0 will be raised to a level 
 #' defined by a character string. "min" will raise all zeros to the lowest
-#'  non-zero value in mx.
+#'  non-zero value in mx - normalization is done after this step so that the 
+#'  zero-replacement values will ary across samples (which is needed for t-tests, etc.) 
 #' @param log if not NULL, log10 will be applied to values in mx
 #' @param normalize if not NULL, column values will be normalized by 
 #' column averages
@@ -347,13 +348,12 @@ featureCalcs <- function(df,
 
 #' foldChange
 #' 
-#' 
 #' calculate fold changes between grouped columns of a matrix
 #' 
-#' @param mx a matrix of numeric (intensity) values
+#' @param mx a matrix of positive numeric (intensity) values
 #' @param groups named list of intensity columns listed by group (as supplied 
 #' by $anagroupnames or $anagroupnames_norm of MseekFT objects)
-#' @param ctrl character() naming the control group(s)
+#' @param ctrl character() naming the control group
 #' @param calc currently has to be "mean", compare rowMeans of one group vs. 
 #' rowMeans of other groups (and optionally rowMeans of controls only)
 #' @param topgroup if TRUE, return group with highest intensity for each feature
@@ -361,9 +361,42 @@ featureCalcs <- function(df,
 #' any two groups for each feature
 #' @param foldMaxK if not NULL, make column with fold change of highest 
 #' group value over foldMaxK largest group value.
-#' @param foldmode if "complex", gives ratios between all groups
+#' @param foldmode if "complex", gives ratios between all groups (not recommended 
+#' nor documented)
 #' 
 #' @importFrom Biobase rowMax rowMin rowQ
+#' 
+#' @return data.frame with columns representing fold change information for 
+#' data in \code{mx}, see \code{Details}
+#' 
+#' @details 
+#' \code{GX} in the following table means that this column is generated for each 
+#' group in \code{groups}, with the group name as prefix.
+#' Columns in the returned data.frame:
+#' \itemize{
+#' \item \code{maxint} maximum intensity value across all samples
+#' \item \code{topgroup} maximum intensity value across all samples
+#' \item \code{maxfold} maximum intensity value across all samples
+#' \item \code{maxfoldoverK} (where K is an integer) fold change of Max 
+#' intensity over kth largest intensity across all samples
+#' \item \code{GX__minInt} minimum intensity value within a group
+#' \item \code{GX__meanInt} mean intensity value within a group
+#' \item \code{GX__foldOverRest} fold change of mean of intensity values in 
+#' this group over mean of intensities in all other groups
+#' \item \code{GX__minFold} fold change of MINIMUM intensity value in 
+#' this group over MAXIMUM intensity value across all other samples outside
+#'  of this group
+#' \item \code{GX__minFoldMean} fold change of MEAN intensity value in 
+#' this group over MAXIMUM intensity value across all other samples outside
+#'  of this group
+#' \item \code{GX__foldOverCtrl} fold change of mean of intensity values in 
+#' this group over mean of intensities in control group
+#' \item \code{GX__minFoldOverCtrl} fold change of MINIMUM intensity value in 
+#' this group over MAXIMUM intensity value in control group
+#' \item \code{best_minFold} Highest minFold value found across all groups
+#' \item \code{best_minFoldMean} Highest minFoldMean value found across all groups
+#' \item \code{best_minFoldCtrl} Highest minFoldOverCtrl value found across all groups
+#' }
 #'    
 #' @export
 foldChange <- function(mx,
@@ -381,6 +414,8 @@ foldChange <- function(mx,
     mat[is.na(mat)] <- replacement
     return(mat)
   }
+  
+  if(length(ctrl) > 1){simpleError("Cannot use multiple control groups")}
   
   out <- data.frame(pholder=integer(nrow(mx)))   
   out$maxint <- if(ncol(mx)==1){mx}else{rowMax(mx)}
@@ -474,7 +509,7 @@ foldChange <- function(mx,
 #' 
 #' 
 #' Calculate per-row t-test between grouped columns of a data.frame.
-#' Note that for column groups with less than 2 members, a pseudo-ttest will be calculated via Mseek::ttestx to avoid throwing errors.
+#' 
 #' 
 #' @param df a data.frame with numeric (intensity) values
 #' @param groups named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
@@ -503,11 +538,8 @@ multittest <- function (df = as.data.frame(mx),
        # sdev2 <- sapply(split(df[,i],seq(nrow(df))),sd)/rowMeans(as.matrix(df[,i]))
         sdev[which(is.na(sdev))] <-0 #if there is only one data point in a line, sd returns 0
         
-        if(ttest){if (min(length(i),length(noni)) > 1){
-            pval <- mttest(x=df[,i],y=df[,noni])}
-            else{ pval <- sapply(as.list(data.frame(t((df[,c(i,noni)])))),
-                                 ttestx,calc=1,over=c(2:(length(i)+length(noni))))
-            pval[which(pval>0.5)] <- 1-pval[which(pval>0.5)]}
+        if(ttest){
+            pval <- mttest(x=df[,i],y=df[,noni])
             padj <- p.adjust(pval, method = adjmethod)}
         
         
@@ -534,7 +566,6 @@ multittest <- function (df = as.data.frame(mx),
 #' @param x numeric vector
 #' @param y numeric vector
 #'  
-#' @export
 mttest <- function (x,y){
     
     if(nrow(x)==1){
@@ -560,48 +591,9 @@ mttest <- function (x,y){
 #' 
 #' @importFrom stats t.test
 #'  
-#' @export
 sttest <- function(out=NA,...){
     res <-try(t.test(...), silent = T)
     if(is(res,"try-error")){return(out)}else{return(res)}
-}
-
-#' ttestx
-#' 
-#' Upper or Lower Tail Test of Population Mean with Unknown Variance
-#'  
-#' @param x numeric vector
-#' @param ltail TRUE or FALSE, passed on as lower.tail to stats::pt
-#' @param over indexes of values in x to be used as population
-#' @param calc indexes of values in x representing the hypothesized upper bond of population mean
-#' 
-#' @importFrom stats sd
-#'  
-#' @export
-ttestx <- function(x=c(1,2,2,3,3,3,4,4,4,4,4,5,5,5,6,6,7) #input vector
-                   , ltail=T,
-                   over= NULL,
-                   calc = NULL){
-    #http://www.r-tutor.com/elementary-statistics/hypothesis-testing/upper-tail-test-population-mean-unknown-variance
-    
-    if (is.null(over)){over <- c(1:length(x))} 
-    if (is.null(calc)){calc <- c(1:length(x))} 
-    
-    
-    m <- mean(x[over])
-    s <-sd(x[over])
-    n <- length(x[over])
-    
-    #test statistic
-    fx <- function(x) (m-x)/(s/sqrt(n))
-    t <- sapply(x[calc], fx )
-    
-    #ttest
-    fy <- function(x) pt(x, df=n-1, lower.tail = ltail)
-    pvals <- sapply(t, fy)
-    
-    return(pvals)
-    
 }
 
 #' MosCluster

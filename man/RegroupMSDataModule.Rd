@@ -2,25 +2,38 @@
 % Please edit documentation in R/Module_RegroupMSDataModule.R
 \name{RegroupMSDataModule}
 \alias{RegroupMSDataModule}
+\alias{RegroupMSDataModuleUI}
 \title{RegroupMSDataModule}
 \usage{
-RegroupMSDataModule(input, output, session, reactives = reactive({    
-  list() }), values = reactiveValues(MSData = MSData, projectData =
-  projectData), static = list())
+RegroupMSDataModule(input, output, session,
+  values = reactiveValues(MSData = MSData, projectData = projectData))
+
+RegroupMSDataModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
 
-\item{values}{Import data from the shiny session}
-
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+}
+\value{
+If the server module for this Module returns something, it is described in \code{Details}.
 }
 \description{
-server module to select and group intensity columns in Feature tables.
+Select and group MS files in plotting layouts
+}
+\section{Functions}{
+\itemize{
+\item \code{RegroupMSDataModule}: server logic
+
+\item \code{RegroupMSDataModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -16,7 +16,6 @@ MainPlotContainer <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   
- # RegroupMS <- 
       callModule(RegroupMSDataModule, "regroupms",
                           values = reactiveValues(MSData = values$MSData,
                                                   projectData = values$projectData))
