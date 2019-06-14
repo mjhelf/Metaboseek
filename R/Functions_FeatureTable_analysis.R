@@ -516,93 +516,85 @@ foldChange <- function(mx,
 #' @param ttest if TRUE, ttest will be calculated
 #' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
 #'  
-#' @importFrom stats p.adjust
+#' @importFrom stats p.adjust t.test
+#' 
+#' @return a data.frame with same number of rows as df, with coluns as described in \code{details}
+#'  
+#' @details columns in the export data.frame. All columns are generated for 
+#' each group defined in \code{groups},  where GX is replaced by the group name:
+#' \itemize{
+#' \item\code{GX__sdev} RELATIVE standard deviation (sd/mean) within the group
+#' \item\code{GX__pval} p value between this group and all samples in all other 
+#' groups, as calculated by \code{\link[stats]{t.test}()}
+#' \item\code{GX__pval_adj} p values, adjusted by the selected \code{adjmethod}
+#'  using \code{\link[stats]{p.adjust}()}
+#' }
 #'  
 #' @export
-multittest <- function (df = as.data.frame(mx),
+multittest <- function (df,
                     groups,
-                    ttest=T,
+                    ttest=TRUE,
                     adjmethod='bonferroni'){
    # withProgress(message = 'Please wait!', detail = "calculating pvalues", value = 0.03,{
 
     out = data.frame(pholder= numeric(nrow(df)))
     #calculate parameters for each group
     for (n in c(1:length(groups))){
-        noni <- unlist(groups)[which(!unlist(groups) %in% groups[[n]])]
+        
         i <- groups[[n]]
         
-       # meanint <- rowMeans(as.matrix(df[,i]))
-        #maxint <- rowMax(as.matrix(df[,i]))
-        #fold2 <- rowMeans(as.matrix(df[,i]))/rowMeans(as.matrix(df[,noni]))
-        sdev <- sapply(as.list(data.frame(t((df[,i])))),sd)/if(length(i)==1){df[,i]}else{rowMeans(as.matrix(df[,i]))}
-       # sdev2 <- sapply(split(df[,i],seq(nrow(df))),sd)/rowMeans(as.matrix(df[,i]))
-        sdev[which(is.na(sdev))] <-0 #if there is only one data point in a line, sd returns 0
+        sdev <- apply(df[,i],1,sd)/apply(df[,i],1,mean)
+        sdev[which(is.na(sdev))] <-0 #if all data point in a line are 0, sd returns 0
         
+        
+        
+    
         if(ttest){
-            pval <- mttest(x=df[,i],y=df[,noni])
+          if(length(groups) >1){
+            noni <- unlist(groups[-n])
+         
+          
+            pval <- apply(df[,c(i,noni)],1,function(x, i , noni){
+              tryCatch({
+                return(
+                t.test(as.numeric(x[i]), as.numeric(x[noni]))[["p.value"]]
+                )
+              },
+              error = function(e){
+                print(e)
+                return(NA)})
+              
+              
+            }, i = i, noni = noni)
+            
             padj <- p.adjust(pval, method = adjmethod)}
         
         
-        #options(scipen = 100, digits = 4)
-        
+
         out[[paste0(names(groups)[n],"__sdev")]] <- sdev
         
-        #options(scipen = -100, digits = 4)
         out[[paste0(names(groups)[n],"__pval")]] <- pval
         out[[paste0(names(groups)[n],"__pval_adj")]] <- padj
+        }else{
+         simpleError("Did not calculate p-value because only a single sample group is defined") 
+        }
     }
     
 
     return(out[,which(colnames(out) !="pholder")])
- #   })
 }
 
-
-
-#' mttest
-#' 
-#' helper function for multittest, calculating the p.value between two numeric vectors
-#'  
-#' @param x numeric vector
-#' @param y numeric vector
-#'  
-mttest <- function (x,y){
-    
-    if(nrow(x)==1){
-        xl <- x
-        yl <- y
-        return(sttest(x=xl,y=yl)[[3]])
-    }else{
-    
-    xl <- as.list(data.frame(t((x))))
-    yl <- as.list(data.frame(t((y))))
-    
-    listo <- mapply(sttest,x=xl, 
-                    y=yl, SIMPLIFY = F)
-    
-    return(sapply(listo,"[[",3))}}
-
-#' sttest
-#' 
-#' helper function for mttest, calculating the p.value between two numeric vectors
-#'  
-#' @param out what to return if there is an error in the call to t.test, defaults to NA
-#' @param ... arguments passed on to stats::t.test
-#' 
-#' @importFrom stats t.test
-#'  
-sttest <- function(out=NA,...){
-    res <-try(t.test(...), silent = T)
-    if(is(res,"try-error")){return(out)}else{return(res)}
-}
 
 #' MosCluster
 #' 
 #' Cluster a matrix
 #'  
 #' @param mx matrix (of intensity values)
-#' @param method "clara" (from the cluster package)
+#' @param method name of a function, defaults to "clara" (from the cluster package)
 #' @param ... additional arguments to the clustering method
+#' 
+#' @return a data.frame with one column, called \code{cluster__METHODNAME}, 
+#' where METHODNAME is the applied \code{method}
 #'
 #' @importFrom cluster clara
 #' 
@@ -612,19 +604,25 @@ MosCluster <- function(method = "clara",
   #requireNamespace("cluster")
   res <- do.call(paste0(method), list(...))
   
-  return(data.frame(cluster__clara = res$clustering))
+  res <- data.frame(col1 = res$clustering)
+  colnames(res) <- paste0("cluster__",method)
   
+  return(res)
 }    
 
-#' multittest
+#' MseekAnova
 #' 
 #' 
-#' Calculate per-row one-way ANOVA between grouped columns of a data.frame. NOTE: Equal variance is not assumed (uses stats::oneway.test)
+#' Calculate per-row one-way ANOVA between grouped columns of a data.frame. 
+#' NOTE: Equal variance is not assumed (uses stats::oneway.test)
 #' Returns NaN in cases where one group has all equal values (no variance), 
 #' 
 #' @param df a data.frame with numeric (intensity) values
-#' @param groups named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
-#'  
+#' @param groups named list of intensity columns listed by group 
+#' (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
+#' 
+#' @return a data.frame with one column, called \code{ANOVA__pvalue}
+#' 
 #' @importFrom stats oneway.test
 #'  
 #' @export
@@ -645,7 +643,7 @@ MseekAnova <- function(df, groups){
   grp <- as.factor(grp)
   
   pvals <- apply(ints,1,function(x,grp){
-    oneway.test(x ~ grp, var.equal = F)$p.value
+    oneway.test(x ~ grp, var.equal = FALSE)$p.value
     
   }, grp)
   
@@ -658,9 +656,28 @@ MseekAnova <- function(df, groups){
 #' Find m/z matches for each item in a Feature Table in a database.
 #'
 #' @param df data.frame that contains a mz column
-#' @param db data.frame that contains the compound database and at least columns mz and id. Can also be a character vector of .csv file names (will be combined into a single list for the search, with duplicate lines removed)
+#' @param db data.frame that contains the compound database and at least 
+#' columns mz and id. Can also be a character vector of .csv file paths 
+#' (will be combined into a single list for the search, with duplicate 
+#' lines removed)
 #' @param ppm ppm mz tolerance
-#' @param mzdiff maximum mz difference. NOTE: either ppm OR mzdiff condition has to be met
+#' @param mzdiff maximum mz difference. NOTE: either ppm OR mzdiff 
+#' condition has to be met
+#'
+#' @return a data.frame with the same number of rows as \code{df} and columns
+#'  as described in \code{details}
+#'
+#' @details columns in the resulting data.frame contain hits for each entry 
+#' (row) in \code{df} :
+#' \itemize{
+#' \item\code{mzMatches} identity of the seach hits in \code{db}, taken from 
+#' the \code{id} column of each \code{db}
+#' \item\code{mzMatchError} ppm error, based on difference between db$mz and df$mz for each search hit.
+#'}
+#' All other columns defined in any \code{db} file are added as well with 
+#' the prefix \code{mzMatch_}. If there are multiple hits across the \code{db}
+#'  files, they will be separated by "|" within each column (including 
+#'  \code{mzMatches} and \code{mzMatchError})
 #'
 #' @importFrom data.table rbindlist
 #'

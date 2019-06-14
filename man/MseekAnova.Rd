@@ -2,16 +2,21 @@
 % Please edit documentation in R/Functions_FeatureTable_analysis.R
 \name{MseekAnova}
 \alias{MseekAnova}
-\title{multittest}
+\title{MseekAnova}
 \usage{
 MseekAnova(df, groups)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+\item{groups}{named list of intensity columns listed by group 
+(as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+}
+\value{
+a data.frame with one column, called \code{ANOVA__pvalue}
 }
 \description{
-Calculate per-row one-way ANOVA between grouped columns of a data.frame. NOTE: Equal variance is not assumed (uses stats::oneway.test)
+Calculate per-row one-way ANOVA between grouped columns of a data.frame. 
+NOTE: Equal variance is not assumed (uses stats::oneway.test)
 Returns NaN in cases where one group has all equal values (no variance),
 }
