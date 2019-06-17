@@ -1,13 +1,12 @@
 #' SimplifyNetworkModule
 #' 
+#' A module to simplify molecular networks to aid visualization
 #' 
-#' server module for loading Tables
+#' @describeIn SimplifyNetworkModule server logic
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @return Returns its internalValues
 #' 
 #' @export 
 SimplifyNetworkModule <- function(input,output, session, values = reactiveValues(Networks = Networks),
@@ -152,6 +151,7 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
             hr(),
             
             fluidRow(
+              p("Merge Nodes functionality temporarily disabled until bugs are fixed. Selections will be ignored."),
               column(3, checkboxInput(ns("mergeCheck"),"Merge Nodes", value = F)),
               column(4, htmlOutput(ns("colSel1"))),
               column(2, div(title = "Minimum value for edges to merge",
@@ -230,7 +230,10 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
       res$tables$nodes$fixed__id <- res$tables$nodes[,1]
     }
        
-          if(input$mergeCheck){
+          ####TEMPORARILY DISABLED
+          if(FALSE
+            #input$mergeCheck
+            ){
             if(input$mergeCheck2){
     res <- list(tables = simplifyGraph(res$tables$nodes,
                                        res$tables$edges,
@@ -319,11 +322,7 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
   
   return(internalValues)
 }
-#' SimplifyNetworkModuleUI
-#' 
-#' UI module for load networking module
-#' 
-#' 
+#' @describeIn SimplifyNetworkModule UI elements
 #' @export
 SimplifyNetworkModuleUI <-  function(id){
   ns <- NS(id)

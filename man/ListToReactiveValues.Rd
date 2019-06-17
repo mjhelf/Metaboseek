@@ -9,6 +9,11 @@ ListToReactiveValues(ls)
 \arguments{
 \item{ls}{a list object}
 }
+\value{
+a \code{\link[shiny]{reactiveValues}} object
+}
 \description{
-recursively converts lists to reactiveValues
+recursively converts lists to reactiveValues, essentially the reverse of 
+\code{\link[shiny]{reactiveValuesToList}()}. Has to be called in a shiny
+ session.
 }

@@ -3,7 +3,10 @@
 #' plot detected peaks for each file in an EIC object
 #' 
 #' @param EIC a single EIC object (list item of multiEIC output)
-#' @param peaklist a peaklist, such as list items returned by find_peaks() (or its rbind product)
+#' @param peaklist a peaklist, such as list items returned by \code{find_peaks()} 
+#' (or its rbind product)
+#' 
+#' @return plots to the current plotting device
 #' 
 #' 
 plotpeaks <- function(EIC, peaklist){
@@ -47,15 +50,40 @@ plotpeaks <- function(EIC, peaklist){
 
 #' peakDetect
 #'
-#' more recent try at peak detection
+#' Peak detection using an algorithm modified from Ma et al.[1].
 #'
-#' @param trace numeric vector of intensity values. it is assumed that the data points were collected in regular intervals (problems may occur e.g. with variable scan rate due to ddMS2 experiments)
-#' @param SN factor by which the maximum of a peak has to be larger than its edges (start  and  end scan) in final filter step
-#' @param minwidth minimum width of a peak to not be thrown out in initial filter step
-#' @param localNoise window size for local noise level calculation - default 7 means data from each point plus/minus 3 scans is used
-#' @param localNoiseFactor  factor to adjust local noise level. can be negative to allow very small peaks
-#' @param globalNoiseFactor factor to adjust global noise level (based on entire trace). can be negative to allow very small peaks
-#' @param extend if true, will try to expand peak boundaries to include downstream tails that may have been cut of before. Aslo depends on local noise settings.
+#' @param trace numeric vector of intensity values. it is assumed that the 
+#' data points were collected in regular intervals (problems may occur e.g. 
+#' with variable scan rate due to ddMS2 experiments)
+#' @param SN factor by which the maximum of a peak has to be larger than its 
+#' edges (start  and  end scan) in final filter step
+#' @param minwidth minimum width of a peak to not be thrown out in 
+#' initial filter step
+#' @param localNoise window size for local noise level calculation - default 7 
+#' means data from each point plus/minus 3 scans is used
+#' @param localNoiseFactor  factor to adjust local noise level. can be negative 
+#' to allow very small peaks
+#' @param globalNoiseFactor factor to adjust global noise level (based on 
+#' entire trace). can be negative to allow very small peaks
+#' @param extend if true, will try to expand peak boundaries to include 
+#' downstream tails that may have been cut of before. Aslo depends on 
+#' local noise settings.
+#' 
+#' @references 
+#' \enumerate{
+#' \item Ma M, van Genderen A, Beukelman P (2005) Developing and Implementing Peak 
+#' Detection for Real-Time Image Registration. Proc 16th  Annu Work Circuits,
+#'  Syst Signal Process 4:641–652
+#'}
+#'
+#' @return a data.frame with detected peaks
+#' 
+#' @details Columns of the returned data.frame:
+#' \itemize{
+#' \item \code{max} index of position in trace with a peak maximum
+#' \item \code{start} index of peak start position in trace 
+#' \item \code{end} index of peak end position in trace 
+#' }
 #'
 #' @export
 peakDetect  <- function(trace,
@@ -102,20 +130,6 @@ peakDetect  <- function(trace,
   
   
   globalnoise <- (max(trace)+mean(trace))/100 + globalNoiseFactor*(sum(abs(trace-mean(trace)))/length(trace))
-  # print((max(trace)+mean(trace))/100)
-  # print(globalNoiseFactor*(sum(abs(trace-mean(trace)))/length(trace)))
-  
-  #define local noise levels
-  #noise1 <- runmed(trace, localNoise)*localNoiseSN
-  
-  # noise1 <- sapply(seq(length(allpeaks[,"max"])), function(n){
-  #    
-  #    localtrace <- trace[na.omit(seq(max(allpeaks[n,"start"]- localNoise, 1),     allpeaks[n,"end"]+ localNoise))]
-  # 
-  #    
-  #    return((max(localtrace)+mean(localtrace))/2 + localNoiseSN*(sum(abs(localtrace-mean(localtrace)))/length(localtrace)))
-  #    
-  #  })
   
   noise1 <- sapply(seq(length(trace)), function(n){
     
@@ -209,12 +223,22 @@ peakDetect  <- function(trace,
   return(goodpeaks)
 }
 
-#' findPeaks2
+#' find_peaks2
 #'
-#' Find peaks in a multiEIC output list item
+#' Find peaks in a multiEIC output list item, using \code{\link{peakDetect}()}
 #' 
 #' @param EIC an EIC output item
-#' @param ... arguments passed to peakDetect()
+#' @param ... arguments passed to \code{\link{peakDetect}()}
+#' 
+#' @return a data.table with information on peak position in EICs
+#' 
+#' @details Columns of the returned data.table:
+#' \itemize{
+#' \item \code{rt} retention time of peak maximum
+#' \item \code{rtmin} retention time of peak start position in trace 
+#' \item \code{rtmax} retention time  of peak end position in trace 
+#' \item \code{file} file names 
+#' }
 #'
 #' @export
 find_peaks2 <- function(EIC, ...){
@@ -243,13 +267,29 @@ find_peaks2 <- function(EIC, ...){
 
 #' mergepeaks2
 #' 
-#' merge peaks in a peaklist
+#' merge peaks in a peaklist within a file or across multiple files
 #' 
-#' @param pl a peaklist, such as list items returned by find_peaks() (or its rbind product)
+#' @param pl a peaklist, such as list items returned by \code{\link{findPeaks2}()}
 #' @param rttol retention time tolerance in seconds to merge peaks
 #' @param minint minimum intensity for a peak to be retained (before merging)
-#' @param minrelint minimum intensity of a peak to be retained (before merging), relative to largest peak
+#' @param minrelint minimum intensity of a peak to be retained (before merging),
+#'  relative to largest peak
 #' @param topN number of highest intensity peaks retained after merging
+#' 
+#' @return a data.frame with information on peak position in EICs
+#' 
+#' @details Columns of the returned data.table:
+#' \itemize{
+#' \item \code{rt} retention time of peak maximum, 
+#'  average across merged peaks, weighted by peak intensity
+#' \item \code{rtmin} retention time of peak start, 
+#'  average across merged peaks, weighted by peak intensity
+#' \item \code{rtmax} retention time of peak end, 
+#'  average across merged peaks, weighted by peak intensity
+#'  \item \code{maxint} maximum intensity of peak
+#' \item \code{file} file names, separated by "|"
+#' }
+#'
 #' 
 #' @export
 mergepeaks2 <- function(pl,
@@ -326,11 +366,17 @@ mergepeaks2 <- function(pl,
 
 #' getpeaks2
 #' 
-#' find and then merge peaks for an EIC object. wrapper function for find_peaks and mergepeaks
+#' find and then merge peaks for an EIC object. wrapper function for
+#'  \code{\link{find_peaks2}()} and \code{\link{mergepeaks2}()}
 #' 
 #' @param EIC a single EIC object (list item of multiEIC output), or a list of EIC items (multiEIC output)
-#' @param findProps arguments passed to find_peaks
-#' @param mergeProps arguments passed to mergepeaks
+#' @param findProps named list of arguments passed to \code{\link{find_peaks2}()}
+#' @param mergeProps named list of arguments passed to \code{\link{mergepeaks2}()}
+#' 
+#' @return a data.frame with information on peak position in EICs, or a list of 
+#' such data.frames if \code{EIC} is a list of EIC matrices (e.g. EICs for multiple mz values)
+#' 
+#' @inherit mergepeaks2
 #' 
 #' 
 #' @export
@@ -345,7 +391,6 @@ getpeaks2 <- function(EIC, findProps = list(SN = 1,
   if(is.matrix(EIC)){
     
     outp <- do.call(find_peaks2, c(list(EIC = EIC), findProps))
-    #print(outp)
     return(do.call(mergepeaks2, c(list(pl = outp),mergeProps)))
     
   }else{
@@ -358,12 +403,18 @@ getpeaks2 <- function(EIC, findProps = list(SN = 1,
 
 #' makeRTlist2
 #' 
-#' find and then merge peaks, given a set of mz values in a dataframe and a set of xcmsRaw objects
+#' find and then merge peaks, given a set of mz values in a dataframe 
+#' and a set of xcmsRaw objects. Wrapper for \code{\link{getpeaks2}()}.
+#' 
+#' @return a data.frame like \code{\link{getpeaks2}()}, that will also retain 
+#' the \code{mz} column of the input \code{df}, and optionally additional as 
+#' defined in \code{retainColumns}.
 #' 
 #' @param df a data.frame that contains a mz column with mz values of interest
 #' @param rawdata a list of xcmsRaw objects
 #' @param ppm ppm tolerance for EIC construction
-#' @param retainColumns keep and copy these columns from the original df when making the result data.frame
+#' @param retainColumns keep and copy these columns from the original df when 
+#' making the result data.frame
 #' @param ... arguments passed to getpeaks2()
 #' @importFrom data.table is.data.table rbindlist
 #' 
@@ -384,7 +435,8 @@ makeRTlist2 <- function(df, rawdata, ppm = 5, retainColumns = NULL, ...){
   allpeaks <- getpeaks2(aEICs, ...)
   
   
-  return(as.data.frame(data.table::rbindlist(lapply(seq(nrow(df)), function(i, df, allpeaks, retainColumns, ppm){
+  return(as.data.frame(data.table::rbindlist(
+    lapply(seq(nrow(df)), function(i, df, allpeaks, retainColumns, ppm){
     
     if(nrow(allpeaks[[i]]) > 0){
       

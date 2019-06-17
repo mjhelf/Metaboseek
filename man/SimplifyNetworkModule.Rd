@@ -2,23 +2,41 @@
 % Please edit documentation in R/Module_SimplifyNetworkModule.R
 \name{SimplifyNetworkModule}
 \alias{SimplifyNetworkModule}
+\alias{SimplifyNetworkModuleUI}
 \title{SimplifyNetworkModule}
 \usage{
 SimplifyNetworkModule(input, output, session,
   values = reactiveValues(Networks = Networks), reactives = reactive({ 
      list(activeNetwork = NULL) }))
+
+SimplifyNetworkModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
-\item{tag}{id to be used in ns()}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
 
-\item{set}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module for loading Tables
+A module to simplify molecular networks to aid visualization
+}
+\section{Functions}{
+\itemize{
+\item \code{SimplifyNetworkModule}: server logic
+
+\item \code{SimplifyNetworkModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

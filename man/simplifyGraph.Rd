@@ -9,10 +9,16 @@ simplifyGraph(nodes, edges, mergebyedges)
 \arguments{
 \item{nodes}{a node table}
 
-\item{edges}{an edge table with "from" and "to" as the first two columns. "From" and "to" have to refer to rownumbers of nodes.}
+\item{edges}{an edge table with "from" and "to" as the first two columns. 
+"From" and "to" have to refer to rownumbers of nodes.}
 
-\item{mergebyedges}{indices by of those edges in edges that link two nodes that should be joined}
+\item{mergebyedges}{indices by of those edges in edges that link 
+two nodes that should be joined}
 }
 \description{
-Assign a color from a range of colors to all values in a numeric vector (datarange). NOTE: Edges are expected to not have a direction.
+Assign a color from a range of colors to all values in a numeric vector 
+(datarange). NOTE: Edges are expected to not have a direction.
+}
+\details{
+TODO: Debug and simplify this function
 }

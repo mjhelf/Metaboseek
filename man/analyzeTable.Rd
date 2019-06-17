@@ -4,8 +4,7 @@
 \alias{analyzeTable}
 \title{analyzeTable}
 \usage{
-analyzeTable(df = tab1$df, intensities = tab1$intensities,
-  groups = tab1$anagroupnames, analyze = c("Basic analysis",
+analyzeTable(df, intensities, groups, analyze = c("Basic analysis",
   "clara_cluster", "t-test", "Peak shapes", "Fast peak shapes",
   "PCA features", "PCA samples", "mzMatch"), normalize = T,
   useNormalized = T, logNormalized = F, MSData = NULL, ppm = 5,

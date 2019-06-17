@@ -61,7 +61,7 @@ MS2BrowserModule <- function(input,output, session,
              ShowSiriusModuleUI(ns("showSirius"))
       ),
       column(3,
-             GetSiriusModuleUI(ns("getSirius"))
+             GetSiriusWidgetUI(ns("getSirius"))
       )
     )
   })

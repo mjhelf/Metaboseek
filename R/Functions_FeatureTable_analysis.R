@@ -28,8 +28,8 @@
 #'
 #' @importFrom stats prcomp 
 #'
-analyzeTable <- function(df = tab1$df, intensities = tab1$intensities,
-                         groups = tab1$anagroupnames,
+analyzeTable <- function(df, intensities,
+                         groups,
                          analyze = c("Basic analysis", "clara_cluster",
                                      "t-test", "Peak shapes",
                                      "Fast peak shapes", "PCA features",

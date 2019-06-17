@@ -13,10 +13,17 @@ makeRTlist2(df, rawdata, ppm = 5, retainColumns = NULL, ...)
 
 \item{ppm}{ppm tolerance for EIC construction}
 
-\item{retainColumns}{keep and copy these columns from the original df when making the result data.frame}
+\item{retainColumns}{keep and copy these columns from the original df when 
+making the result data.frame}
 
 \item{...}{arguments passed to getpeaks2()}
 }
+\value{
+a data.frame like \code{\link{getpeaks2}()}, that will also retain 
+the \code{mz} column of the input \code{df}, and optionally additional as 
+defined in \code{retainColumns}.
+}
 \description{
-find and then merge peaks, given a set of mz values in a dataframe and a set of xcmsRaw objects
+find and then merge peaks, given a set of mz values in a dataframe 
+and a set of xcmsRaw objects. Wrapper for \code{\link{getpeaks2}()}.
 }

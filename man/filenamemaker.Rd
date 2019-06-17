@@ -9,8 +9,14 @@ filenamemaker(projectName, FT)
 \arguments{
 \item{projectName}{ProjectName used as prefix}
 
-\item{FT}{Mseek's featureTable reactiveValues (or a list with same structure)}
+\item{FT}{Mseek's featureTable reactiveValues, as returned by 
+\code{\link{FeatureTable}(values)} (or a list with same structure)}
+}
+\value{
+a character string with an informative filename that includes 
+filter criteria
 }
 \description{
+TODO: reimplement this
 Generate a filename from project name and filter criteria
 }

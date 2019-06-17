@@ -9,7 +9,11 @@ plotpeaks(EIC, peaklist)
 \arguments{
 \item{EIC}{a single EIC object (list item of multiEIC output)}
 
-\item{peaklist}{a peaklist, such as list items returned by find_peaks() (or its rbind product)}
+\item{peaklist}{a peaklist, such as list items returned by \code{find_peaks()} 
+(or its rbind product)}
+}
+\value{
+plots to the current plotting device
 }
 \description{
 plot detected peaks for each file in an EIC object

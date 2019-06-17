@@ -1,6 +1,3 @@
-#library(Hmisc)
-
-
 #' EICgeneral
 #' 
 #' wrapper function to plot multiple EICs
@@ -249,11 +246,6 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   
   
 }
-
-
-
-
-
 
 
 #' EICtitles

@@ -1,12 +1,15 @@
 #' ListToReactiveValues
 #' 
-#' recursively converts lists to reactiveValues
+#' recursively converts lists to reactiveValues, essentially the reverse of 
+#' \code{\link[shiny]{reactiveValuesToList}()}. Has to be called in a shiny
+#'  session.
 #' 
 #' @param ls a list object
 #' 
-#' @import shiny
+#' @importFrom shiny reactiveValues is.reactivevalues
 #' 
-#' @export 
+#' @return a \code{\link[shiny]{reactiveValues}} object
+#' 
 ListToReactiveValues <- function(ls){
   
   #note: 
@@ -26,11 +29,13 @@ ListToReactiveValues <- function(ls){
 
 #' checkFolders
 #'
-#' Looks for folders 
+#' Looks for folders as specified in \code{query}
 #' 
-#' @param query character vector with folders to search for, by default looks for drives in Windows file system
+#' @return a named character vector of the folders in \code{query} which exist.
+#' 
+#' @param query character vector with folders to search for,
+#'  by default looks for drives in Windows file system
 #'
-#' @export
 checkFolders <- function(query = paste0(LETTERS,":/")){
   
   out <- character(0)
@@ -46,13 +51,16 @@ checkFolders <- function(query = paste0(LETTERS,":/")){
 
 #' Make filenames for exported .csv or .pdf files
 #' 
+#' TODO: reimplement this
 #' Generate a filename from project name and filter criteria
 #' 
 #' @param projectName ProjectName used as prefix
-#' @param FT Mseek's featureTable reactiveValues (or a list with same structure)
+#' @param FT Mseek's featureTable reactiveValues, as returned by 
+#' \code{\link{FeatureTable}(values)} (or a list with same structure)
 #'
+#' @return a character string with an informative filename that includes 
+#' filter criteria
 #'
-#' @export
 filenamemaker <- function(projectName,
                           FT){
   
@@ -81,6 +89,7 @@ filenamemaker <- function(projectName,
 #' @param paths vector of paths
 #' @param delim folder delimiter
 #'
+#' @return sting with the common root folder of all supplied \code{paths}
 #'
 #' @export
 get_common_dir <- function(paths, delim = "/")
@@ -104,26 +113,35 @@ get_common_dir <- function(paths, delim = "/")
 
 #' Mseek.colors
 #' 
-#' custom color spectrum using color brewer Set1 colors plus topo.colors; good color discrimination up to n = 13
+#' custom color spectrum using color brewer Set1 colors plus topo.colors; 
+#' good color discrimination up to n = 13
 #' 
 #' @param n number of colors
 #' @param alpha transparency
 #' 
+#' @return a character vector representing \code{n} colors.
+#' 
 #' @export
 Mseek.colors<- function (n, alpha){
   
+  if(is.null(alpha)){
+    alphahex <- ""
+  }else{
   alphahex <- as.hexmode(as.integer(alpha*255))
   if(nchar(alphahex) == 1){alphahex <- paste0("0",alphahex)}
   alphahex <- toupper(alphahex)
-  base <- c("#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00","#FFFF33","#A65628","#F781BF","#999999","#1FFFB4","#000000")
+  }
+  
+  base <- c("#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00",
+            "#FFFF33","#A65628","#F781BF","#999999","#1FFFB4","#000000")
   
   
   
   if(n<=11){
     return(paste0(base[1:n],alphahex))
   }else{
-    add <- topo.colors(n = n-11, alpha = alpha)
-    return(c(paste0(base[1:11],alphahex),add))
+      extended.colrange <- topo.colors(n = n-11, alpha = alpha)
+    return(c(paste0(base[1:11],alphahex),extended.colrange))
   }
   
   
