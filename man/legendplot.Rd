@@ -7,7 +7,10 @@
 legendplot(...)
 }
 \arguments{
-\item{...}{all arguments passed on to legend}
+\item{...}{all arguments passed on to \code{\link[graphics]{legend}()}}
+}
+\value{
+calls a new \code{plot()} with a legend
 }
 \description{
 Plot a legend in an otherwise empty plot

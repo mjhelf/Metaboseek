@@ -10,5 +10,8 @@ reverselog_trans(base = exp(1))
 \item{base}{base of log}
 }
 \description{
-reverse log scale for ggplot, as described here: https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2
+reverse log scale for ggplot, as described in reference.
+}
+\references{
+https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2 , accessed on 2019-06-17
 }

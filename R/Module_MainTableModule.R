@@ -1,26 +1,41 @@
 #' MainTableModule
 #' 
+#' Main Feature Table viewer Module
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param set Import data from the shiny session
+#' @return returns its internalValues and modifies \code{\link{values}}
+#' @describeIn MainTableModule server logic
+#' 
+#' @details 
+#' \describe{
+#' \item{static}{
+#' \itemize{
+#' \item \code{heigth} height of the Table view in pixels
+#' \item \code{readOnly} if TRUE, no changes to table can be made from GUI
+#' \item \code{contextMenu} if TRUE, allow right click 
+#' \item \code{fixedColumnsLeft} number of columns to always show at the left 
+#' even when scrolling horizontally
+#' \item \code{invertReadOnly} character of column names for which to invert 
+#' the readOnly rule (e.g. only allow editing on comments column)
+#' \item \code{controls} show UI elements for filtering
+#' \item \code{format} a named list with elements \code{col} and \code{format}
+#' }
+#' 
+#' }
+#' }
 #' 
 #' @export 
-MainTableModule <- function(input,
-                            output,
-                            session,
+MainTableModule <- function(input, output, session,
                             values = reactiveValues(featureTables = featureTables,
                                                     GlobalOpts = GlobalOpts,
                                                     projectData = projectData),
                             static = list(height = 300,
-                                          readOnly = T,
-                                          contextMenu = T,
+                                          readOnly = TRUE,
+                                          contextMenu = TRUE,
                                           fixedColumnsLeft = 1,
                                           invertReadOnly = NULL,
-                                          controls = T,
+                                          controls = TRUE,
                                           format = list(col = NULL,
                                                         format = NULL))
 ){
@@ -75,19 +90,7 @@ MainTableModule <- function(input,
                  values$featureTables$tableSwitch,
                  values$featureTables$row_filters),{
                    
-                   # if(!is.null(input$maintable$changes$event) && input$maintable$changes$event == "afterRemoveRow"){
-                   #   
-                   #   values$featureTables$tables[[values$featureTables$active]]$df <- values$featureTables$tables[[values$featureTables$active]]$df[- internalValues$inpage[(input$maintable$changes$ind + 1) : (input$maintable$changes$ind + input$maintable$changes$ct)] ,]
-                   # }
-                   # 
-                   # if(!is.null(input$maintable$changes$event) && input$maintable$changes$event == "afterCreateRow"){
-                   #   
-                   #   values$featureTables$tables[[values$featureTables$active]]$df[(nrow(values$featureTables$tables[[values$featureTables$active]]$df) + 1):(nrow(values$featureTables$tables[[values$featureTables$active]]$df) + input$maintable$changes$ct),] <- NA
-                   # }
-                   
-                   # if(!is.null(values$featureTables$tableSwitch) && values$featureTables$tableSwitch){
-                   #   internalValues$liveView <- NULL
-                   # }
+                  
                    
                    #update the df with any possible changes before changing anything else
                    if(!is.null(input$maintable)
@@ -274,10 +277,7 @@ MainTableModule <- function(input,
   return(internalValues) 
 }
 
-#' MainTableModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn MainTableModule UI elements
 #' @export
 MainTableModuleUI <- function(id){
   

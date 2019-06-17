@@ -1,13 +1,12 @@
 #' MassShiftsModule
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module to select mass shifts to plot in EICs
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @describeIn MassShiftsModule server logic
+#' 
+#' @inherit MseekModules
+#' 
+#' @return Returns its internalValues
 #' 
 #' @export 
 MassShiftsModule <- function(input,output, session,
@@ -67,12 +66,7 @@ MassShiftsModule <- function(input,output, session,
   return(internalValues)
 }
 
-#' MassShiftsModuleUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
-#' 
+#' @describeIn MassShiftsModule UI elements
 #' @export
 MassShiftsModuleUI <- function(id){
   ns <- NS(id)

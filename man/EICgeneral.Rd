@@ -4,29 +4,29 @@
 \alias{EICgeneral}
 \title{EICgeneral}
 \usage{
-EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
-  glist = MSData$layouts[[MSData$active]]$grouping, cols = NULL,
-  colrange = MSData$layouts[[MSData$active]]$settings$colr,
-  transparency = MSData$layouts[[MSData$active]]$settings$alpha,
-  RTall = input$RTtoggle, TICall = input$TICtoggle,
-  rtw = MSData$layouts[[MSData$active]]$settings$rtw,
-  ppm = MSData$layouts[[MSData$active]]$settings$ppm,
-  rdata = MSData$data, pdfFile = file, leadingTIC = T, lw = 1,
-  adducts = c(0), cx = 1, midline = T, yzoom = 1,
+EICgeneral(rtmid, mzmid, glist, cols = NULL, colrange = "Mseek.colors",
+  transparency = 1, RTall = FALSE, TICall = FALSE, rtw = 30,
+  ppm = 5, rdata, pdfFile = "plotOutput.pdf", leadingTIC = T,
+  lw = 1, adducts = c(0), cx = 1, midline = T, yzoom = 1,
   RTcorrect = NULL, importEIC = NULL, globalYmax = NULL,
   subtitles = NULL, raise = F, relPlot = F, margins = NULL,
   ylabshift = 0, RescaleExclude = NULL)
 }
 \arguments{
-\item{rtmid}{vector of retention time values (not ranges)}
+\item{rtmid}{vector of retention time values (not ranges). If length >1, 
+multiple plots are called (multiple pages in pdf file)}
 
-\item{mzmid}{vector of mz values (not ranges)}
+\item{mzmid}{vector of mz values (not ranges). 
+Has to be same length as \code{rtmid}}
 
-\item{glist}{a named list of grouped file names (as supplied in $grouping of rawLayout objects)}
+\item{glist}{a named list of grouped file names 
+(as supplied in $grouping of rawLayout objects)}
 
-\item{cols}{integer, number of columns in plot. if NULL, grid can be defined externally}
+\item{cols}{integer, number of columns in plot. if NULL, 
+grid can be defined externally}
 
-\item{colrange}{character(1), color range function used for line colors}
+\item{colrange}{character(1), color range function used for line colors,
+OR a list of data.frames, see \code{Details}}
 
 \item{transparency}{numeric(1), alpha (range 0..1) for transparency of lines}
 
@@ -40,9 +40,11 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 
 \item{rdata}{named list of xcmsRaw objects}
 
-\item{pdfFile}{character - if not NULL, plotting result will be saved in a pdf file with this name.}
+\item{pdfFile}{character - if not NULL, plotting result will be saved in a 
+pdf file with this name.}
 
-\item{leadingTIC}{if TRUE, a TIC plot is made before the EIC plots (e.g. as first page of pdf file)}
+\item{leadingTIC}{if TRUE, a TIC plot is made before the EIC plots 
+(e.g. as first page of pdf file)}
 
 \item{lw}{line width for plot lines}
 
@@ -54,11 +56,14 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 
 \item{yzoom}{zoom factor into y-axis}
 
-\item{RTcorrect}{if not NULL, this RTcorr object will be used to adjust retention times.}
+\item{RTcorrect}{if not NULL, this RTcorr object will be used to 
+adjust retention times.}
 
-\item{subtitles}{subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL}
+\item{subtitles}{subtitles for each EIC, must be character of 
+same length as rtmid and mzmid or NULL}
 
-\item{raise}{if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.}
+\item{raise}{if TRUE, EIC will be plotted with y axis going to 
+-0.02*max(ylim) so that EICs with 0 intensity are visible.}
 
 \item{relPlot}{if TRUE, y-axis will show relative intensities}
 
@@ -66,10 +71,23 @@ EICgeneral(rtmid = combino()[, "rt"], mzmid = combino()[, "mz"],
 
 \item{ylabshift}{shift horizontal position of y axis label}
 
-\item{RescaleExclude}{exclude this group from rescaling, or NULL to use all}
+\item{RescaleExclude}{character(), exclude this group from rescaling, or NULL to use all}
 
 \item{exportmode}{if TRUE, $EIC list is exported along with $plot (as list)}
 }
+\value{
+sends a grouped EIC plot to the current plotting device, or 
+generates a .pdf file
+}
 \description{
 wrapper function to plot multiple EICs
+}
+\details{
+\describe{
+\item{colrange}{A named list with the same structure as \code{glist},
+but with a data.frame in each list element with row order corresponding to 
+items in the list elements of \code{glist} and columns \code{color} and \code{label},
+specifying the EIC color and legend label for each EIC trace.
+}
+}
 }

@@ -4,13 +4,11 @@
 \alias{EICplot}
 \title{EICplot}
 \usage{
-EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0,
-  max(unlist(EIClistItem[, "tic"]))), xlim = c(min(unlist(EIClistItem[,
-  "rt"])), max(unlist(EIClistItem[, "rt"])))/60,
-  legendtext = paste(sub("^([^.]*).*", "\\\\1",
-  basename(row.names(sEICs$EIClist[[1]])))),
-  colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha = 1),
-  heading = "test", relto = NULL, TIC = F, single = F,
+EICplot(EICs, cx = 1, ylim = c(0, max(unlist(EICs[[1]][, "tic"]))),
+  xlim = c(min(unlist(EICs[[1]][, "rt"])), max(unlist(EICs[[1]][,
+  "rt"])))/60, legendtext = paste(sub("^([^.]*).*", "\\\\1",
+  basename(row.names(EICs[[1]])))), colr = topo.colors(nrow(EICs[[1]]),
+  alpha = 1), heading = "test", relto = NULL, TIC = F, single = F,
   midline = 100, lw = 1, yzoom = 1, ylabshift = 0)
 }
 \arguments{
@@ -40,6 +38,9 @@ EICplot(EICs = sEICs$EIClist, cx = 1, ylim = c(0,
 
 \item{EIClistItem}{item from a list of EICs from METABOseek:multiEIC}
 }
+\value{
+sends a single EIC plot to the current plotting device
+}
 \description{
-generate one EIC plot for multiple files
+generate one EIC plot for multiple files in one plot window.
 }

@@ -19,6 +19,9 @@ addLines(EIClist = EICsAdducts, TIC = F,
 
 \item{liwi}{line width of plotted lines}
 }
+\value{
+plots EIC trace lines into the current plot window
+}
 \description{
 Helper function for EICplot to plot the lines of EICs into a PlottingWindow. 
 Mass shifts will be handled by plotting different line types
