@@ -3,6 +3,8 @@
 #' write an .ms file containing a spectrum to be exported to SIRIUS.
 #' will append additional spectrum to file if filename is that of an existing file.
 #' 
+#' @return Returns nothing, but writes a SIRIUS \code{.ms} file.
+#' 
 #' @param filename path of file to write to
 #' @param ms2 a matrix with columns mz and intensity
 #' @param parentmz numeric: parent ion m/z value
@@ -33,7 +35,8 @@ writeMS <- function(filename,
   
   write(paste(
     if(appending){"\n"}else{paste0('# Generated with MOSAiC version ',
-                                   packageVersion("METABOseek"),', timestamp: ', strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
+                                   packageVersion("METABOseek"),', timestamp: ',
+                                   strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
     paste0(">compound ", splashtag),
     paste0(">parentmass ", parentmz),
     if(!is.null(ion)){paste0(">ion ", ion)}else{paste0(">charge ", charge)},
@@ -52,7 +55,8 @@ writeMS <- function(filename,
       file = filename,
       append = T
     )
-  fwrite(data.table(ms1), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  fwrite(data.table(ms1), filename, append = T, sep = "\t",
+         row.names = F, col.names = F, quote = T, eol = "\n")
   }
   
   if(!is.null(ms2)){
@@ -69,7 +73,8 @@ writeMS <- function(filename,
       append = T
     )
   
-  fwrite(data.table(ms2[[n]]), filename, append = T, sep = "\t", row.names = F, col.names = F, quote = T, eol = "\n")
+  fwrite(data.table(ms2[[n]]), filename, append = T, sep = "\t", 
+         row.names = F, col.names = F, quote = T, eol = "\n")
     })
   }
   
@@ -82,7 +87,8 @@ writeMS <- function(filename,
 #' run SIRIUS externally for a list of ms2 spectra
 #' 
 #' @param outfolder output folder for the SIRIUS results
-#' @param ms2 a list (or list of lists) of ms2 spectra (matrices with columns mz and intensity)
+#' @param ms2 a list (or list of lists) of ms2 spectra 
+#' (matrices with columns mz and intensity), see \code{Details}
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
@@ -93,15 +99,22 @@ writeMS <- function(filename,
 #' @param moreOpts character with additional options to be passed to SIRIUS
 #' @param force force calculation, even if same results should exist according to indexfile
 #' 
-#' @details 
+#' @return Will cause SIRIUS to run a job and save its results in
+#'  a timestamped subfolder of  \code{outfolder}, and will register the job in
+#'  the \code{index.csv} file in \code{outfolder}.
 #' 
+#' @details
 #' \describe{
-#'    \item{ms2}{can be a list of matrices, or a list of list of matrices. In the latter case, the (optional) names of the nested list items are expected to be in the format "collisionXX", where XX denotes an integer collision energy.}
+#'    \item{ms2}{can be a list of matrices, or a list of list of matrices. 
+#'    In the latter case, the (optional) names of the nested list items are 
+#'    expected to be in the format "collisionXX", where XX denotes an integer 
+#'    collision energy.}
 #' }
 #' 
 #' @importFrom data.table fread fwrite
 #' @importFrom digest digest
 #' 
+#' @export
 runSirius <- function(outfolder,
                       ms1 = NULL,
                        ms2,
@@ -143,7 +156,11 @@ runSirius <- function(outfolder,
    newjobs$moreOpts = paste0(moreOpts, instrument)
    newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
    newjobs$METABOseek_sirius_revision = 2
-   newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision"),drop = F], 1, digest, algo = "xxhash64")
+   newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge",
+                                            "fingerid", "moreOpts",
+                                            "METABOseek_sirius_revision"),
+                                         drop = F], 1, digest,
+                                 algo = "xxhash64")
    
   
    indexfile <- file.path(outfolder, "index.csv")
@@ -157,9 +174,15 @@ runSirius <- function(outfolder,
       jobindex[,charCols] <- character(nrow(jobindex))
     }
     
-    checkme <- as.data.frame(rbindlist(list(old = jobindex, new = newjobs), fill = T))[,c("mz", "splash", "ion", "charge", "fingerid", "moreOpts", "METABOseek_sirius_revision")]
+    checkme <- as.data.frame(rbindlist(list(old = jobindex, 
+                                            new = newjobs),
+                                       fill = T))[,c("mz", "splash",
+                                                     "ion", "charge", 
+                                                     "fingerid", "moreOpts",
+                                                     "METABOseek_sirius_revision")]
     
-    #To avoid problems with m/z digits possibly not retained when exporting and reimporting of siriusIndex to/from index.csv
+    #To avoid problems with m/z digits possibly not retained when 
+    #exporting and reimporting of siriusIndex to/from index.csv
     checkme$mz <- round(checkme$mz, 4)
     
     dups <- duplicated.data.frame(checkme)[seq(nrow(jobindex)+1,nrow(checkme))]
@@ -212,13 +235,15 @@ runSirius <- function(outfolder,
     
   fwrite(newjobs,
          indexfile,
-         append = T, sep = ",", row.names = F, col.names = F, quote = T, eol = "\n")
+         append = T, sep = ",", row.names = F,
+         col.names = F, quote = T, eol = "\n")
   
   }else{
     
     fwrite(newjobs,
            indexfile,
-           append = F, sep = ",", row.names = F, col.names = T, quote = T, eol = "\n")
+           append = F, sep = ",", row.names = F,
+           col.names = T, quote = T, eol = "\n")
     
   }
    }
@@ -236,6 +261,33 @@ runSirius <- function(outfolder,
 #' 
 #' @importFrom data.table fread
 #' 
+#' @return Returns a list with information for a completed SIRIUS job
+#' that matches \code{splash} and \code{ts} in \code{outfolder}
+#' 
+#' @details Finds a result folder matching the search terms and reads 
+#' its contents.
+#' \itemize{
+#' \item \code{splash} copy of \code{splash}
+#' \item \code{timestamp} copy of \code{ts}
+#' \item \code{allfiles} character vector with all files in \code{outfolder}
+#' \item \code{summary} path of the \code{summary_sirius.csv} file
+#' \item \code{summary_expanded} data.frame read in from the 
+#' \code{summary_sirius.csv} file
+#' \item \code{annotations} list of all files in the \code{spectra} 
+#' subfolder of the result folder
+#' \item \code{trees_dot} list of all fragmentation tree \code{.dot} files
+#' \item \code{trees_json} list of all fragmentation tree \code{.json} files
+#' \item \code{summary_fingerid} path of the \code{summary_csi_fingerid.csv} 
+#' file
+#' \item \code{summary_fingerid_expanded} data.frame read in from the 
+#' \code{summary_csi_fingerid.csv} file
+#' \item \code{fingerids} list of all files in the \code{csi_fingerid} 
+#' subfolder of the result folder
+#' \item \code{fingerprints} list of all files in the \code{fingerprints} 
+#' subfolder of the result folder
+#' }
+#' 
+#' @export
 getSirius <- function(outfolder, splash, ts){
   
   res <- list()
@@ -255,31 +307,44 @@ getSirius <- function(outfolder, splash, ts){
   
   res[["allfiles"]] <- list.files(targetfolder, full.names = T, recursive = T)
   
-  res[["summary"]] <-  grep(paste0("summary_sirius.csv"),res[["allfiles"]],value = T)
+  res[["summary"]] <-  grep(paste0("summary_sirius.csv"),
+                            res[["allfiles"]],
+                            value = T)
   
   res[["summary_expanded"]] <-  as.data.frame(fread(res[["summary"]],
-                                           stringsAsFactors = F), stringsAsFactors = F)
+                                           stringsAsFactors = F),
+                                           stringsAsFactors = F)
   
-  res[["annotations"]] <-  list.files(file.path(dirname(res[["summary"]]), "spectra"), full.names = T, recursive = T)
+  res[["annotations"]] <-  list.files(file.path(dirname(res[["summary"]]),
+                                                "spectra"),
+                                      full.names = T, recursive = T)
   
   res[["trees_dot"]] <-  grep(".dot$",
-                              list.files(file.path(dirname(res[["summary"]]), "trees"),
+                              list.files(file.path(dirname(res[["summary"]]),
+                                                   "trees"),
                                          full.names = T, recursive = T),
                               value = T)
   
   res[["trees_json"]] <-  grep(".json$",
-                               list.files(file.path(dirname(res[["summary"]]), "trees"),
+                               list.files(file.path(dirname(res[["summary"]]),
+                                                    "trees"),
                                           full.names = T, recursive = T),
                                value = T)
   
-  res[["summary_fingerid"]] <-  grep(paste0("summary_csi_fingerid.csv"),res[["allfiles"]],value = T)
+  res[["summary_fingerid"]] <-  grep(paste0("summary_csi_fingerid.csv"),
+                                     res[["allfiles"]],value = T)
   
   res[["summary_fingerid_expanded"]] <-  as.data.frame(fread(res[["summary_fingerid"]],
-                                                    stringsAsFactors = F), stringsAsFactors = F)
+                                                    stringsAsFactors = F), 
+                                                    stringsAsFactors = F)
   
   
-  res[["fingerids"]] <-  list.files(file.path(dirname(res[["summary"]]), "csi_fingerid"), full.names = T, recursive = T)
-  res[["fingerprints"]] <-  list.files(file.path(dirname(res[["summary"]]), "fingerprints"), full.names = T, recursive = T)
+  res[["fingerids"]] <-  list.files(file.path(dirname(res[["summary"]]),
+                                              "csi_fingerid"),
+                                    full.names = T, recursive = T)
+  res[["fingerprints"]] <-  list.files(file.path(dirname(res[["summary"]]),
+                                                 "fingerprints"),
+                                       full.names = T, recursive = T)
   
   
   
@@ -289,10 +354,23 @@ getSirius <- function(outfolder, splash, ts){
 
 #' getSiriusTree
 #' 
-#' get additional SIRIUS results for a spectrum
+#' get additional SIRIUS results (fragmentation trees) for a spectrum
 #' 
-#' @param paths list generated by getSirius()
+#' @param paths list generated by \code{\link{getSirius}()}
 #' @param formula molecular formula prediction to get details for
+#' 
+#' @return Returns a named list with fragmentation tree objects for plotting,
+#'  see |code{Details}
+#' 
+#' @details
+#' \itemize{
+#' \item \code{annotations} the matching file from \code{spectra} subfolder 
+#' as data.frame
+#' \item \code{trees_dot} the matching \code{.dot} tree file, read in by 
+#' \code{DiagrammeR::grViz}
+#' \item \code{trees_json} the matching \code{.json} tree file, read in by 
+#' \code{jsonlite::read_json}
+#' }
 #' 
 #' @importFrom data.table fread
 #' @importFrom jsonlite read_json
@@ -301,27 +379,19 @@ getSiriusTree <- function(paths, formula){
   
   res <- list()
   
-  # res[["summary"]] <-  paths[["summary_expanded"]][which(paths[["summary_expanded"]]$formula == formula),]
-  # 
   res[["annotations"]] <-  as.data.frame(fread(grep(paste0("_",formula,"_"),
                                            paths[["annotations"]],
-                                           value = T), stringsAsFactors = F), stringsAsFactors = F)
+                                           value = T), stringsAsFactors = F),
+                                         stringsAsFactors = F)
   
   res[["trees_dot"]] <- DiagrammeR::grViz(grep(paste0("_",formula,"_"),
                                                paths[["trees_dot"]],
                                                value = T))
   
-  res[["trees_json"]] <-   read_json(grep(paste0("_",formula,"_"),
+  res[["trees_json"]] <-   jsonlite::read_json(grep(paste0("_",formula,"_"),
                                           paths[["trees_json"]],
                                           value = T))
-  # 
-  # res[["fingerids"]] <-  read.delim(grep(paste0("_",formula,"_"),
-  #                                        paths[["fingerids"]],
-  #                                        value = T), stringsAsFactors = F)
-  # 
-  # res[["fingerprints"]] <-  read.delim(grep(paste0("_",formula,"_"),
-  #                                           paths[["fingerprints"]],
-  #                                           value = T), stringsAsFactors = F)
+  
   return(res)
   
 }

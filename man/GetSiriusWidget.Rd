@@ -16,16 +16,21 @@ GetSiriusWidget(input, output, session, reactives = reactive({
 GetSiriusWidgetUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{reactives}{a reactive() returning a list of \code{\link{runSirius}()}
 parameters}
 
-\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \description{
 Widget that starts a SIRIUS analysis as specified in reactives({}, which will 

@@ -9,6 +9,9 @@ activeFT(x)
 \arguments{
 \item{x}{an MseekTree (reactivevalues) object}
 }
+\value{
+returns the ID (character(1)) of the currently active Feature Table
+}
 \description{
-returns the ID of the currently active Feature Table
+activeFT
 }

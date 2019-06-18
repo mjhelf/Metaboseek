@@ -7,22 +7,32 @@
 \usage{
 NetworkModule(input, output, session, values = reactiveValues(Networks =
   Networks), reactives = reactive({     list(active = T, highlights =
-  integer(0)) }), static = list(noSelection = T), keys)
+  integer(0)) }), static = list(noSelection = T), keys = reactive({    
+  "NO" }))
 
 NetworkModuleUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} expression with settings for this module. See \code{details}.}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
 
-\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+\item{keys}{\code{reactive({})} that reports the current key press}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \value{
 Returns its internalValues

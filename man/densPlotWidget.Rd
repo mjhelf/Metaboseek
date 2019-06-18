@@ -11,15 +11,20 @@ densplotWidget(input, output, session, reactives = reactive({     list()
 densplotModuleUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{reactives}{list of arguments passed to \code{\link{densplot}}}
 
-\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \description{
 Plot density of a vector or matrix

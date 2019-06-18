@@ -16,17 +16,23 @@ FilterModule(input, output, session,
 FilterModuleUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
 \item{initValues}{set initial values for input fields}
 
-\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \value{
 a reactivevalues object with its internalValues

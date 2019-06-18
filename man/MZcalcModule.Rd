@@ -2,22 +2,44 @@
 % Please edit documentation in R/Module_MZcalcModule.R
 \name{MZcalcModule}
 \alias{MZcalcModule}
+\alias{MZcalcModuleUI}
 \title{MZcalcModule}
 \usage{
 MZcalcModule(input, output, session,
   values = reactiveValues(featureTables = featureTables))
+
+MZcalcModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module for saving Tables
+Module for calculating mzs from molecular formulas in the FeatureTable
+}
+\section{Functions}{
+\itemize{
+\item \code{MZcalcModule}: Server logic
+
+\item \code{MZcalcModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

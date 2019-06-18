@@ -20,8 +20,13 @@ FeatureTable(x, ...) <- value
 For setter, will create a new Feature Table under this ID if ID does not exist, 
 otherwise will override or update the selected Feature Table}
 
-\item{replace}{replace the current Feature table with the given tableID? will update it if FALSE.}
+\item{replace}{replace the current Feature table with the given tableID? 
+If FALSE, will update instead.}
+}
+\value{
+An \code{MseekFT} object
 }
 \description{
-Getter and setter methods to retireve a Feature Table from \code{values}
+Getter and setter methods to retrieve or modify a Feature Table 
+(\code{MseekFT} object) from \code{values}
 }

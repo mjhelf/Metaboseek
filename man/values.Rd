@@ -16,7 +16,8 @@ contains objects related to feature tables
 \subsection{values$MSData}{
 contains object related to MS data
 \describe{
- \item{values$MSData$MS2.selectTable}{data.frame listing metadata for all MS2 spectra matching criteria}
+ \item{values$MSData$MS2.selectTable}{data.frame listing metadata for all 
+ MS2 spectra matching criteria}
  \item{values$MSData$MS2.selected}{list with three items:
  \itemize{
  \item{spectra:} list of selected MS2 spectra as matrices

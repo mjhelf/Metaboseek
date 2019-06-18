@@ -13,13 +13,17 @@ FeatureReportModule(input, output, session,
 FeatureReportModuleUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
 \item{MS2feed}{temporary solution to feed current MS2 scan in from MS2BrowserModule}
 
@@ -27,7 +31,9 @@ FeatureReportModuleUI(id)
 
 \item{fragments}{feed SIRIUS fragmentation annotation for the MS2 scan}
 
-\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \value{
 Returns its internalValues

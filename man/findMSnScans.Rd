@@ -16,9 +16,11 @@ findMSnScans(data, ...)
 \arguments{
 \item{data}{an OnDiskMSnExp or MseekValues (reactivevalues) object}
 
-\item{mz}{parentMZ value to search for. mz and rt can be vectors, but need to be of equal length}
+\item{mz}{parentMZ value to search for. mz and rt can be vectors,
+but need to be of equal length}
 
-\item{rt}{retention time to search for. mz and rt can be vectors, but need to be of equal length}
+\item{rt}{retention time to search for. mz and rt can be vectors,
+but need to be of equal length}
 
 \item{ppm}{mz tolerance in ppm}
 
@@ -28,7 +30,12 @@ findMSnScans(data, ...)
 
 \item{MSlevel}{which mz level to}
 }
+\value{
+a subset of the \code{data@featureData@data} data.frame matching
+the search criteria, with an additional \code{filename} column
+}
 \description{
 Get a list of MS scans based on parent m/z and retention time
-Will return all scans with parentMZ within mz +/- ppm OR mzwid, AND retentionTime within rt +/- rtwid.
+Will return all scans with parentMZ within mz +/- ppm OR mzwid,
+ AND retentionTime within rt +/- rtwid.
 }

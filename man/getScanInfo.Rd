@@ -7,13 +7,21 @@
 getScanInfo(file, number, data, type = c("acquisition", "ms1", "ms2"))
 }
 \arguments{
-\item{file}{character vector of MS data file basenames. Files must be loaded in data.}
+\item{file}{character vector of MS data file basenames.
+Files must be loaded in data.}
 
-\item{number}{scan for which to get metadata. Can be an acquisition number or an index of an ms1 or ms2 scan}
+\item{number}{scan for which to get metadata. Can be an acquisition 
+number or an index of an ms1 or ms2 scan}
 
-\item{data}{an MSnExp or OnDiskMSnExp object. NYI: If NULL, will assume that values$MSData$MSnExp is defined in parent environment}
+\item{data}{an MSnExp or OnDiskMSnExp object. NYI: If NULL, will assume 
+that values$MSData$MSnExp is defined in parent environment}
 
-\item{type}{specify what the scan number represents, either "acquisition", "ms1" or "ms2".}
+\item{type}{specify what the scan number represents, either 
+"acquisition", "ms1" or "ms2".}
+}
+\value{
+a subset of the \code{data@featureData@data} data.frame matching
+the search criteria, with an additional \code{filename} column
 }
 \description{
 get metadata for a scan or multiple scans

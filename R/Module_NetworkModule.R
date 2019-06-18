@@ -7,6 +7,7 @@
 #' @describeIn NetworkModule server logic
 #' 
 #' @inherit MseekModules
+#' @param keys \code{reactive({})} that reports the current key press
 #' 
 #' @return Returns its internalValues
 #' 
@@ -18,7 +19,7 @@ NetworkModule <- function(input,output, session,
                                                      )
                             }),
                           static = list(noSelection = T),
-                          keys
+                          keys = reactive({"NO"})
 ){
   
   ns <- NS(session$ns(NULL))

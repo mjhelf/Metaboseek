@@ -13,6 +13,34 @@ getSirius(outfolder, splash, ts)
 
 \item{ts}{timestamp to look for}
 }
+\value{
+Returns a list with information for a completed SIRIUS job
+that matches \code{splash} and \code{ts} in \code{outfolder}
+}
 \description{
 get SIRIUS results for a given spectrum
+}
+\details{
+Finds a result folder matching the search terms and reads 
+its contents.
+\itemize{
+\item \code{splash} copy of \code{splash}
+\item \code{timestamp} copy of \code{ts}
+\item \code{allfiles} character vector with all files in \code{outfolder}
+\item \code{summary} path of the \code{summary_sirius.csv} file
+\item \code{summary_expanded} data.frame read in from the 
+\code{summary_sirius.csv} file
+\item \code{annotations} list of all files in the \code{spectra} 
+subfolder of the result folder
+\item \code{trees_dot} list of all fragmentation tree \code{.dot} files
+\item \code{trees_json} list of all fragmentation tree \code{.json} files
+\item \code{summary_fingerid} path of the \code{summary_csi_fingerid.csv} 
+file
+\item \code{summary_fingerid_expanded} data.frame read in from the 
+\code{summary_csi_fingerid.csv} file
+\item \code{fingerids} list of all files in the \code{csi_fingerid} 
+subfolder of the result folder
+\item \code{fingerprints} list of all files in the \code{fingerprints} 
+subfolder of the result folder
+}
 }

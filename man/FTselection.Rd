@@ -9,11 +9,17 @@ FTselection(x, ...)
 \arguments{
 \item{x}{a MseekValues (reactivevalues) object}
 
-\item{liveView}{if TRUE, will get data from the liveView of the MainTable directly (default: FALSE)}
+\item{liveView}{if TRUE, will get data from the liveView of the 
+MainTable directly (default: FALSE)}
+}
+\value{
+a data.frame that is a subset of \code{FeatureTable(x)$df}
 }
 \description{
 get the rows that are currently selected in MainTable window.
-Note: by default, will get its data from the underlying Feature Table,
+}
+\details{
+By default, will get its data from the underlying Feature Table,
  not using changes (such as comments) made immediately prior to selection, 
  but including all columns, including those not visible in the current table view.
 }

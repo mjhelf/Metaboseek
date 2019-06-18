@@ -5,6 +5,8 @@
 #'  For setter, will create a new Feature Table under this ID if ID does not exist, 
 #'  otherwise will override or update the selected Feature Table
 #' 
+#' @return An \code{MseekFT} object
+#' 
 #' @rdname FeatureTable
 #' 
 #' @export
@@ -37,14 +39,15 @@ FeatureTable.reactivevalues <- function(x, update = F, tableID = NULL){
 
 #' FeatureTable<-
 #'
-#' Getter and setter methods to retireve a Feature Table from \code{values} 
+#' Getter and setter methods to retrieve or modify a Feature Table 
+#' (\code{MseekFT} object) from \code{values} 
 #'
 #'
 #' @param x the \code{values} object
 #' @param value the value that gets set
-#' @param replace replace the current Feature table with the given tableID? will update it if FALSE.
+#' @param replace replace the current Feature table with the given tableID? 
+#' If FALSE, will update instead.
 #'
-#'  
 #' @rdname FeatureTable
 #'
 #' @export
@@ -127,7 +130,7 @@ FeatureTable.reactivevalues <- function(x, update = F, tableID = NULL){
 
 #' activeFT
 #' 
-#' returns the ID of the currently active Feature Table
+#' @return returns the ID (character(1)) of the currently active Feature Table
 #' 
 #' @param x an MseekTree (reactivevalues) object
 #'
@@ -141,7 +144,8 @@ activeFT <- function(x){
 
 #' activeFT
 #' 
-#' changes the currently active Feature Table if supplied value is a valid table ID
+#' changes or returns the currently active Feature Table if 
+#' supplied value is a valid table ID
 #' 
 #' @param x an MseekTree (reactivevalues) object
 #' @param value a character() value corresponding to a table ID
@@ -168,6 +172,8 @@ activeFT <- function(x){
 #' Update currently active Feature Table with any changes that may have
 #'  been applied via the GUI
 #'  
+#' @return nothing, but modifies \code{FeatureTable(values)$df}
+#'  
 #' @param values an MseekTree (reactivevalues) object
 #' 
 #' @export
@@ -190,12 +196,16 @@ updateFT <- function(values){
 #' FTselection
 #'
 #' get the rows that are currently selected in MainTable window.
-#' Note: by default, will get its data from the underlying Feature Table,
+#' 
+#' @details By default, will get its data from the underlying Feature Table,
 #'  not using changes (such as comments) made immediately prior to selection, 
 #'  but including all columns, including those not visible in the current table view.
 #'
+#' @return a data.frame that is a subset of \code{FeatureTable(x)$df}
+#'
 #' @param x a MseekValues (reactivevalues) object
-#' @param liveView if TRUE, will get data from the liveView of the MainTable directly (default: FALSE)
+#' @param liveView if TRUE, will get data from the liveView of the 
+#' MainTable directly (default: FALSE)
 #'
 #' @export
 FTselection <- function(x, ...){

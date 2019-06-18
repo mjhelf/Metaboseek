@@ -1,14 +1,12 @@
 #' PcaViewModule
 #' 
+#' Module to view Principal Component Analysis (PCA) results
 #' 
-#' server module to view PCA results
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns its internalValues
+#' 
+#' @describeIn PcaViewModule Server logic
 #' 
 #' @import shiny
 #' 
@@ -49,10 +47,7 @@ PcaViewModule <- function(input,output, session,
   
 }
 
-#' PCABrowserModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn PcaViewModule UI elements
 #' @export
 PcaViewModuleUI <- function(id){
   ns <- NS(id)

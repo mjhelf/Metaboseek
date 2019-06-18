@@ -12,11 +12,14 @@ PeptideSequencePlotWidget(input, output, session, reactives = reactive({
 PeptideSequencePlotWidgetUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{reactives}{list of arguments to be passed to
 \code{MassTools::\link[MassTools]{plotAnnotatedPeptide}} 
@@ -24,7 +27,9 @@ inside of shiny::reactive()}
 
 \item{layout}{list of layout options (active: logical, and height: numeric)}
 
-\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \value{
 nothing; generates a specialized \code{\link[shiny]{plotOutput}}

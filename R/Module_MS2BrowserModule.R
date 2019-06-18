@@ -1,21 +1,18 @@
 #' MS2BrowserModule
 #' 
+#' Module for browsing and comparing MS2 data
 #' 
-#' server module for loading Tables
+#' @inherit MseekModules
+#' @param keys \code{reactive({})} that reports the current key press
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
+#' @describeIn MS2BrowserModule Server logic
 #' 
 #' @export 
 MS2BrowserModule <- function(input,output, session, 
-                             reactives = reactive({}),
                              values = reactiveValues(featureTables = featureTables,
                                                      MSData = MSData,
                                                      GlobalOpts = GlobalOpts),
-                             keys = reactive({keys()})){
+                             keys = reactive({"NO"})){
   
   ns <- NS(session$ns(NULL))
 
@@ -440,17 +437,7 @@ MS2BrowserModule <- function(input,output, session,
   
 }
 
-#' MS2BrowserModule
-#' 
-#' 
-#' server module for loading Tables
-#' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
-#' 
+#' @describeIn MS2BrowserModule UI elements
 #' @export 
 MS2BrowserModuleUI <-  function(id){
   ns <- NS(id)

@@ -12,7 +12,8 @@ getAllScans(scanlist, MSData, removeNoise = NULL, type = c("ms2",
 
 \item{MSData}{list of xcmsRaw objects}
 
-\item{type}{specify what the scan number represents, either "acquisition", "ms1" or "ms2".}
+\item{type}{specify what the scan number represents, either 
+"acquisition", "ms1" or "ms2".}
 }
 \value{
 a list of MS spectra (each in matrix format)

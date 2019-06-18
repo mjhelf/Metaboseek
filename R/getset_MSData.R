@@ -99,12 +99,17 @@ getSpectra.OnDiskMSnExp <- function(data, index, xcmsRawobject = NULL, SpectrumC
 #' findMSnScans
 #'
 #' Get a list of MS scans based on parent m/z and retention time
-#' Will return all scans with parentMZ within mz +/- ppm OR mzwid, AND retentionTime within rt +/- rtwid.
+#' Will return all scans with parentMZ within mz +/- ppm OR mzwid,
+#'  AND retentionTime within rt +/- rtwid.
 #' 
+#' @return a subset of the \code{data@@featureData@@data} data.frame matching
+#' the search criteria, with an additional \code{filename} column
 #'   
 #' @param data an OnDiskMSnExp or MseekValues (reactivevalues) object
-#' @param mz parentMZ value to search for. mz and rt can be vectors, but need to be of equal length
-#' @param rt retention time to search for. mz and rt can be vectors, but need to be of equal length
+#' @param mz parentMZ value to search for. mz and rt can be vectors,
+#'  but need to be of equal length
+#' @param rt retention time to search for. mz and rt can be vectors,
+#'  but need to be of equal length
 #' @param ppm mz tolerance in ppm
 #' @param mzwid mz tolerance in absolute mz values 
 #' @param rtwid rt tolerance in seconds
@@ -165,10 +170,17 @@ findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 
 #'
 #' get metadata for a scan or multiple scans
 #' 
-#' @param file  character vector of MS data file basenames. Files must be loaded in data.
-#' @param number scan for which to get metadata. Can be an acquisition number or an index of an ms1 or ms2 scan
-#' @param data an MSnExp or OnDiskMSnExp object. NYI: If NULL, will assume that values$MSData$MSnExp is defined in parent environment
-#' @param type specify what the scan number represents, either "acquisition", "ms1" or "ms2".
+#' @return a subset of the \code{data@@featureData@@data} data.frame matching
+#' the search criteria, with an additional \code{filename} column
+#' 
+#' @param file  character vector of MS data file basenames.
+#'  Files must be loaded in data.
+#' @param number scan for which to get metadata. Can be an acquisition 
+#' number or an index of an ms1 or ms2 scan
+#' @param data an MSnExp or OnDiskMSnExp object. NYI: If NULL, will assume 
+#' that values$MSData$MSnExp is defined in parent environment
+#' @param type specify what the scan number represents, either 
+#' "acquisition", "ms1" or "ms2".
 #'
 #'
 #' @export

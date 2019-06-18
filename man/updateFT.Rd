@@ -9,6 +9,9 @@ updateFT(values)
 \arguments{
 \item{values}{an MseekTree (reactivevalues) object}
 }
+\value{
+nothing, but modifies \code{FeatureTable(values)$df}
+}
 \description{
 Update currently active Feature Table with any changes that may have
  been applied via the GUI

@@ -12,5 +12,6 @@ activeFT(x) <- value
 \item{value}{a character() value corresponding to a table ID}
 }
 \description{
-changes the currently active Feature Table if supplied value is a valid table ID
+changes or returns the currently active Feature Table if 
+supplied value is a valid table ID
 }
