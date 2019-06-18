@@ -45,6 +45,7 @@ NULL
 #' \code{\link[shiny]{callModule}()}
 #' @param reactives a list, wrapped in a \code{\link[shiny]{reactive}()} 
 #' expression with settings for this module. See \code{details}.
+#' @param keys \code{reactive({})} that reports the current key press. 
 #' @param id id to be used to define a namespace via  \code{\link[shiny]{NS}()}
 #'  (must match \code{id} in \code{\link[shiny]{callModule}} 
 #'  for the server Module)
@@ -53,7 +54,7 @@ NULL
 #'  module is used in
 #' 
 #' @describeIn MseekWidgets generic server logic example for MseekWidgets
-MseekWidgets <- function(input,output, session, reactives, ...){
+MseekWidgets <- function(input,output, session, reactives, keys, ...){
     
     #creating the namespacing function to be used for UI elements that are prepared inside the server logic
     ns <- NS(session$ns(NULL))

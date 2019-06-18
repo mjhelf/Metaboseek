@@ -2,20 +2,48 @@
 % Please edit documentation in R/Module_WelcomePageModule.R
 \name{WelcomePageModule}
 \alias{WelcomePageModule}
+\alias{WelcomePageModuleUI}
 \title{WelcomePageModule}
 \usage{
 WelcomePageModule(input, output, session,
   values = reactiveValues(projectData = values$projectData, featureTables
   = values$featureTables, MSData = values$MSData, GlobalOpts =
-  values$GlobalOpts), show = reactive({     T }))
+  values$GlobalOpts), show = reactive({     TRUE }))
+
+WelcomePageModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
+
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{show}{a reactive(), if show() is TRUE, will show update news}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-module to welcome Mseek users.
+Start page module, shows update news and allows loading of data.
+}
+\section{Functions}{
+\itemize{
+\item \code{WelcomePageModule}: Server logic
+
+\item \code{WelcomePageModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

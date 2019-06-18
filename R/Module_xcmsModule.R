@@ -1,13 +1,11 @@
 #' xcmsModule
 #' 
-#' 
 #' server module for accessing the xcms data analysis workflow
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values import reactiveValues from the shiny session
-#' @param static import static values
+#' @inherit MseekModules
+#' @describeIn xcmsModule Server logic
+#' 
+#' @return Returns nothing
 #' 
 #' @import shiny
 #' @import shinydashboard
@@ -345,20 +343,7 @@ return(internalValues)
 }
 
 
-#' xcmsModuleUI
-#' 
-#' 
-#' UI module for xcms Module
-#' 
-#' @param id id to be used in ns()
-#' 
-#' @import shiny
-#' @import shinydashboard
-#' @importFrom shinyjs useShinyjs
-#' @import shinyBS
-#' @import shinyFiles
-#' @import rhandsontable
-#' 
+#' @describeIn xcmsModule UI elements
 #' @export 
 xcmsModuleUI <-  function(id){
   ns <- NS(id)

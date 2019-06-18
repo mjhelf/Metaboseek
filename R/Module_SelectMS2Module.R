@@ -1,6 +1,5 @@
 #' SelectMS2Module
 #' 
-#' 
 #' Module for selection of MS2 spectra. Will search for MS2 spectra matching the
 #'  current selection in the Feature table within specified ppm and RT boundaries,
 #'  and will make the selection available app-wide.

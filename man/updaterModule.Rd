@@ -2,22 +2,45 @@
 % Please edit documentation in R/Module_updaterModule.R
 \name{updaterModule}
 \alias{updaterModule}
+\alias{updaterModuleUI}
 \title{updaterModule}
 \usage{
 updaterModule(input, output, session, tag, set = list(package =
   "METABOseek", refs = c("master", "devel", "devel_raw"), active = T))
+
+updaterModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{tag}{id to be used in ns()}
 
-\item{set}{Import data from the shiny session}
+\item{set}{set which package to update and which branches to allow to be selected}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-module to update METABOseek by the click of a button
+module to update METABOseek from inside the UI. Currently not working.
+}
+\section{Functions}{
+\itemize{
+\item \code{updaterModule}: Server logic
+
+\item \code{updaterModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

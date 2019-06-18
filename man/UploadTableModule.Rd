@@ -2,22 +2,46 @@
 % Please edit documentation in R/Module_UploadTableModule.R
 \name{UploadTableModule}
 \alias{UploadTableModule}
+\alias{UploadTableModuleUI}
 \title{UploadTableModule}
 \usage{
 UploadTableModule(input, output, session,
   values = reactiveValues(featureTables = NULL), static = list(title =
   NULL, filetypes = NULL, format = list(header = T, sep = "\\t", quote =
   "\\"", stringsAsFactors = F)))
+
+UploadTableModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{static}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module for loading Tables
+Module for loading Tables into the app via \code{\link[shiny]{fileInput}()}
+}
+\section{Functions}{
+\itemize{
+\item \code{UploadTableModule}: Server logic
+
+\item \code{UploadTableModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -1,14 +1,12 @@
 #' PlotBrowserModule
 #' 
+#' MseekWidget to customize ggplot views
 #' 
-#' server module to customize ggplot views
+#' @inherit MseekWidgets
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns its internalValues
+#' 
+#' @describeIn PlotBrowserModule Server logic
 #' 
 #' @import shiny
 #' @importFrom shinyjs toggle toggleElement
@@ -17,7 +15,6 @@
 PlotBrowserModule <- function(input,output, session,
                               reactives = reactive({reactiveValues(PCAtable = df,
                                                                    active = T)}),
-                              values = NULL,
                               static = list(patterns = list(axis = "PCA__",
                                                             color = "",
                                                             hover = ""))
@@ -56,9 +53,15 @@ PlotBrowserModule <- function(input,output, session,
     if(!is.null(reactives()$PCAtable) && reactives()$active){
       
       
-      internalValues$axisChoices <- grep(static$patterns$axis,colnames(reactives()$PCAtable), value = T)
-      internalValues$colorChoices <- grep(static$patterns$color,colnames(reactives()$PCAtable), value = T)
-      internalValues$textChoices <- grep(static$patterns$hover,colnames(reactives()$PCAtable), value = T)
+      internalValues$axisChoices <- grep(static$patterns$axis,
+                                         colnames(reactives()$PCAtable),
+                                         value = T)
+      internalValues$colorChoices <- grep(static$patterns$color,
+                                          colnames(reactives()$PCAtable),
+                                          value = T)
+      internalValues$textChoices <- grep(static$patterns$hover,
+                                         colnames(reactives()$PCAtable),
+                                         value = T)
       
       
       
@@ -87,8 +90,11 @@ PlotBrowserModule <- function(input,output, session,
          && internalValues$y != ""){
        
         txtmake <- "data"
-        if(internalValues$interactive && !is.null(internalValues$text) && internalValues$text != ""){
-          txtmake <- plotlyTextFormatter(reactives()$PCAtable, internalValues$text)
+        if(internalValues$interactive 
+           && !is.null(internalValues$text) 
+           && internalValues$text != ""){
+          txtmake <- plotlyTextFormatter(reactives()$PCAtable,
+                                         internalValues$text)
         }
         colvec <- reactives()$PCAtable[[internalValues$color]]
         try({
@@ -237,10 +243,7 @@ PlotBrowserModule <- function(input,output, session,
   
 }
 
-#' PlotBrowserModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn PlotBrowserModule UI elements
 #' @export
 PlotBrowserModuleUI <- function(id){
   ns <- NS(id)

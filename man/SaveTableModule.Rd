@@ -2,6 +2,7 @@
 % Please edit documentation in R/Module_SaveTableModule.R
 \name{SaveTableModule}
 \alias{SaveTableModule}
+\alias{SaveTableModuleUI}
 \title{SaveTableModule}
 \usage{
 SaveTableModule(input, output, session,
@@ -9,20 +10,42 @@ SaveTableModule(input, output, session,
   NULL), reactives = reactive({     list(df = NULL, filename =
   "table.csv") }), static = list(tooltip = "Save", label = "Save", format
   = c("tsv", "csv"), allowformats = NULL))
+
+SaveTableModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{reactives}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
 
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-server module for saving Tables
+Module for saving Tables
+}
+\section{Functions}{
+\itemize{
+\item \code{SaveTableModule}: Server logic
+
+\item \code{SaveTableModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

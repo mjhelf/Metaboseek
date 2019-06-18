@@ -1,12 +1,11 @@
 #' UploadTableModule
 #' 
+#' Module for loading Tables into the app via \code{\link[shiny]{fileInput}()}
 #' 
-#' server module for loading Tables
+#' @inherit MseekModules
+#' @describeIn UploadTableModule Server logic
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param static Import data from the shiny session
+#' @return Returns its internalValues
 #' 
 #' @export 
 UploadTableModule <- function(input,output, session,
@@ -103,20 +102,7 @@ UploadTableModule <- function(input,output, session,
                  
                })  
   
-  # observe({
-  #   
-  #   anytoggle <- any(c(is.null(static$format$header), is.null(static$format$sep), is.null(static$format$quote)  ))
-  #   
-  #   
-  #   toggleOpt <- (anytoggle && !is.null(input$toggleTabOpts) && input$toggleTabOpts)
-  #   
-  #   toggle(id = 'toggleTabOpts', condition = anytoggle)
-  #   
-  #   toggle(id = 'header', condition = (is.null(static$format$header) &&  toggleOpt))
-  #   toggle(id = 'sep', condition = (is.null(static$format$sep) && toggleOpt))
-  #   toggle(id = 'quote', condition = (is.null(static$format$quote) && toggleOpt))
-  # })
-  
+ 
   output$tableLoad <- renderUI({
     
     fluidRow(
@@ -160,10 +146,7 @@ UploadTableModule <- function(input,output, session,
   
 }
 
-#' UploadTableModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn UploadTableModule UI elements
 #' @export
 UploadTableModuleUI <- function(id){
   ns <- NS(id)

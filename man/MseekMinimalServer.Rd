@@ -11,9 +11,15 @@ MseekMinimalServer(data = T, tables = T, diagnostics = T)
 
 \item{tables}{load example tables?}
 
-\item{diagnostics}{run diagnostics (shinyjs::runcodeServer()) code?}
+\item{diagnostics}{if TRUE, run diagnostics (shinyjs::runcodeServer())}
+}
+\value{
+provides a shiny session with basic elements needed for METABOseek.
 }
 \description{
-A minimal server logic for Mseek. Function has to be called in a shiny server function context. Will load example data if it is not present in the parent environment.
-Save time by providing the parent environment with objects \code{tab1}, \code{tab2} and \code{MSD} by calling MseekExamplePreload()
+A minimal server logic for Mseek. Function has to be called in a shiny server
+ function context. Will load example data if it is not present in the 
+ parent environment. Save time by providing the parent environment with
+  objects \code{tab1}, \code{tab2} and \code{MSD} by calling 
+  \code{\link{MseekExamplePreload}()}
 }

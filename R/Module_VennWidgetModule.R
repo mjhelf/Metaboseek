@@ -1,13 +1,12 @@
-
 #' VennWidgetModule
 #' 
 #' 
-#' server module for Venn diagrams in shiny
+#' MseekWidget for plotting Venn diagrams
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @inherit MseekWidgets
+#' @describeIn VennWidgetModule Server logic
+#' 
+#' @return Returns nothing
 #' 
 #' @importFrom grid grid.draw
 #' @importFrom  VennDiagram venn.diagram
@@ -55,13 +54,7 @@ output$pdfButton <- downloadHandler(filename= function(){
 
 }
 
-#' VennWidgetModuleUI
-#' 
-#' 
-#' UI module for Venn diagrams in shiny
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn VennWidgetModule UI elements
 #' @export
 VennWidgetModuleUI <- function(id){
   ns <- NS(id)

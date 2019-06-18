@@ -2,25 +2,42 @@
 % Please edit documentation in R/Module_PlotBrowserModule.R
 \name{PlotBrowserModule}
 \alias{PlotBrowserModule}
+\alias{PlotBrowserModuleUI}
 \title{PlotBrowserModule}
 \usage{
 PlotBrowserModule(input, output, session, reactives = reactive({    
-  reactiveValues(PCAtable = df, active = T) }), values = NULL,
-  static = list(patterns = list(axis = "PCA__", color = "", hover = "")))
+  reactiveValues(PCAtable = df, active = T) }), static = list(patterns =
+  list(axis = "PCA__", color = "", hover = "")))
+
+PlotBrowserModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
 
-\item{values}{Import data from the shiny session}
-
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module to customize ggplot views
+MseekWidget to customize ggplot views
 }
+\section{Functions}{
+\itemize{
+\item \code{PlotBrowserModule}: Server logic
+
+\item \code{PlotBrowserModuleUI}: UI elements
+}}
+

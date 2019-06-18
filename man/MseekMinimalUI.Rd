@@ -2,10 +2,36 @@
 % Please edit documentation in R/UI_components.R
 \name{MseekMinimalUI}
 \alias{MseekMinimalUI}
+\alias{MseekHeader}
+\alias{MseekSidebar}
 \title{MseekMinimalUI}
 \usage{
 MseekMinimalUI(..., diagnostics = T, dashboard = F, id = NULL)
+
+MseekHeader(..., id = NULL)
+
+MseekSidebar(..., id = NULL)
+}
+\arguments{
+\item{...}{UI elements to embed in the METABOseek app}
+
+\item{diagnostics}{if TRUE, will render diagnostics UI elements}
+
+\item{dashboard}{if TRUE, will render a dashboard layout}
+
+\item{id}{id for namespacing - must be the id of the enclosing module or NULL}
+}
+\value{
+UI elements for METABOseek
 }
 \description{
-A minimal UI for Mseek that can be extended with additional objects for testing and development purposes
+A minimal UI for Mseek that can be extended with additional objects for 
+testing and development purposes
 }
+\section{Functions}{
+\itemize{
+\item \code{MseekHeader}: generates the dashboardHeader for Mseek.
+
+\item \code{MseekSidebar}: generates the dashboardSidebar for Mseek.
+}}
+

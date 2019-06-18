@@ -2,23 +2,46 @@
 % Please edit documentation in R/Module_TableModule2.R
 \name{TableModule2}
 \alias{TableModule2}
+\alias{TableModule2UI}
 \title{TableModule}
 \usage{
-TableModule2(input, output, session, reactives = reactive({     list(df =
-  NULL, rowFilters = NULL, colFilters = NULL) }),
-  values = reactiveValues(), static = list(perpage = 100, height = 300,
+TableModule2(input, output, session, values = reactiveValues(),
+  reactives = reactive({     list(df = NULL, rowFilters = NULL,
+  colFilters = NULL) }), static = list(perpage = 100, height = 300,
   readOnly = T, contextMenu = T, fixedColumnsLeft = 1, invertReadOnly =
   NULL, format = list(col = NULL, format = NULL)))
+
+TableModule2UI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{set}{Import data from the shiny session}
+\item{values}{not used!}
+
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module for interactive mass spectrum view
+Module to show a Table in the UI eith sorting and pagination.
 }
+\section{Functions}{
+\itemize{
+\item \code{TableModule2}: Server logic
+
+\item \code{TableModule2UI}: UI elements
+}}
+

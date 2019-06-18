@@ -92,7 +92,6 @@ QuickPlotsModule <- function(input, output, session,
   Freeview <- callModule(PlotBrowserModule, "freeview",
                          reactives = reactive({reactiveValues(PCAtable =FeatureTable(values)$df[values$featureTables$row_filters,],
                                                               active = T)}),
-                         values = NULL,
                          static = list(patterns = list(axis = "",
                                                        color = "",
                                                        hover = "")))

@@ -35,7 +35,7 @@ MseekContainer <- function(input,output, session){
   
   callModule(updaterModule, 'update', tag = ns('update'), set =list(package = "METABOseek",
                                                                 refs = c("master", "devel", "devel_raw"),
-                                                                active = !.MseekOptions$serverMode))
+                                                                active = FALSE))#!.MseekOptions$serverMode))
   
   
  observeEvent(StartPage$explore,{

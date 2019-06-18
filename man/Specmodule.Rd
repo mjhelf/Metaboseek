@@ -2,6 +2,7 @@
 % Please edit documentation in R/Module_Specmodule.R
 \name{Specmodule}
 \alias{Specmodule}
+\alias{SpecmoduleUI}
 \title{Specmodule}
 \usage{
 Specmodule(input, output, session, tag, set = list(spec = list(xrange =
@@ -9,20 +10,44 @@ Specmodule(input, output, session, tag, set = list(spec = list(xrange =
   NULL, data = NULL, MS2 = T), layout = list(lw = 1, cex = 1, controls = F,
   ppm = 5, active = T, highlights = NULL, height = 550), msdata = NULL,
   moreArgs = NULL), keys)
+
+SpecmoduleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{tag}{id to be used in ns()}
 
 \item{set}{Import data from the shiny session}
 
 \item{keys}{registered keystrokes}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module for interactive mass spectrum view
+Module for interactive mass spectrum view. Deprecated. Use
+ \code{\link{SpecModule2}()}
+}
+\section{Functions}{
+\itemize{
+\item \code{Specmodule}: Server logic
+
+\item \code{SpecmoduleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

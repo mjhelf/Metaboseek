@@ -4,12 +4,15 @@
 \alias{mActionButton}
 \title{mActionButton}
 \usage{
-mActionButton(..., red = F)
+mActionButton(..., red = FALSE)
 }
 \arguments{
 \item{...}{passed to shiny::actionButton}
 
 \item{red}{if True, button will be red}
+}
+\value{
+a \code{\link[shiny]{actionButton}} that can be turned red easily
 }
 \description{
 An actionButton that can optionally be colored in Cornell red

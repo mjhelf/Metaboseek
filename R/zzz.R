@@ -15,9 +15,7 @@
 
   MseekOptions()
   
-  
-  
-  #Update example ms file locations
+    #Update example ms file locations
   if(dirname(system.file(package = "METABOseek")) %in% .libPaths()
      && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "METABOseek"))){
     rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "METABOseek"), stringsAsFactors = F, row.names = 1)

@@ -2,22 +2,52 @@
 % Please edit documentation in R/Module_VennDiagramModule.R
 \name{VennDiagramModule}
 \alias{VennDiagramModule}
+\alias{VennDiagramModuleUI}
 \title{VennDiagramModule}
 \usage{
 VennDiagramModule(input, output, session,
   values = reactiveValues(featureTables = featureTables, GlobalOpts =
   GlobalOpts), reactives = reactive({     list(active = T, highlights =
   integer(0)) }), static = list(noSelection = T), keys)
+
+VennDiagramModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{keys}{\code{reactive({})} that reports the current key press. 
+This argument is deprecated and will be removed from all modules.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
 server module for Venn diagrams in METABOseek
+}
+\section{Functions}{
+\itemize{
+\item \code{VennDiagramModule}: Server logic
+
+\item \code{VennDiagramModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

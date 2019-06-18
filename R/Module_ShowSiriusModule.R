@@ -1,13 +1,12 @@
 #' ShowSiriusModule
 #' 
+#' A button that triggers retrieval of Sirius results for the selected MS2 scans
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @return Returns nothing
 #' 
+#' @describeIn ShowSiriusModule Server logic
 #' 
 #' @export 
 ShowSiriusModule <- function(input,output, session, 
@@ -121,13 +120,7 @@ ShowSiriusModule <- function(input,output, session,
   })
 }
 
-#' ShowSiriusModuleUI
-#' 
-#' 
-#' UI module for interactive SIRIUS interface
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn ShowSiriusModule UI elements
 #' @export
 ShowSiriusModuleUI <- function(id){
   ns <- NS(id)

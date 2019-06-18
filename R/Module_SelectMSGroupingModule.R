@@ -1,14 +1,12 @@
 #' SelectMSGroupingModule
 #' 
+#' Module to set up MS data file grouping for plotting
 #' 
-#' server module for loading a Project Folder
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns its internalValues
+#' 
+#' @describeIn SelectMSGroupingModule Server logic
 #' 
 #' @export 
 SelectMSGroupingModule <- function(input,output, session,
@@ -43,10 +41,7 @@ SelectMSGroupingModule <- function(input,output, session,
   return(internalValues)
 }
 
-#' SelectMSGroupingModuleUI
-#' 
-#' @param id id of the Module
-#' 
+#' @describeIn SelectMSGroupingModule UI elements
 #' @export 
 SelectMSGroupingModuleUI <- function(id){
   
