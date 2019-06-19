@@ -10,6 +10,7 @@
 #' 
 #' @return a \code{\link[shiny]{reactiveValues}} object
 #' 
+#' @export
 ListToReactiveValues <- function(ls){
   
   #note: 

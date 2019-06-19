@@ -1,6 +1,6 @@
 Package: METABOseek
 Title: Metaboseek platform
-Version: 0.9.3-12
+Version: 0.9.4
 Authors@R: person("Maximilian", "Helf", email = "maximilian.helf@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1393-3999"))
 biocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
@@ -24,6 +24,7 @@ Imports: Biobase,
     jsonlite,
     lsa,
     MassTools (>= 0.2.1),
+    methods,
     MSnbase,
     plotly,
     qgraph,
@@ -45,9 +46,11 @@ Suggests: covr,
     knitr,
     png,
     rcdk,
+    rlang,
     rmarkdown,
     rsvg,
-    testthat,
     shinytest,
+    shinyAce,
+    testthat,
     xml2
 VignetteBuilder: knitr
