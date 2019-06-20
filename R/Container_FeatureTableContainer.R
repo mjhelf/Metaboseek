@@ -28,13 +28,10 @@ FeatureTableContainer <- function(input,output, session,
   ####TODO move these modules out of this container and make the feature table box more compact/ not a tabBox
   #TabGrouping <- 
       callModule(ChangeFTGroupingModule, "tabgrouping",
-                          reactives = reactive({list()}),
                           values = reactiveValues(fileGrouping = NULL,
                                                   featureTables = values$featureTables,
                                                   MSData = values$MSData,
-                                                  projectData = values$projectData),
-                          static = list()
-  )
+                                                  projectData = values$projectData))
   
 
   

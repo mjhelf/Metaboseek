@@ -2,13 +2,25 @@
 % Please edit documentation in R/Function_runMseek.R
 \name{runMseek}
 \alias{runMseek}
+\alias{runPeptideApp}
 \title{RunMseek}
 \usage{
 runMseek(...)
+
+runPeptideApp(...)
 }
 \arguments{
-\item{...}{Additional arguments passed to shiny::runApp, e.g. to set up the port used or to make Mseek reachable from other computers (with host = getOption("shiny.host", "0.0.0.0"))}
+\item{...}{Additional arguments passed to shiny::runApp, e.g. to set up the 
+port used or to make Mseek reachable from other computers 
+(with host = getOption("shiny.host", "0.0.0.0"))}
 }
 \description{
 Run Mseek in your webbrowser.
 }
+\section{Functions}{
+\itemize{
+\item \code{runMseek}: run the entire Metaboseek app
+
+\item \code{runPeptideApp}: start just the peptide annotation app
+}}
+

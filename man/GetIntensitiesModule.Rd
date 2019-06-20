@@ -2,23 +2,47 @@
 % Please edit documentation in R/Module_GetIntensitiesModule.R
 \name{GetIntensitiesModule}
 \alias{GetIntensitiesModule}
+\alias{GetIntensitiesModuleUI}
 \title{GetIntensitiesModule}
 \usage{
 GetIntensitiesModule(input, output, session,
   values = reactiveValues(MSData = MSData, featureTables = featureTables,
   GlobalOpts = GlobalOpts))
+
+GetIntensitiesModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module for saving Tables
+One-button module to get intensities for all features in a feature 
+table across the loaded MS data files
+}
+\section{Functions}{
+\itemize{
+\item \code{GetIntensitiesModule}: server logic
+
+\item \code{GetIntensitiesModuleUI}: server logic
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

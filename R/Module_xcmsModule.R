@@ -1,13 +1,11 @@
 #' xcmsModule
 #' 
-#' 
 #' server module for accessing the xcms data analysis workflow
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values import reactiveValues from the shiny session
-#' @param static import static values
+#' @inherit MseekModules
+#' @describeIn xcmsModule Server logic
+#' 
+#' @return Returns nothing
 #' 
 #' @import shiny
 #' @import shinydashboard
@@ -312,7 +310,7 @@ output$summary <- renderPrint({
 })
 
 output$noRtCorrCheck <- renderUI({
-  div(title= "Acivate post-processing for non-retention time corrected data.",
+  div(title= "Activate post-processing for non-retention time corrected data.",
       checkboxInput(ns('nortcorrcheck'), 'Before retention time correction', value = internalValues$noRtCorrAnaCheck))
 })
 
@@ -321,7 +319,7 @@ observeEvent(input$nortcorrcheck,{
 })
 
 output$rtCorrCheck <- renderUI({
-  div(title= "Acivate post-processing for retention time corrected data.",
+  div(title= "Activate post-processing for retention time corrected data.",
       checkboxInput(ns('rtcorrcheck'), 'After retention time correction', value = internalValues$rtCorrAnaCheck))
 })
 
@@ -330,7 +328,9 @@ observeEvent(input$rtcorrcheck,{
 })
 
 tAnalysisX <- callModule(TableAnalysisModule, "TabAnalysisXcms",
-                        reactives = reactive({list(fileGrouping = if(internalValues$active == "filegroups" && !is.null(input$xcms_settingstab) && length(hot_to_r(input$xcms_settingstab)$File) > 0 ){
+                        reactives = reactive({list(fileGrouping = if(internalValues$active == "filegroups" 
+                                                                     && !is.null(input$xcms_settingstab) 
+                                                                     && length(hot_to_r(input$xcms_settingstab)$File) > 0 ){
                           hot_to_r(input$xcms_settingstab)}
                           else{internalValues$params$filegroups})
                           }),
@@ -345,20 +345,7 @@ return(internalValues)
 }
 
 
-#' xcmsModuleUI
-#' 
-#' 
-#' UI module for xcms Module
-#' 
-#' @param id id to be used in ns()
-#' 
-#' @import shiny
-#' @import shinydashboard
-#' @importFrom shinyjs useShinyjs
-#' @import shinyBS
-#' @import shinyFiles
-#' @import rhandsontable
-#' 
+#' @describeIn xcmsModule UI elements
 #' @export 
 xcmsModuleUI <-  function(id){
   ns <- NS(id)

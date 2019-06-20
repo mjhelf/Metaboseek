@@ -1,21 +1,24 @@
 #' densplot
 #' 
-#' 
 #' generate a density plot for numeric data.
 #' 
+#' @return sends a density plot to the current plotting device
+#' 
+#' @details
 #' To accomodate logarithmized data,
 #' Inf values will be set to 1.1*largest value that is not Inf
 #' -Inf values will be set to 0.9*smallest value that is not -Inf
 #' 
 #' @param densin numeric vector or matrix
 #' @param perc numeric(): draw lines at these quantiles
+#' @param ... arguments passed to \code{plot()}
 #' 
 #' @importFrom BiocGenerics density
 #' @importFrom stats quantile
 #' @importFrom grDevices rainbow
 #' 
 #' @export
-densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtrate3$rt,#input values
+densplot <-function(densin = stats::rnorm(100),
                     perc = c(0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9, 0.95, 0.99),
                     ... #pass arguments to plot()
 ){
@@ -25,7 +28,8 @@ densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtra
     densin[densin==-Inf] <- 0.9*min(densin[densin!=-Inf])
     densin <- na.omit(densin)
     
-    dens <- density(densin,from=min(densin),to=max(densin), cut=0, n=4096, na.rm = T)
+    dens <- density(densin,from=min(densin),
+                    to=max(densin), cut=0, n=4096, na.rm = T)
     
     #dens$x[is.infinite(dens$x)] <- 1*max(dens$x[dens$x!=Inf])
     graphics::plot(dens, type= "l", ...)
@@ -44,7 +48,11 @@ densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtra
 
 #' Plot summary data on grouped data
 #' 
-#' @param ... arguments passed to ggplot2::ggplot
+#' Wrapper function for \code{ggplot}.
+#' 
+#' @return a ggplot object that can be plotted.
+#' 
+#' @param ... arguments passed to \code{\link[ggplot2]{ggplot}()}
 #' @param main plot type
 #' @param dotplot boolean whether or not to plot individual values as dots
 #' @param mark select a value to be plotted
@@ -56,11 +64,11 @@ densplot <-function(densin = log10(as.numeric(unlist(filtrate3[,scol]))),#filtra
 #' @export
 groupedplot <- function(...,
                         main = c("boxplot", "barplot","violinplot"),
-                        dotplot = T,
+                        dotplot = TRUE,
                         dsize = 1,
                         mark = c("mean", "median"),
                         errorbar = c("Standard Deviation", "95% Confidence Interval"),
-                        rotate = T
+                        rotate = TRUE
 ){
   
   
@@ -97,6 +105,8 @@ groupedplot <- function(...,
 #' 
 #' Assign a color from a range of colors to all values in a numeric vector (datarange)
 #' 
+#' @return a character vector of same length as \code{datarange} with color values
+#' 
 #' @param datarange the data range for the legend
 #' @param colscale character vector of colors
 #'
@@ -122,6 +132,7 @@ assignColor <- function(datarange, colscale){
 #' colorRampLegend
 #' 
 #' Make a figure legend for a continuous color range
+#' @return sends a new plot to the current plotting device
 #' 
 #' @param datarange the data range for the legend
 #' @param colscale character vector of colors
@@ -155,14 +166,15 @@ colorRampLegend <- function(datarange, colscale, title = ""){
 
 #' reverselog_trans
 #' 
-#' reverse log scale for ggplot, as described here: https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2
+#' reverse log scale for ggplot, as described in reference. 
 #' 
+#' @references 
+#' https://stackoverflow.com/questions/11053899/how-to-get-a-reversed-log10-scale-in-ggplot2 , accessed on 2019-06-17
 #' 
 #' @param base base of log
 #' 
 #' @importFrom scales trans_new log_breaks
 #'
-#' @export
 reverselog_trans <- function(base = exp(1)) {
   trans <- function(x) -log(x, base)
   inv <- function(x) base^(-x)
@@ -173,9 +185,11 @@ reverselog_trans <- function(base = exp(1)) {
 
 #' safelog
 #' 
-#' aplly a log function to a numeric vector, but replaces zeros and uses abs values 
+#' apply a log function to a numeric vector, but replaces zeros and uses abs values 
 #' 
-#' @param x numeric()
+#' @return a numeric vector of same length as \code{x}, with logarithmized values
+#' 
+#' @param x numeric vector of positive values
 #' @param base of log
 #' @param replaceZeros replace zeros with this value, if NULL will use smallest non-zero absolute value in x
 #' 
@@ -189,4 +203,33 @@ safelog <- function(x, base = 10, replaceZeros = NULL){
     x[!is.finite(x)] <- max(abs(x))
     
     return(log(abs(x), base))
+}
+
+#' plotlyTextFormatter
+#' 
+#' prepare text to be shown in plotly through aes(text)
+#' 
+#' @return a character(), pasting together column names and contents of 
+#' columns to make an informative plot title
+#' 
+#' @param df data.frame
+#' @param cols character() of column names to display
+#' 
+plotlyTextFormatter <- function(df, cols){
+  
+  collect <- list()
+  
+  for(i in cols){
+    collect[[i]] <- paste(i, df[[i]], sep = ": ")
+  }
+  
+  collect2 <- collect[[1]]
+  
+  if(length(collect) >1){
+    for (i in 2:length(collect)){
+      collect2 <- paste(collect2, collect[[i]], sep = "\n")
+    }
+  }
+  return(collect2)
+  
 }

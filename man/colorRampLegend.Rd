@@ -13,6 +13,9 @@ colorRampLegend(datarange, colscale, title = "")
 
 \item{title}{legend title}
 }
+\value{
+sends a new plot to the current plotting device
+}
 \description{
 Make a figure legend for a continuous color range
 }

@@ -1,19 +1,20 @@
 #' TableModule
 #' 
+#' Module to show a Table in the UI eith sorting and pagination.
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekWidgets
+#' @param values not used!
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param set Import data from the shiny session
+#' @describeIn TableModule2 Server logic
+#' 
+#' @return Returns its internalValues
 #' 
 #' @export 
 TableModule2 <- function(input,output, session,
-                        reactives = reactive({list(df = NULL,
+                         values = reactiveValues(),
+                         reactives = reactive({list(df = NULL,
                                                    rowFilters = NULL,
                                                    colFilters = NULL)}),
-                        values = reactiveValues(),
                         static = list(perpage = 100,
                                       height = 300,
                                       readOnly = T,
@@ -314,10 +315,7 @@ TableModule2 <- function(input,output, session,
   
 }
 
-#' TableModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn TableModule2 UI elements
 #' @export
 TableModule2UI <- function(id){
   ns <- NS(id)

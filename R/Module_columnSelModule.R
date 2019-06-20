@@ -1,19 +1,14 @@
-#' columnSelModule
-#' 
+#' ColumnSelModule
 #' 
 #' server module for selection of columns to show in main Table
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values import reactiveValues from the shiny session
-#' @param load data to load from previous session (not implemented)
+#' @inherit MseekModules
 #' 
 #' @import shiny
 #' 
+#' @describeIn ColumnSelModule server logic for ColumnSelModule
 #' @export 
-ColumnSelModule <- function(input,output, session,
-                       
+ColumnSelModule <- function(input, output, session,
                        values = reactiveValues(featureTables = featureTables,
                                                MainTable = MainTable)
 ){
@@ -61,32 +56,6 @@ observeEvent(c(#values$featureTables$active,
                  
                  })
 
-# observeEven(values$featureTables$loadedColumns,{
-#   
-#   if(!is.null(values$featureTables$loadedColumns)){
-#     
-#     internalValues$selectedGroup <- values$featureTables$loadedColumns$activeGroup
-#   
-#     if(!is.null(internalValues$selectedGroup)){
-#   internalValues$gPropsSelected <- values$featureTables$loadedColumns$columns[values$featureTables$loadedColumns$columns %in% values$featureTables$tables[[values$featureTables$active]]$gProps[[internalValues$selectedGroup]]]
-#   
-#   internalValues$sPropsSelected <- values$featureTables$loadedColumns$columns[values$featureTables$loadedColumns$columns %in% values$featureTables$tables[[values$featureTables$active]]$sProps[[internalValues$selectedGroup]]]
-#   internalValues$intensitiesSelected <- values$featureTables$loadedColumns$columns[values$featureTables$loadedColumns$columns %in% values$featureTables$tables[[values$featureTables$active]]$anagroupnames[[internalValues$selectedGroup]]]
-#     internalValues$othersSelected <- values$featureTables$loadedColumns$columns[!values$featureTables$loadedColumns$columns %in% c(internalValues$gPropsSelected, internalValues$sPropsSelected, internalValues$intensitiesSelected)]
-#     } 
-#     else{
-#       internalValues$othersSelected <- values$featureTables$loadedColumns$columns
-#       
-#     }
-#   }
-# })
-
-
-
-
-# internalValues$othersSelected <- unique(c(internalValues$colnames[internalValues$colnames %in% internalValues$othersSelected],
-#                                           values$featureTables$tables[[values$featureTables$active]]$summaryStats))
-#   
   ###Column Selection
   
   output$mainSelGroup <- renderUI({
@@ -205,15 +174,7 @@ observeEvent(c(#values$featureTables$active,
 }
 
 
-#' columnSelModuleUI
-#' 
-#' 
-#' UI module for columnsel Module
-#' 
-#' @param id id to be used in ns()
-#' 
-#' @import shiny
-#' 
+#' @describeIn ColumnSelModule UI elements for ColumnSelModule
 #' @export 
 ColumnSelModuleUI <-  function(id){
 ns <- NS(id)

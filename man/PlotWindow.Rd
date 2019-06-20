@@ -4,9 +4,8 @@
 \alias{PlotWindow}
 \title{PlotWindow}
 \usage{
-PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
-  xlim = c(min(unlist(EIClistItem[, "rt"])), max(unlist(EIClistItem[,
-  "rt"])))/60, heading = "test", single = F, par = T, relto = NULL,
+PlotWindow(cx = 1, ylim = c(0, 1), xlim = c(0, 1),
+  heading = "test", single = F, par = T, relto = NULL,
   ylab = "Intensity", xlab = "RT (min)", ysci = T, liwi = 1,
   textadj = 0.5, ylabshift = 0)
 }
@@ -19,9 +18,11 @@ PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
 
 \item{heading}{heading of the plot}
 
-\item{single}{if TRUE, this plot is expected to be the only plot in a composite (different margin settings)}
+\item{single}{if TRUE, this plot is expected to be the only 
+plot in a composite plot (different margin settings)}
 
-\item{par}{if FALSE, par margin settings are not set inside the function and should be set outside}
+\item{par}{if FALSE, par margin settings are not set inside 
+the function and should be set outside}
 
 \item{relto}{show y axis values relative to relto if not NULL.}
 
@@ -31,10 +32,14 @@ PlotWindow(cx = 1, ylim = c(0, max(unlist(EIClistItem[, "tic"]))),
 
 \item{ysci}{if TRUE, y axis label numbers are shown in scientific format}
 
-\item{textadj}{passed on to mtext adj for orientation of plot description/title text line}
+\item{textadj}{passed on to mtext adj for orientation 
+of plot description/title text line}
 
 \item{ylabfactor}{factor to adjust the position of the y axis label}
 }
+\value{
+plots an empty coordinate system in the current plotting device
+}
 \description{
-Initiate a plot and draw axes
+Initiate a plot and draw axes. Used by plotting functions in Metaboseek.
 }

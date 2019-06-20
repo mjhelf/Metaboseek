@@ -2,19 +2,27 @@
 #' 
 #' 
 #' Constructor function for "MseekFT" object from a feature table data.frame.
-#' uses and retains the original data frame plus names of columns containing relevant data. 
+#' uses and retains the original data frame plus names of columns containing 
+#' relevant data. 
 #' 
 #' NOTE: currently, only the default values for column names are supported.
 #' 
-#' @param df feature table as data.frame, with retention time (rt), mz and (optionally) intensity values.
+#' @param df feature table as data.frame, with retention time (rt), mz and 
+#' (optionally) intensity values.
 #' @param mzcol column in df with mz values (columnname), defaults to "mz"
 #' @param rtcol column in df with rt values (columnname), defaults to "rt"
 #' @param commentcol column in df with comments (columnname), defaults to "comments"
-#' @param fragmentcol column in df with fragmentation information (columnname), defaults to "fragments"
+#' @param fragmentcol column in df with fragmentation information (columnname), 
+#' defaults to "fragments"
 #' @param rtFormat Are retention times given in seconds ("sec") or minutes ("min")
-#' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
+#' @param anagrouptable Analysis grouping table: a data.frame with columns 
+#' "Column" (containing column names from df with intensity values) and "Group" 
+#' (defining a group for each entry in "Column") 
 #' @param tablename Name of the table as displayed by Mseek
-#' @param editable allow editing of this table in the Mseek app? if FALSE, only comments column can be edited. editable tables are also not paginated.
+#' @param editable allow editing of this table in the Mseek app? if FALSE, only
+#'  comments column can be edited. editable tables are also not paginated.
+#' 
+#' @return an \code{MseekFT} object containing a feature table and metadata
 #' 
 #' @export
 constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3)),# data frame 
@@ -112,11 +120,14 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
 #' updateDF
 #' 
 #' Update dataframe b with data from dataframe a; must have equal number of rows
-#' Existing data in b will be overridden if columns by the same name exist in a, and retained otherwise.
-#' Additional columns in a will be transferred to b. Returns an updated data.frame b.
+#' Existing data in b will be overridden if columns by the same name exist in a,
+#'  and retained otherwise.
+#' Additional columns in a will be transferred to b. 
 #' 
 #' @param a source data.frame
 #' @param b target data.frame
+#' 
+#' @return Returns the updated data.frame b
 #' 
 #' @export
 updateDF <- function(a, b){
@@ -128,12 +139,16 @@ updateDF <- function(a, b){
     }
     
 
-#' updateDF
+#' updateFeatureTable
 #' 
-#' update an existing MseekFT with new data frame columns (leaving intensitiy tables and constants in effect)
+#' update an existing MseekFT with new data.frame columns (leaving intensitiy
+#'  column names and constants in effect, but updating information on which 
+#'  "other" columns are present)
 #' 
 #' @param FT MseekFT object
 #' @param df source data.frame
+#' 
+#' @return An updated \code{MseekFT} object
 #' 
 #' @export
 updateFeatureTable <- function(FT, df){
@@ -166,7 +181,11 @@ updateFeatureTable <- function(FT, df){
 #' update or construct grouping information of a MseekFT object
 #' 
 #' @param FT MseekFT object
-#' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
+#' @param anagrouptable Analysis grouping table: a data.frame with columns 
+#' "Column" (containing column names from df with intensity values) and 
+#' "Group" (defining a group for each entry in "Column") 
+#' 
+#' @return An updated \code{MseekFT} object
 #' 
 #' @export
 updateFTgrouping <- function(FT,anagrouptable){
@@ -181,7 +200,9 @@ updateFTgrouping <- function(FT,anagrouptable){
     FT$anagroupnums = newgrouping$anagroupnums
 
     if(length(grep("__norm",colnames(FT$df)))>0){
-        FT$anagroupnames_norm = relist(paste0(unlist(FT$anagroupnames),"__norm"),FT$anagroupnames)
+        FT$anagroupnames_norm = relist(paste0(unlist(FT$anagroupnames),
+                                              "__norm"),
+                                       FT$anagroupnames)
         FT$intensities_norm = unname(unlist(FT$anagroupnames_norm))
     }
     
@@ -212,7 +233,9 @@ updateFTgrouping <- function(FT,anagrouptable){
     FT$sProps = list()
     for(i in names(FT$gNames)){
         #list all columns containing sample names from group i followed by double underscore which are not in the intensities table
-        selCols <- unlist(sapply(paste0(FT$sNames[[i]],"__"),grep,colnames(FT$df)[which(!colnames(FT$df) %in% c(FT$intensities,FT$intensities_norm))], value = T))
+        selCols <- unlist(sapply(paste0(FT$sNames[[i]],"__"),
+                                 grep,
+                                 colnames(FT$df)[which(!colnames(FT$df) %in% c(FT$intensities,FT$intensities_norm))], value = T))
         if(length(selCols)>0){
             FT$sProps[[i]] <- sort(selCols)}
     }
@@ -237,11 +260,13 @@ updateFTgrouping <- function(FT,anagrouptable){
 
 #' updateFTgrouping
 #' 
-#' update the FT index of the Mseek App (needed because this index is a named list - extracts tablename entry from each MseekFT object in list)
+#' update the FT index of the Mseek App (needed because this index is a named 
+#' list - extracts tablename entry from each MseekFT object in list)
 #' 
-#' @param table list of MseekFT objects 
+#' @param table named list of MseekFT objects 
 #' 
-#' @export
+#' @return named list of MseekFT tablenames
+#' 
 updateFTIndex <- function(tables){
     out <- names(tables)
     
@@ -253,12 +278,23 @@ updateFTIndex <- function(tables){
 
 #' tableGrouping
 #' 
-#' Groups a anagrouptable into a named list. Helper function to reformat Table analysis grouping tables
+#' Groups a anagrouptable into a named list. Helper function to
+#'  reformat Table analysis grouping tables
 #' 
 #' @param df feature table as data.frame, with intensity values.
-#' @param anagrouptable Analysis grouping table: a data.frame with columns "Column" (containing column names from df with intensity values) and "Group" (defining a group for each entry in "Column") 
+#' @param anagrouptable Analysis grouping table: a data.frame with columns 
+#' \code{Column} (containing column names from df with intensity values) and 
+#' \code{Group} (defining a group for each entry in "Column") 
 #' 
-#' @export
+#' @return A named list, see \code{details}
+#' 
+#' @details
+#'  Will return a named list with two list items
+#'  \itemize{
+#'  \item\code{anagroupnames} named list of intensity column names
+#' \item\code{anagroupnums} named list of intensity column numbers
+#' }
+#' 
 tableGrouping <- function(df=NULL, anagrouptable){
   ## Make list object of grouped column names
   if(is.null(anagrouptable$Column)){
@@ -299,12 +335,16 @@ tableGrouping <- function(df=NULL, anagrouptable){
 #' @param df feature table as data.frame, with mz and rt columns.
 #' @param fname file name
 #' @param format output format
-#' @param moreArgs additional arguments 
-#' @param instrument which instrument is this table for?
-#' @param listType "inclusion" or "exclusion"
+#' @param moreArgs named list of additional arguments to be 
+#' passed to \code{\link{asInclusionlist}}
+#' 
+#' @importFrom data.table fwrite
+#' 
+#' @return Returns nothing, but writes a file to disk
 #' 
 #' @export
-tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"), moreArgs = list()){
+tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
+                       moreArgs = list()){
   
   if(length(format)==0 || is.na(format)){
     warning("File format selected was empty. Could not export data to file")
@@ -357,14 +397,18 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"), mo
 
 #' asInclusionlist
 #' 
-#' Reformats a feature table into a format that can be imported into MS instruments as inclusion or exclusion lists.
+#' Reformats a feature table into a format that can be imported 
+#' into MS instruments as inclusion or exclusion lists.
 #' 
 #' @param parenttable feature table as data.frame, with mz and rt columns.
 #' @param rtwin retention time window (+/- df$rt) in seconds
 #' @param polarity "Positive" or "Negative" 
 #' @param instrument which instrument is this table for?
 #' @param listType "inclusion" or "exclusion"
-#' @param restrictRT use retention time column from parenttable and rtwin to restrict retention time in inclusion/exclusion list
+#' @param restrictRT use retention time column from parenttable and rtwin to 
+#' restrict retention time in inclusion/exclusion list
+#' 
+#' @return A data.frame that, when written to a file, has the expected format for a given instrument
 #' 
 #' @export
 asInclusionlist <- function(parenttable,
@@ -379,21 +423,33 @@ asInclusionlist <- function(parenttable,
                       "Formula type" = character(length(parenttable$mz)),
                       Species = character(length(parenttable$mz)),
                       "CS [z]" = character(length(parenttable$mz)),
-                      Polarity = as.character(rep(polarity,length(parenttable$mz))),
-                      "Start [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt-rtwin)/60,3))},
-                      "End [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt+rtwin)/60,3))},
+                      Polarity = as.character(rep(polarity,
+                                                  length(parenttable$mz))),
+                      "Start [min]" = if(!restrictRT){
+                          character(length(parenttable$mz))
+                          }else{as.numeric(round((parenttable$rt-rtwin)/60,3))},
+                      "End [min]" = if(!restrictRT){
+                          character(length(parenttable$mz))
+                          }else{as.numeric(round((parenttable$rt+rtwin)/60,3))},
                       Comment = as.character(parenttable$comments),
                       stringsAsFactors = F)
-  colnames(out) <- c("Mass [m/z]","Formula [M]", "Formula type", "Species", "CS [z]", "Polarity", "Start [min]", "End [min]", "Comment")
+  colnames(out) <- c("Mass [m/z]","Formula [M]", "Formula type", "Species",
+                     "CS [z]", "Polarity", "Start [min]",
+                     "End [min]", "Comment")
   }else{
   out <- data.frame("Mass [m/z]" = parenttable$mz,
                     "Formula [M]" = character(length(parenttable$mz)),
                     "Formula type" = character(length(parenttable$mz)),
                     Species = character(length(parenttable$mz)),
                     "CS [z]" = character(length(parenttable$mz)),
-                    Polarity = as.character(rep(polarity,length(parenttable$mz))),
-                    "Start [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt-rtwin)/60,3))},
-                    "End [min]" = if(!restrictRT){character(length(parenttable$mz))}else{as.numeric(round((parenttable$rt+rtwin)/60,3))},
+                    Polarity = as.character(rep(polarity,
+                                                length(parenttable$mz))),
+                    "Start [min]" = if(!restrictRT){
+                        character(length(parenttable$mz))
+                        }else{as.numeric(round((parenttable$rt-rtwin)/60,3))},
+                    "End [min]" = if(!restrictRT){
+                        character(length(parenttable$mz))
+                        }else{as.numeric(round((parenttable$rt+rtwin)/60,3))},
                     "(N)CE" = character(length(parenttable$mz)),
                     "(N)CE type" = character(length(parenttable$mz)),
                     "MSX ID" = character(length(parenttable$mz)),
@@ -401,7 +457,8 @@ asInclusionlist <- function(parenttable,
                     stringsAsFactors = F)
   colnames(out) <- c("Mass [m/z]","Formula [M]", "Formula type", 
                      "Species", "CS [z]", "Polarity",
-                     "Start [min]", "End [min]", "(N)CE", "(N)CE type", "MSX ID", "Comment")
+                     "Start [min]", "End [min]", "(N)CE", "(N)CE type",
+                     "MSX ID", "Comment")
   }
   
   return(out) 

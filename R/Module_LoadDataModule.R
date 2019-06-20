@@ -1,14 +1,13 @@
 #' LoadDataModule
 #' 
+#' Container Module for loading a Project Folder, MS data, or feature Tables.
+#' TODO: transition to Container format/naming
 #' 
-#' server module for loading a Project Folder
+#' @inherit MseekContainers
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return returns its internalValues
+#' 
+#' @describeIn LoadDataModule server logic
 #' 
 #' @export 
 LoadDataModule <- function(input,output, session,
@@ -67,13 +66,7 @@ LoadDataModule <- function(input,output, session,
   return(internalValues)
 }
 
-#' LoadDataModuleUI
-#' 
-#' 
-#' server module for loading Tables
-#' 
-#' @param id
-#' 
+#' @describeIn LoadDataModule UI elements
 #' @export 
 LoadDataModuleUI <- function(id){
   

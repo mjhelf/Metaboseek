@@ -1,12 +1,13 @@
 #' simpleTableModule
 #' 
+#' A simple Table module without sorting or pagination
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekWidgets
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param set Import data from the shiny session
+#' @return Returns its internalValues, most importantly elements \code{df} 
+#' and \code{liveView}
+#' 
+#' @describeIn simpleTableModule Server logic
 #' 
 #' @export 
 simpleTableModule <- function(input,output, session,
@@ -84,10 +85,7 @@ simpleTableModule <- function(input,output, session,
   
 }
 
-#' simpleTableModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn simpleTableModule UI elements
 #' @export
 simpleTableModuleUI <- function(id){
   

@@ -2,25 +2,46 @@
 % Please edit documentation in R/Module_ChangeFTGroupingModule.R
 \name{ChangeFTGroupingModule}
 \alias{ChangeFTGroupingModule}
+\alias{ChangeFTGroupingModuleUI}
 \title{ChangeFTGroupingModule}
 \usage{
-ChangeFTGroupingModule(input, output, session, reactives = reactive({    
-  list() }), values = reactiveValues(featureTables = featureTables,
-  MSData = MSData, projectData = projectData), static = list())
+ChangeFTGroupingModule(input, output, session,
+  values = reactiveValues(featureTables = featureTables, MSData = MSData,
+  projectData = projectData))
+
+ChangeFTGroupingModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{values}{Import data from the shiny session}
-
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module to select and group intensity columns in Feature tables.
+Module to select and group intensity columns in Feature tables.
+}
+\section{Functions}{
+\itemize{
+\item \code{ChangeFTGroupingModule}: server logic for ChangeFTGroupingModule
+
+\item \code{ChangeFTGroupingModuleUI}: UI elements for ChangeFTGroupingModule
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -1,14 +1,12 @@
 #' SelectProjectFolderModule
 #' 
+#' Module for loading a Project Folder
 #' 
-#' server module for loading a Project Folder
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns nothing
+#' 
+#' @describeIn SelectProjectFolderModule Server logic
 #' 
 #' @export 
 SelectProjectFolderModule <- function(input,output, session,
@@ -39,7 +37,9 @@ SelectProjectFolderModule <- function(input,output, session,
                               displayFolder = F)
   
   observeEvent(MSFolder$dir,{
-    if(length(MSFolder$dir)>0 && (is.null(values$projectData$projectFolder) || values$projectData$projectFolder != MSFolder$dir)){
+    if(length(MSFolder$dir)>0 
+       && (is.null(values$projectData$projectFolder) 
+           || values$projectData$projectFolder != MSFolder$dir)){
       values$projectData$projectFolder <- MSFolder$dir
       
       internalValues$filegroupsfile <- list.files(values$projectData$projectFolder, pattern="filegroups.csv", recursive = TRUE, full.names=T)
@@ -47,7 +47,9 @@ SelectProjectFolderModule <- function(input,output, session,
       
       if(length(internalValues$filegroupsfile) >0 ){
         
-        rtfile <- list.files(values$projectData$projectFolder, pattern="RTcorr_data.Rdata", recursive = TRUE, full.names=T)
+        rtfile <- list.files(values$projectData$projectFolder, 
+                             pattern="RTcorr_data.Rdata",
+                             recursive = TRUE, full.names=T)
         if(length(rtfile) == 1){
           values$MSData$RTcorr <- attach(rtfile[1])$rtx
           
@@ -57,15 +59,16 @@ SelectProjectFolderModule <- function(input,output, session,
             
           }
         }
-        #projectData$projectName <- basename(dirname(projectData$filegroupfiles))
-        internalValues$filegroups <- read.csv(internalValues$filegroupsfile, stringsAsFactors = F, header = T)
+        internalValues$filegroups <- read.csv(internalValues$filegroupsfile,
+                                              stringsAsFactors = F, header = T)
         
         if(is.null(internalValues$filegroups$Group2)){
           internalValues$filegroups$Group2 <- internalValues$filegroups$Group
         }
         
         
-        temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$", recursive =  T, full.names = T)
+        temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$",
+                            recursive =  T, full.names = T)
         
         temp <- temp[!basename(temp) %in% c("camera.csv",
                                             "centWave.csv",
@@ -86,7 +89,9 @@ SelectProjectFolderModule <- function(input,output, session,
           names(tl[[i]]) <- basename(temp[dirname(temp) == i])
         }
         
-        names(tl) <- file.path(basename(values$projectData$projectFolder), gsub(values$projectData$projectFolder, "", names(tl)))
+        names(tl) <- file.path(basename(values$projectData$projectFolder),
+                               gsub(values$projectData$projectFolder, "",
+                                    names(tl)))
         
         internalValues$fileSelection <- tl
         
@@ -114,7 +119,9 @@ SelectProjectFolderModule <- function(input,output, session,
   
   observeEvent(input$projectLoadOk,{
     tryCatch({
-      withProgress(message = 'Please wait!', detail = "Importing Feature Table", value = 0.3, {
+      withProgress(message = 'Please wait!',
+                   detail = "Importing Feature Table",
+                   value = 0.3, {
         
         if(input$checkModal){
           
@@ -134,7 +141,10 @@ SelectProjectFolderModule <- function(input,output, session,
             feats[,charCols] <- character(nrow(feats))
           }
           
-          ColumnNames <- gsub("-",".",paste0(basename(internalValues$filegroups$File),"__XIC"))
+          ColumnNames <- gsub("-",
+                              ".",
+                              paste0(basename(internalValues$filegroups$File),
+                                     "__XIC"))
           
           ColumnNames2 <- ColumnNames
           ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))])
@@ -142,15 +152,22 @@ SelectProjectFolderModule <- function(input,output, session,
           intColRange <- grep("__XIC$",colnames(feats))
           #look for a .tGrouping file in same folder as table and load it
           if(file.exists(gsub("\\.csv$",".tGrouping",input$modalSelect))){
-            anagroup <-read.delim(gsub("\\.csv$",".tGrouping",input$modalSelect), stringsAsFactors = F, header = T, sep = "\t")
+            anagroup <-read.delim(gsub("\\.csv$",
+                                       ".tGrouping",
+                                       input$modalSelect),
+                                  stringsAsFactors = F,
+                                  header = T, sep = "\t")
           }
           #look for a .tGrouping file for this table in the entire project folder and load the first match
           else if(length(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)) > 0){
             anagroup <- read.delim(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)[1], stringsAsFactors = F, header = T, sep = "\t")
           }
           #backwards compatibility
-          else if(file.exists(file.path(values$projectData$projectFolder, "analysis_groups.csv"))){
-            anagroup <- read.csv(file.path(values$projectData$projectFolder, "analysis_groups.csv"), stringsAsFactors = F, header = T)
+          else if(file.exists(file.path(values$projectData$projectFolder,
+                                        "analysis_groups.csv"))){
+            anagroup <- read.csv(file.path(values$projectData$projectFolder,
+                                           "analysis_groups.csv"), 
+                                 stringsAsFactors = F, header = T)
             
           }else if(all(ColumnNames %in% colnames(feats))){
             
@@ -232,9 +249,12 @@ SelectProjectFolderModule <- function(input,output, session,
     # print("dirTrigger")
     if(length(AltFileFolder$dir) > 0){
       
-      allFiles <- list.files(AltFileFolder$dir, pattern=.MseekOptions$filePattern, recursive = TRUE, full.names=T)
+      allFiles <- list.files(AltFileFolder$dir, 
+                             pattern=.MseekOptions$filePattern, 
+                             recursive = TRUE, full.names=T)
       
-      allHits <- sapply(basename(internalValues$missingFiles), grep, x = allFiles, value = T)
+      allHits <- sapply(basename(internalValues$missingFiles),
+                        grep, x = allFiles, value = T)
       if(is.list(allHits)){
         allHits <- unlist(allHits[which(sapply(allHits, length) != 0)])
       }
@@ -243,15 +263,21 @@ SelectProjectFolderModule <- function(input,output, session,
         
         singleHits <- allHits[!duplicated(basename(allHits))]
         
-        replaceThese <- sapply(basename(singleHits), grep, x = basename(internalValues$filegroups$File), value = F)
+        replaceThese <- sapply(basename(singleHits), grep,
+                               x = basename(internalValues$filegroups$File), 
+                               value = F)
         
         internalValues$filegroups$File[replaceThese] <-  singleHits}
       
       try({
         #print("writing files")
         #override old filegroups with updated file paths and make a backup of the old file
-        file.copy(internalValues$filegroupsfile, gsub("\\.csv$", "_original.csv", internalValues$filegroupsfile))
-        write.csv(internalValues$filegroups, file = internalValues$filegroupsfile, row.names = F)
+        file.copy(internalValues$filegroupsfile, 
+                  gsub("\\.csv$", "_original.csv", 
+                       internalValues$filegroupsfile))
+        write.csv(internalValues$filegroups, 
+                  file = internalValues$filegroupsfile,
+                  row.names = F)
       })
       
       internalValues$msLoadTrigger <- !internalValues$msLoadTrigger
@@ -275,7 +301,9 @@ SelectProjectFolderModule <- function(input,output, session,
   }, ignoreInit = T)
   
   observeEvent(c(internalValues$msLoadTrigger,  input$modalIgnore),{
-    if(is.null(input$modalIgnore) || (input$modalIgnore > 0 || length(AltFileFolder$dir) > 0)){
+    if(is.null(input$modalIgnore) 
+       || (input$modalIgnore > 0 
+           || length(AltFileFolder$dir) > 0)){
       if(!is.null(is.null(input$modalIgnore))){
         removeModal()
       }
@@ -360,13 +388,7 @@ SelectProjectFolderModule <- function(input,output, session,
   
 }
 
-#' SelectProjectFolderModuleUI
-#' 
-#' 
-#' server module for loading Tables
-#' 
-#' @param id
-#' 
+#' @describeIn SelectProjectFolderModule UI elements
 #' @export 
 SelectProjectFolderModuleUI <- function(id){
   

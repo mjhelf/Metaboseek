@@ -19,7 +19,26 @@ peakFitter(x, y, m, s, startdepth = 1, maxdepth = 5,
 \item{startdepth}{defaults to 1, part of limiting the recursion}
 
 \item{maxdepth}{limits recursion to trying to fit curve \code{maxdepth} times with increasing \code{s} values}
+
+\item{best_estimate}{Best estimate from previous iterations - argument carries previous results through recursion}
+
+\item{allowWorseScore}{if FALSE, recursion ends when an iteration has a worse result than the previous one,
+and will return the best result up to that point}
+}
+\value{
+a list, see \code{details}
 }
 \description{
 fit a curve into a numeric vector. Will recursively try different starting values for the optimizer.
+}
+\details{
+Elements in returned list:
+\itemize{
+\item \code{depth} integer indicationg recursion depth
+\item \code{fit} result of using \code{\link[stats]{nls}()} on \code{x} with
+ \code{\link{peakFunction}()}, followed by \code{\link[stats]{fitted}()}
+\item \code{cor} result of calling \code{\link[stats]{cor.test}()} on \code{y}
+ and \code{fit}
+
+}
 }

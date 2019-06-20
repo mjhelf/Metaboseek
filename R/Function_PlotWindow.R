@@ -1,25 +1,28 @@
 #' PlotWindow
 #'
-#' Initiate a plot and draw axes
+#' Initiate a plot and draw axes. Used by plotting functions in Metaboseek.
+#' 
+#' @return plots an empty coordinate system in the current plotting device
 #'
 #' @param cx character expansion factor (font size)
 #' @param ylim numeric(2) of y-axis range
 #' @param xlim numeric(2) of x-axis range
 #' @param heading heading of the plot
-#' @param single if TRUE, this plot is expected to be the only plot in a composite (different margin settings)
-#' @param par if FALSE, par margin settings are not set inside the function and should be set outside
+#' @param single if TRUE, this plot is expected to be the only 
+#' plot in a composite plot (different margin settings)
+#' @param par if FALSE, par margin settings are not set inside 
+#' the function and should be set outside
 #' @param xlab x axis label
 #' @param ylab y axis label
 #' @param relto show y axis values relative to relto if not NULL.
 #' @param ysci if TRUE, y axis label numbers are shown in scientific format
-#' @param textadj passed on to mtext adj for orientation of plot description/title text line
+#' @param textadj passed on to mtext adj for orientation 
+#' of plot description/title text line
 #' @param ylabfactor factor to adjust the position of the y axis label
 #'
-#' @export
 PlotWindow <- function(cx = 1, 
-                       ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
-                       xlim = c(min(unlist(EIClistItem[,'rt'])),
-                                max(unlist(EIClistItem[,'rt'])))/60,
+                       ylim = c(0,1), 
+                       xlim = c(0,1),
                        heading = "test",
                        single = F,
                        par = T,
@@ -66,7 +69,8 @@ PlotWindow <- function(cx = 1,
   #x axis
   axis(side=1, lwd=liwi, lwd.ticks = liwi, at = pretty(xlim),
        labels = format(pretty(xlim), scientific = F),
-       mgp=c(0,0.4*cx,0), cex.axis=1*cx, xaxs = "i")#x-axis mgp[2] controls distance of tick labels to axis
+       mgp=c(0,0.4*cx,0), cex.axis=1*cx, xaxs = "i")
+  #x-axis mgp[2] controls distance of tick labels to axis
   
   mtext(side=1, text= xlab, line=1.5*(1+(cx-1)/2), cex=par("cex")*cx*1)
   
@@ -75,7 +79,9 @@ PlotWindow <- function(cx = 1,
          labels = format(pretty(ylim, n =pn), scientific = F),
          mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7)-ylabshift, cex=par("cex")*1*cx)
+    mtext(side=2, text= ylab,
+          line=4*(1+(cx-1)/1.7)-ylabshift,
+          cex=par("cex")*1*cx)
   }
   else{
     #y axis
@@ -83,13 +89,17 @@ PlotWindow <- function(cx = 1,
          labels = format(pretty(ylim, n =pn), scientific = ysci,digits = 3),
          mgp=c(0,0.6,0), cex.axis=1*cx, lwd = liwi, lwd.ticks = liwi)
     #axis labels
-    mtext(side=2, text= ylab, line=4*(1+(cx-1)/1.7)-ylabshift, cex=par("cex")*1*cx)
+    mtext(side=2, text= ylab,
+          line=4*(1+(cx-1)/1.7)-ylabshift,
+          cex=par("cex")*1*cx)
   }
   
   #fix axis to not have gaps at edges
   abline(v=min(xlim), h=min(ylim), lwd = liwi)
   
-  Hmisc::minor.tick(nx=2, ny=2, tick.ratio=0.5, x.args = list(), y.args = list())
+  Hmisc::minor.tick(nx=2, ny=2,
+                    tick.ratio=0.5, x.args = list(),
+                    y.args = list())
   
   # text(max(xlim), max(ylim)+1.5*strheight("M"),
   #      labels = heading, bty="n",

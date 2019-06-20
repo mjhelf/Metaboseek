@@ -7,11 +7,15 @@
 MosCluster(method = "clara", ...)
 }
 \arguments{
-\item{method}{"clara" (from the cluster package)}
+\item{method}{name of a function, defaults to "clara" (from the cluster package)}
 
 \item{...}{additional arguments to the clustering method}
 
 \item{mx}{matrix (of intensity values)}
+}
+\value{
+a data.frame with one column, called \code{cluster__METHODNAME}, 
+where METHODNAME is the applied \code{method}
 }
 \description{
 Cluster a matrix

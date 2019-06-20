@@ -15,6 +15,10 @@ pairCompare(v1, v2, NAasZero = T, method = c("cosine", "pearson"))
 
 \item{method}{"cosine" will use lsa::cosine(), "pearson" will use stats::cor()}
 }
+\value{
+the result of the method call, a numeric similarity score
+}
 \description{
-Compare two vectors of equal length pairwise and calculate a similarity score (e.g. intensity values of matched MS peaks)
+Compare two vectors of equal length pairwise and calculate a similarity 
+score (e.g. intensity values of matched MS peaks)
 }

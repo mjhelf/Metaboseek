@@ -1,17 +1,17 @@
-#' GetSiriusModule
+#' GetSiriusWidget
 #' 
+#' Widget that starts a SIRIUS analysis as specified in reactives({}, which will 
+#' add an entry to the index file in the SIRIUS folder to be observed by the SiriusModule
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekWidgets
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @param reactives a reactive() returning a list of \code{\link{runSirius}()}
+#'  parameters
 #' 
+#' @describeIn GetSiriusWidget server logic
 #' 
 #' @export 
-GetSiriusModule <- function(input,output, session, 
-                          values = reactiveValues(),
+GetSiriusWidget <- function(input,output, session, 
                           reactives = reactive({
                             list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
                                  ms2 = MergedSpecs,
@@ -51,15 +51,9 @@ GetSiriusModule <- function(input,output, session,
   })
 }
 
-#' GetSiriusModuleUI
-#' 
-#' 
-#' UI module for interactive SIRIUS interface
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn GetSiriusWidget UI elements
 #' @export
-GetSiriusModuleUI <- function(id){
+GetSiriusWidgetUI <- function(id){
   ns <- NS(id)
   fluidPage(
     htmlOutput(ns("getsiriusbutton"))

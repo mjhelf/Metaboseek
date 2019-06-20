@@ -1,11 +1,10 @@
 #' GlobalOptionsModule
 #' 
+#' Module to change some global options in \code{values$GlobalOpts} from the UI
 #' 
-#' Module to change global options
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
+#' @describeIn GlobalOptionsModule server logic
 #' 
 #' @import shiny
 #' @importFrom parallel detectCores
@@ -87,10 +86,7 @@ if(length(SiriusFolder$dir) > 0
 
 }
 
-#' GlobalOptionsModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn GlobalOptionsModule UI elements
 #' @export
 GlobalOptionsModuleUI <- function(id){
   ns <- NS(id)

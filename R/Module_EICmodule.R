@@ -1,19 +1,17 @@
 #' EICmodule
 #' 
-#' 
 #' server module for interactive EIC view
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekModules
 #' 
+#' @details 
+#' Returns its internalValues, a \code{reactivevalues} object
+#' 
+#' @describeIn EICmodule server logic for the EICmodule
 #' @export 
 EICmodule <- function(input, output, session, 
                       values = reactiveValues(MSData = MSData,
-                                              GlobalOpts = GlobalOpts
-                                              ),
-                      keys){
+                                              GlobalOpts = GlobalOpts)){
   
   ####Initialization####
   ns <- NS(session$ns(NULL))
@@ -233,7 +231,7 @@ EICmodule <- function(input, output, session,
   observeEvent(input$plainplot_click,{
     #print("click")
     if(internalValues$active){
-      if (keys() == 16) {
+      if (values$GlobalOpts$keyinput.keydown == 16) {
         internalValues$controls$click <- input$plainplot_click
         internalValues$controls$marker <- nearPoints(internalValues$controls$nearpoints,
                                                      input$plainplot_click,
@@ -247,7 +245,7 @@ EICmodule <- function(input, output, session,
       
       ###TEMPORARY FIX FOR BROKEN DOUBLECLICK, Ctrl + click
       
-      if (keys() == 17) {
+      if (values$GlobalOpts$keyinput.keydown == 17) {
         if (!is.null(input$plainplot_brush)) {
           
           
@@ -441,19 +439,10 @@ EICmodule <- function(input, output, session,
     }
   })
   
-  return(
-    internalValues
-  )
+  return(internalValues)
 }
 
-
-#' EICmoduleUI
-#' 
-#' 
-#' UI module for interactive EIC view
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn EICmodule UI elements for the EICmodule
 #' @export 
 EICmoduleUI <- function(id){
   ns <- NS(id)

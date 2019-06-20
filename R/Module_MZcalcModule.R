@@ -1,13 +1,12 @@
 #' MZcalcModule
 #' 
+#' Module for calculating mzs from molecular formulas in the FeatureTable
 #' 
-#' server module for saving Tables
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns its internalValues
+#' 
+#' @describeIn MZcalcModule Server logic
 #' 
 #' @export 
 MZcalcModule <- function(input,output, session,
@@ -67,7 +66,9 @@ MZcalcModule <- function(input,output, session,
         tabid <- paste0("table",length(values$featureTables$index))
         names(tabid) <- paste0("mzcalc_", paste(input$chargesel, collapse = "_"), values$featureTables$tables[[values$featureTables$active]]$tablename)
         
-        newdf <-  calcMZs(values$featureTables$tables[[values$featureTables$active]]$df, charges = as.integer(input$chargesel), carrier = "H", monoisotopic = T, mf_column = input$formulacolumn)
+        newdf <-  calcMZs(values$featureTables$tables[[values$featureTables$active]]$df,
+                          charges = as.integer(input$chargesel), carrier = "H",
+                          monoisotopic = T, mf_column = input$formulacolumn)
 
         
         if(is.null(newdf) || nrow(newdf) == 0){
@@ -118,10 +119,7 @@ MZcalcModule <- function(input,output, session,
   return(internalValues)
 }
 
-#' MZcalcModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn MZcalcModule UI elements
 #' @export
 MZcalcModuleUI <- function(id)
 {

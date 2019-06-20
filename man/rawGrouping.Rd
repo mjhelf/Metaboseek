@@ -7,7 +7,11 @@
 rawGrouping(rawgrouptable)
 }
 \arguments{
-\item{rawgrouptable}{a data.frame with columns File and Group , holding file paths and group names, respectively.}
+\item{rawgrouptable}{a data.frame with columns File and Group,
+holding file paths and group names, respectively.}
+}
+\value{
+a named list
 }
 \description{
 Groups a rawgrouptable into a named list.

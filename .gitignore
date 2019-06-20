@@ -8,3 +8,5 @@ mosaic.Rproj
 inst/config/MseekOptions.json
 METABOseek.Rproj
 vignettes/*.log
+doc
+Meta

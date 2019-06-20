@@ -7,16 +7,33 @@
 mergepeaks2(pl, rttol = 3, minint = 0, minrelint = 0, topN = 100)
 }
 \arguments{
-\item{pl}{a peaklist, such as list items returned by find_peaks() (or its rbind product)}
+\item{pl}{a peaklist, such as list items returned by \code{\link{findPeaks2}()}}
 
 \item{rttol}{retention time tolerance in seconds to merge peaks}
 
 \item{minint}{minimum intensity for a peak to be retained (before merging)}
 
-\item{minrelint}{minimum intensity of a peak to be retained (before merging), relative to largest peak}
+\item{minrelint}{minimum intensity of a peak to be retained (before merging),
+relative to largest peak}
 
 \item{topN}{number of highest intensity peaks retained after merging}
 }
+\value{
+a data.frame with information on peak position in EICs
+}
 \description{
-merge peaks in a peaklist
+merge peaks in a peaklist within a file or across multiple files
+}
+\details{
+Columns of the returned data.table:
+\itemize{
+\item \code{rt} retention time of peak maximum, 
+ average across merged peaks, weighted by peak intensity
+\item \code{rtmin} retention time of peak start, 
+ average across merged peaks, weighted by peak intensity
+\item \code{rtmax} retention time of peak end, 
+ average across merged peaks, weighted by peak intensity
+ \item \code{maxint} maximum intensity of peak
+\item \code{file} file names, separated by "|"
+}
 }

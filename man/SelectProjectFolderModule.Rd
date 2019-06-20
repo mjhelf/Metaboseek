@@ -2,25 +2,45 @@
 % Please edit documentation in R/Module_SelectProjectFolderModule.R
 \name{SelectProjectFolderModule}
 \alias{SelectProjectFolderModule}
+\alias{SelectProjectFolderModuleUI}
 \title{SelectProjectFolderModule}
 \usage{
 SelectProjectFolderModule(input, output, session,
   values = reactiveValues(projectData = projectData, featureTables =
   featureTables, MSData = MSData, GlobalOpts = GlobalOpts))
+
+SelectProjectFolderModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{reactives}{Import data from the shiny session}
-
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-server module for loading a Project Folder
+Module for loading a Project Folder
+}
+\section{Functions}{
+\itemize{
+\item \code{SelectProjectFolderModule}: Server logic
+
+\item \code{SelectProjectFolderModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -26,6 +26,9 @@ writeMS(filename, ms2, ms1 = NULL, parentmz, comments = "", rt = "",
 
 \item{scanindices}{which scans were averaged into this ms2 spectrum}
 }
+\value{
+Returns nothing, but writes a SIRIUS \code{.ms} file.
+}
 \description{
 write an .ms file containing a spectrum to be exported to SIRIUS.
 will append additional spectrum to file if filename is that of an existing file.

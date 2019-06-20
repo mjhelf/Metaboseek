@@ -1,16 +1,16 @@
 #' PlotModule
 #' 
+#' Module for ggplot2 handler
 #' 
-#' server module for ggplot2 handler
+#' @inherit MseekWidgets
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @return Returns nothing but provides a ggplot GUI output
+#' 
+#' @describeIn PlotModule Server logic
 #' 
 #' @import shiny ggplot2
 #' @importFrom shinyjs hideElement showElement toggle
-#' @importFrom plotly renderPlotly
+#' @importFrom plotly renderPlotly plotlyOutput
 #' 
 #' @export 
 PlotModule <- function(input,output, session,
@@ -62,13 +62,7 @@ PlotModule <- function(input,output, session,
   
 }
 
-#' PCABrowserModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
-#' @import shiny
-#' @importFrom plotly plotlyOutput
-#' 
+#' @describeIn PlotModule UI elements
 #' @export
 PlotModuleUI <- function(id){
   ns <- NS(id)

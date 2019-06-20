@@ -2,20 +2,49 @@
 % Please edit documentation in R/Module_MultiEICmodule.R
 \name{MultiEICmodule}
 \alias{MultiEICmodule}
+\alias{MultiEICmoduleUI}
 \title{MultiEICmodule}
 \usage{
 MultiEICmodule(input, output, session, values = reactiveValues(MSData =
   MSData, GlobalOpts = GlobalOpts, featureTables = featureTables))
+
+MultiEICmoduleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module for interactive EIC view
+Allows viewing multiple interactive EIC views at a time by providing multiple
+\code{\link{EICmodule}} outlets
+}
+\details{
+Returns its internalValues, a \code{reactivevalues} object
+}
+\section{Functions}{
+\itemize{
+\item \code{MultiEICmodule}: server logic for the MultiEICmodule
+
+\item \code{MultiEICmoduleUI}: UI elements for the MultiEICmodule
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -1,13 +1,14 @@
 #' FilterModule
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module to apply filters to a featureTable (UI). Has to be inside a 
+#' MultiFilterModule, and will modify the parent modules internalValues, accessed as values$MultiFilter!
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
+#' @param initValues set initial values for input fields
+#' 
+#' @return a reactivevalues object with its internalValues
+#' 
+#' @describeIn FilterModule server logic
 #' 
 #' @export 
 FilterModule <- function(input,output, session,
@@ -164,12 +165,7 @@ FilterModule <- function(input,output, session,
   
 }
 
-#' FilterModuleUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
-#' 
+#' @describeIn FilterModule UI elements
 #' @export
 FilterModuleUI <- function(id){
   ns <- NS(id)

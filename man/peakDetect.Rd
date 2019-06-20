@@ -8,20 +8,47 @@ peakDetect(trace, SN = 1, minwidth = 4, localNoise = 7,
   localNoiseFactor = 0.5, globalNoiseFactor = 0.5, extend = T)
 }
 \arguments{
-\item{trace}{numeric vector of intensity values. it is assumed that the data points were collected in regular intervals (problems may occur e.g. with variable scan rate due to ddMS2 experiments)}
+\item{trace}{numeric vector of intensity values. it is assumed that the 
+data points were collected in regular intervals (problems may occur e.g. 
+with variable scan rate due to ddMS2 experiments)}
 
-\item{SN}{factor by which the maximum of a peak has to be larger than its edges (start  and  end scan) in final filter step}
+\item{SN}{factor by which the maximum of a peak has to be larger than its 
+edges (start  and  end scan) in final filter step}
 
-\item{minwidth}{minimum width of a peak to not be thrown out in initial filter step}
+\item{minwidth}{minimum width of a peak to not be thrown out in 
+initial filter step}
 
-\item{localNoise}{window size for local noise level calculation - default 7 means data from each point plus/minus 3 scans is used}
+\item{localNoise}{window size for local noise level calculation - default 7 
+means data from each point plus/minus 3 scans is used}
 
-\item{localNoiseFactor}{factor to adjust local noise level. can be negative to allow very small peaks}
+\item{localNoiseFactor}{factor to adjust local noise level. can be negative 
+to allow very small peaks}
 
-\item{globalNoiseFactor}{factor to adjust global noise level (based on entire trace). can be negative to allow very small peaks}
+\item{globalNoiseFactor}{factor to adjust global noise level (based on 
+entire trace). can be negative to allow very small peaks}
 
-\item{extend}{if true, will try to expand peak boundaries to include downstream tails that may have been cut of before. Aslo depends on local noise settings.}
+\item{extend}{if true, will try to expand peak boundaries to include 
+downstream tails that may have been cut of before. Aslo depends on 
+local noise settings.}
+}
+\value{
+a data.frame with detected peaks
 }
 \description{
-more recent try at peak detection
+Peak detection using an algorithm modified from Ma et al.[1].
+}
+\details{
+Columns of the returned data.frame:
+\itemize{
+\item \code{max} index of position in trace with a peak maximum
+\item \code{start} index of peak start position in trace 
+\item \code{end} index of peak end position in trace 
+}
+}
+\references{
+\enumerate{
+\item Ma M, van Genderen A, Beukelman P (2005) Developing and Implementing Peak 
+Detection for Real-Time Image Registration. Proc 16th  Annu Work Circuits,
+ Syst Signal Process 4:641–652
+}
 }

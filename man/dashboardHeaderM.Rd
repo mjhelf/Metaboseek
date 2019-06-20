@@ -8,5 +8,6 @@ dashboardHeaderM(..., title = NULL, titleWidth = NULL,
   disable = FALSE, .list = NULL, left = NULL)
 }
 \description{
-METABOseek-specific, modified version of shinydashboard::dashboardHeader that allows placing icons left and right in the navbar
+METABOseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
+that allows placing icons left and right in the navbar
 }

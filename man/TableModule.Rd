@@ -2,24 +2,47 @@
 % Please edit documentation in R/Module_TableModule.R
 \name{TableModule}
 \alias{TableModule}
+\alias{TableModuleUI}
 \title{TableModule}
 \usage{
 TableModule(input, output, session, tag, set = list(df = NULL, update =
   1, layout = list(perpage = 100, height = 300, readOnly = T, contextMenu =
   T, fixedColumnsLeft = 1, invertReadOnly = NULL, format = list(col = NULL,
   format = NULL))))
+
+TableModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{tag}{id to be used in ns()}
 
 \item{set}{Import data from the shiny session}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module for interactive mass spectrum view
+Module to show a Table in the UI. Deprecated, use \code{\link{TableModule2}}
+}
+\section{Functions}{
+\itemize{
+\item \code{TableModule}: Server logic
+
+\item \code{TableModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

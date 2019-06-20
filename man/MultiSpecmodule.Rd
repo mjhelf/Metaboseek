@@ -2,6 +2,7 @@
 % Please edit documentation in R/Module_MultiSpecmodule.R
 \name{MultiSpecmodule}
 \alias{MultiSpecmodule}
+\alias{MultiSpecmoduleUI}
 \title{MultiSpecmodule}
 \usage{
 MultiSpecmodule(input, output, session, tag, set = list(spec =
@@ -9,18 +10,44 @@ MultiSpecmodule(input, output, session, tag, set = list(spec =
   sel = NULL, mz = NULL, data = NULL, MS2 = T), layout = list(lw = 1, cex =
   1, controls = F, ppm = 5, active = T, height = 350), msdata = NULL),
   keys, static = list(title = "MS spectra"))
+
+MultiSpecmoduleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
 \item{tag}{id to be used in ns()}
 
 \item{set}{Import data from the shiny session}
+
+\item{keys}{\code{reactive({})} that reports the current key press. 
+This argument is deprecated and will be removed from all modules.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module for multiple interactive mass spectrum views
+Multiple interactive mass spectrum views. Deprecated
+}
+\section{Functions}{
+\itemize{
+\item \code{MultiSpecmodule}: Server logic
+
+\item \code{MultiSpecmoduleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -1,14 +1,12 @@
 #' TableAnalysisModule
 #' 
+#' Module for Feature Table analysis
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @describeIn TableAnalysisModule Server logic
+#' 
+#' @return Returns its internalValues
 #' 
 #' @import shiny
 #' @importFrom shinyjs toggle
@@ -91,10 +89,10 @@ TableAnalysisModule <- function(input,output, session,
    })
    
    
-  output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
+  output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group',
                                                 choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{reactives()$fileGrouping$Group},
-                                                selected = if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups},
-                                                multiple = T)})
+                                                selected = isolate({if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups}}),
+                                                multiple = F)})
   observeEvent(input$selctrl,{
     if(!is.null(values$featureTables)){
       values$featureTables$tables[[values$featureTables$active]]$ctrlGroups <- input$selctrl}
@@ -268,7 +266,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
    # toggle(id = 'peakpickMod', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables) && !is.null(values$MSData))
   #  toggle(id = 'getintmod', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables) && !is.null(values$MSData))
     
-    toggle(id = 'advancedana', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables))
+    toggle(id = 'advancedana', condition = !is.null(values$featureTables) && !is.null(values$featureTables$Maintable))
     
   })
   
@@ -284,10 +282,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   
 }
 
-#' TableAnalysisModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn TableAnalysisModule UI elements
 #' @export
 TableAnalysisModuleUI <- function(id){
   ns <- NS(id)

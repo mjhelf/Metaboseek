@@ -4,18 +4,34 @@
 \alias{makeEdges}
 \title{makeEdges}
 \usage{
-makeEdges(speclist = speclist1, parentmasses, mztol = 0.005,
-  minpeaks = 6, nonmatched = T)
+makeEdges(speclist, parentmasses = NULL, mztol = 0.005, minpeaks = 6,
+  nonmatched = T)
 }
 \arguments{
 \item{speclist}{(non-nested) list of MS spectra}
 
-\item{parentmasses}{vector of parent m/z values (same length as speclist)}
+\item{parentmasses}{vector of parent m/z values (same length as speclist).}
 
 \item{mztol}{max difference between matched peaks in m/z}
 
 \item{minpeaks}{minimum number of peaks that have to be matched, otherwise returns 0}
+
+\item{nonmatched}{if TRUE, will add non-matching peaks to calculation, 
+with 0 intensity in the spectrum missing the peak}
+}
+\value{
+a data.frame with edge information, see \code{Details}
 }
 \description{
-Make an edgelist (data.table) using a vector of parentmasses and a list of MS spectra
+Make an edgelist (data.frame) using a vector of parentmasses 
+and a list of MS spectra. Wrapper for \code{\link{network1}()}.
+}
+\details{
+Columns of the returned data.frame:
+\itemize{
+\item \code{from} vertex id
+\item \code{to} vertex id
+\item \code{cosine} similarity measure
+\item \code{deltamz} parent mass difference
+}
 }

@@ -7,8 +7,12 @@
 updateFTIndex(tables)
 }
 \arguments{
-\item{table}{list of MseekFT objects}
+\item{table}{named list of MseekFT objects}
+}
+\value{
+named list of MseekFT tablenames
 }
 \description{
-update the FT index of the Mseek App (needed because this index is a named list - extracts tablename entry from each MseekFT object in list)
+update the FT index of the Mseek App (needed because this index is a named 
+list - extracts tablename entry from each MseekFT object in list)
 }

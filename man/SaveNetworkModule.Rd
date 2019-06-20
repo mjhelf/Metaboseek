@@ -2,27 +2,50 @@
 % Please edit documentation in R/Module_SaveNetworkModule.R
 \name{SaveNetworkModule}
 \alias{SaveNetworkModule}
+\alias{SaveNetworkModuleUI}
 \title{SaveNetworkModule}
 \usage{
-SaveNetworkModule(input, output, session, reactives = reactive({    
-  list(graphname = NULL, filename = "table.graphml") }),
-  values = reactiveValues(Networks = Networks), static = list(tooltip =
-  "Save Network as a graphml file", label = "Save Network", format =
-  c("graphml")))
+SaveNetworkModule(input, output, session,
+  values = reactiveValues(Networks = Networks), reactives = reactive({ 
+     list(graphname = NULL, filename = "table.graphml") }),
+  static = list(tooltip = "Save Network as a graphml file", label =
+  "Save Network", format = c("graphml")))
+
+SaveNetworkModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{values}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
 
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-server module for saving Tables
+Module for saving molecular network data
+}
+\section{Functions}{
+\itemize{
+\item \code{SaveNetworkModule}: Server logic
+
+\item \code{SaveNetworkModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -1,11 +1,16 @@
 #' MseekMinimalServer
 #'
-#' A minimal server logic for Mseek. Function has to be called in a shiny server function context. Will load example data if it is not present in the parent environment.
-#' Save time by providing the parent environment with objects \code{tab1}, \code{tab2} and \code{MSD} by calling MseekExamplePreload()
+#' A minimal server logic for Mseek. Function has to be called in a shiny server
+#'  function context. Will load example data if it is not present in the 
+#'  parent environment. Save time by providing the parent environment with
+#'   objects \code{tab1}, \code{tab2} and \code{MSD} by calling 
+#'   \code{\link{MseekExamplePreload}()}
 #'
 #' @param data load example MS data?
 #' @param tables load example tables?
-#' @param diagnostics run diagnostics (shinyjs::runcodeServer()) code?
+#' @param diagnostics if TRUE, run diagnostics (shinyjs::runcodeServer())
+#' 
+#' @return provides a shiny session with basic elements needed for METABOseek.
 #'   
 #' @importFrom shinyjs runcodeServer 
 #' @importFrom BiocParallel register bpstart SnowParam MulticoreParam
@@ -131,7 +136,11 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
 
 #' MseekExamplePreload
 #'
-#' Loads example data into the parent environment for testing and development purposes
+#' Loads example data into the parent environment for 
+#' testing and development purposes
+#'
+#' @return Generates objects \code{tab1}, \code{tab2} and \code{MSD} in the 
+#' parent environment of the function call
 #'
 #' @param tables load example tables?
 #' @param data load example MS data?

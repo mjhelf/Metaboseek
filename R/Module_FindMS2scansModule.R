@@ -1,13 +1,11 @@
 #' FindMS2ScansModule
 #' 
+#' A one-button modue to enrich a Feature Table with information about available 
+#' MS2 scans for each molecular feature
 #' 
-#' server module for saving Tables
+#' @describeIn FindMS2ScansModule server logic
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
 #' 
 #' @export 
 FindMS2ScansModule <- function(input,output, session,
@@ -106,10 +104,8 @@ FindMS2ScansModule <- function(input,output, session,
   return(internalValues)
 }
 
-#' FindMS2ScansModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+
+#' @describeIn FindMS2ScansModule UI elements
 #' @export
 FindMS2ScansModuleUI <- function(id)
 {

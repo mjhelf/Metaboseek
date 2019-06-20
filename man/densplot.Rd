@@ -4,14 +4,18 @@
 \alias{densplot}
 \title{densplot}
 \usage{
-densplot(densin = log10(as.numeric(unlist(filtrate3[, scol]))),
-  perc = c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95,
-  0.99), ...)
+densplot(densin = stats::rnorm(100), perc = c(0.01, 0.05, 0.1, 0.2,
+  0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99), ...)
 }
 \arguments{
 \item{densin}{numeric vector or matrix}
 
 \item{perc}{numeric(): draw lines at these quantiles}
+
+\item{...}{arguments passed to \code{plot()}}
+}
+\value{
+sends a density plot to the current plotting device
 }
 \description{
 generate a density plot for numeric data.

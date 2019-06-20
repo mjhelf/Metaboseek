@@ -1,13 +1,11 @@
 #' VennDiagramModule
 #' 
-#' 
 #' server module for Venn diagrams in METABOseek
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @inherit MseekModules
+#' @describeIn VennDiagramModule Server logic
 #' 
+#' @return Returns its internalValues
 #' 
 #' 
 #' @export 
@@ -129,13 +127,7 @@ VennDiagramModule <- function(input,output, session,
   
 }
 
-#' VennDiagramModuleUI
-#' 
-#' 
-#' UI module for Venn diagrams in METABOseek
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn VennDiagramModule UI elements
 #' @export
 VennDiagramModuleUI <- function(id){
   ns <- NS(id)

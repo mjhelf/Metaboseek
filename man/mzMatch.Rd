@@ -9,12 +9,33 @@ mzMatch(df, db, ppm = 5, mzdiff = 0.001)
 \arguments{
 \item{df}{data.frame that contains a mz column}
 
-\item{db}{data.frame that contains the compound database and at least columns mz and id. Can also be a character vector of .csv file names (will be combined into a single list for the search, with duplicate lines removed)}
+\item{db}{data.frame that contains the compound database and at least 
+columns mz and id. Can also be a character vector of .csv file paths 
+(will be combined into a single list for the search, with duplicate 
+lines removed)}
 
 \item{ppm}{ppm mz tolerance}
 
-\item{mzdiff}{maximum mz difference. NOTE: either ppm OR mzdiff condition has to be met}
+\item{mzdiff}{maximum mz difference. NOTE: either ppm OR mzdiff 
+condition has to be met}
+}
+\value{
+a data.frame with the same number of rows as \code{df} and columns
+ as described in \code{details}
 }
 \description{
 Find m/z matches for each item in a Feature Table in a database.
+}
+\details{
+columns in the resulting data.frame contain hits for each entry 
+(row) in \code{df} :
+\itemize{
+\item\code{mzMatches} identity of the seach hits in \code{db}, taken from 
+the \code{id} column of each \code{db}
+\item\code{mzMatchError} ppm error, based on difference between db$mz and df$mz for each search hit.
+}
+All other columns defined in any \code{db} file are added as well with 
+the prefix \code{mzMatch_}. If there are multiple hits across the \code{db}
+ files, they will be separated by "|" within each column (including 
+ \code{mzMatches} and \code{mzMatchError})
 }

@@ -1,13 +1,25 @@
 #' LoadTableModule
 #' 
+#' Module for loading Tables
 #' 
-#' server module for loading Tables
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
+#' @return returns its internalValues, most notably element \code{df} that contains 
+#' the table once it is loaded, and \code{filename}, which contains the basename 
+#' of the loaded table file
+#' 
+#' @param static see \code{Details}
+#' 
+#' @details elements in \code{static} that can be set:
+#' \itemize{
+#' \item \code{tooltip} tooltip on button opening the load table menu
+#' \item \code{label} label on button opening the load table menu
+#' \item \code{format} loading options \code{header}, \code{sep},
+#'  \code{quote}, \code{stringsAsFactors} to be passed to \code{data.table::fread}
+#' \item \code{pattern} file name pattern to restrict file display to
+#' }
+#' 
+#' @describeIn LoadTableModule server logic
 #' @param static Import data from the shiny session
 #' 
 #' @export 
@@ -209,10 +221,7 @@ LoadTableModule <- function(input,output, session,
   
 }
 
-#' simpleTableModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn LoadTableModule UI elements
 #' @export
 LoadTableModuleUI <- function(id)
 {

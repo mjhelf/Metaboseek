@@ -1,13 +1,12 @@
 #' MzqueryModule
 #' 
-#' Chemcalc mz query module
-#' server module to get molecular formula predictions from chemcalc
+#' Use the \code{MassTools} and \code{Rdisop} packages to predict molecular formulas
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @describeIn MzqueryModule Server logic
+#' 
+#' @return Returns its internalValues
 #' 
 #' @importFrom MassTools calcMF
 #' @importFrom BiocParallel bpparam
@@ -331,14 +330,7 @@ return(internalValues)
 
 }
 
-#' massquery
-#' 
-#' Chemcalc mz query module
-#' UI module to get molecular formula predictions from chemcalc
-#' 
-#' @param id id to be used in ns()
-#'
-#' 
+#' @describeIn MzqueryModule UI elements
 #' @export 
 MzqueryModuleUI <- function(id){
  ns <- NS(id)

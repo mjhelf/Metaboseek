@@ -1,22 +1,18 @@
 #' MS2BrowserModule
 #' 
+#' Module for browsing and comparing MS2 data
 #' 
-#' server module for loading Tables
+#' @inherit MseekModules
+#' @param keys \code{reactive({})} that reports the current key press
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
+#' @describeIn MS2BrowserModule Server logic
 #' 
 #' @export 
 MS2BrowserModule <- function(input,output, session, 
-                             reactives = reactive({list(query = list(mz = NULL,
-                                                                     rt = NULL))}),
                              values = reactiveValues(featureTables = featureTables,
                                                      MSData = MSData,
                                                      GlobalOpts = GlobalOpts),
-                             keys = reactive({keys()})){
+                             keys = reactive({"NO"})){
   
   ns <- NS(session$ns(NULL))
 
@@ -37,12 +33,16 @@ MS2BrowserModule <- function(input,output, session,
                                                                                                 invertReadOnly = NULL
                                                                                             ))})
   )
-  observeEvent(c(input$ppmSearch,input$rtSearch,reactives()$query),{ 
-      if(length(reactives()$query$mz) > 0 ){
-          internalValues$spectab <- Parentsearch(values$MSData$data, mz = reactives()$query$mz, rt = reactives()$query$rt, ppm = input$ppmSearch, rtw = input$rtSearch)
+  observeEvent(c(input$ppmSearch,input$rtSearch,values$featureTables$Maintable$selected_rows),{ 
+      if(length(values$featureTables$Maintable$selected_rows) > 0 ){
+          internalValues$spectab <- Parentsearch(values$MSData$data,
+                                                 mz = values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"],
+                                                 rt = values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"],
+                                                 ppm = input$ppmSearch,
+                                                 rtw = input$rtSearch)
           
       }
-  })
+  }, ignoreInit = T)
   
   output$searchcontrol <- renderUI({
     fluidRow(
@@ -58,7 +58,7 @@ MS2BrowserModule <- function(input,output, session,
              ShowSiriusModuleUI(ns("showSirius"))
       ),
       column(3,
-             GetSiriusModuleUI(ns("getSirius"))
+             GetSiriusWidgetUI(ns("getSirius"))
       )
     )
   })
@@ -153,9 +153,7 @@ MS2BrowserModule <- function(input,output, session,
                                                                                GlobalOpts = values$GlobalOpts),
                         MS2feed = specEngine,
                         tree = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_dot"]]}else{NULL}}),
-                        fragments = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_json"]]}else{NULL}}),
-                        
-                        keys = reactive({keys()}))
+                        fragments = reactive({if(length(Sirius$activeMF)>0){Sirius$activeMF[["trees_json"]]}else{NULL}}))
   
   
   ####NETWORK RELATED
@@ -374,9 +372,7 @@ MS2BrowserModule <- function(input,output, session,
       }, ignoreNULL = FALSE)
   
   
-  callModule(GetSiriusModule, "getSirius",
-             values = reactiveValues(MSData = values$MSData,
-                                     GlobalOpts = values$GlobalOpts),
+  callModule(GetSiriusWidget, "getSirius",
              reactives = reactive({
                
                
@@ -441,17 +437,7 @@ MS2BrowserModule <- function(input,output, session,
   
 }
 
-#' MS2BrowserModule
-#' 
-#' 
-#' server module for loading Tables
-#' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
-#' 
+#' @describeIn MS2BrowserModule UI elements
 #' @export 
 MS2BrowserModuleUI <-  function(id){
   ns <- NS(id)

@@ -16,7 +16,6 @@ MainPlotContainer <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   
- # RegroupMS <- 
       callModule(RegroupMSDataModule, "regroupms",
                           values = reactiveValues(MSData = values$MSData,
                                                   projectData = values$projectData))
@@ -36,20 +35,13 @@ MainPlotContainer <- function(input,output, session,
   
   
   MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
-                           reactives = reactive({list(query = list(mz = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"mz"]},
-                                                                   rt = if(is.null(values$featureTables$Maintable$selected_rows)){NULL}else{values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],"rt"]}
-                           ))}),
                            values = reactiveValues(featureTables = values$featureTables,
                                                    MSData = values$MSData,
                                                    GlobalOpts = values$GlobalOpts),
                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   #### Quickplots #####
-  callModule(featurePlotModule, "quickplots",
-             FT = reactive({values$featureTables$tables[[values$featureTables$active]]}),
-             rname = reactive({row.names(values$featureTables$Maintable$liveView[values$featureTables$Maintable$selected_rows[1],])}),
-             values = reactiveValues(featureTables  =  values$featureTables)
-  )
+  callModule(QuickPlotsModule, "quickplots", values)
   
   #### interactiveView #####
   MultiEICout <- callModule(MultiEICmodule,"MultiE", values)
@@ -129,7 +121,7 @@ MainPlotContainerUI <- function(id){
                   )
          ),
          tabPanel("Quickplots",
-                  featurePlotModuleUI(ns("quickplots"))
+                  QuickPlotsModuleUI(ns("quickplots"))
          ),
          tabPanel("Venn Diagrams",
                   VennDiagramModuleUI(ns("venndiagrams"))

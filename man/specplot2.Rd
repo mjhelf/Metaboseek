@@ -19,7 +19,8 @@ specplot2(x = sc[, 1], y = sc[, 2], spectrum, norm = NULL, cx = 1,
 
 \item{cx}{font size}
 
-\item{k}{top k intensity peaks will be labeled}
+\item{k}{top k intensity peaks will be labeled 
+automatically with their mz values}
 
 \item{fileName}{plot title}
 
@@ -32,19 +33,43 @@ specplot2(x = sc[, 1], y = sc[, 2], spectrum, norm = NULL, cx = 1,
 \item{labels}{data.frame containing at least x and y coordinates,
 plus optional columns: label and color}
 
-\item{highlights}{matrix or data.frame with at the first two columns containing x and y coordinates of peaks to highlight.
-If \code{highlights} has an additional column called \code{color},
- that column is expected to contain color values for the highlights.
-If \code{highlights} has an additional column called \code{type},
- that column is expected to contain point \code{type} values for the highlights,
- as detailed in \link[graphics]{plot.default}.}
+\item{highlights}{matrix or data.frame, see \code{details}}
 
 \item{mar}{margins passed to par()}
 
 \item{ylab}{y axis label}
 
 \item{ylabshift}{shift horizontal position of y axis label}
+
+\item{parseLabels}{if TRUE, the \code{label} column in \code{labels} will
+be parsed (using \code{\link[base]{parse}})}
+}
+\value{
+plots a spectrum view in the current plotting device
 }
 \description{
 Plot an MS spectrum
+}
+\details{
+\describe{
+\item{highlights}{matrix or data.frame with at the first two columns 
+containing x and y coordinates of peaks to highlight.
+If \code{highlights} has an additional column called \code{color},
+ that column is expected to contain color values for the highlights.
+If \code{highlights} has an additional column called \code{type},
+ that column is expected to contain point \code{type} values for the highlights,
+ as detailed in \link[graphics]{plot.default}.}
+ \item{labels}{
+ The first two columns of this data.frame will be assumed to be mz and intensity values, respectively.
+ If it only contains two columns, the first column values will be used as label text.
+ If a \code{label} column is present, that column will be used as peak labels.
+ If a \code{colors} column is present, that column will be used to define
+  the label color, otherwise it will be red.
+ }
+ \item{parseLabels}{
+ Parsing labels can be used to include subscript and
+  superscript elements in peak labels, but requires careful preparation
+   of the strings to be passed to \code{\link[base]{parse}}
+ }
+}
 }

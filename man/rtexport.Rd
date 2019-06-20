@@ -9,6 +9,18 @@ rtexport(xset)
 \arguments{
 \item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object}
 }
+\value{
+\code{RTcorr} object, which is a named list, see \code{Details}
+}
 \description{
-Extract corrected and uncorrected retention times for each scan from an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object
+Extract corrected and uncorrected retention times for each scan from an 
+xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object
+}
+\details{
+elements of the returned \code{RTcorr} class object
+\itemize{
+\item \code{noncorr} list of numeric vectors with retention times for each scan for each file, before RT correction
+\item \code{corr} list of numeric vectors with retention times for each scan for each file, after RT correction
+\item \code{fnames} character() of filenames for each of the lists in \code{noncorr} and \code{corr} 
+}
 }

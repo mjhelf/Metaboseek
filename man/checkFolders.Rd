@@ -7,8 +7,12 @@
 checkFolders(query = paste0(LETTERS, ":/"))
 }
 \arguments{
-\item{query}{character vector with folders to search for, by default looks for drives in Windows file system}
+\item{query}{character vector with folders to search for,
+by default looks for drives in Windows file system}
+}
+\value{
+a named character vector of the folders in \code{query} which exist.
 }
 \description{
-Looks for folders
+Looks for folders as specified in \code{query}
 }

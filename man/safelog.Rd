@@ -7,12 +7,15 @@
 safelog(x, base = 10, replaceZeros = NULL)
 }
 \arguments{
-\item{x}{numeric()}
+\item{x}{numeric vector of positive values}
 
 \item{base}{of log}
 
 \item{replaceZeros}{replace zeros with this value, if NULL will use smallest non-zero absolute value in x}
 }
+\value{
+a numeric vector of same length as \code{x}, with logarithmized values
+}
 \description{
-aplly a log function to a numeric vector, but replaces zeros and uses abs values
+apply a log function to a numeric vector, but replaces zeros and uses abs values
 }

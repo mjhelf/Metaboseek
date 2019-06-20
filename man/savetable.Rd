@@ -11,24 +11,46 @@ savetable(xset, status = NULL, fill = FillChromPeaksParam(expandMz =
   saveR = T, postProc = NULL)
 }
 \arguments{
-\item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from which to extract the peaklist}
+\item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 
+which to extract the peaklist}
 
-\item{status}{a writeStatus object to be modified and returned by the function.}
+\item{status}{a \code{\link{writeStatus}} object to be modified and returned
+by the function, or NULL to start a new status.csv file}
 
-\item{fill}{xcms::FillChromPeaksParam object to specify how to fill peaks (only works if xset is an XCMSnExp object). No peak filling if NULL.}
+\item{fill}{xcms::FillChromPeaksParam object to specify how to fill peaks
+(only works if xset is an XCMSnExp object). No peak filling if NULL.}
 
 \item{nonfill}{also write the non-filled peaktable data? TRUE or FALSE}
 
-\item{filename}{filename to use when writing the csv file (including file extension). "_filled" will be added for filled data.}
+\item{filename}{filename to use when writing the csv file (including file 
+extension). "_filled" will be added for filled data.}
 
-\item{bparams}{BBPARAMs (BiocParallel::BiocParallelParam object with parameters for parallel computing used in fill peaks)}
+\item{bparams}{BBPARAMs (BiocParallel::BiocParallelParam object with 
+parameters for parallel computing used in fill peaks)}
 
-\item{intensities}{list of parameters for Mseek EIC intensity extraction (for each feature in the peaklist). ppm: mz window, rtw: rt window (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, if FALSE rtw centers around value in column rt. Not performed if intensities = NULL.}
+\item{intensities}{list of parameters for Mseek EIC intensity extraction 
+(for each feature in the peaklist). ppm: mz window, rtw: rt window 
+(+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, 
+if FALSE rtw centers around value in column rt. Not performed if 
+intensities = NULL.}
 
-\item{rawdata}{named list of xcmsRaw objects (as returned by Mseek::loadRawM), required for Mseek EIC intensity extraction which is not performed if NULL.}
+\item{rawdata}{named list of xcmsRaw objects (as returned by
+Mseek::loadRawM), required for Mseek EIC intensity extraction which 
+is not performed if NULL.}
 
 \item{saveR}{save the xset object as .Rdata file}
+
+\item{postProc}{list of SOME arguments passed to \code{\link{analyzeTable}()}
+for post processing, or NULL to skip processing. 
+TODO: transisiton to do.call solution for postProc and document}
+}
+\value{
+Returns a \code{writeStatus} object, writes to \code{status.csv} 
+ file as well as other .csv files (with processed or unprocessed peakTables) 
+ in current working directory.
 }
 \description{
-Write or update a status dataframe with custom messages, time stamp and time elapsed since last status. Useful to document time consumed analysis by steps.
+Save a peakTable from an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate
+ object, and also keep track of analysis status via internal calls to 
+ \code{\link{writeStatus}()}.
 }

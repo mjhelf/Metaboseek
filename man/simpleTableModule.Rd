@@ -2,20 +2,39 @@
 % Please edit documentation in R/Module_simpleTableModule.R
 \name{simpleTableModule}
 \alias{simpleTableModule}
+\alias{simpleTableModuleUI}
 \title{simpleTableModule}
 \usage{
 simpleTableModule(input, output, session, df = reactive({     NULL }),
   static = list(readOnly = T, contextMenu = F, height = "auto"))
+
+simpleTableModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{set}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues, most importantly elements \code{df} 
+and \code{liveView}
 }
 \description{
-server module for interactive mass spectrum view
+A simple Table module without sorting or pagination
 }
+\section{Functions}{
+\itemize{
+\item \code{simpleTableModule}: Server logic
+
+\item \code{simpleTableModuleUI}: UI elements
+}}
+

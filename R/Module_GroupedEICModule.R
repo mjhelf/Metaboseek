@@ -1,14 +1,12 @@
 #' GroupedEICModule
 #' 
+#' Shiny Module to plot grouped EICs, using \code{\link{EICgeneral}()}
 #' 
-#' server module for loading a Project Folder
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return returns its internalValues
+#' 
+#' @describeIn GroupedEICModule server logic
 #' 
 #' @export 
 GroupedEICModule <- function(input,output, session,
@@ -358,10 +356,7 @@ GroupedEICModule <- function(input,output, session,
 }
 
 
-#' GroupedEICModuleUI
-#' 
-#' @param id id of the Module
-#' 
+#' @describeIn GroupedEICModule UI elements
 #' @export 
 GroupedEICModuleUI <- function(id){
   
