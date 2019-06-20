@@ -1,29 +1,12 @@
 ---
 title: "Getting started with METABOseek"
 author: "Maximilian Helf"
-package: METABOseek
 date: "May 2019"
-output:
-  rmarkdown::html_vignette:
-      toc: yes
-      toc_depth: 2
-  html_document:
-      self_contained: yes
-      css: style.css
-      df_print: paged
-      number_sections: yes
-      theme: simplex
-      toc: yes
-      toc_depth: 2
-      toc_float:
-        collapsed: no
-        smooth_scroll: yes
-  pdf_document:
-      toc: yes
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Getting started with METABOseek}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 
