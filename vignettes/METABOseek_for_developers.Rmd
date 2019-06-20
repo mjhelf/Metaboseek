@@ -1,8 +1,12 @@
 ---
-title: "METABOseek developer handbook"
+title: "METABOseek Developer Handbook"
 author: "Max Helf"
 date: "June 2019"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{METABOseek Developer Handbook}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}

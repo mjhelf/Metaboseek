@@ -4,6 +4,9 @@ author: "Maximilian Helf"
 package: METABOseek
 date: "May 2019"
 output:
+  rmarkdown::html_vignette:
+      toc: yes
+      toc_depth: 2
   html_document:
       self_contained: yes
       css: style.css
@@ -15,15 +18,12 @@ output:
       toc_float:
         collapsed: no
         smooth_scroll: yes
-  rmarkdown::html_vignette:
-      toc: yes
-      toc_depth: 2
   pdf_document:
       toc: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Getting started with METABOseek}
-  %\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
 ---
 
 
