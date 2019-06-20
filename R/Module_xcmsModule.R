@@ -310,7 +310,7 @@ output$summary <- renderPrint({
 })
 
 output$noRtCorrCheck <- renderUI({
-  div(title= "Acivate post-processing for non-retention time corrected data.",
+  div(title= "Activate post-processing for non-retention time corrected data.",
       checkboxInput(ns('nortcorrcheck'), 'Before retention time correction', value = internalValues$noRtCorrAnaCheck))
 })
 
@@ -319,7 +319,7 @@ observeEvent(input$nortcorrcheck,{
 })
 
 output$rtCorrCheck <- renderUI({
-  div(title= "Acivate post-processing for retention time corrected data.",
+  div(title= "Activate post-processing for retention time corrected data.",
       checkboxInput(ns('rtcorrcheck'), 'After retention time correction', value = internalValues$rtCorrAnaCheck))
 })
 

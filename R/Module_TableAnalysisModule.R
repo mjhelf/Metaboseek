@@ -89,7 +89,7 @@ TableAnalysisModule <- function(input,output, session,
    })
    
    
-  output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
+  output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group',
                                                 choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{reactives()$fileGrouping$Group},
                                                 selected = isolate({if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups}}),
                                                 multiple = F)})
