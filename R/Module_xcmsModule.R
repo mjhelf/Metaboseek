@@ -328,7 +328,9 @@ observeEvent(input$rtcorrcheck,{
 })
 
 tAnalysisX <- callModule(TableAnalysisModule, "TabAnalysisXcms",
-                        reactives = reactive({list(fileGrouping = if(internalValues$active == "filegroups" && !is.null(input$xcms_settingstab) && length(hot_to_r(input$xcms_settingstab)$File) > 0 ){
+                        reactives = reactive({list(fileGrouping = if(internalValues$active == "filegroups" 
+                                                                     && !is.null(input$xcms_settingstab) 
+                                                                     && length(hot_to_r(input$xcms_settingstab)$File) > 0 ){
                           hot_to_r(input$xcms_settingstab)}
                           else{internalValues$params$filegroups})
                           }),

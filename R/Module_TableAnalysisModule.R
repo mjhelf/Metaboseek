@@ -91,7 +91,7 @@ TableAnalysisModule <- function(input,output, session,
    
   output$ctrlSelect <- renderUI({selectizeInput(ns('selctrl'), 'Select control group(s)',
                                                 choices = if(!is.null(values$featureTables)){c(values$featureTables$tables[[values$featureTables$active]]$gNames)}else{reactives()$fileGrouping$Group},
-                                                selected = if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups},
+                                                selected = isolate({if(!is.null(values$featureTables)){values$featureTables$tables[[values$featureTables$active]]$ctrlGroups}else{internalValues$controlGroups}}),
                                                 multiple = F)})
   observeEvent(input$selctrl,{
     if(!is.null(values$featureTables)){
@@ -266,7 +266,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
    # toggle(id = 'peakpickMod', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables) && !is.null(values$MSData))
   #  toggle(id = 'getintmod', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables) && !is.null(values$MSData))
     
-    toggle(id = 'advancedana', condition = !is.null(values$featureTables$Maintable) && !is.null(values$featureTables))
+    toggle(id = 'advancedana', condition = !is.null(values$featureTables) && !is.null(values$featureTables$Maintable))
     
   })
   
