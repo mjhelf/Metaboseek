@@ -9,10 +9,25 @@ layout_components_qgraph(graph, layout, ...)
 \arguments{
 \item{graph}{an igraph object, needs to have an "id" vertex property}
 
-\item{layout}{the layout function applied (from igraph or qgraph packages). Defaults to qgraph.layout.fruchtermanmeingold with some Mseek specific settings}
+\item{layout}{the layout function applied (from igraph or qgraph packages). 
+Defaults to qgraph.layout.fruchtermanmeingold with some Mseek specific 
+settings}
 
-\item{...}{arguments passed to layout (except if layout is qgraph.layout.fruchtermanreingold)}
+\item{...}{arguments passed to layout (except if layout is 
+qgraph.layout.fruchtermanreingold)}
+}
+\value{
+a list of graph layouts, see \code{details}
 }
 \description{
 Generate subgraphs and sublayouts from a graph for Mseek interactive view.
+}
+\details{
+Elements of the returned list
+\itemize{
+\item \code{layout} merged coordinates of all subgraphs
+\item \code{subgraphs} result of \code{\link[igraph]{decompose}(graph)}
+\item \code{sublayouts} list of layout coordinates for each subgraph
+\item \code{subedgelist} list of edgelists for each subgraph
+}
 }

@@ -1,13 +1,11 @@
 #' GetIntensitiesModule
 #' 
+#' One-button module to get intensities for all features in a feature 
+#' table across the loaded MS data files
 #' 
-#' server module for saving Tables
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @describeIn GetIntensitiesModule server logic
 #' 
 #' @export 
 GetIntensitiesModule <- function(input,output, session,
@@ -125,10 +123,7 @@ If this is selected, the rt window setting for peak intensity calculation starts
   return(internalValues)
 }
 
-#' GetIntensitiesModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn GetIntensitiesModule server logic
 #' @export
 GetIntensitiesModuleUI <- function(id)
 {

@@ -2,23 +2,45 @@
 % Please edit documentation in R/Module_xcmsModule.R
 \name{xcmsModule}
 \alias{xcmsModule}
+\alias{xcmsModuleUI}
 \title{xcmsModule}
 \usage{
 xcmsModule(input, output, session, values = reactiveValues(),
   static = list(servermode = F, rootpath = .MseekOptions$filePaths,
   activateXCMS = T, filePattern = .MseekOptions$filePattern))
+
+xcmsModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{import reactiveValues from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{static}{import static values}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
 server module for accessing the xcms data analysis workflow
+}
+\section{Functions}{
+\itemize{
+\item \code{xcmsModule}: Server logic
+
+\item \code{xcmsModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

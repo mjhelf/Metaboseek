@@ -2,20 +2,45 @@
 % Please edit documentation in R/Module_SiriusModule.R
 \name{SiriusModule}
 \alias{SiriusModule}
+\alias{SiriusModuleUI}
 \title{SiriusModule}
 \usage{
 SiriusModule(input, output, session, values = reactiveValues(GlobalOpts =
   GlobalOpts))
+
+SiriusModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
 server module for interactive mass spectrum view
+}
+\section{Functions}{
+\itemize{
+\item \code{SiriusModule}: server logic for SiriusModule
+
+\item \code{SiriusModuleUI}: UI for interactive SIRIUS interface
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

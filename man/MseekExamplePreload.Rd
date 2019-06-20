@@ -11,6 +11,11 @@ MseekExamplePreload(tables = T, data = T)
 
 \item{data}{load example MS data?}
 }
+\value{
+Generates objects \code{tab1}, \code{tab2} and \code{MSD} in the 
+parent environment of the function call
+}
 \description{
-Loads example data into the parent environment for testing and development purposes
+Loads example data into the parent environment for 
+testing and development purposes
 }

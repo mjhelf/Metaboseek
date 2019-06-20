@@ -2,6 +2,7 @@
 % Please edit documentation in R/Module_LoadTableModule.R
 \name{LoadTableModule}
 \alias{LoadTableModule}
+\alias{LoadTableModuleUI}
 \title{LoadTableModule}
 \usage{
 LoadTableModule(input, output, session,
@@ -9,20 +10,55 @@ LoadTableModule(input, output, session,
   NULL), static = list(tooltip = "Load", label = "Load", format =
   list(header = T, sep = "\\t", quote = "\\"", stringsAsFactors = F),
   pattern = "\\\\.tGrouping$"))
+
+LoadTableModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{static}{see \code{Details}}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 
 \item{static}{Import data from the shiny session}
-
-\item{reactives}{Import data from the shiny session}
+}
+\value{
+returns its internalValues, most notably element \code{df} that contains 
+the table once it is loaded, and \code{filename}, which contains the basename 
+of the loaded table file
 }
 \description{
-server module for loading Tables
+Module for loading Tables
+}
+\details{
+elements in \code{static} that can be set:
+\itemize{
+\item \code{tooltip} tooltip on button opening the load table menu
+\item \code{label} label on button opening the load table menu
+\item \code{format} loading options \code{header}, \code{sep},
+ \code{quote}, \code{stringsAsFactors} to be passed to \code{data.table::fread}
+\item \code{pattern} file name pattern to restrict file display to
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{LoadTableModule}: server logic
+
+\item \code{LoadTableModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

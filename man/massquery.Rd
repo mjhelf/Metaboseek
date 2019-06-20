@@ -26,5 +26,10 @@ massquery(mz, range = 0.01, ppm = 5,
 \item{maxUnsat}{maximum unsaturation}
 }
 \description{
-get molecular formula predictions from chemcalc
+get molecular formula predictions from \url{http://chemcalc.org}
+}
+\references{
+\enumerate{
+\item ChemCalc: a building block for tomorrow’s chemical infrastructure. Patiny, Luc; Borel, Alain Journal of Chemical Information and Modeling 2013.
+}
 }

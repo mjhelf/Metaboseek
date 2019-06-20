@@ -11,6 +11,9 @@ assignColor(datarange, colscale)
 
 \item{colscale}{character vector of colors}
 }
+\value{
+a character vector of same length as \code{datarange} with color values
+}
 \description{
 Assign a color from a range of colors to all values in a numeric vector (datarange)
 }

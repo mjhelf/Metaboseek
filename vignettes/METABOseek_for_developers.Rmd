@@ -1,0 +1,610 @@
+---
+title: "METABOseek Developer Handbook"
+author: "Max Helf"
+date: "June 2019"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{METABOseek Developer Handbook}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Disclaimer
+
+This developer documentation is work in progress and incomplete. More information will be added over time.
+For feedback, please email me: maximilian.helf@gmail.com.
+
+##Getting started
+
+METABOseek is built in [Shiny](http://shiny.rstudio.com/), an R package that makes it straightforward to develop web apps using R code. These web apps can be run on a public server as well as on any computer that runs R and has a web browser. This allows developers to provide a graphical user interface for software written in R, both locally and on the internet. To follow along with the examples in this tutorial, make sure to [install METABOseek](https://metaboseek.com/doc.html) first. **For all examples to work, install all dependencies, including the packages that `METABOseek` merely `Suggests`!**
+
+###Helpful links{#helpfulLinks}
+
+Shiny is extremely well documented, and it will be helpful to keep these resources in mind throughout this tutorial:
+
+
+* [Introduction to Shiny](http://shiny.rstudio.com/articles/basics.html)
+* [Introduction to Shiny modules, including a video](http://shiny.rstudio.com/articles/modules.html)
+* [Collection of Shiny documentation articles](http://shiny.rstudio.com/articles/)
+
+If this is your first time working with Shiny, I highly recommend looking at these 
+websites before we dive into the architecture of METABOseek.
+
+
+###Reactive programming
+
+**If you are curious now about seeing some example app code, you can skip this part 
+for now and take a look at [METABOseek modules](#MseekModules) first**
+
+Shiny is a reactive programming framework, and there are two important consequences of that:
+
+1. A shiny app is open to input after being launched, so that it can *react* to input,
+rather than run a routine based on a set of initial settings.
+2. Shiny re-evaluates all code that depends on a value whenever that value is
+*invalidated*, which typically happens when it changes.
+
+Before we move on, let's remember the reactive elements in shiny apps:
+
+1. reactiveValues: "reactive sources" Store values which will invalidate
+2. reactive()/ eventReactive() expressions: "Reactive conductors" - expressions 
+that will observe the validity of all values they need to execute (or a set of specified events in the case of eventReactive().
+Re-evaluate if one of the values they depend on is invalidated and return a value.
+3. observe()/ observeEvent(): "Reactive endpoints" - simlar to reactive expressions, but no return value.
+
+[Here](http://shiny.rstudio.com/articles/reactivity-overview.html) is a nice review of
+reactivity in shiny.
+
+Inputs are kept in a reactiveValues() object in the shiny session:
+**Make sure you look at your console output when pushong the buttons to see the print output**
+
+```{r, eval = F}
+
+library(shiny)
+
+server <- shinyServer(function(input, output, session) {
+  
+  
+  EnvirValues <- reactiveValues()
+  
+  observeEvent(input$ab1,{
+    
+   print("You pushed the button")
+
+  })
+  
+ output$diag <- renderPrint({
+    print(input)
+  })
+  
+  output$diag2 <- renderPrint({
+    print(names(input))
+  })
+ 
+})
+
+ui <- tagList(
+    actionButton("ab1","Mod var1"),
+    actionButton("ab2","Mod var2"),
+    p("This is a printout of the 'input' reactiveValues object:"),
+    verbatimTextOutput('diag'),
+    p("This is a printout of the names of values in the 'input' reactiveValues object:"),
+    verbatimTextOutput('diag2')
+    )
+shinyApp(ui,server)
+
+```
+
+reactiveValues are implemented as an [R6 class](https://adv-r.hadley.nz/r6.html) object 
+
+The app output is kept in a different object named `output` of class `shinyoutput`.
+
+####Passing values around
+
+Whenever you develop software, one important consideration is how data is passed between different parts of the software. 
+Let's revisit some important ways of how this can be done in R, and using shiny in particular.
+
+In many languages, passing values by reference allows functions to change variables that are defined outside the function scope. While this is rarely done in R, it is possible to do so by using environemnts:
+```{r, eval = T}
+
+exlist <- list(a = 1)
+exenv <- rlang::env(a = 1)
+
+changingValues <- function(l = exlist, e = exenv){
+
+    l$a <- l$a + 1
+    e$a <- e$a + 1
+    
+    return(invisible(NULL))
+}
+
+changingValues()
+
+    print(paste("list value remains unchanged: exlist$a =", exlist$a)) 
+    print(paste("environment value changes: exenv$a =", exenv$a)) 
+
+```
+
+reactiveValues share some properties with [environments](http://adv-r.had.co.nz/Environments.html),
+including the pass-by-reference behavior we just saw. METABOseek makes extensive
+use of this property to exchange data between modules without cluttering the code.
+
+###Reactive Values in practice
+
+Let's dive into an example that shows us some of the properties of `reactivevalues`
+compared to `list` objects. This section is a bit long, but it should be 
+interesting for anyone starting to write apps in shiny!
+
+**Make sure you look at your console output when pushong the buttons to see the print output**
+```{r, eval = F}
+library(shiny)
+
+server <- shinyServer(function(input, output, session) {
+  
+  
+  internalValues <- reactiveValues(exampleList = list(var1 = 1,
+                                    var2 = 1),
+                                   exampleRV = reactiveValues(var1 = 1,
+                                    var2 = 1),
+                                   bystander = 1)
+  
+###Observers for the actionButtons ab1, ab2 and ab3
+  observeEvent(input$ab1,{
+        internalValues$exampleList$var1 <-  internalValues$exampleList$var1 +1
+  })
+  
+  observeEvent(input$ab2,{
+        internalValues$exampleRV$var1 <-  internalValues$exampleRV$var1 +1
+  })
+  
+   
+### observers for values in internalValues
+  observeEvent(internalValues$exampleList$var1,{
+        print(paste0("exampleList$var1 (",internalValues$exampleList$var1,") triggered"))
+      })
+  observeEvent(internalValues$exampleList$var2,{
+        print(paste0("exampleList$var2 (",internalValues$exampleList$var2,") triggered"))
+      })
+  
+  observeEvent(internalValues$exampleRV$var1,{
+        print(paste0("exampleRV$var1 (",internalValues$exampleRV$var1,") triggered"))
+      })
+  observeEvent(internalValues$intval2$var2,{
+        print(paste0("exampleRV$var2 (",internalValues$exampleRV$var2,") triggered"))
+      })
+  
+  observeEvent(internalValues$bystander,{
+        print("bystander value triggered")
+      })
+  
+  output$diag <- renderPrint({
+      print(METABOseek:::ListToReactiveValues(internalValues))
+  })
+  
+})
+
+ui <- tagList(
+    actionButton("ab1","Modify internalValues$exampleList$var1"),
+    actionButton("ab2","Modify internalValues$exampleRV$var1"),
+    p("This is a printout of the 'internalValues' reactiveValues object:"),
+    verbatimTextOutput('diag')
+    )
+shinyApp(ui,server)
+
+
+
+```
+
+There is a lot to unpack here, so let's see what this example actually shows:
+
+1. This shiny app has a reactiveValues object called `internalValues` that contains
+three objects:
+    * `exampleList` (a `list` with two variables)
+    * `exampleRV` (a `reactivevalues` with two variables)
+    * `bystander` (a numeric value)
+2. Clicking the `Modify internalValues$exampleList$var1` button (internally 
+observed as `input$ab1`) will trigger an observer. The code inside that observer
+will add 1 to the `internalValues$exampleList$var1` variable.
+```
+observeEvent(input$ab1,{
+        internalValues$exampleList$var1 <-  internalValues$exampleList$var1 +1
+  })
+```
+3. Importantly, *invalidating* `internalValues$exampleList$var1` (by changing its value)
+will now trigger another observer and cause something to be printed to the console:
+```
+ observeEvent(internalValues$exampleList$var1,{
+        print(paste0("exampleList$var1 (",internalValues$exampleList$var1,") triggered"))
+      })
+```
+
+4. However, you will notice that another observer gets triggered as well:
+```
+   observeEvent(internalValues$exampleList$var2,{
+        print(paste0("exampleList$var2 (",internalValues$exampleList$var2,") triggered"))
+      })
+```
+This is because the `exampleList` value gets replaced with a copy of itself with `exampleList$var1` changed,
+but because the entire `exampleList` gets *invalidated* due to the replacement taking place in the background,
+observers to any of the values stored in `exampleList` will get triggered.
+
+5. Notice that the other observers do not get triggered! Objects within `internalValues$exampleList` show this cross-reactivity,
+but other objects in `internalValues`, (`internalValues$exampleRV` and `internalValues$bystander`) do not get invalidated.
+
+6. When you press the `Modify internalValues$exampleRV$var1` button (internally 
+observed as `input$ab2`), the same kind of observers as seen for the 
+`internalValues$exampleList$var1`-modifying button exist, BUT the only observer
+that gets triggered is the one for `internalValues$exampleRV$var1` itself,
+`internalValues$exampleRV$var2` is not invalidated! This is because `internalValues$exampleRV`
+is a `reactivevalues` object that behaves a lot like an environment, and so isntead 
+of replacing the entire `internalValues$exampleRV`, it is just references being 
+changed for the individual variables inside of `internalValues$exampleRV`.
+
+**In practical terms, this is a very important consideration: If you keep a set of
+values in a list, be aware that if one of them gets changed, all observers 
+observing any of the values in that list will be triggered. In contrast, changes
+to values stored in `reactivevalues` will only trigger observers for the value that was changed.**
+
+Either behavior can be desireable depending on the situation, but in most cases 
+using `reactivevalues` will prevent unnecessary code execution. However, using 
+`reactivevalues` can make it a bit more complicated to develop and test code, because they 
+require the reactive environment of shiny and cannot be constructed in a regular R session.
+The environment-like pass-by reference behavior can also lead to some confusion for 
+people used to programming in R, where mutable objects are not the norm. For instance, setting one
+`reactivevalues` object as a value in another `reactivevalues` object like this:
+```
+  reactivevalues1$aliasforRV2 <- reactivevalues2
+
+```
+will not just the values from one object to the other, but will create a reference
+to `reactivevalues2` in `reactivevalues1$aliasforRV2`. This can be very useful, because
+now showing, changing or adding values in `reactivevalues1$aliasforRV2` will be the same
+thing as doing it to `reactivevalues2`, because both refer to the exact same object in memory.
+
+###Setters and getters in METABOseek
+
+In the example above, we saw observers changing values in the internalValues `reactivevalues` object.
+In METABOseek, the most commonly used values can be accessed by getter and setter functions.
+This not only makes the code much easier to read and understand, but it also means that
+if the structure of `values` changes, the only functions that have to be adjusted are the
+getter and setter functions, not all modules and functions that use any of the reactiveValues that are available.
+Here is an example for an S3-style setter function used with a reactiveValues object 
+in a shiny app, just do demonstrate that functionality, there is no difference to the previous implementation:
+
+METABOseek uses one central `reactivevalues` object, called `values`,
+to let Shiny modules interact with each other. `values` contains a set of `reactivevalues` objects.
+This is seems quite convenient because modifications in that central `values` object can be observed
+in all modules, and rearranging modules is much easier when objects that need to be accessed by
+multiple modules don't have to be passed in through `callModule()` individually, but instead are always
+found in the same place, no matter where the modules are called.
+Thanks to reference semantics, all modules also access and change the same object in memory.
+
+However, accessing the correct objects inside `values` gets verbose, and if the structure of 
+`values` changes, the code of many modules would have to be changed.
+
+In regular R programming, the natural reflex would be to formalize the `values` object 
+into a S3 or S4 class and write methods that know how to safely retrieve or modify data.
+
+Because of the special (and necessary) properties of `reactivevalues`, METABOseek uses some generics to get and set values in the `reactivevalues` `values` object. 
+I started assigning a custom class name to the `values` object and S3 generics type
+getters and setters to make things easier to navigate.  In the future, `values` will get its own class definition:
+`c("MseekTree", "reactivevalues")`, but that implementation has to be tested first for conflicts with base shiny.
+
+To illustrate the underlying idea, there is an example below. It is a bit complicated,
+but also demonstrates a number of things:
+- class of an `reactivevalues` is changed (in a way that would still return is.reactivevalues() = TRUE)
+- values retrieved with a getter are observable
+- getter can include an update (or any other kind of check on the returned value) that may be useful
+- in this example, the button using the getter has a (somewhat artificially introduced) advantage and always adds the number currently specified in the numericInput, while the regular "add number" button does not automatically add currently selected number - it only does so after pressing the other button once.
+
+
+**Make sure you look at your console output when pushong the buttons to see the print output**
+```{r, eval = F}
+library(shiny)
+
+
+#Defining some getter and setter functions
+
+#note that here, method dispatch depends on the value being set,
+#which is a bit sneaky, but might be useful when different processing
+#is required for different things being set
+'Setter<-' <- function(x, value, ...){
+    
+    UseMethod('Setter<-', value)
+    
+}
+
+'Setter<-.numeric' <- function(x, value){
+        x$exampleRV$var1 <- value
+}
+
+'Getter' <- function(x, ...){
+   
+    UseMethod('Getter', x)
+    
+}
+
+'Getter.myClass' <- function(x){
+        return(x$exampleRV)
+    }
+
+'GetInput' <- function(x, ...){
+   
+    UseMethod('GetInput', x)
+    
+}
+
+# this getter is special because it makes sure that the 
+# value it is getting gets updated from elsewhere when needed
+# isolate could also be made optional
+'GetInput.myClass' <- function(x, update = T){
+    if(update){
+    isolate({
+   x$exampleRV$addthis <- x$input$addthis
+    })
+    }
+        return(x$exampleRV$addthis)
+}
+
+ # using an observer like this would be an alternative
+#  observeEvent(input$addthis,{values$exampleRV$addthis <- input$addthis})
+
+
+server <- shinyServer(function(input, output, session) {
+  
+    
+    values <- reactiveValues(exampleRV = reactiveValues(var1 = 1,
+                                                                var2 = 1,
+                                                                addthis = 1))
+    
+    #assigning and additional class to this reactivevalues object
+    class(values) <- c("myClass", class(values))
+  
+    #making input accessible from values
+    observeEvent(values,{values$input <- input}, once = T)
+    
+###Observers for the actionButtons
+    
+    #Getter and Setter function work
+  observeEvent(input$ab1,{
+        Setter(values) <- Getter(values)$var1 + values$exampleRV$addthis
+  })
+  
+  #In this variant, the addthis value is retrieved by a custom getter
+  observeEvent(input$ab2,{
+        Setter(values) <- Getter(values)$var1 + GetInput(values)
+  })
+   
+### Values returned by getters are observable as if using their return value directly
+  observeEvent(Getter(values)$var1,{
+        print(paste0("exampleList$var1 (",Getter(values)$var1,") triggered"))
+      })
+  
+ # as expected, this does not get triggered by chages to var1
+  observeEvent(Getter(values)$var2,{
+        print(paste0("exampleList$var2 (",Getter(values)$var2,") triggered"))
+      })
+  
+
+  output$diag <- renderPrint({
+     print(reactiveValuesToList(Getter(values)))
+  })
+  
+})
+
+ui <- fluidPage(
+    actionButton("ab1","Add number"),
+    actionButton("ab2","Add updated number using Getter"),
+    numericInput("addthis","Add this number", value = 1),
+    p("This is a printout of the 'values$exampleRV' reactivevalues object:"),
+    verbatimTextOutput('diag')
+    )
+shinyApp(ui,server)
+```
+
+##METABOseek modules {#MseekModules}
+
+ `METABOseek` is built from a set of Shiny modules which interact with each other. Modularization makes the code a lot easier to extend and rearrange - one important effect of this is that you can easily use individual METABOseek modules to build a lightweight, specialized app (e.g. an MS data viewer to share data with colleagues). There will be executable examples throughout this tutorial, so feel free to jump ahead and take a look at the example code to get a feel for the code structure of METABOseek. I will assume that you have some experience in R programming and a basic understanding of the structure of Shiny apps as described in this [Introduction to Shiny](http://shiny.rstudio.com/articles/basics.html). 
+
+###Let's build a module
+
+Here is a bare bones module that will show up as a "Calculate something" button 
+in the app and can be used to modify the Feature Table with some custom functions:
+
+```{r, eval = F}
+library(shiny)
+library(METABOseek)
+MseekOptions()
+
+Add1toMzs <- function(df){
+    
+    df$mz <- df$mz + 1
+    return(df)
+    
+}
+
+calculateMolecularFormulas <- function(df){
+    
+    #df$MF <- MassTools::calcMF(df$mz, summarize = T, top = 3)
+    return(data.frame(MF =  MassTools::calcMF(df$mz, summarize = T, top = 3),
+                      df))
+    }
+
+DemoModule <- function(input,output, session, values){
+    
+    ns <- NS(session$ns(NULL))
+    
+    dialog <- callModule(MseekModalModule, "calcbutton",
+                         reactives = reactive({  
+                             list(fp = fluidPage(
+                                 fluidRow(
+                                     selectizeInput(ns("functionsel"), "Apply this function:",
+                                                    choices = c("Add1toMzs", "calculateMolecularFormulas"),
+                                                    multiple = F),
+
+                                     actionButton(ns("abutton"), "Calculate")
+                                 )
+                             )
+                             ) 
+                         }),
+                         static = list(tooltip = "Make a calculation on the Feature Table",
+                                       title = "Calculate something with custom functions", 
+                                       label = "Calculate something",
+                                       icon = icon("calculator", lib = "font-awesome")))
+    
+    observeEvent(input$abutton,{
+        FeatureTable(values, replace = T) <- do.call(input$functionsel,list(df = FeatureTable(values)$df))
+        removeModal()
+    })
+    
+}
+
+DemoModuleUI <- function(id){
+  ns <- NS(id)
+    MseekModalModuleUI(ns("calcbutton"))
+  }
+
+ui <- MseekMinimalUI(
+  tagList(
+      DemoModuleUI("demo"),
+     MainTableModuleUI("maintable")),
+  diagnostics = T)
+
+server <- function(input, output) {
+    
+
+MseekMinimalServer(diagnostics = T, data = F, tables = T)
+  
+callModule(MainTableModule, "maintable", values)
+                       
+callModule(DemoModule, "demo", values)
+
+observe({values$featureTables$selectedCols <- colnames(values$featureTables$tables[[values$featureTables$active]]$df)})
+
+}
+
+# Create Shiny app ----
+shinyApp(ui, server)
+```
+
+
+
+###METABOseek modules overview
+
+Modules in METABOseek come in three flavours:
+
+####Widgets
+These should work in a "vanilla" shiny environment, i.e. any shiny app, making it easy to use them in other shiny projects without significant overhead. The only expected argument they need is a list supplied as reactives, and potentially additional arguments for which default values exist. Widgets are typically wrappers for plotting functions with some additional functionality. 
+
+Here is a complete shiny app that uses the  `METABOseek::SpecplotWidget` to display a mock mass spectrum. In additon to passing arguments to a plotting function, it also takes care of setting up a selectCallback to register click and brush events, and adds a zoom functionality.
+
+```{r, eval = F}
+library(METABOseek)
+library(shiny)
+
+#user interface
+ui <- SpecplotWidgetUI("examplewidget")
+  
+#server logic
+server <- function(input, output) {
+
+ExampleWidget <- callModule(SpecplotWidget, "examplewidget",
+                     reactives = reactive({
+                         list(spectrum = data.frame(mz = c(100,200,250,300,400),
+                                                    intensity = c(1000,2000,3000,1000,3000)))
+                     }))
+}
+
+# Create Shiny app ----
+shinyApp(ui, server)
+
+```
+
+If this example runs succesfully on your computer, METABOseek is installed and working! **Try out the zoom function: you can select a range with you mouse (hold left mouse button), and zoom in by double-clicking. To zoom out, just double-click again.**
+
+####Modules
+Regular modules in METABOseek take a `shiny::reactiveValues` object called `values` as their first argument. `values` is the primary interface allowing communication between modules and is generated by `MseekMinimalServer()`. Modules expect this input to work properly, and will only work in shiny apps that provide the proper environment set up by `MseekMinimalServer()`.
+
+We will now run a modified app that uses the METABOseek environment, and a full-fledged module:
+
+
+```{r, eval = F}
+library(METABOseek)
+library(shiny)
+
+ui <- MseekMinimalUI(
+  tagList(
+      SpecplotWidgetUI("examplewidget"),
+      SpecModule2UI("examplemodule")),
+  diagnostics = T)
+
+server <- function(input, output) {
+  MseekMinimalServer(diagnostics = T, data = F, tables = F)
+  
+ExampleWidget <- callModule(SpecplotWidget, "examplewidget",
+                     reactives = reactive({
+                         list(spectrum = data.frame(mz = c(100,200,250,300,400),
+                                                    intensity = c(1000,2000,3000,1000,3000)))
+                       
+                     }))
+                       
+ExampleModule <- callModule(SpecModule2, "examplemodule", values,
+                     reactives = reactive({
+                         list(spectrum = data.frame(mz = c(100,200,250,300,400),
+                                                    intensity = c(1000,2000,3000,1000,3000)))
+                       
+                     }))
+}
+
+# Create Shiny app ----
+shinyApp(ui, server)
+
+```
+
+As you will notice, there are now two very similar looking plots showing up in the app. The top one is the same output as before, and you can interact with it in the same way as before to zoom in and out.
+The bottom plot has some additional functionality though:
+
+* below the plot, there is information about the peak you are hovering over
+* Try holding the shift key and clicking on a peak. The peak will be highlighted in orange, and the information at the bottom shows potential molecular formulas for that peak.
+* Once you have highlighted (or "marked") a peak, hovering over other peaks will show their m/z distance to the marked peak at the bottom. In addition, potential molecular formuals for this peak difference are shown.
+
+How does this work and what is the difference between the two modules used for visualization?
+
+TODO: explain
+
+
+####Containers
+Containers are used to keep the code organised and can be characterized as 
+Modules which contain other Modules, but do not contain add any functionality 
+themselves. They should not contain any observers and are only here to pass 
+`values` into modules, or provide ways for individual Modules to interact with each other.
+
+Here we use the container for the entire METABOseek app:
+```{r, eval = F}
+library(METABOseek)
+
+#load .MseekOptions in case they have been deleted from environment
+MseekOptions(develMode = F,
+             testMode = T)
+
+ui <- MseekContainerUI("Mseek")
+
+server <- function(input, output, session) {
+    callModule(MseekContainer, "Mseek")
+}
+
+
+# Create Shiny app ----
+shiny::shinyApp(ui, server)
+
+
+```
+
+###METABOseek modules in detail
+
+Now that we have seen the different types of METABOseek modules, let's look 
+closer at how they are different and what the implications of those differences are.
+We will build our own set of modules into a small app here.

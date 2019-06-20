@@ -2,24 +2,44 @@
 % Please edit documentation in R/Module_RtCorrViewModule.R
 \name{RtCorrViewModule}
 \alias{RtCorrViewModule}
+\alias{RtCorrViewModuleUI}
 \title{RtCorrViewModule}
 \usage{
 RtCorrViewModule(input, output, session, values = reactiveValues(MSData =
   MSData, GlobalOpts = GlobalOpts))
+
+RtCorrViewModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{reactives}{Import data from the shiny session}
-
-\item{static}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-Module to apply filters to a featureTable (UI)
+Module to plot retention time correction results
+}
+\section{Functions}{
+\itemize{
+\item \code{RtCorrViewModule}: Server logic
+
+\item \code{RtCorrViewModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

@@ -1,13 +1,12 @@
 #' MultiSpecmodule
 #' 
+#' Multiple interactive mass spectrum views. Deprecated
 #' 
-#' server module for multiple interactive mass spectrum views
-#' 
-#' @param input 
-#' @param output 
-#' @param session 
+#' @inherit MseekModules
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
+#' 
+#' @describeIn MultiSpecModule Server logic
 #' 
 #' @export 
 MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(xrange = NULL,
@@ -470,13 +469,7 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
   return(selections)
   
 }
-#' MultiSpecmoduleUI
-#' 
-#' 
-#' UI module for interactive view of multiple spectra
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn MultiSpecModule UI elements
 #' @export
 MultiSpecmoduleUI <-  function(id){
   ns <- NS(id)

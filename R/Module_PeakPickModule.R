@@ -1,13 +1,12 @@
 #' PeakPickModule
 #' 
+#' Module for picking peaks in MS data for features in a featureTable
 #' 
-#' server module for saving Tables
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns its internalValues
+#' 
+#' @describeIn PeakPickModule Server logic
 #' 
 #' @export 
 PeakPickModule <- function(input,output, session,
@@ -226,10 +225,7 @@ If this is selected, the rt window setting for peak intensity calculation starts
   return(internalValues)
 }
 
-#' PeakPickModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn PeakPickModule UI elements
 #' @export
 PeakPickModuleUI <- function(id)
 {

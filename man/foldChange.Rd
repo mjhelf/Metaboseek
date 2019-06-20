@@ -8,22 +8,60 @@ foldChange(mx, groups, ctrl = NULL, calc = "mean", topgroup = T,
   maxFold = T, foldMaxK = 2, foldmode = "simple")
 }
 \arguments{
-\item{mx}{a matrix of numeric (intensity) values}
+\item{mx}{a matrix of positive numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied 
+by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
 
-\item{ctrl}{character() naming the control group(s)}
+\item{ctrl}{character() naming the control group}
 
-\item{calc}{currently has to be "mean", compare rowMeans of one group vs. rowMeans of other groups (and optionally rowMeans of controls only)}
+\item{calc}{currently has to be "mean", compare rowMeans of one group vs. 
+rowMeans of other groups (and optionally rowMeans of controls only)}
 
 \item{topgroup}{if TRUE, return group with highest intensity for each feature}
 
-\item{maxFold}{if TRUE, make a column with maximum fold change between any two groups for each feature}
+\item{maxFold}{if TRUE, make a column with maximum fold change between 
+any two groups for each feature}
 
-\item{foldMaxK}{if not NULL, make column with fold change of highest group value over foldMaxK largest group value.}
+\item{foldMaxK}{if not NULL, make column with fold change of highest 
+group value over foldMaxK largest group value.}
 
-\item{foldmode}{if "complex", gives ratios between all groups}
+\item{foldmode}{if "complex", gives ratios between all groups (not recommended 
+nor documented)}
+}
+\value{
+data.frame with columns representing fold change information for 
+data in \code{mx}, see \code{Details}
 }
 \description{
 calculate fold changes between grouped columns of a matrix
+}
+\details{
+\code{GX} in the following table means that this column is generated for each 
+group in \code{groups}, with the group name as prefix.
+Columns in the returned data.frame:
+\itemize{
+\item \code{maxint} maximum intensity value across all samples
+\item \code{topgroup} maximum intensity value across all samples
+\item \code{maxfold} maximum intensity value across all samples
+\item \code{maxfoldoverK} (where K is an integer) fold change of Max 
+intensity over kth largest intensity across all samples
+\item \code{GX__minInt} minimum intensity value within a group
+\item \code{GX__meanInt} mean intensity value within a group
+\item \code{GX__foldOverRest} fold change of mean of intensity values in 
+this group over mean of intensities in all other groups
+\item \code{GX__minFold} fold change of MINIMUM intensity value in 
+this group over MAXIMUM intensity value across all other samples outside
+ of this group
+\item \code{GX__minFoldMean} fold change of MEAN intensity value in 
+this group over MAXIMUM intensity value across all other samples outside
+ of this group
+\item \code{GX__foldOverCtrl} fold change of mean of intensity values in 
+this group over mean of intensities in control group
+\item \code{GX__minFoldOverCtrl} fold change of MINIMUM intensity value in 
+this group over MAXIMUM intensity value in control group
+\item \code{best_minFold} Highest minFold value found across all groups
+\item \code{best_minFoldMean} Highest minFoldMean value found across all groups
+\item \code{best_minFoldCtrl} Highest minFoldOverCtrl value found across all groups
+}
 }

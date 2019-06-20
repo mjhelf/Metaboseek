@@ -1,13 +1,12 @@
 #' RtCorrViewModule
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module to plot retention time correction results
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @return Returns nothing
+#' 
+#' @describeIn RtCorrViewModule Server logic
 #' 
 #' @export 
 RtCorrViewModule <- function(input,output, session,
@@ -40,12 +39,7 @@ RtCorrViewModule <- function(input,output, session,
   
 }
 
-#' RtCorrViewModuleUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
-#' 
+#' @describeIn RtCorrViewModule UI elements
 #' @export
 RtCorrViewModuleUI <- function(id){
   ns <- NS(id)

@@ -9,6 +9,9 @@ parseTitle(scanInfo)
 \arguments{
 \item{scanInfo}{a data.frame as returned by \link{getScanInfo}()}
 }
+\value{
+a character vector of length 1.
+}
 \description{
 parse a scanInfo table into a title for a mass spectrum plot
 }

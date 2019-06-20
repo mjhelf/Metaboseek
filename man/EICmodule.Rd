@@ -2,20 +2,48 @@
 % Please edit documentation in R/Module_EICmodule.R
 \name{EICmodule}
 \alias{EICmodule}
+\alias{EICmoduleUI}
 \title{EICmodule}
 \usage{
 EICmodule(input, output, session, values = reactiveValues(MSData =
-  MSData, GlobalOpts = GlobalOpts), keys)
+  MSData, GlobalOpts = GlobalOpts))
+
+EICmoduleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
 server module for interactive EIC view
+}
+\details{
+Returns its internalValues, a \code{reactivevalues} object
+}
+\section{Functions}{
+\itemize{
+\item \code{EICmodule}: server logic for the EICmodule
+
+\item \code{EICmoduleUI}: UI elements for the EICmodule
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

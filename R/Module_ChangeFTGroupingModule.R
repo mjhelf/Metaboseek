@@ -1,26 +1,19 @@
 #' ChangeFTGroupingModule
 #' 
 #' 
-#' server module to select and group intensity columns in Feature tables.
+#' Module to select and group intensity columns in Feature tables.
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
 #' 
 #' @import shiny
 #' @importFrom shinyjs toggle
 #' 
+#' @describeIn ChangeFTGroupingModule server logic for ChangeFTGroupingModule
 #' @export 
 ChangeFTGroupingModule <- function(input,output, session,
-                                   reactives = reactive({list()}),
                                    values = reactiveValues(featureTables = featureTables,
                                                            MSData = MSData,
-                                                           projectData = projectData),
-                                   static = list()
-){
+                                                           projectData = projectData)){
   
   ns <- NS(session$ns(NULL))
   
@@ -161,10 +154,12 @@ ChangeFTGroupingModule <- function(input,output, session,
             p(strong("There is a problem with the Column names you supplied.")),
             hr(),
             if(any(!GroupingTable$liveView$Column %in% cnames)){
-              p("These Columns do not exist in the Feature Table:", strong(paste(unique(GroupingTable$liveView$Column[!GroupingTable$liveView$Column %in% cnames]), collapse = ", ")))
+              p("These Columns do not exist in the Feature Table:",
+                strong(paste(unique(GroupingTable$liveView$Column[!GroupingTable$liveView$Column %in% cnames]), collapse = ", ")))
             }else{p("")},
             if(any(duplicated(GroupingTable$liveView$Column))){
-              p("These Columns are listed multiple times in the Grouping Table:", strong(paste(unique(GroupingTable$liveView$Column[duplicated(GroupingTable$liveView$Column)]), collapse = ", ")))
+              p("These Columns are listed multiple times in the Grouping Table:",
+                strong(paste(unique(GroupingTable$liveView$Column[duplicated(GroupingTable$liveView$Column)]), collapse = ", ")))
             }else{p("")},
             
             title = "Error",
@@ -254,15 +249,11 @@ ChangeFTGroupingModule <- function(input,output, session,
                                    
   )
   
-  # observe({print(Preview$selected_cols)})
-  return(internalValues)
+#  return(internalValues)
 }
 
-#' ChangeFTGroupingModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
-#' @export
+#' @describeIn ChangeFTGroupingModule UI elements for ChangeFTGroupingModule
+#' @export 
 ChangeFTGroupingModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(

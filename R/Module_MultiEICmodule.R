@@ -1,13 +1,15 @@
 #' MultiEICmodule
 #' 
 #' 
-#' server module for interactive EIC view
+#' Allows viewing multiple interactive EIC views at a time by providing multiple
+#' \code{\link{EICmodule}} outlets
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
+#' @inherit MseekModules
 #' 
+#' @details 
+#' Returns its internalValues, a \code{reactivevalues} object
+#' 
+#' @describeIn MultiEICmodule server logic for the MultiEICmodule
 #' @export 
 MultiEICmodule <- function(input, output, session, 
                            values = reactiveValues(MSData = MSData,
@@ -18,9 +20,7 @@ MultiEICmodule <- function(input, output, session,
   
   
   
-  iEIC1 <- callModule(EICmodule,"EIC1", values = values,
-                      keys = reactive({values$GlobalOpts$keyinput.keydown})
-  )
+  iEIC1 <- callModule(EICmodule,"EIC1", values = values)
   
   
   
@@ -41,8 +41,7 @@ MultiEICmodule <- function(input, output, session,
     
     internalValues[[paste0("EIC", internalValues$numEICs)]] <- callModule(EICmodule,
                                                                              paste0("EIC", internalValues$numEICs),
-                                                                             values = values,
-                                                                          keys = reactive({values$GlobalOpts$keyinput.keydown}))
+                                                                             values = values)
     
     internalValues[[paste0("EIC", internalValues$numEICs)]]$removable <- T
   })
@@ -70,13 +69,7 @@ MultiEICmodule <- function(input, output, session,
   
 }
 
-#' MultiEICmoduleUI
-#' 
-#' 
-#' UI module for interactive EIC view
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn MultiEICmodule UI elements for the MultiEICmodule
 #' @export 
 MultiEICmoduleUI <- function(id){
   ns <- NS(id)

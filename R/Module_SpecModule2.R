@@ -1,12 +1,8 @@
 #' SpecModule2
 #' 
+#' Module for interactive mass spectrum view
 #' 
-#' server module for interactive mass spectrum view
-#' 
-#' @param input,output,session arguments necessary for use with \link[shiny]{callModule}()
-#' @param reactive a \link[shiny]{reactive} object with settings for this module. See \code{details}.
-#' @param values a \link[shiny]{reactiveValues} object that in effect gives read and write access to external objects
-#' @param id id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)
+#' @inherit MseekModules
 #' 
 #' @describeIn SpecModule2 Server module, to be called with \link[shiny]{callModule}()
 #' 
@@ -61,7 +57,7 @@ SpecModule2 <- function(input,output, session,
       
       if(!is.null(reactives()$spectrum)){
         
-        plotArgs <- reactives()[!names(reactives()) %in% c("specinfo","scantable","type")]
+        plotArgs <- reactives()[!names(reactives()) %in% c("specinfo","scantable","type", "spectra")]
         
         if(!is.null(reactives()$specinfo)){
           internalValues$specinfo <- reactives()$specinfo
@@ -75,7 +71,7 @@ SpecModule2 <- function(input,output, session,
         
       }else if(!is.null(reactives()$scantable) && !is.null(values$MSData$data) ){
         
-        plotArgs <- reactives()[!names(reactives()) %in% c("specinfo","scantable","type")]
+        plotArgs <- reactives()[!names(reactives()) %in% c("specinfo","scantable","type", "spectra")]
         
         plotArgs$spectrum <- mergeMS(getAllScans(reactives()$scantable, MSData = values$MSData$data))
         
@@ -216,11 +212,11 @@ SpecModule2 <- function(input,output, session,
       
       
       fluidPage(
-        fluidRow(downloadButton(ns('pdfButton'), "Save as pdf"),
-                 downloadButton(ns('peaklistButton'), "Save as table"),
-                 htmlOutput(ns("predictionselection"))
-                 
-        ),
+        # fluidRow(downloadButton(ns('pdfButton'), "Save as pdf"),
+        #          downloadButton(ns('peaklistButton'), "Save as table"),
+        #          htmlOutput(ns("predictionselection"))
+        #          
+        # ),
         fluidRow(SpecplotWidgetUI(ns("specp"))),
         htmlOutput(ns("specinfo"))
         

@@ -1,6 +1,32 @@
 #' MseekOptions
 #'
-#' Load and/or change .MseekOptions
+#' Load and/or change .MseekOptions. 
+#' Call MseekOptions() without arguments to just load the config file 
+#' (MseekOptions.json) into the R session as an object called \code{.MseekOptions}.
+#' Any argument provided will be added to \code{.MseekOptions} as a named list item,
+#' and will also be saved in the (MseekOptions.json) file so that the current settings
+#' can be loaded in future R sessions.
+#' 
+#' @details
+#' Some arguments have special behavior:
+#' \itemize{
+#' \item \code{defaults} setting \code{MseekOptions(default = T)} will reset all
+#'  items in \code{.MseekOptions} to the defaults and save them to the comfig file
+#' \item \code{testMode} setting \code{MseekOptions(testMode = T)} will 
+#' disable saving the settings to the config file in this session
+#' }
+#' 
+#' @section Usage in Metaboseek:
+#' \code{.MseekOptions} itself is a list object, and therefore does not have reactive properties.
+#' However, upon startup of Metaboseek, \code{.MseekOptions} will be loaded into the session as
+#' \code{values$GlobalOpts}, so that the values can be used in a reactive context where they get invalidated when changed.
+#' Note that not all items in \code{values$GlobalOpts} are in \code{.MseekOptions},
+#'  but all items in \code{.MseekOptions} are in \code{values$GlobalOpts}. 
+#'  To save changes to input fields so that they are loaded back the next time the app starts,
+#'  set up an observer that assigns the input value via \code{MseekOptions(...)}.
+#' 
+#' @return generates a list called \code{.MseekOptions} in the global environment,
+#'  and can add new items to that list.
 #' 
 #' @param defaults if TRUE, default MseekOptions are loaded
 #' @param ... parameters to be modified

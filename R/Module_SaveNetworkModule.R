@@ -1,20 +1,18 @@
 #' SaveNetworkModule
 #' 
+#' Module for saving molecular network data
 #' 
-#' server module for saving Tables
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns nothing
+#' 
+#' @describeIn SaveNetworkModule Server logic
 #' 
 #' @export 
 SaveNetworkModule <- function(input,output, session,
+                            values = reactiveValues(Networks = Networks),
                             reactives = reactive({list(graphname = NULL,
                                                        filename = "table.graphml")}),
-                            values = reactiveValues(Networks = Networks),
                             static = list(tooltip = "Save Network as a graphml file",
                                           label = "Save Network",
                                           format = c("graphml"))
@@ -103,10 +101,7 @@ SaveNetworkModule <- function(input,output, session,
   
 }
 
-#' SaveNetworkModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn SaveNetworkModule UI elements
 #' @export
 SaveNetworkModuleUI <- function(id)
 {

@@ -30,9 +30,17 @@ runcodeUIns <- function (code = "", type = c("text", "textarea",
 # Define UI for dataset viewer app ----
 #' MseekMinimalUI
 #'
-#' A minimal UI for Mseek that can be extended with additional objects for testing and development purposes
+#' A minimal UI for Mseek that can be extended with additional objects for 
+#' testing and development purposes
 #'
-#' @importFrom shinyjs runcodeUI 
+#' @return UI elements for METABOseek
+#' 
+#' @param ... UI elements to embed in the METABOseek app
+#' @param diagnostics if TRUE, will render diagnostics UI elements
+#' @param dashboard if TRUE, will render a dashboard layout
+#' @param id id for namespacing - must be the id of the enclosing module or NULL
+#' 
+#' @importFrom shinyjs runcodeUI useShinyjs
 #' @importFrom shinydashboard dashboardPage 
 #' @importFrom shiny fluidPage verbatimTextOutput
 #' 
@@ -85,7 +93,8 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
 
 #' dashboardHeaderM
 #'
-#' METABOseek-specific, modified version of shinydashboard::dashboardHeader that allows placing icons left and right in the navbar
+#' METABOseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
+#' that allows placing icons left and right in the navbar
 #'
 dashboardHeaderM <- function (..., title = NULL, titleWidth = NULL, disable = FALSE, 
                               .list = NULL, left = NULL) 
@@ -113,18 +122,16 @@ dashboardHeaderM <- function (..., title = NULL, titleWidth = NULL, disable = FA
               ))
 }
 
-#' MseekHeader
-#'
-#' generates the dashboardHeader for Mseek.
-#' 
+
+#' @describeIn MseekMinimalUI generates the dashboardHeader for Mseek.
 #' @export
 MseekHeader <- function(..., id = NULL){
   
-  if(!is.null(id)){
+  #if(!is.null(id)){
     ns <- NS(id)
-  }else{
-    ns <- function(id){return(id)}
-  }
+ # }else{
+#    ns <- function(id){return(id)}
+ # }
   
   dashboardHeaderM(title = "METABOseek",
                    #style = "width:95%",
@@ -159,20 +166,17 @@ MseekHeader <- function(..., id = NULL){
 }
 
 
-#' MseekSidebar
-#'
-#' generates the dashboardSidebar for Mseek.
-#' 
+#' @describeIn MseekMinimalUI generates the dashboardSidebar for Mseek.
 #' @export
 MseekSidebar <- function(..., id = NULL){
-  if(!is.null(id)){
+ # if(!is.null(id)){
     ns <- NS(id)
     keyid <- ns("keyd")
     SBid <- ns("MseekSB")
-  }else{
-    keyid <- "keyd"
-    SBid <- "MseekSB"
-  }
+  # }else{
+  #   keyid <- "keyd"
+  #   SBid <- "MseekSB"
+  # }
   
   dashboardSidebar(
     
@@ -233,10 +237,12 @@ MseekSidebar <- function(..., id = NULL){
 #'
 #' An actionButton that can optionally be colored in Cornell red
 #' 
+#' @return a \code{\link[shiny]{actionButton}} that can be turned red easily
+#' 
 #' @param ... passed to shiny::actionButton
 #' @param red if True, button will be red
 #'
-mActionButton <- function(..., red = F){
+mActionButton <- function(..., red = FALSE){
   
   shiny::actionButton(..., style = if(red){"color: #fff; background-color: #C41230; border-color: #595959"}else{""})
   

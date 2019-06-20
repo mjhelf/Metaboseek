@@ -2,15 +2,27 @@
 % Please edit documentation in R/Functions_peakPicking.R
 \name{find_peaks2}
 \alias{find_peaks2}
-\title{findPeaks2}
+\title{find_peaks2}
 \usage{
 find_peaks2(EIC, ...)
 }
 \arguments{
 \item{EIC}{an EIC output item}
 
-\item{...}{arguments passed to peakDetect()}
+\item{...}{arguments passed to \code{\link{peakDetect}()}}
+}
+\value{
+a data.table with information on peak position in EICs
 }
 \description{
-Find peaks in a multiEIC output list item
+Find peaks in a multiEIC output list item, using \code{\link{peakDetect}()}
+}
+\details{
+Columns of the returned data.table:
+\itemize{
+\item \code{rt} retention time of peak maximum
+\item \code{rtmin} retention time of peak start position in trace 
+\item \code{rtmax} retention time  of peak end position in trace 
+\item \code{file} file names 
+}
 }

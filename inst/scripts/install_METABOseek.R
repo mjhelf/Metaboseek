@@ -5,7 +5,7 @@ try({remove.packages("BiocInstaller")})
 if (!requireNamespace("BiocManager", quietly = TRUE)){
 install.packages("BiocManager")}
 
-BiocManager::install(c("xcms", "CAMERA","BiocParallel"))
+BiocManager::install(c("xcms", "CAMERA","BiocParallel"), update = TRUE, ask = FALSE)
 
 #devtools::install_github("berlinguyinca/spectra-hash", subdir="splashR")
 devtools::install_github("mjhelf/Rdisop")  ##forked from "sneumann/Rdisop"; forked version will not change and should always work. Will change once new Rdisop version is in bioc-release

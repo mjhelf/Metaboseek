@@ -2,26 +2,53 @@
 % Please edit documentation in R/Module_FeatureReportModule.R
 \name{FeatureReportModule}
 \alias{FeatureReportModule}
+\alias{FeatureReportModuleUI}
 \title{FeatureReportModule}
 \usage{
 FeatureReportModule(input, output, session,
   values = reactiveValues(MSData = MSData, featureTables = featureTables,
-  GlobalOpts = GlobalOpts), MS2feed = NULL, tree = NULL,
-  fragments = NULL, keys = reactive({     keyin$keyd }))
+  GlobalOpts = GlobalOpts), MS2feed = NULL, tree = reactive({ }),
+  fragments = NULL)
+
+FeatureReportModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{reactives}{Import data from the shiny session}
+\item{MS2feed}{temporary solution to feed current MS2 scan in from MS2BrowserModule}
 
-\item{static}{Import data from the shiny session}
+\item{tree}{feed SIRIUS fragmentation tree in from MS2BrowserModule}
+
+\item{fragments}{feed SIRIUS fragmentation annotation for the MS2 scan}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-server module for loading a Project Folder
+Module for visualization of MS1 and MS2 spectra along with EICs, plus option 
+to plot them together with SIRIUS results in a pdf
+}
+\section{Functions}{
+\itemize{
+\item \code{FeatureReportModule}: server logic
+
+\item \code{FeatureReportModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

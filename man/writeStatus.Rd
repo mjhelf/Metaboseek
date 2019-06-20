@@ -8,14 +8,38 @@ writeStatus(previous = NULL, message = list(Status =
   "Starting analysis", Details = "loading files"), wd = getwd())
 }
 \arguments{
-\item{previous}{a writeStatus object to be updated (must have same column names); new object generated if NULL.}
+\item{previous}{a \code{writeStatus} object to be updated (must have same 
+column names):  new object generated if NULL.}
 
-\item{message}{named list of columns with custom messages}
+\item{message}{named list of columns with elements \code{Status} 
+and \code{Details}, specifying the progress message for thsi step}
 
-\item{wd}{directory where the status.csv file should be written and updated. If NULL, no status.csv is written.}
+\item{wd}{directory where the status.csv file should be written and 
+updated. If NULL, no status.csv is written.}
+}
+\value{
+returns a \code{writeStatus} object, see \code{Details} and writes to 
+a \code{status.csv} file in \code{wd}
 }
 \description{
-Write or update a status dataframe with custom messages, time stamp and time elapsed since last status. Useful to document time consumed analysis by steps.
+Write or update a status dataframe with custom messages, time stamp and 
+time elapsed since last status. Useful to document time consumed by analysis 
+steps.
+}
+\details{
+A \code{writeStatus} object is a named list with two elements:
+\describe{
+\item{pt}{current \code{\link[base]{proc.time}()}},
+\item{status}{A data.frame with progress messages in rows, and these columns:
+\itemize{
+\item \code{Time} time stamp of analysis step
+\item \code{Status} status message/ analysis step
+\item \code{Details} details on analysis step
+\item \code{elapsed_time} total elapsed time
+}
+
+}
+}
 }
 \examples{
 

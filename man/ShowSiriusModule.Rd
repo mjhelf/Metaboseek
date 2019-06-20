@@ -2,22 +2,49 @@
 % Please edit documentation in R/Module_ShowSiriusModule.R
 \name{ShowSiriusModule}
 \alias{ShowSiriusModule}
+\alias{ShowSiriusModuleUI}
 \title{ShowSiriusModule}
 \usage{
 ShowSiriusModule(input, output, session,
   values = reactiveValues(SiriusModule = SiriusModule, GlobalOpts =
   GlobalOpts), reactives = reactive({     list(splash = NULL, ms1splash =
   NULL, mz = NULL) }))
+
+ShowSiriusModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-server module for interactive mass spectrum view
+A button that triggers retrieval of Sirius results for the selected MS2 scans
+}
+\section{Functions}{
+\itemize{
+\item \code{ShowSiriusModule}: Server logic
+
+\item \code{ShowSiriusModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

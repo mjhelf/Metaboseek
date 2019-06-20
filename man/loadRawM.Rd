@@ -4,23 +4,29 @@
 \alias{loadRawM}
 \title{loadRawM}
 \usage{
-loadRawM(filelist = mzxml_pos, MSn = T, workers = 10,
-  rnames = filelist)
+loadRawM(filelist, MSn = T, workers = 1, rnames = filelist)
 }
 \arguments{
 \item{filelist}{a list of mzXML or mzML files (character vector)}
 
 \item{MSn}{should MSn data be read in? defaults to TRUE}
 
-\item{workers}{How many cores to use (cf. BiocParallel and SnowParam, argument only used if more than 10 files are loaded).}
+\item{workers}{How many cores to use (cf. BiocParallel and SnowParam,
+argument only used if more than 10 files are loaded).}
 
-\item{rnames}{names of the xcmsRaw objects in the list returned, defaults to the filepaths of the source files.}
+\item{rnames}{names of the xcmsRaw objects in the list returned,
+defaults to the filepaths of the source files.}
+}
+\value{
+a list of \code{xcmsRaw} objects
 }
 \description{
-TIME CONSUMING. This step does not need to be repeated when adjusting other parameters
-(e.g. feature list, EIC ppm or RT) Generates an R-readable data structure (a list of xcmsRaw objects) 
-in memory from MS data files defined in the file list.
+TIME CONSUMING. This step does not need to be repeated when adjusting
+ other parameters (e.g. feature list, EIC ppm or RT) Generates an R-readable
+  data structure (a list of xcmsRaw objects) in memory from MS data files 
+  defined in the file list.
 }
 \details{
-Note that there is an xcms function of the same name.
+This is a wrapper for \code{xcms::\link[xcms]{loadRaw}} that can process
+ multiple filenames at a time and supports parallel processing
 }

@@ -2,6 +2,7 @@
 % Please edit documentation in R/Module_FilterModule.R
 \name{FilterModule}
 \alias{FilterModule}
+\alias{FilterModuleUI}
 \title{FilterModule}
 \usage{
 FilterModule(input, output, session,
@@ -11,20 +12,42 @@ FilterModule(input, output, session,
   minSel = NULL, maxSel = NULL, modeSel = NULL, txtSel = NULL, minSelInit =
   NULL, maxSelInit = NULL, modeSelInit = NULL, txtSelInit = NULL,
   loadingFilters = F))
+
+FilterModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{values}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{static}{Import data from the shiny session}
+\item{initValues}{set initial values for input fields}
 
-\item{reactives}{Import data from the shiny session}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+a reactivevalues object with its internalValues
 }
 \description{
-Module to apply filters to a featureTable (UI)
+Module to apply filters to a featureTable (UI). Has to be inside a 
+MultiFilterModule, and will modify the parent modules internalValues, accessed as values$MultiFilter!
+}
+\section{Functions}{
+\itemize{
+\item \code{FilterModule}: server logic
+
+\item \code{FilterModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

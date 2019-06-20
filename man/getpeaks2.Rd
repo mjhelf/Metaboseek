@@ -11,10 +11,28 @@ getpeaks2(EIC, findProps = list(SN = 1, minwidth = 4, localNoise = 7,
 \arguments{
 \item{EIC}{a single EIC object (list item of multiEIC output), or a list of EIC items (multiEIC output)}
 
-\item{findProps}{arguments passed to find_peaks}
+\item{findProps}{named list of arguments passed to \code{\link{find_peaks2}()}}
 
-\item{mergeProps}{arguments passed to mergepeaks}
+\item{mergeProps}{named list of arguments passed to \code{\link{mergepeaks2}()}}
+}
+\value{
+a data.frame with information on peak position in EICs, or a list of 
+such data.frames if \code{EIC} is a list of EIC matrices (e.g. EICs for multiple mz values)
 }
 \description{
-find and then merge peaks for an EIC object. wrapper function for find_peaks and mergepeaks
+find and then merge peaks for an EIC object. wrapper function for
+ \code{\link{find_peaks2}()} and \code{\link{mergepeaks2}()}
+}
+\details{
+Columns of the returned data.table:
+\itemize{
+\item \code{rt} retention time of peak maximum, 
+ average across merged peaks, weighted by peak intensity
+\item \code{rtmin} retention time of peak start, 
+ average across merged peaks, weighted by peak intensity
+\item \code{rtmax} retention time of peak end, 
+ average across merged peaks, weighted by peak intensity
+ \item \code{maxint} maximum intensity of peak
+\item \code{file} file names, separated by "|"
+}
 }

@@ -1,51 +1,70 @@
-#library(Hmisc)
-
-
 #' EICgeneral
 #' 
 #' wrapper function to plot multiple EICs
 #' 
 #' 
-#' @param rtmid vector of retention time values (not ranges)
-#' @param mzmid vector of mz values (not ranges)
-#' @param glist a named list of grouped file names (as supplied in $grouping of rawLayout objects)
-#' @param cols integer, number of columns in plot. if NULL, grid can be defined externally
-#' @param colrange character(1), color range function used for line colors
+#' @param rtmid vector of retention time values (not ranges). If length >1, 
+#' multiple plots are called (multiple pages in pdf file)
+#' @param mzmid vector of mz values (not ranges). 
+#' Has to be same length as \code{rtmid}
+#' @param glist a named list of grouped file names 
+#' (as supplied in $grouping of rawLayout objects)
+#' @param cols integer, number of columns in plot. if NULL, 
+#' grid can be defined externally
+#' @param colrange character(1), color range function used for line colors,
+#'  OR a list of data.frames, see \code{Details}
 #' @param transparency numeric(1), alpha (range 0..1) for transparency of lines
 #' @param RTall if TRUE, entire RT range will be plotted
 #' @param TICall if TRUE, TIC will be plotted instead of EIC
 #' @param rtw retention time window +/- rtmid in seconds that will be plotted
 #' @param ppm mz window +/- mzmid in ppm that will be plotted
 #' @param rdata named list of xcmsRaw objects
-#' @param pdfFile character - if not NULL, plotting result will be saved in a pdf file with this name.
-#' @param leadingTIC if TRUE, a TIC plot is made before the EIC plots (e.g. as first page of pdf file)
+#' @param pdfFile character - if not NULL, plotting result will be saved in a 
+#' pdf file with this name.
+#' @param leadingTIC if TRUE, a TIC plot is made before the EIC plots 
+#' (e.g. as first page of pdf file)
 #' @param midline if TRUE, dotted vertical line should be plotted at feature rt
 #' @param lw line width for plot lines
 #' @param yzoom zoom factor into y-axis
 #' @param cx character expansion factor (font size)
 #' @param adducts numeric() of mass shifts to be added to feature masses
-#' @param RTcorrect if not NULL, this RTcorr object will be used to adjust retention times.
+#' @param RTcorrect if not NULL, this RTcorr object will be used to 
+#' adjust retention times.
 #' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
-#' @param subtitles subtitles for each EIC, must be character of same length as rtmid and mzmid or NULL
-#' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
+#' @param subtitles subtitles for each EIC, must be character of 
+#' same length as rtmid and mzmid or NULL
+#' @param raise if TRUE, EIC will be plotted with y axis going to 
+#' -0.02*max(ylim) so that EICs with 0 intensity are visible.
 #' @param relPlot if TRUE, y-axis will show relative intensities
 #' @param margins manual setting for plot margins (par$mar)
 #' @param ylabshift shift horizontal position of y axis label 
-#' @param RescaleExclude exclude this group from rescaling, or NULL to use all
+#' @param RescaleExclude character(), exclude this group from rescaling, or NULL to use all
+#' 
+#' @return sends a grouped EIC plot to the current plotting device, or 
+#' generates a .pdf file
+#' 
+#' @details 
+#' \describe{
+#' \item{colrange}{A named list with the same structure as \code{glist},
+#' but with a data.frame in each list element with row order corresponding to 
+#' items in the list elements of \code{glist} and columns \code{color} and \code{label},
+#' specifying the EIC color and legend label for each EIC trace.
+#' }
+#' }
 #' 
 #' @export
-EICgeneral <- function(rtmid = combino()[,"rt"],
-                       mzmid = combino()[,"mz"],
-                       glist = MSData$layouts[[MSData$active]]$grouping,
+EICgeneral <- function(rtmid,
+                       mzmid,
+                       glist,
                        cols = NULL,
-                       colrange = MSData$layouts[[MSData$active]]$settings$colr,
-                       transparency = MSData$layouts[[MSData$active]]$settings$alpha,
-                       RTall = input$RTtoggle,
-                       TICall = input$TICtoggle,
-                       rtw = MSData$layouts[[MSData$active]]$settings$rtw,
-                       ppm = MSData$layouts[[MSData$active]]$settings$ppm,
-                       rdata = MSData$data,
-                       pdfFile = file,
+                       colrange = "Mseek.colors",
+                       transparency = 1,
+                       RTall = FALSE,
+                       TICall = FALSE,
+                       rtw = 30,
+                       ppm = 5,
+                       rdata,
+                       pdfFile = "plotOutput.pdf",
                        leadingTIC = T,
                        lw = 1,
                        adducts = c(0),
@@ -137,7 +156,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
     
     
     
-    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICsTIC)),sapply(EICsTIC, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
+    yl <- if(!is.null(globalYmax) 
+             && globalYmax){matrix(c(rep(0, length(EICsTIC)),
+                                     sapply(EICsTIC, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
     
     groupPlot(EIClist = EICsTIC,
               grouping = glist,
@@ -192,11 +213,15 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
   if(TICall){
     if(is.null(rtx) || length(EICs) %% nrow(rtx) != 0 ){
       
-    yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
+    yl <- if(!is.null(globalYmax) 
+             && globalYmax){matrix(c(rep(0, length(EICs)),
+                                     sapply(EICs, function(x){ max(unlist(x[,"tic"])) })), ncol = 2, byrow = F)}else{NULL}
     }
     else{
       suppressWarnings({
-      yl <- if(!is.null(globalYmax) && globalYmax){matrix(c(rep(0, length(EICs)),mapply(function(x, rt){ max(unlist(x[,"tic"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  )), ncol = 2, byrow = F)}else{NULL}
+      yl <- if(!is.null(globalYmax) 
+               && globalYmax){matrix(c(rep(0, length(EICs)),
+                                       mapply(function(x, rt){ max(unlist(x[,"tic"])[unlist(x[,"rt"]) >= max(c(min(rt),min(unlist(x[,"rt"])))) & unlist(x[,"rt"]) <= min(c(max(rt),max(unlist(x[,"rt"]))))])}, x = EICs, rt = as.list(as.data.frame(t(as.matrix(rtx))))  )), ncol = 2, byrow = F)}else{NULL}
     }) #warnings occur if all scans are out of given rt range
     }
     
@@ -251,11 +276,6 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 }
 
 
-
-
-
-
-
 #' EICtitles
 #' 
 #' helper function to generate titles for EICgeneral
@@ -265,7 +285,9 @@ EICgeneral <- function(rtmid = combino()[,"rt"],
 #' @param mzs vector of mz values (not ranges)
 #' @param ppm mz window +/- mzmid in ppm that will be plotted
 #' 
-#' @export
+#' @return a character vector with plot titles of same length as 
+#' \code{rts} and \code{mzs}
+#' 
 EICtitles <- function(mzs, rts, ppm){
   
   if(!is.null(ppm)){
@@ -303,40 +325,58 @@ EICtitles <- function(mzs, rts, ppm){
 #' generate multiple EICs on one page
 #' 
 #' 
-#' @param EIClist list of EICs from METABOseek:multiEIC
+#' @param EIClist list of EICs from \code{\link{multiEIC}()} or \code{\link{multiEICplus}()}
 #' @param grouping a named list of grouped file names (as supplied in $grouping of rawLayout objects)
-#' @param plotProps a list of settings for the individual plots
-#' @param plotProps.TIC if TRUE, TIC instead of EIC
-#' @param plotProps.cx numeric(1) font size (character expansion) factor
-#' @param plotProps.colr color range (actual vector of color values)
-#' @param plotProps.ylim data.frame or matrix of nrow = number of plotted features, with min and max visible rt value (in seconds) for each feature
-#' @param plotProps.xlim data.frame or matrix of nrow = number of plotted features, with min and max visible intensity value for each feature
-#' @param plotProps.midline numeric() of y-axis positions where a dotted vertical line should be plotted
-#' @param plotProps.lw line width for plot lines
-#' @param plotProps.yzoom zoom factor into y-axis
-#' @param compProps layoout options for the composite plot
-#' @param compProps.mfrow integer(2) rows and columns for plotting (cf. par(), mfrow)
-#' @param compProps.oma numeric(4) outer margins (cf. par(), oma)
-#' @param compProps.xpd drawing outside of plot region, cf. par(), xpd
-#' @param compProps.bg background color, cf. par(), bg
-#' @param compProps.header First (title) line of composite plot
-#' @param compProps.header2 Subtitle line of composite plot
-#' @param compProps.pdfFile character - if not NULL, plotting result will be saved in a pdf file with this name.
-#' @param compProps.pdfHi pdf height in inches
-#' @param compProps.pdfWi pdf width in inches
-#' @param compProps.cx numeric(1) font size (character expansion) factor
-#' @param compProps.adductLabs adduct labels (nonfunctional)
+#' @param plotProps a list of settings for the individual plots, see \code{Details}
+#' @param compProps layoout options for the composite plot, see \code{Details}
 #' @param raise if TRUE, EIC will be plotted with y axis going to -0.02*max(ylim) so that EICs with 0 intensity are visible.
 #' @param relPlot if TRUE, y-axis will show relative intensities
 #' @param margins manual setting for plot margins (par$mar)
 #' @param ylabshift shift horizontal position of y axis label 
+#' @param RescaleExclude character(), exclude this group from rescaling, or NULL to use all
+#' 
+#' @return sends a grouped EIC plot to the current plotting device
+#' 
+#' @details 
+#' \describe{
+#' \item{plotProps}{A list with these elements:
+#' \itemize{
+#' \item \code{TIC} if TRUE, TIC instead of EIC
+#' \item \code{cx} numeric(1) font size (character expansion) factor
+#' \item \code{colr} color range (actual vector of color values)
+#' \item \code{ylim} data.frame or matrix of nrow = number of plotted features,
+#'  with min and max visible rt value (in seconds) for each feature
+#' \item \code{xlim} data.frame or matrix of nrow = number of plotted features,
+#'  with min and max visible intensity value for each feature
+#' \item \code{midline} numeric() of y-axis positions where a dotted vertical 
+#' line should be plotted
+#' \item \code{lw} line width for plot lines
+#' \item \code{yzoom} zoom factor into y-axis
+#' }
+#' }
+#' \item{compProps}{
+#' \itemize{
+#' \item \code{mfrow} integer(2) rows and columns for plotting (cf. par(), mfrow)
+#' \item \code{oma} numeric(4) outer margins (cf. par(), oma)
+#' \item \code{xpd} drawing outside of plot region, cf. par(), xpd
+#' \item \code{bg} background color, cf. par(), bg
+#' \item \code{header} First (title) line of composite plot
+#' \item \code{header2} Subtitle line of composite plot
+#' \item \code{pdfFile} character - if not NULL, plotting result will be saved in a pdf file with this name.
+#' \item \code{pdfHi} pdf height in inches
+#' \item \code{pdfWi} pdf width in inches
+#' \item \code{cx} numeric(1) font size (character expansion) factor
+#' \item \code{adductLabs} adduct labels (nonfunctional)
+#' }
+#' }
+#' }
 #' 
 #' @export
-groupPlot <- function(EIClist = res,
-                      grouping = grouping2,
-                      plotProps = list(TIC = T, #settings for single plots
+groupPlot <- function(EIClist,
+                      grouping,
+                      plotProps = list(TIC = TRUE, #settings for single plots
                                        cx = 1,
-                                       colr = topo.colors(nrow(minoritem), alpha=1),
+                                       colr = topo.colors(nrow(EIClist[[1]]), alpha=1),
                                        ylim = NULL, #these should be data.frames or matrices of nrow = number of plotted features
                                        xlim = NULL,
                                        lw = 1,
@@ -345,7 +385,7 @@ groupPlot <- function(EIClist = res,
                       compProps = list(mfrow=c(1,2), #par options for the composite plot
                                        oma=c(0,2,8,0),
                                        xpd=NA, bg=NA,
-                                       header =  paste0(names(res)),
+                                       header =  paste0(names(EIClist)),
                                        header2 = NULL,
                                        pdfFile = NULL,
                                        pdfHi = 6,
@@ -468,23 +508,6 @@ groupPlot <- function(EIClist = res,
     
     if(!is.null(compProps$header2)){mtext(compProps$header2[majoritem], side=3, outer=T,line=0, cex=compProps$cx)}
     
-
-    # par(mar=c(0,0,0,0))
-    
-    #   if(length(compProps$adductLabs)>1){
-    #    mod <- ((compProps$mfrow[1]-1)*compProps$mfrow[2])%%length(grouping)
-    #   if(mod >0){
-    #    for(n in 1:mod){
-    #     plot(1, type = "n", axes=FALSE, xlab="", ylab="")
-    #  }
-    #  }
-    #for(n in )
-    # plot(1, type = "n", axes=FALSE, xlab="", ylab="")
-    #legend("top",
-    # inset=c(-0.08,-0.08),#c(0.025*max(xlim),0.025*max(ylim)),
-    #      legend = compProps$adductLabs, lty=1:length(compProps$adductLabs), lwd=2.5, col="black", bty="n",  cex=cx*0.7, horiz = T)
-    #}
-    
     
   }
   
@@ -494,8 +517,9 @@ groupPlot <- function(EIClist = res,
 
 #' EICplot
 #' 
-#' generate one EIC plot for multiple files
+#' generate one EIC plot for multiple files in one plot window.
 #' 
+#' @return sends a single EIC plot to the current plotting device
 #' 
 #' @param EIClistItem item from a list of EICs from METABOseek:multiEIC
 #' @param ylim numeric(2) min and max visible rt value (in seconds)
@@ -512,13 +536,12 @@ groupPlot <- function(EIClist = res,
 #' @param ylabshift shift horizontal position of y axis label 
 #' 
 #' @export
-
-EICplot <- function(EICs = sEICs$EIClist, cx = 1, 
-                    ylim = c(0,max(unlist(EIClistItem[,'tic']))), 
-                    xlim = c(min(unlist(EIClistItem[,'rt'])),
-                             max(unlist(EIClistItem[,'rt'])))/60,
-                    legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(sEICs$EIClist[[1]])))),
-                    colr = topo.colors(nrow(sEICs$EIClist[[1]]), alpha=1),
+EICplot <- function(EICs, cx = 1, 
+                    ylim = c(0,max(unlist(EICs[[1]][,'tic']))), 
+                    xlim = c(min(unlist(EICs[[1]][,'rt'])),
+                             max(unlist(EICs[[1]][,'rt'])))/60,
+                    legendtext = paste(sub("^([^.]*).*", "\\1",basename(row.names(EICs[[1]])))),
+                    colr = topo.colors(nrow(EICs[[1]]), alpha=1),
                     heading = "test",
                     relto = NULL,
                     TIC = F,
@@ -603,13 +626,14 @@ EICplot <- function(EICs = sEICs$EIClist, cx = 1,
 #' Helper function for EICplot to plot the lines of EICs into a PlottingWindow. 
 #' Mass shifts will be handled by plotting different line types
 #' 
+#' @return plots EIC trace lines into the current plot window
+#' 
 #' @param EIClist matrix or list of EIC objects (potentially subsetted)
 #' @param TIC logical() if TRUE, TIC will be plotted instead of EIC
 #' @param colr character() of color values for lines
 #' @param relto if not NULL, intensities will be given as relative to this numeric(1)
 #' @param liwi line width of plotted lines
 #'
-#' @export
 addLines <- function(EIClist = EICsAdducts,
                      TIC = F,
                      colr = topo.colors(nrow(EIClistItem), alpha=1),
@@ -649,9 +673,10 @@ addLines <- function(EIClist = EICsAdducts,
 #' 
 #' Plot a legend in an otherwise empty plot
 #' 
-#' @param ... all arguments passed on to legend
+#' @param ... all arguments passed on to \code{\link[graphics]{legend}()}
+#' 
+#' @return calls a new \code{plot()} with a legend 
 #'
-#' @export
 legendplot <- function(...){
   
   par(mfrow=c(1,1), 

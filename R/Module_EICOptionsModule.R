@@ -1,14 +1,13 @@
 #' EICOptionsModule
-#' 
-#' 
+#'
 #' Module to change EIC options
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @details 
+#' Returns nothing, but writes to \code{values$GlobalOpts}
+#' 
+#' @describeIn EICOptionsModule server logic for the EICOptionsModule
 #' 
 #' @import shiny
 #' @importFrom parallel detectCores
@@ -182,13 +181,7 @@ EICOptionsModule <- function(input,output, session,
   })
 }
 
-#' EICOptionsModuleUI
-#' 
-#' 
-#' Module to change EIC options
-#' 
-#' @param id id of the module
-#' 
+#' @describeIn EICOptionsModule UI elements for the EICOptionsModule
 #' @export 
 EICOptionsModuleUI <- function(id){
   ns <- NS(id)

@@ -5,12 +5,12 @@
 \title{Plot summary data on grouped data}
 \usage{
 groupedplot(..., main = c("boxplot", "barplot", "violinplot"),
-  dotplot = T, dsize = 1, mark = c("mean", "median"),
+  dotplot = TRUE, dsize = 1, mark = c("mean", "median"),
   errorbar = c("Standard Deviation", "95\% Confidence Interval"),
-  rotate = T)
+  rotate = TRUE)
 }
 \arguments{
-\item{...}{arguments passed to ggplot2::ggplot}
+\item{...}{arguments passed to \code{\link[ggplot2]{ggplot}()}}
 
 \item{main}{plot type}
 
@@ -22,6 +22,9 @@ groupedplot(..., main = c("boxplot", "barplot", "violinplot"),
 
 \item{rotate}{boolean whether or not to rotate x-axis labels}
 }
+\value{
+a ggplot object that can be plotted.
+}
 \description{
-Plot summary data on grouped data
+Wrapper function for \code{ggplot}.
 }

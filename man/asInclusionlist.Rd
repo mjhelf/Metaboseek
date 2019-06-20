@@ -19,8 +19,13 @@ asInclusionlist(parenttable, rtwin = 2.5, polarity = "Positive",
 
 \item{listType}{"inclusion" or "exclusion"}
 
-\item{restrictRT}{use retention time column from parenttable and rtwin to restrict retention time in inclusion/exclusion list}
+\item{restrictRT}{use retention time column from parenttable and rtwin to 
+restrict retention time in inclusion/exclusion list}
+}
+\value{
+A data.frame that, when written to a file, has the expected format for a given instrument
 }
 \description{
-Reformats a feature table into a format that can be imported into MS instruments as inclusion or exclusion lists.
+Reformats a feature table into a format that can be imported 
+into MS instruments as inclusion or exclusion lists.
 }

@@ -7,7 +7,8 @@
 mergeMSold(speclist, ppm = 5, mergeOnly = F)
 }
 \arguments{
-\item{speclist}{data.frame or matrix containing mz and intensity values of a spectrum (mz in column 1)}
+\item{speclist}{data.frame or matrix containing mz and intensity 
+values of a spectrum (mz in column 1)}
 
 \item{ppm}{accuracy}
 
@@ -17,5 +18,6 @@ mergeMSold(speclist, ppm = 5, mergeOnly = F)
 Merge MS spectra by combining peaks that are within a ppm distance
 }
 \details{
-NOTE: If multiple peaks inside a spectrum match another spectrum, only the one with higher(?) mz will be retained
+NOTE: If multiple peaks inside a spectrum match another spectrum,
+ only the one with higher(?) mz will be retained
 }

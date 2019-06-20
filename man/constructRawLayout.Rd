@@ -7,10 +7,35 @@
 constructRawLayout(rawgrouptable, stem = NULL, msnExp = NULL)
 }
 \arguments{
-\item{rawgrouptable}{a data.frame with columns File and Group , holding file paths and group names, respectively.}
+\item{rawgrouptable}{a data.frame with columns File and Group ,
+holding file paths and group names, respectively.}
 
-\item{stem}{if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.}
+\item{stem}{if the file paths in rawgrouptable are not full
+(e.g. subdirectories of the working directory),
+ this should be the path of the working directory.}
+
+\item{msnExp}{if not NULL, must be an \code{OnDiskMSnExp} object,
+see \code{details}}
+}
+\value{
+a \code{rawLayout} object
 }
 \description{
-Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in METABOseek.
+Constructor function for the rawLayout S3 class,
+ holding information on MSdata grouping and layout options in METABOseek.
+}
+\details{
+If \code{msnExp} is provided, will generate an element called 
+\code{MSnExp_summary} in the resulting \code{rawLayout} which is a data.frame
+containing information that can be used for normalization. Columns in
+ \code{MSnExp_summary}:
+\itemize{
+\item\code{sampleNames}File names of raw files
+\item\code{bpmeans} mean values of the basepeak intensity for each file
+\item\code{ticmeans} mean values of the TIC intensity for each file
+\item\code{normfactor_bp} normalization factor for each file based on base peak
+\item\code{normfactor_tic} normalization factor for each file based on TIC intensity peak
+}
+Multiplying all intensity values for each file with their normfactors will
+yield the same mean intensity for all files.
 }

@@ -11,6 +11,9 @@ plotSMILE(SMILE, ...)
 
 \item{...}{additional arguments passed to \link[adsf]{view.image.2d}()}
 }
+\value{
+plots a molecule in the current plotting device
+}
 \description{
 draw single molecule from a SMILE
 }

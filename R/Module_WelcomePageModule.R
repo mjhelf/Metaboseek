@@ -1,12 +1,13 @@
 #' WelcomePageModule
 #' 
+#' Start page module, shows update news and allows loading of data.
 #' 
-#' module to welcome Mseek users.
+#' @inherit MseekModules
+#' @describeIn WelcomePageModule Server logic
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
+#' @return Returns nothing
 #' 
+#' @param show a reactive(), if show() is TRUE, will show update news
 #' 
 #' @import shiny shinyFiles
 #' 
@@ -16,7 +17,7 @@ WelcomePageModule <- function(input,output, session,
                                                       featureTables = values$featureTables,
                                                       MSData = values$MSData,
                                                       GlobalOpts = values$GlobalOpts),
-                              show = reactive({T})){
+                              show = reactive({TRUE})){
   
   ns <- NS(session$ns(NULL))
   
@@ -111,11 +112,7 @@ style="border:none;width:100%;height:500px;" ',
 }
 
 
-#' WelcomePageModuleUI
-#' 
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn WelcomePageModule UI elements
 #' @export
 WelcomePageModuleUI <- function(id){
   ns <- NS(id)

@@ -1,0 +1,6 @@
+"active"	"tag"	"min"	"max"	"AAs"	"formula"	"mass"
+FALSE	"Ep"	0	2	""	""	1.00627675
+FALSE	"DH"	0	1	"TS"	"H-2O-1"	-18.0105647
+FALSE	"DA"	0	1	"QN"	"N-1H-3"	17.0265491
+FALSE	"Me"	0	2	""	"CH2"	14.01565007
+FALSE	"CAM"	0	5	"C"	"C2H3ON"	57.0214637370

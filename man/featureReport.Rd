@@ -10,9 +10,13 @@ featureReport(pdf_settings = list(file = "testReport.pdf", width = NULL,
   selectMS2 = NULL)
 }
 \arguments{
-\item{pdf_settings}{if NULL, plot to current device, otherwise takes list with items file, height and width. If height and/ or width are NULL, plot to A4 format pdf with some safeguards increasing width and hieght as necessary}
+\item{pdf_settings}{if NULL, plot to current device, otherwise takes list 
+with items file, height and width. If height and/ or width are NULL, plot 
+to A4 format pdf with some safeguards increasing width and hieght as 
+necessary}
 
-\item{layout_settings}{list of arguments passed to layout(), OR an integer defining how many columns to use for the EIC plots}
+\item{layout_settings}{list of arguments passed to layout(), OR an integer 
+defining how many columns to use for the EIC plots}
 
 \item{EICplots}{list of arguments passed to EICgeneral()}
 
@@ -22,8 +26,17 @@ featureReport(pdf_settings = list(file = "testReport.pdf", width = NULL,
 
 \item{tree}{list of arguments passed to plotTree()}
 
-\item{selectMS2}{if not NULL, and if one of the groups in EICplots is called "MS2", only the EIC for this file will be shown in the MS2 EIC group}
+\item{fragments}{labels for known fragments, currently not used!}
+
+\item{cx}{font size factor}
+
+\item{selectMS2}{if not NULL, and if one of the groups in EICplots is called
+"MS2", only the EIC for this file will be shown in the MS2 EIC group}
+}
+\value{
+plots MS1 and MS2 spectra, EICs and SIRIUS results, optimized for A4 sized pdf pages
 }
 \description{
-featureReport
+Generates a report on a selected molecular feature with MS1 ands 
+MS2 spectra, EICs and SIRIUS results.
 }

@@ -1,28 +1,30 @@
 #' TableModule
 #' 
+#' Module to show a Table in the UI. Deprecated, use \code{\link{TableModule2}}
 #' 
-#' server module for interactive mass spectrum view
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
+#' @describeIn TableModule Server logic
+#' 
+#' @return Returns its internalValues
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
 #' 
 #' 
 #' @export 
-TableModule <- function(input,output, session, tag, set = list(df =  NULL,
-                                                               update = 1, #change this to trigger update of the df or set to NULL to update anytime df changes
-                                                               layout = list(
-                                                                 perpage = 100,
-                                                                 height = 300,
-                                                                 readOnly = T,
-                                                                 contextMenu = T,
-                                                                 fixedColumnsLeft = 1,
-                                                                 invertReadOnly = NULL,
-                                                                 format = list(col = NULL,
-                                                                               format = NULL)
-                                                               ))
+TableModule <- function(input,output, session,
+                        tag, set = list(df =  NULL,
+                                        update = 1, #change this to trigger update of the df or set to NULL to update anytime df changes
+                                        layout = list(
+                                          perpage = 100,
+                                          height = 300,
+                                          readOnly = T,
+                                          contextMenu = T,
+                                          fixedColumnsLeft = 1,
+                                          invertReadOnly = NULL,
+                                          format = list(col = NULL,
+                                                        format = NULL)
+                                        ))
 ){
   
   ns <- NS(tag)
@@ -73,37 +75,29 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                  tableProperties$sortCheck,
                  tableProperties$set$update,
                  tableProperties$set$df),{
-    if(!is.null(tableProperties$set$df) && length(tableProperties$set$df) > 0){
-      # if(tableProperties$updating){
-      #   tableProperties$updating <- F
-      # }else{
-      #   #update the df with any possible changes before changing anything else
-      #   if(!is.null(input$maintable) && !identical(tableProperties$showTable, hot_to_r(input$maintable))){
-      #     
-      #     tableProperties$set$df[row.names(hot_to_r(input$maintable)),colnames(hot_to_r(input$maintable))] <- hot_to_r(input$maintable)
-      #   }
-      # }
-      
-      if(tableProperties$sortCheck && length(tableProperties$sortBy) > 0){
-        tableProperties$row_order <- order(tableProperties$set$df[,tableProperties$sortBy], decreasing = tableProperties$decreasing)
-        
-      }else{
-        tableProperties$row_order <- seq(nrow(tableProperties$set$df))
-      }
-
-      tableProperties$inpage <- if(is.null(set()$layout$perpage)){
-        tableProperties$row_order}
-      else if(tableProperties$page >= ceiling(length(tableProperties$row_order)/set()$layout$perpage)){
-        tableProperties$page <- ceiling(length(tableProperties$row_order)/set()$layout$perpage)
-        tableProperties$row_order[c((tableProperties$page*set()$layout$perpage-(set()$layout$perpage-1)):(length(tableProperties$row_order)))]}
-      else{
-        if(tableProperties$page < 1){tableProperties$page <- 1}
-        tableProperties$row_order[c((tableProperties$page*set()$layout$perpage-(set()$layout$perpage-1)):(tableProperties$page*set()$layout$perpage))]}
-      
-      tableProperties$showTable <- tableProperties$set$df[tableProperties$inpage,]
-      
-    }
-  })
+                   if(!is.null(tableProperties$set$df) && length(tableProperties$set$df) > 0){
+                     
+                     
+                     if(tableProperties$sortCheck && length(tableProperties$sortBy) > 0){
+                       tableProperties$row_order <- order(tableProperties$set$df[,tableProperties$sortBy], decreasing = tableProperties$decreasing)
+                       
+                     }else{
+                       tableProperties$row_order <- seq(nrow(tableProperties$set$df))
+                     }
+                     
+                     tableProperties$inpage <- if(is.null(set()$layout$perpage)){
+                       tableProperties$row_order}
+                     else if(tableProperties$page >= ceiling(length(tableProperties$row_order)/set()$layout$perpage)){
+                       tableProperties$page <- ceiling(length(tableProperties$row_order)/set()$layout$perpage)
+                       tableProperties$row_order[c((tableProperties$page*set()$layout$perpage-(set()$layout$perpage-1)):(length(tableProperties$row_order)))]}
+                     else{
+                       if(tableProperties$page < 1){tableProperties$page <- 1}
+                       tableProperties$row_order[c((tableProperties$page*set()$layout$perpage-(set()$layout$perpage-1)):(tableProperties$page*set()$layout$perpage))]}
+                     
+                     tableProperties$showTable <- tableProperties$set$df[tableProperties$inpage,]
+                     
+                   }
+                 })
   
   
   output$maintable <- renderRHandsontable({
@@ -126,46 +120,22 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
                     highlightRow = TRUE,
                     autoWrapCol = FALSE,
                     autoWrapRow = FALSE) %>%
-        #  hot_cols(renderer = "
-        #        function(instance, td, row, col, prop, value, cellProperties) {
-        #               Handsontable.TextCell.renderer.apply(this, arguments);
-        #            td.style.color = 'black';
-        #       }")%>%
         hot_col(col = set()$layout$format$col[which(set()$layout$format$col %in% colnames(tableProperties$showTable))], format=set()$layout$format$format)%>%
         hot_col(col = set()$layout$invertReadOnly[which(set()$layout$invertReadOnly %in% colnames(tableProperties$showTable))], readOnly = !set()$layout$readOnly)%>%
         hot_cols(fixedColumnsLeft = set()$layout$fixedColumnsLeft)%>%
-        hot_cols(columnSorting = FALSE)#%>%
-      #hot_col("em",format="0.000000")%>%
-      # hot_cols(renderer = "
-      #  function(instance, td, row, col, prop, value, cellProperties) {
-      #    Handsontable.renderers.TextRenderer.apply(this, arguments);
-      #      tbl = HTMLWidgets.widgets.filter(function(widget) {
-      #// this should match the table id specified in the shiny app
-      #          return widget.name === 'maintable'
-      #})[0];
+        hot_cols(columnSorting = FALSE)
       
-      #   hrows = tbl.params.row_highlight
-      #  hrows = hrows instanceof Array ? hrows : [hrows] 
-      #
-      #     if (hrows.includes(row)) {
-      #      td.style.background = 'pink';
-      #   }
-      
-      #  return td;
-      #}")
-      
-      # 
       
     }
   })
   
   output$tabUI <- renderUI({
     
-   # if(!is.null(tableProperties$set$df)){
-      fluidRow(
-        rHandsontableOutput(ns("maintable"))
-      )
-  #  }
+    # if(!is.null(tableProperties$set$df)){
+    fluidRow(
+      rHandsontableOutput(ns("maintable"))
+    )
+    #  }
   })
   
   
@@ -237,10 +207,7 @@ TableModule <- function(input,output, session, tag, set = list(df =  NULL,
   
 }
 
-#' TableModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn TableModule UI elements
 #' @export
 TableModuleUI <- function(id){
   ns <- NS(id)

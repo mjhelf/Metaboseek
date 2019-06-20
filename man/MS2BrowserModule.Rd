@@ -2,24 +2,48 @@
 % Please edit documentation in R/Module_MS2BrowserModule.R
 \name{MS2BrowserModule}
 \alias{MS2BrowserModule}
+\alias{MS2BrowserModuleUI}
 \title{MS2BrowserModule}
 \usage{
-MS2BrowserModule(input, output, session, reactives = reactive({    
-  list(query = list(mz = NULL, rt = NULL)) }),
+MS2BrowserModule(input, output, session,
   values = reactiveValues(featureTables = featureTables, MSData = MSData,
-  GlobalOpts = GlobalOpts), keys = reactive({     keys() }))
+  GlobalOpts = GlobalOpts), keys = reactive({     "NO" }))
+
+MS2BrowserModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{tag}{id to be used in ns()}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{set}{Import data from the shiny session}
+\item{keys}{\code{reactive({})} that reports the current key press}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module for loading Tables
+Module for browsing and comparing MS2 data
+}
+\section{Functions}{
+\itemize{
+\item \code{MS2BrowserModule}: Server logic
+
+\item \code{MS2BrowserModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

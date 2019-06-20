@@ -2,18 +2,45 @@
 % Please edit documentation in R/Module_GlobalOptionsModule.R
 \name{GlobalOptionsModule}
 \alias{GlobalOptionsModule}
+\alias{GlobalOptionsModuleUI}
 \title{GlobalOptionsModule}
 \usage{
 GlobalOptionsModule(input, output, session,
   values = reactiveValues(GlobalOpts = GlobalOpts))
+
+GlobalOptionsModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
+
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-Module to change global options
+Module to change some global options in \code{values$GlobalOpts} from the UI
+}
+\section{Functions}{
+\itemize{
+\item \code{GlobalOptionsModule}: server logic
+
+\item \code{GlobalOptionsModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

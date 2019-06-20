@@ -1,9 +1,32 @@
 #' constructRawLayout
 #' 
-#' Constructor function for the rawLayout S3 class, holding information on MSdata grouping and layout options in METABOseek.
+#' Constructor function for the rawLayout S3 class,
+#'  holding information on MSdata grouping and layout options in METABOseek.
 #' 
-#' @param rawgrouptable a data.frame with columns File and Group , holding file paths and group names, respectively.
-#' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
+#' @param rawgrouptable a data.frame with columns File and Group ,
+#'  holding file paths and group names, respectively.
+#' @param stem if the file paths in rawgrouptable are not full
+#'  (e.g. subdirectories of the working directory),
+#'   this should be the path of the working directory.
+#' @param msnExp if not NULL, must be an \code{OnDiskMSnExp} object,
+#'  see \code{details}
+#'  
+#' @return a \code{rawLayout} object
+#' 
+#' @details
+#' If \code{msnExp} is provided, will generate an element called 
+#' \code{MSnExp_summary} in the resulting \code{rawLayout} which is a data.frame
+#' containing information that can be used for normalization. Columns in
+#'  \code{MSnExp_summary}:
+#' \itemize{
+#' \item\code{sampleNames}File names of raw files
+#' \item\code{bpmeans} mean values of the basepeak intensity for each file
+#' \item\code{ticmeans} mean values of the TIC intensity for each file
+#' \item\code{normfactor_bp} normalization factor for each file based on base peak
+#' \item\code{normfactor_tic} normalization factor for each file based on TIC intensity peak
+#' }
+#' Multiplying all intensity values for each file with their normfactors will
+#' yield the same mean intensity for all files. 
 #' 
 #' @export
 constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
@@ -15,9 +38,13 @@ constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
       MSD$rawgrouptable$Group2 <- MSD$rawgrouptable$Group
     }
     MSD$filelist <- paste0(stem, rawgrouptable$File)
-    MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = rawgrouptable$Group))
+    MSD$grouping = rawGrouping(data.frame(File = MSD$filelist,
+                                          Group = rawgrouptable$Group))
     
-    MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist, Group = if(!is.null(rawgrouptable$Group2)){rawgrouptable$Group2}else{rawgrouptable$Group}) )
+    MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist,
+                                           Group = if(!is.null(rawgrouptable$Group2)){
+                                               rawgrouptable$Group2
+                                               }else{rawgrouptable$Group}) )
 
 
     MSD$settings = list(rtw = 30,
@@ -28,7 +55,8 @@ constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
     
     if(!is.null(msnExp)){
       
-      findex <- match(MSD$filelist, as.character(msnExp@phenoData@data$sampleNames))
+      findex <- match(MSD$filelist,
+                      as.character(msnExp@phenoData@data$sampleNames))
       
       if(!any(is.na(findex))){
         
@@ -62,16 +90,21 @@ constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
 
 #' updateRawLayout
 #' 
-#' Updates the file path information in a rawLayout object
+#' Updates the file path information in a \code{rawLayout} object
 #' 
-#' @param MSD a rawLayout object with a defined stem
-#' @param stem if the file paths in rawgrouptable are not full (e.g. subdirectories of the working directory), this should be the path of the working directory.
+#' @param MSD a \code{rawLayout} object with a defined stem
+#' @param stem if the file paths in rawgrouptable are not full
+#'  (e.g. subdirectories of the working directory), this should 
+#'  be the path of the working directory.
+#' 
+#' @return An updated \code{rawLayout} object
 #' 
 #' @export
 updateRawLayout <- function(MSD, new.stem=NULL){
     
     MSD$filelist <- gsub(MSD$stem,new.stem,MSD$filelist)
-    MSD$grouping = rawGrouping(data.frame(File = MSD$filelist, Group = MSD$rawgrouptable$Group))
+    MSD$grouping = rawGrouping(data.frame(File = MSD$filelist,
+                                          Group = MSD$rawgrouptable$Group))
     MSD$grouping2 = rawGrouping(data.frame(File = MSD$filelist,
                                            Group = if(!is.null(MSD$rawgrouptable$Group2)){MSD$rawgrouptable$Group2}else{MSD$rawgrouptable$Group}))
 
@@ -82,29 +115,34 @@ updateRawLayout <- function(MSD, new.stem=NULL){
 
 #' loadRawM
 #' 
-#' TIME CONSUMING. This step does not need to be repeated when adjusting other parameters
-#' (e.g. feature list, EIC ppm or RT) Generates an R-readable data structure (a list of xcmsRaw objects) 
-#' in memory from MS data files defined in the file list.
+#' TIME CONSUMING. This step does not need to be repeated when adjusting
+#'  other parameters (e.g. feature list, EIC ppm or RT) Generates an R-readable
+#'   data structure (a list of xcmsRaw objects) in memory from MS data files 
+#'   defined in the file list.
 #' 
-#' Note that there is an xcms function of the same name.
+#' This is a wrapper for \code{xcms::\link[xcms]{loadRaw}} that can process
+#'  multiple filenames at a time and supports parallel processing
+#' 
+#' @return a list of \code{xcmsRaw} objects
 #' 
 #' @param filelist a list of mzXML or mzML files (character vector)
 #' @param MSn should MSn data be read in? defaults to TRUE
-#' @param workers How many cores to use (cf. BiocParallel and SnowParam, argument only used if more than 10 files are loaded).
-#' @param rnames names of the xcmsRaw objects in the list returned, defaults to the filepaths of the source files.
+#' @param workers How many cores to use (cf. BiocParallel and SnowParam,
+#' argument only used if more than 10 files are loaded).
+#' @param rnames names of the xcmsRaw objects in the list returned,
+#'  defaults to the filepaths of the source files.
 #' 
 #' @importFrom BiocParallel SnowParam bplapply
 #' @importFrom xcms xcmsRaw
 #' 
 #' @export
-##Parallel enabled version for larger number of files
-##NOTE: not equivalent to xcms function loadRaw
-loadRawM <- function (filelist= mzxml_pos, MSn = T, workers=10, rnames = filelist){
+loadRawM <- function (filelist, MSn = T, workers=1, rnames = filelist){
 
     if (length(filelist)<=10){workers<-1}
     param <- SnowParam(workers = workers)
     suppressWarnings({
-    rawcoll <- bplapply(filelist,xcmsRaw,  profstep=0, includeMSn = MSn, BPPARAM= param)
+    rawcoll <- bplapply(filelist,xcmsRaw,  profstep=0,
+                        includeMSn = MSn, BPPARAM= param)
     })
     names(rawcoll)<- rnames
     
@@ -116,9 +154,11 @@ loadRawM <- function (filelist= mzxml_pos, MSn = T, workers=10, rnames = filelis
 #' 
 #' Groups a rawgrouptable into a named list.
 #' 
-#' @param rawgrouptable a data.frame with columns File and Group , holding file paths and group names, respectively.
+#' @param rawgrouptable a data.frame with columns File and Group,
+#'  holding file paths and group names, respectively.
+#'  
+#' @return a named list
 #' 
-#' @export
 rawGrouping <- function(rawgrouptable){
     ## Make list object of grouped column names                                        
     colme <- list()
@@ -131,25 +171,32 @@ rawGrouping <- function(rawgrouptable){
 
 #' makeColorscheme
 #'
-#' Use two grouing lists to generate a color scheme for groupPlot() and EICgeneral().
+#' Use two grouping lists to generate a color scheme
+#' that can be passed as an argument for \code{\link{groupPlot}()}
+#'  and \code{\link{EICgeneral}()}.
 #' 
-#' @param maingroup main plot grouping scheme (e.g. grouping in rawlayouts)
-#' @param colorgroup grouping to be used for coloring (e.g. grouping2 in rawlayouts)
-#' @param colrange function to use to make color range
+#' @param maingroup a named list defining the main plot grouping scheme
+#' (e.g. grouping in rawlayouts)
+#' @param colorgroup a named list defining the grouping to be used for coloring 
+#' (e.g. grouping2 in rawlayouts)
+#' @param colrange name of the function to use to make color range
 #' @param transparency setting for transparent coloring
 #'
+#' @return a named list of data.frames with color values and labels
 #'
 #' @export
-makeColorscheme <- function(maingroup = MSD$layouts[[MSD$active]]$grouping,
-                            colorgroup = MSD$layouts[[MSD$active]]$grouping,
+makeColorscheme <- function(maingroup,
+                            colorgroup,
                             colrange = "Mseek.colors",
                             transparency = 0.8){
   
   colvec <- do.call(colrange,
                     list(n=length(colorgroup), alpha = transparency))
   
-  labs <- unlist(sapply(seq(length(colorgroup)),function(n){rep(names(colorgroup)[n],length(colorgroup[[n]]))}))
-  colvec <- unlist(sapply(seq(length(colorgroup)),function(n){rep(colvec[n],length(colorgroup[[n]]))}))
+  labs <- unlist(sapply(seq(length(colorgroup)),function(n){
+      rep(names(colorgroup)[n],length(colorgroup[[n]]))}))
+  colvec <- unlist(sapply(seq(length(colorgroup)),function(n){
+      rep(colvec[n],length(colorgroup[[n]]))}))
   srch <- unlist(colorgroup)
   
   colrs <- list()

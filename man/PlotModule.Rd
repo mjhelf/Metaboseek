@@ -2,20 +2,41 @@
 % Please edit documentation in R/Module_PlotModule.R
 \name{PlotModule}
 \alias{PlotModule}
+\alias{PlotModuleUI}
 \title{PlotModule}
 \usage{
 PlotModule(input, output, session, reactives = reactive({    
   list(reactiveValues(plot = p, interactive = F)) }))
+
+PlotModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing but provides a ggplot GUI output
 }
 \description{
-server module for ggplot2 handler
+Module for ggplot2 handler
 }
+\section{Functions}{
+\itemize{
+\item \code{PlotModule}: Server logic
+
+\item \code{PlotModuleUI}: UI elements
+}}
+

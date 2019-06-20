@@ -1,14 +1,12 @@
 #' SelectActiveTableModule
 #' 
+#' Module to select the active Feature Table
 #' 
-#' server module for loading a Project Folder
+#' @inherit MseekModules
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @return Returns nothing
+#' 
+#' @describeIn SelectActiveTableModule Server logic
 #' 
 #' @export 
 SelectActiveTableModule <- function(input,output, session,
@@ -38,10 +36,7 @@ SelectActiveTableModule <- function(input,output, session,
   
 }
 
-#' SelectActiveTableModuleUI
-#' 
-#' @param id id of the Module
-#' 
+#' @describeIn SelectActiveTableModule UI elements
 #' @export 
 SelectActiveTableModuleUI <- function(id){
   

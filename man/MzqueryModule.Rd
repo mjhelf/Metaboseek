@@ -2,24 +2,48 @@
 % Please edit documentation in R/Module_MzqueryModule.R
 \name{MzqueryModule}
 \alias{MzqueryModule}
+\alias{MzqueryModuleUI}
 \title{MzqueryModule}
 \usage{
 MzqueryModule(input, output, session,
   values = reactiveValues(featureTables, MainTable, GlobalOpts),
   reactives = reactive({     list(mz = NULL) }))
+
+MzqueryModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{tag}{id to be used in ns()}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{set}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns its internalValues
 }
 \description{
-Chemcalc mz query module
-server module to get molecular formula predictions from chemcalc
+Use the \code{MassTools} and \code{Rdisop} packages to predict molecular formulas
+}
+\section{Functions}{
+\itemize{
+\item \code{MzqueryModule}: Server logic
+
+\item \code{MzqueryModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

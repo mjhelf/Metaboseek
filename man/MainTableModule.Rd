@@ -2,23 +2,65 @@
 % Please edit documentation in R/Module_MainTableModule.R
 \name{MainTableModule}
 \alias{MainTableModule}
+\alias{MainTableModuleUI}
 \title{MainTableModule}
 \usage{
 MainTableModule(input, output, session,
   values = reactiveValues(featureTables = featureTables, GlobalOpts =
   GlobalOpts, projectData = projectData), static = list(height = 300,
-  readOnly = T, contextMenu = T, fixedColumnsLeft = 1, invertReadOnly =
-  NULL, controls = T, format = list(col = NULL, format = NULL)))
+  readOnly = TRUE, contextMenu = TRUE, fixedColumnsLeft = 1, invertReadOnly
+  = NULL, controls = TRUE, format = list(col = NULL, format = NULL)))
+
+MainTableModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{set}{Import data from the shiny session}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+returns its internalValues and modifies \code{\link{values}}
 }
 \description{
-server module for interactive mass spectrum view
+Main Feature Table viewer Module
+}
+\details{
+\describe{
+\item{static}{
+\itemize{
+\item \code{heigth} height of the Table view in pixels
+\item \code{readOnly} if TRUE, no changes to table can be made from GUI
+\item \code{contextMenu} if TRUE, allow right click 
+\item \code{fixedColumnsLeft} number of columns to always show at the left 
+even when scrolling horizontally
+\item \code{invertReadOnly} character of column names for which to invert 
+the readOnly rule (e.g. only allow editing on comments column)
+\item \code{controls} show UI elements for filtering
+\item \code{format} a named list with elements \code{col} and \code{format}
+}
+
+}
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{MainTableModule}: server logic
+
+\item \code{MainTableModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

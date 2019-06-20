@@ -1,28 +1,24 @@
 #' RegroupMSDataModule
 #' 
 #' 
-#' server module to select and group intensity columns in Feature tables.
+#' Select and group MS files in plotting layouts
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @describeIn RegroupMSDataModule server logic
 #' 
 #' @import shiny
 #' @importFrom shinyjs toggle
 #' 
 #' @export 
 RegroupMSDataModule <- function(input,output, session,
-                                reactives = reactive({list()}),
                                 values = reactiveValues(MSData = MSData,
-                                                        projectData = projectData),
-                                static = list()
+                                                        projectData = projectData)
 ){
   
   ns <- NS(session$ns(NULL))
   
+  internalValues <- reactiveValues()
   
   GroupingTable <-  callModule(simpleTableModule, "groupingTable",
                                df = reactive({NULL}),
@@ -178,16 +174,11 @@ RegroupMSDataModule <- function(input,output, session,
     
   })
   
-  internalValues <- reactiveValues()
   
-  # observe({print(Preview$selected_cols)})
-  #return(internalValues)
+  
 }
 
-#' RegroupMSDataModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn RegroupMSDataModule UI elements
 #' @export
 RegroupMSDataModuleUI <- function(id){
   ns <- NS(id)

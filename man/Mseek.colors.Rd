@@ -11,6 +11,10 @@ Mseek.colors(n, alpha)
 
 \item{alpha}{transparency}
 }
+\value{
+a character vector representing \code{n} colors.
+}
 \description{
-custom color spectrum using color brewer Set1 colors plus topo.colors; good color discrimination up to n = 13
+custom color spectrum using color brewer Set1 colors plus topo.colors; 
+good color discrimination up to n = 13
 }

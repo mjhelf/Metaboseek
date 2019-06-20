@@ -13,6 +13,10 @@ EICtitles(mzs, rts, ppm)
 
 \item{ppm}{mz window +/- mzmid in ppm that will be plotted}
 }
+\value{
+a character vector with plot titles of same length as 
+\code{rts} and \code{mzs}
+}
 \description{
 helper function to generate titles for EICgeneral
 }

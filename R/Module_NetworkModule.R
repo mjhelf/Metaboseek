@@ -1,13 +1,15 @@
 #' NetworkModule
 #' 
+#' Visualize and interact with molecular networks
 #' 
-#' server module for interactive mass spectrum view
+#' TODO: standardize and split/simplify this module
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
+#' @describeIn NetworkModule server logic
 #' 
+#' @inherit MseekModules
+#' @param keys \code{reactive({})} that reports the current key press
+#' 
+#' @return Returns its internalValues
 #' 
 #' @export 
 NetworkModule <- function(input,output, session, 
@@ -17,7 +19,7 @@ NetworkModule <- function(input,output, session,
                                                      )
                             }),
                           static = list(noSelection = T),
-                          keys
+                          keys = reactive({"NO"})
 ){
   
   ns <- NS(session$ns(NULL))
@@ -676,13 +678,7 @@ sliderInput(ns("seledges"), "Filter edges",
   return(internalValues)
 }
 
-#' NetworkModuleUI
-#' 
-#' 
-#' UI module for interactive spectrum view
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn NetworkModule UI elements
 #' @export
 NetworkModuleUI <- function(id){
   ns <- NS(id)

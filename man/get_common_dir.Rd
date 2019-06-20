@@ -11,6 +11,9 @@ get_common_dir(paths, delim = "/")
 
 \item{delim}{folder delimiter}
 }
+\value{
+sting with the common root folder of all supplied \code{paths}
+}
 \description{
 From: https://rosettacode.org/wiki/Find_common_directory_path#R
 }

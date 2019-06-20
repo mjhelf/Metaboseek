@@ -1,10 +1,32 @@
 #' writeStatus
 #' 
-#' Write or update a status dataframe with custom messages, time stamp and time elapsed since last status. Useful to document time consumed analysis by steps.
+#' Write or update a status dataframe with custom messages, time stamp and 
+#' time elapsed since last status. Useful to document time consumed by analysis 
+#' steps.
 #' 
-#' @param previous a writeStatus object to be updated (must have same column names); new object generated if NULL.
-#' @param message named list of columns with custom messages
-#' @param wd directory where the status.csv file should be written and updated. If NULL, no status.csv is written.
+#' @param previous a \code{writeStatus} object to be updated (must have same 
+#' column names):  new object generated if NULL.
+#' @param message named list of columns with elements \code{Status} 
+#' and \code{Details}, specifying the progress message for thsi step
+#' @param wd directory where the status.csv file should be written and 
+#' updated. If NULL, no status.csv is written.
+#' 
+#' @return returns a \code{writeStatus} object, see \code{Details} and writes to 
+#' a \code{status.csv} file in \code{wd}
+#' 
+#' @details A \code{writeStatus} object is a named list with two elements:
+#' \describe{
+#' \item{pt}{current \code{\link[base]{proc.time}()}},
+#' \item{status}{A data.frame with progress messages in rows, and these columns:
+#' \itemize{
+#' \item \code{Time} time stamp of analysis step
+#' \item \code{Status} status message/ analysis step
+#' \item \code{Details} details on analysis step
+#' \item \code{elapsed_time} total elapsed time
+#' }
+#' 
+#' }
+#' }
 #' 
 #' @examples 
 #' 
@@ -45,8 +67,12 @@ writeStatus <- function(previous = NULL,
     if(!is.null(wd)){
     write.csv(history,file = file.path(wd,"status.csv"))}
     
-  return(list(pt = pt1,
-              status = history))
+    res <- list(pt = pt1,
+              status = history)
+    
+    class(res) <- "writeStatus"
+    
+  return(res)
     }
   
   #If there is a previous input, update the status
@@ -64,30 +90,54 @@ writeStatus <- function(previous = NULL,
   
   write.csv(history,file = file.path(wd,"status.csv"))
   
-  return(list(pt = pt1,
+  res <- list(pt = pt1,
               status = history)
-         )
+  
+  class(res) <- "writeStatus"
+  
+  return(res)
 }
 
 
 #' savetable
 #' 
-#' Write or update a status dataframe with custom messages, time stamp and time elapsed since last status. Useful to document time consumed analysis by steps.
+#' Save a peakTable from an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate
+#'  object, and also keep track of analysis status via internal calls to 
+#'  \code{\link{writeStatus}()}.
+#'  
+#' @return Returns a \code{writeStatus} object, writes to \code{status.csv} 
+#'  file as well as other .csv files (with processed or unprocessed peakTables) 
+#'  in current working directory.
 #' 
-#' @param xset an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from which to extract the peaklist
-#' @param status a writeStatus object to be modified and returned by the function.
-#' @param fill xcms::FillChromPeaksParam object to specify how to fill peaks (only works if xset is an XCMSnExp object). No peak filling if NULL.
+#' @param xset an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 
+#' which to extract the peaklist
+#' @param status a \code{\link{writeStatus}} object to be modified and returned
+#'  by the function, or NULL to start a new status.csv file
+#' @param fill xcms::FillChromPeaksParam object to specify how to fill peaks
+#'  (only works if xset is an XCMSnExp object). No peak filling if NULL.
 #' @param nonfill also write the non-filled peaktable data? TRUE or FALSE
-#' @param filename filename to use when writing the csv file (including file extension). "_filled" will be added for filled data.
-#' @param bparams BBPARAMs (BiocParallel::BiocParallelParam object with parameters for parallel computing used in fill peaks)
-#' @param intensities list of parameters for Mseek EIC intensity extraction (for each feature in the peaklist). ppm: mz window, rtw: rt window (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, if FALSE rtw centers around value in column rt. Not performed if intensities = NULL.
-#' @param rawdata named list of xcmsRaw objects (as returned by Mseek::loadRawM), required for Mseek EIC intensity extraction which is not performed if NULL.
+#' @param filename filename to use when writing the csv file (including file 
+#' extension). "_filled" will be added for filled data.
+#' @param bparams BBPARAMs (BiocParallel::BiocParallelParam object with 
+#' parameters for parallel computing used in fill peaks)
+#' @param intensities list of parameters for Mseek EIC intensity extraction 
+#' (for each feature in the peaklist). ppm: mz window, rtw: rt window 
+#' (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, 
+#' if FALSE rtw centers around value in column rt. Not performed if 
+#' intensities = NULL.
+#' @param rawdata named list of xcmsRaw objects (as returned by
+#'  Mseek::loadRawM), required for Mseek EIC intensity extraction which 
+#'  is not performed if NULL.
 #' @param saveR save the xset object as .Rdata file
+#' @param postProc list of SOME arguments passed to \code{\link{analyzeTable}()}
+#'  for post processing, or NULL to skip processing. 
+#'  TODO: transisiton to do.call solution for postProc and document
 #'  
 #' @export
 savetable <- function(xset,
                       status = NULL,
-                      fill = FillChromPeaksParam(expandMz = 0.005, expandRt = 5, ppm = 3),
+                      fill = FillChromPeaksParam(expandMz = 0.005,
+                                                 expandRt = 5, ppm = 3),
                       nonfill = F,
                       filename = "tableoutxx.csv",
                       bparams = SnowParam(workers = 1),

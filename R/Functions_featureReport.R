@@ -1,14 +1,24 @@
 #' featureReport
-#'
 #' 
-#' @param pdf_settings if NULL, plot to current device, otherwise takes list with items file, height and width. If height and/ or width are NULL, plot to A4 format pdf with some safeguards increasing width and hieght as necessary
-#' @param layout_settings list of arguments passed to layout(), OR an integer defining how many columns to use for the EIC plots
+#' Generates a report on a selected molecular feature with MS1 ands 
+#' MS2 spectra, EICs and SIRIUS results.
+#' 
+#' @param pdf_settings if NULL, plot to current device, otherwise takes list 
+#' with items file, height and width. If height and/ or width are NULL, plot 
+#' to A4 format pdf with some safeguards increasing width and hieght as 
+#' necessary
+#' @param layout_settings list of arguments passed to layout(), OR an integer 
+#' defining how many columns to use for the EIC plots
 #' @param EICplots list of arguments passed to EICgeneral()
 #' @param MS1 list of arguments passed to specplot()
 #' @param MS2 list of arguments passed to specplot()
 #' @param tree list of arguments passed to plotTree()
-#' @param selectMS2 if not NULL, and if one of the groups in EICplots is called "MS2", only the EIC for this file will be shown in the MS2 EIC group
+#' @param fragments labels for known fragments, currently not used!
+#' @param cx font size factor
+#' @param selectMS2 if not NULL, and if one of the groups in EICplots is called
+#'  "MS2", only the EIC for this file will be shown in the MS2 EIC group
 #' 
+#' @return plots MS1 and MS2 spectra, EICs and SIRIUS results, optimized for A4 sized pdf pages
 #'
 #' @export
 featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = NULL, height = NULL),
@@ -211,6 +221,8 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
 #'
 #' @param tree DiagrammeR::grViz output object
 #' @param resolution resolution  of the image along its longest edge
+#' 
+#' @return plots a grViz- generated tree in an R plotting device
 #'
 plotTree <- function(tree, resolution = 2000, filename= NULL){
   

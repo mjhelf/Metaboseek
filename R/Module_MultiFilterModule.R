@@ -1,13 +1,12 @@
 #' MultiFilterModule
 #' 
-#' Module to apply filters to a featureTable (UI)
+#' Module to apply filters to the active \code{\link{FeatureTable}}.
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @return Returns its internalValues
+#' 
+#' @describeIn MultiFilterModule Server logic
 #' 
 #' @export 
 MultiFilterModule <- function(input,output, session,
@@ -253,12 +252,7 @@ MultiFilterModule <- function(input,output, session,
       
 }
 
-#' MultiFilterModuleUI
-#' 
-#' Module to apply filters to a featureTable (UI)
-#' 
-#' @param id
-#' 
+#' @describeIn MultiFilterModule UI elements
 #' @export
 MultiFilterModuleUI <- function(id){
   ns <- NS(id)

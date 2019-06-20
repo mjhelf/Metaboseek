@@ -1,11 +1,10 @@
 #' Specmodule
 #' 
+#' Module for interactive mass spectrum view. Deprecated. Use
+#'  \code{\link{SpecModule2}()}
 #' 
-#' server module for interactive mass spectrum view
-#' 
-#' @param input 
-#' @param output 
-#' @param session 
+#' @inherit MseekModules
+#' @describeIn Specmodule Server logic
 #' @param tag id to be used in ns()
 #' @param set Import data from the shiny session
 #' @param keys registered keystrokes
@@ -13,23 +12,24 @@
 #' @importFrom xcms getMsnScan
 #' @importFrom xcms getScan
 #' @export 
-Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange = NULL,
-                                                                          yrange = NULL,
-                                                                          maxxrange = NULL,
-                                                                          maxyrange = NULL,
-                                                                          sel = NULL,
-                                                                          mz = NULL,
-                                                                          data = NULL,
-                                                                          MS2 = T),
-                                                              layout = list(lw = 1,
-                                                                            cex = 1,
-                                                                            controls = F,
-                                                                            ppm = 5,
-                                                                            active = T,
-                                                                            highlights = NULL,
-                                                                            height = 550),
-                                                              msdata = NULL,
-                                                              moreArgs = NULL),
+Specmodule <- function(input,output, session,
+                       tag, set = list(spec = list(xrange = NULL,
+                                                   yrange = NULL,
+                                                   maxxrange = NULL,
+                                                   maxyrange = NULL,
+                                                   sel = NULL,
+                                                   mz = NULL,
+                                                   data = NULL,
+                                                   MS2 = T),
+                                       layout = list(lw = 1,
+                                                     cex = 1,
+                                                     controls = F,
+                                                     ppm = 5,
+                                                     active = T,
+                                                     highlights = NULL,
+                                                     height = 550),
+                                       msdata = NULL,
+                                       moreArgs = NULL),
                        keys){
   
   ns <- NS(tag)
@@ -47,7 +47,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
                                                         MSmerge = NULL,
                                                         fullplot = NULL),
                                             
-                                                        plotArgs = NULL,
+                                            plotArgs = NULL,
                                             set = NULL #copy of set() to check if set() has changed
   )
   )
@@ -172,12 +172,12 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
   
   observeEvent(set(),{
     if(!is.null(set())){
-    if(length(set()$layout$highlights) > 0){
-      selections$plots$spec$highlights <- set()$layout$highlights
-    }else{
-      selections$plots$spec$highlights <- NULL
-      
-    }
+      if(length(set()$layout$highlights) > 0){
+        selections$plots$spec$highlights <- set()$layout$highlights
+      }else{
+        selections$plots$spec$highlights <- NULL
+        
+      }
     }
   })
   
@@ -217,7 +217,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
        && length(set()$spec$sel) >1
     ){
       
-     
+      
       #select file based on basename rather than full path
       filesel <- match(basename(set()$spec$sel$File), basename(names(set()$msdata)))
       
@@ -240,7 +240,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
       fluidPage(
         fluidRow(downloadButton(ns('pdfButton'), "Save as pdf"),
                  downloadButton(ns('peaklistButton'), "Save as table")
-                          
+                 
         ),
         fluidRow(
           tags$div(title = paste("Scans:", paste(coll, collapse = ", ")),
@@ -321,19 +321,19 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
         }
       }else{""}
       
-       tempArgs <- list(x=selections$plots$spec$data[,1],
-                                           y=selections$plots$spec$data[,2],
-                                           norm=selections$plots$spec$ymax/100,
-                                           cx=set()$layout$cex/1.5,
-                                           k = 20,
-                                           fileName = label,
-                                           yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
-                                           xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
-                                           maxi = selections$plots$spec$ymax
+      tempArgs <- list(x=selections$plots$spec$data[,1],
+                       y=selections$plots$spec$data[,2],
+                       norm=selections$plots$spec$ymax/100,
+                       cx=set()$layout$cex/1.5,
+                       k = 20,
+                       fileName = label,
+                       yrange = if(!is.null(selections$plots$spec$yrange)){selections$plots$spec$yrange}else{selections$plots$spec$maxyrange},
+                       xrange = if(!is.null(selections$plots$spec$xrange)){selections$plots$spec$xrange}else{selections$plots$spec$maxxrange},
+                       maxi = selections$plots$spec$ymax
       )
       
       if(!is.null(set()$moreArgs)){
-       
+        
         for(i in names(set()$moreArgs)){
           tempArgs[[i]] <- set()$moreArgs[[i]]
         }
@@ -346,11 +346,11 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
           tempArgs$labels$y <- tempArgs$y[na.omit(mzmatched)]
           
         }
-         
+        
       }
       selections$plots$plotArgs <- tempArgs
       do.call(specplot,tempArgs)
-        
+      
       #   specplot(x=selections$plots$spec$data[,1],
       #          y=selections$plots$spec$data[,2],
       #          norm=selections$plots$spec$ymax/100,
@@ -572,8 +572,8 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
     return(paste0(titleout,".tsv"))}, 
     content = function(file){
       if(!is.null(selections$plots$spec$data)){
-      data.table::fwrite(data.frame(mz = selections$plots$spec$data[,1],
-                                          intensity = selections$plots$spec$data[,2]), file, sep = "\t")
+        data.table::fwrite(data.frame(mz = selections$plots$spec$data[,1],
+                                      intensity = selections$plots$spec$data[,2]), file, sep = "\t")
       }else{
         data.table::fwrite(data.frame(mz = 0,
                                       intensity = 0), file, sep = "\t")
@@ -589,13 +589,7 @@ Specmodule <- function(input,output, session, tag, set = list(spec = list(xrange
 }
 
 
-#' SpecmoduleUI
-#' 
-#' 
-#' UI module for interactive spectrum view
-#' 
-#' @param id id to be used in ns()
-#' 
+#' @describeIn Specmodule UI elements
 #' @export
 SpecmoduleUI <- function(id){
   ns <- NS(id)

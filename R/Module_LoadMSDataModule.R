@@ -1,14 +1,13 @@
 #' LoadMSDataModule
 #' 
 #' 
-#' server module for loading a Project Folder
+#' Module for loading MS data into Metaboseek
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param reactives Import data from the shiny session
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @inherit MseekModules
+#' 
+#' @return Nothing, but modifies \code{\link{values}}
+#' 
+#' @describeIn LoadMSDataModule server logic
 #' 
 #' @export 
 LoadMSDataModule <- function(input,output, session,
@@ -122,13 +121,7 @@ LoadMSDataModule <- function(input,output, session,
 }
 
 
-#' LoadMSDataModuleUI
-#' 
-#' 
-#' server module for loading Tables
-#' 
-#' @param id
-#' 
+#' @describeIn LoadMSDataModule UI elements
 #' @export 
 LoadMSDataModuleUI <- function(id){
   

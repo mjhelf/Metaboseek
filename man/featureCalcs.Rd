@@ -11,6 +11,10 @@ featureCalcs(df, massdef = T)
 
 \item{massdef}{if true, calculate the mass defect for each entry in df from their mz values}
 }
+\value{
+\code{df} with an additional column, \code{massdefppm}
+}
 \description{
-Calculate simple parameters from feature table data.frame
+Calculate simple parameters from feature table data.frame. 
+Currently ONLY calculates the mass defect in ppm.
 }

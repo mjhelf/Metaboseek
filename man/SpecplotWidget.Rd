@@ -15,15 +15,23 @@ SpecplotWidget(input, output, session, reactives = reactive({     list(x
 SpecplotWidgetUI(id)
 }
 \arguments{
-\item{input}{arguments necessary for use with \link[shiny]{callModule}()}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{arguments necessary for use with \link[shiny]{callModule}()}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{arguments necessary for use with \link[shiny]{callModule}()}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
+
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
 
 \item{keys}{a \link[shiny]{reactive} object registering keystrokes}
 
-\item{id}{id to be used to define a namespace via  \link[shiny]{NS}() (must match \code{id} in \link[shiny]{callModule} for the server Module)}
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
 }
 \description{
 Module for interactive mass spectrum view

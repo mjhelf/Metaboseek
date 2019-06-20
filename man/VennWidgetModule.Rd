@@ -2,21 +2,42 @@
 % Please edit documentation in R/Module_VennWidgetModule.R
 \name{VennWidgetModule}
 \alias{VennWidgetModule}
+\alias{VennWidgetModuleUI}
 \title{VennWidgetModule}
 \usage{
 VennWidgetModule(input, output, session, reactives = reactive({    
   list(x = list(A = 1:105, B = 101:115), ext.percent = c(0.01, 0.01, 0.01),
   filename = NULL) }), static = list())
+
+VennWidgetModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{reactives}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+Returns nothing
 }
 \description{
-server module for Venn diagrams in shiny
+MseekWidget for plotting Venn diagrams
 }
+\section{Functions}{
+\itemize{
+\item \code{VennWidgetModule}: Server logic
+
+\item \code{VennWidgetModuleUI}: UI elements
+}}
+

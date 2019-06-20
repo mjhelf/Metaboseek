@@ -1,13 +1,32 @@
 #' MseekModalModule
 #' 
+#' Generic module for modal dialogs that are launched from a button.
 #' 
-#' server module for saving Tables
+#' @inherit MseekWidgets
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param values Import data from the shiny session
-#' @param static Import data from the shiny session
+#' @param reactives a \code{reactive({})} returning a list with one element,
+#'  \code{fp}, see details
+#' @param useActionLink if TRUE, will use an \code{actionLink} instead 
+#' of an \code{actionButton} to open the modal Dialog
+#'  
+#' @details Because the UI elements of the modal dialog are passed in as 
+#' \code{reactives()$fp}, they can be namespaced and easily accessed in the 
+#' parent module that can then handle the input from the modal dialog.
+#' \describe{
+#' \item{reactives()$fp}{Specify the UI elements of the modal dialog here}
+#' \item{static}{
+#' \itemize{
+#' \item \code{tooltip} tooltip when hovering over the button
+#' \item \code{title} title of the modal dialog
+#' \item \code{label} label of the button opening the modal dialog
+#' \item \code{icon} \code{\link[shiny]{icon}()} of the button opening the modal dialog
+#' }
+#' }
+#' }
+#' 
+#' @return returns its internalValues
+#' 
+#' @describeIn MseekModalModule Server logic
 #' 
 #' @export 
 MseekModalModule <- function(input,output, session,
@@ -63,10 +82,7 @@ MseekModalModule <- function(input,output, session,
  return(internalValues)
 }
 
-#' MseekModalModuleUI
-#' 
-#' @param id id of the shiny module
-#' 
+#' @describeIn MseekModalModule UI elements
 #' @export
 MseekModalModuleUI <- function(id)
 {
