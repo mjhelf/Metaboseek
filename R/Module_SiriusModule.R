@@ -274,10 +274,6 @@ SiriusModule <- function(input,output, session,
   output$smileplot <- renderPlot({
       if(!is.null(internalValues$activeStructure)
                   && !is.null(internalValues$activeStructure$smiles)){
-          print("plotting smiles")
-
-          # 
-          #       pcid <- internalValues$activeStructure$pubchemids
       if(values$GlobalOpts$rcdk.installed){
       plotSMILE(internalValues$activeStructure$smiles, depictor = internalValues$depictor)
           
