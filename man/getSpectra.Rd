@@ -16,14 +16,14 @@ getSpectra(data, ...)
 \arguments{
 \item{data}{an OnDiskMSnExp or MseekValues (reactivevalues) object}
 
+\item{...}{arguments passed to \code{getSpectra.OnDiskMSnExp}}
+
 \item{index}{a numeric vector of scan indices}
 
 \item{xcmsRawobject}{list of xcmsRaw objects}
 
 \item{SpectrumClass}{if TRUE, will return a list of Spectum class objects, 
 otherwise will return a list of matrices with mz and intensity values}
-
-\item{scanlist}{as returned by makeScanlist2()}
 }
 \value{
 a list of Spectrum1 or Spectrum2 objects

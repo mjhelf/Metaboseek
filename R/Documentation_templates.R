@@ -28,6 +28,10 @@
 #'  accessible app-wide.
 #' }
 #' @name values
+#' @importFrom grDevices as.raster colorRampPalette dev.off pdf recordPlot replayPlot topo.colors
+#' @importFrom graphics abline axis layout lcm legend lines mtext par plot points polygon rasterImage segments strheight strwidth text title
+#' @importFrom stats df median na.omit sd
+#' @importFrom utils choose.dir installed.packages packageVersion read.csv read.delim relist type.convert unzip write.csv zip
 #' 
 NULL
 
@@ -45,6 +49,8 @@ NULL
 #' \code{\link[shiny]{callModule}()}
 #' @param reactives a list, wrapped in a \code{\link[shiny]{reactive}()} 
 #' expression with settings for this module. See \code{details}.
+#' @param static a list of arguments that are not in a reactive context 
+#' and hence do not change while the app is running.
 #' @param keys \code{reactive({})} that reports the current key press. 
 #' @param id id to be used to define a namespace via  \code{\link[shiny]{NS}()}
 #'  (must match \code{id} in \code{\link[shiny]{callModule}} 
@@ -54,7 +60,7 @@ NULL
 #'  module is used in
 #' 
 #' @describeIn MseekWidgets generic server logic example for MseekWidgets
-MseekWidgets <- function(input,output, session, reactives, keys, ...){
+MseekWidgets <- function(input,output, session, reactives, static, keys, ...){
     
     #creating the namespacing function to be used for UI elements that are prepared inside the server logic
     ns <- NS(session$ns(NULL))
@@ -103,6 +109,8 @@ MseekWidgetsUI <- function(id){
 #' for the server Module)
 #' @param keys \code{reactive({})} that reports the current key press. 
 #' This argument is deprecated and will be removed from all modules.
+#' @param static a list of arguments that are not in a reactive context 
+#' and hence do not change while the app is running.
 #' @param ... additional arguments, as defined for the individual module. 
 #' For example: constant layout options depending on the context that this 
 #' module is used in
@@ -111,7 +119,8 @@ MseekWidgetsUI <- function(id){
 #' \code{\link{values}} for a description of the \code{values} object
 #' 
 #' @describeIn MseekModules generic server logic example for MseekModules
-MseekModules <- function(input,output, session, values, reactives, ...){
+MseekModules <- function(input,output, session, values, reactives,
+                         static, keys, ...){
     
     #creating the namespacing function to be used for UI elements that are prepared inside the server logic
     ns <- NS(session$ns(NULL))

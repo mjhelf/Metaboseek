@@ -20,7 +20,6 @@
 #' }
 #' 
 #' @describeIn LoadTableModule server logic
-#' @param static Import data from the shiny session
 #' 
 #' @export 
 LoadTableModule <- function(input,output, session,

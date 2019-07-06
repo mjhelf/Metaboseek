@@ -30,7 +30,10 @@
 #' @param adducts numeric() of mass shifts to be added to feature masses
 #' @param RTcorrect if not NULL, this RTcorr object will be used to 
 #' adjust retention times.
-#' @param exportmode if TRUE, $EIC list is exported along with $plot (as list)
+#' @param importEIC a \code{\link{multiEICplus}()} output object to plot here, If NULL,
+#'  \code{multiEICplus()} is called with the other supplied parameters 
+#' @param globalYmax if TRUE, all EICs are scaled to the maximum value across all 
+#' plotting groups instead of the maximum within each group
 #' @param subtitles subtitles for each EIC, must be character of 
 #' same length as rtmid and mzmid or NULL
 #' @param raise if TRUE, EIC will be plotted with y axis going to 
@@ -73,7 +76,7 @@ EICgeneral <- function(rtmid,
                        yzoom = 1,
                        RTcorrect = NULL,
                        importEIC = NULL,
-                       globalYmax = NULL,
+                       globalYmax = FALSE,
                        subtitles = NULL,
                        raise = F,
                        relPlot = F,
@@ -521,7 +524,8 @@ groupPlot <- function(EIClist,
 #' 
 #' @return sends a single EIC plot to the current plotting device
 #' 
-#' @param EIClistItem item from a list of EICs from METABOseek:multiEIC
+#' @param EICs item from a list of EICs from METABOseek:multiEIC
+#' @param cx character expansion (font size) factor
 #' @param ylim numeric(2) min and max visible rt value (in seconds)
 #' @param xlim numeric(2) min and max visible intensity value (in seconds)
 #' @param legendtext character() with item for each shown EIC for the plot legend

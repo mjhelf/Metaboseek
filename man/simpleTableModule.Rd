@@ -20,6 +20,11 @@ simpleTableModuleUI(id)
 \item{session}{arguments necessary for use with 
 \code{\link[shiny]{callModule}()}}
 
+\item{df}{reactive containing the data.frame to display}
+
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
+
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}

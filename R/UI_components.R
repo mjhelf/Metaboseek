@@ -95,8 +95,17 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
 #'
 #' METABOseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
 #' that allows placing icons left and right in the navbar
+#' 
+#' @param ... additional UI elements for the header
+#' @param title App title
+#' @param titleWidth custom width of title
+#' @param disable if TRUE, header will not be shown
+#' @param .list additional uI elements for the header, passed as a list
+#' @param left list of UI elements for the left side of the header
 #'
-dashboardHeaderM <- function (..., title = NULL, titleWidth = NULL, disable = FALSE, 
+dashboardHeaderM <- function (..., title = NULL,
+                              titleWidth = NULL,
+                              disable = FALSE, 
                               .list = NULL, left = NULL) 
 {
   items <- c(list(...), .list, left)

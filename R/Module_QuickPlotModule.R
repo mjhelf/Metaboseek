@@ -63,7 +63,6 @@ QuickPlotsModule <- function(input, output, session,
                                       "by sample" = ggplot2::aes(x=sam, y=values)),
                      main = input$ptype,
                      dotplot = input$pdots,
-                     dsize = max(mx2()$values)/50,
                      mark = input$mark,
                      errorbar = input$errorbar,
                      rotate = input$rot)

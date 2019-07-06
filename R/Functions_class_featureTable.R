@@ -263,7 +263,7 @@ updateFTgrouping <- function(FT,anagrouptable){
 #' update the FT index of the Mseek App (needed because this index is a named 
 #' list - extracts tablename entry from each MseekFT object in list)
 #' 
-#' @param table named list of MseekFT objects 
+#' @param tables named list of MseekFT objects 
 #' 
 #' @return named list of MseekFT tablenames
 #' 

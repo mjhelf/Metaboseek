@@ -25,6 +25,9 @@ MseekModalModuleUI(id)
 \item{reactives}{a \code{reactive({})} returning a list with one element,
 \code{fp}, see details}
 
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
+
 \item{useActionLink}{if TRUE, will use an \code{actionLink} instead 
 of an \code{actionButton} to open the modal Dialog}
 

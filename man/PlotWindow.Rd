@@ -32,10 +32,12 @@ the function and should be set outside}
 
 \item{ysci}{if TRUE, y axis label numbers are shown in scientific format}
 
+\item{liwi}{line width for axes}
+
 \item{textadj}{passed on to mtext adj for orientation 
 of plot description/title text line}
 
-\item{ylabfactor}{factor to adjust the position of the y axis label}
+\item{ylabshift}{integer to adjust the position of the y axis label}
 }
 \value{
 plots an empty coordinate system in the current plotting device

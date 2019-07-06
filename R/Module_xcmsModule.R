@@ -219,7 +219,7 @@ observeEvent(input$xcms_start,{
   write(jsonlite::serializeJSON(posSettings, pretty = T), file.path(fo, "postProcessingSettings.json"))
   
   
-  zip(file.path(fo,"settings.zip"), grep(list.files(fo, full.names = T), pattern = "status.csv", inv = T, value = T), flags = "-j")
+  zip(file.path(fo,"settings.zip"), grep(list.files(fo, full.names = T), pattern = "status.csv", invert = T, value = T), flags = "-j")
   
   runner <- system.file("scripts", "xcms_runner_i.R",package = "METABOseek")
   rpath <- file.path(R.home(component = "bin"), "Rscript")

@@ -4,11 +4,11 @@
 #' get a list of spectra using indices from the OnDiskMSnExp object
 #' 
 #' @param data an OnDiskMSnExp or MseekValues (reactivevalues) object
-#' @param scanlist as returned by makeScanlist2()
 #' @param index a numeric vector of scan indices
 #' @param xcmsRawobject list of xcmsRaw objects
 #' @param SpectrumClass if TRUE, will return a list of Spectum class objects, 
 #' otherwise will return a list of matrices with mz and intensity values
+#' @param ... arguments passed to \code{getSpectra.OnDiskMSnExp}
 #' 
 #' @return a list of Spectrum1 or Spectrum2 objects
 #'
@@ -30,7 +30,8 @@ getSpectra.reactivevalues <- function(data, ...){
 
 #' @rdname getSpectra
 #' @export
-getSpectra.OnDiskMSnExp <- function(data, index, xcmsRawobject = NULL, SpectrumClass = F){
+getSpectra.OnDiskMSnExp <- function(data, index,
+                                    xcmsRawobject = NULL, SpectrumClass = F){
     
     if(!is(data, "OnDiskMSnExp")){
         simpleError("No valid OnDiskMSnExp object provided") 
@@ -114,6 +115,7 @@ getSpectra.OnDiskMSnExp <- function(data, index, xcmsRawobject = NULL, SpectrumC
 #' @param mzwid mz tolerance in absolute mz values 
 #' @param rtwid rt tolerance in seconds
 #' @param MSlevel which mz level to 
+#' @param ... arguments passed to \code{findMSnScans.OnDiskMSnExp}
 #' 
 #' @rdname findMSnScans
 #'
@@ -134,7 +136,9 @@ findMSnScans.reactivevalues <- function(data, ...){
 
 #' @rdname findMSnScans
 #' @export
-findMSnScans.OnDiskMSnExp <- function(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 30, MSlevel = 2){
+findMSnScans.OnDiskMSnExp <- function(data, mz, rt,
+                                      ppm = 5, mzwid = 0,
+                                      rtwid = 30, MSlevel = 2){
     
     
     if(length(mz) > 1 && length(mz) == length(rt)){

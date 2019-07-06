@@ -26,6 +26,9 @@ MainTableModuleUI(id)
 \item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
 gives read and write access to external objects}
 
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
+
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}

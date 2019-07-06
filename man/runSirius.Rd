@@ -11,8 +11,12 @@ runSirius(outfolder, ms1 = NULL, ms2, instrument, parentmz,
 \arguments{
 \item{outfolder}{output folder for the SIRIUS results}
 
+\item{ms1}{if not NULL, a list of MS1 spectra}
+
 \item{ms2}{a list (or list of lists) of ms2 spectra 
 (matrices with columns mz and intensity), see \code{Details}}
+
+\item{instrument}{specify instrument, can be \code{"orbitrap", "qtof" or "fticr"}}
 
 \item{parentmz}{numeric: parent ion m/z value}
 
@@ -23,6 +27,8 @@ runSirius(outfolder, ms1 = NULL, ms2, instrument, parentmz,
 \item{ion}{ion type (e.g. \eqn{[M+H]+})}
 
 \item{charge}{charge (positive or negative integer)}
+
+\item{fingerid}{if TRUE, will try to predict structures with CSI:FingerID}
 
 \item{scanindices}{which scans were averaged into this ms2 spectrum}
 

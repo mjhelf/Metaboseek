@@ -11,8 +11,7 @@
 #' @describeIn SiriusModule server logic for SiriusModule
 #' @export 
 SiriusModule <- function(input,output, session, 
-                          values = reactiveValues(
-                                                  GlobalOpts = GlobalOpts)){
+                          values = reactiveValues(GlobalOpts = NULL)){
   
   ns <- NS(session$ns(NULL))
   internalValues <- reactiveValues(siriusIndex = NULL,

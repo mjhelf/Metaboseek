@@ -6,7 +6,9 @@
 #' @return Returns nothing, but writes a SIRIUS \code{.ms} file.
 #' 
 #' @param filename path of file to write to
-#' @param ms2 a matrix with columns mz and intensity
+#' @param ms2 a matrix with columns mz and intensity, or a list of ms2 spectra 
+#' in the same format
+#' @param ms1 a matrix with columns mz and intensity for a single MS1 spectrum
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
@@ -87,11 +89,14 @@ writeMS <- function(filename,
 #' run SIRIUS externally for a list of ms2 spectra
 #' 
 #' @param outfolder output folder for the SIRIUS results
+#' @param ms1 if not NULL, a list of MS1 spectra
 #' @param ms2 a list (or list of lists) of ms2 spectra 
 #' (matrices with columns mz and intensity), see \code{Details}
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
+#' @param instrument specify instrument, can be \code{"orbitrap", "qtof" or "fticr"}
+#' @param fingerid if TRUE, will try to predict structures with CSI:FingerID
 #' @param ion ion type (e.g. \eqn{[M+H]+})
 #' @param charge charge (positive or negative integer)
 #' @param scanindices which scans were averaged into this ms2 spectrum

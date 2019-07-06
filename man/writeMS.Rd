@@ -10,7 +10,10 @@ writeMS(filename, ms2, ms1 = NULL, parentmz, comments = "", rt = "",
 \arguments{
 \item{filename}{path of file to write to}
 
-\item{ms2}{a matrix with columns mz and intensity}
+\item{ms2}{a matrix with columns mz and intensity, or a list of ms2 spectra 
+in the same format}
+
+\item{ms1}{a matrix with columns mz and intensity for a single MS1 spectrum}
 
 \item{parentmz}{numeric: parent ion m/z value}
 

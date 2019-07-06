@@ -31,8 +31,6 @@ gives read and write access to external objects}
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}
-
-\item{static}{Import data from the shiny session}
 }
 \value{
 returns its internalValues, most notably element \code{df} that contains 

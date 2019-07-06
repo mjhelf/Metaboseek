@@ -2,12 +2,17 @@
 % Please edit documentation in R/getset_featureTables.R
 \name{FTselection}
 \alias{FTselection}
+\alias{FTselection.reactivevalues}
 \title{FTselection}
 \usage{
 FTselection(x, ...)
+
+\method{FTselection}{reactivevalues}(x, liveView = F)
 }
 \arguments{
 \item{x}{a MseekValues (reactivevalues) object}
+
+\item{...}{additional arguments passed to S3 methods}
 
 \item{liveView}{if TRUE, will get data from the liveView of the 
 MainTable directly (default: FALSE)}

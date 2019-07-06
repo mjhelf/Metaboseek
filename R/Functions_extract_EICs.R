@@ -22,260 +22,308 @@
 #' @param SN when calculating peak quality with quickshapes, 
 #' reject any peaks with a signal-to-noise ratio than this (intensity range 
 #' within observed rt window, MAX/ MEAN INTENSITY!)
+#' @param scoreBy specify which column is used to find which EIC to use 
+#' for quickshapes
 #' 
 #' @return a list of extracted ion chromatograms that can be read 
 #' by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}}
 #' 
 #' @export
 multiEIC <- function (rawdata,
-                        mz,
-                        rt,
-                        rnames = row.names(mz),
-                        byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
-                        XIC = F,
-                        getgauss = F,
-                        RTcorr = NULL,
-                        workers = 1,
-                        quickshapes = F,
-                        SN = NULL,
-                        scoreBy = "intmean"
+                      mz,
+                      rt,
+                      rnames = row.names(mz),
+                      byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
+                      XIC = F,
+                      getgauss = F,
+                      RTcorr = NULL,
+                      workers = 1,
+                      quickshapes = F,
+                      SN = NULL,
+                      scoreBy = "intmean"
 ){
-  
-  if(is.null(rt)){
-    if(class(rawdata)  != "OnDiskMSnExp"){
-      sts = lapply(rawdata,slot,"scantime")
-      rt <- data.frame(rtmin = rep(min(unname(sapply(sts,min))),nrow(mz)),
-                       rtmax = rep(max(unname(sapply(sts,max))),nrow(mz)))
-    }
-    else{
-      rt <- data.frame(rtmin = rep(min(onDisk@featureData@data$retentionTime),nrow(mz)),
-                       rtmax = rep(max(onDisk@featureData@data$retentionTime),nrow(mz)))
-    }
     
-  }
-  
-  mx <- as.matrix(cbind(mz,rt))
-  
-  if(nrow(mx) ==1){
-    mxl <-unname(as.list(data.frame((mx[,1:2]))))
-    rxl <-unname(as.list(data.frame((mx[,3:4]))))}
-  else{
-    mxl <-unname(as.list(data.frame(t(mx[,1:2]))))
-    rxl <-unname(as.list(data.frame(t(mx[,3:4]))))
-  }    
-  
-  if(class(rawdata)  != "OnDiskMSnExp"){
-    fx3 <- function(ls, mz, rt, rfile, gauss = getgauss, RTcorrx = NULL){
-      
-      if(!is.null(RTcorrx)){
-        ls$rt <- unname(RTcorrx$corr[[which(basename(RTcorrx$fnames) == basename(rfile@filepath@.Data))]])[ls$scan]
-      }else{
-        ls$rt <- rfile@scantime[ls$scan]
-      }
-      
-      ls$tic <- rfile@tic[ls$scan]
-      ls$mzmin <- mz[1]
-      ls$mzmax <- mz[2]
-      ls$rtmin <- rt[1]
-      ls$rtmax <- rt[2]
-      ls$intmax <- max(ls$intensity)
-      ls$intmin <- min(ls$intensity)
-      ls$intsum <- sum(ls$intensity)
-      ls$intmean <- mean(ls$intensity)
-      # ls$intmedian <- median(ls$intensity)
-      #ls$int25perc <- quantile(ls$intensity, 0.25)
-      #ls$intsd <- sd(ls$intensity)/ls$intmean
-      if(ls$intmax == 0){ls$maxrun <- 0}
-      else{
-        runs <- rle(ls$intensity > ls$intmean)
-        ls$maxrun <- max(runs$lengths[runs$values])
-      }
-      
-      if(gauss){
-        #if(ls$intmedian > 0 && (!is.null(SN) && ls$intmax/(ls$intmedian) > SN)){return(0)}
-        middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
-        smallWindowEstimate <- METABOseek:::peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
-        #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
-        return(METABOseek:::peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)
-      }
-      return(ls)
-    }
-    summe <- list()
-    if(byFile){
-      
-      #this works because mxl  and other objects are in the upstream seach path for the function
-      summe <- BiocParallel::bplapply(names(rawdata), function(i){
-        rawfile <- rawdata[[i]]
-        res <- mapply(METABOseek:::rawEICm, mzrange = mxl,
-                      rtrange = rxl, MoreArgs=list(object=rawfile), SIMPLIFY = F)
-        
-        res <- t(mapply(fx3, res, mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss, RTcorrx = RTcorr)))
-        
-      }, BPPARAM = SnowParam(workers = if(nrow(mz) > 500){workers}else{1}))
-      
-      return(summe)
-      
-    }else{
-      summe <- lapply(c(1:nrow(mz)), function(i){
-        #for(i in c(1:nrow(mz))){
-        if(!is.null(rnames)){
-          featname <- rnames[i]}
-        else{featname <-i}
-        
-        res <- mapply(METABOseek::rawEICm, object=rawdata, 
-                      MoreArgs=list(mzrange = mxl[[i]], rtrange = rxl[[i]]), SIMPLIFY = F)
-        
-        res <- t(mapply(fx3, res, rfile=rawdata, MoreArgs=list(mz = mxl[[i]],
-                                                               rt = rxl[[i]],
-                                                               gauss = getgauss,
-                                                               RTcorrx = RTcorr
-        )
-        ))
-        
-        if(quickshapes){
-          
-          #find the best signal to noise ratio:
-          if(!is.null(SN)){
-            snrs <- unlist(res[,"intmax"])/unlist(res[,"intmin"])
-            #snrs2 <- unlist(res[,"intmax"])/unlist(res[,"int25perc"])
-            presel <- which(!is.na(snrs) 
-                            #& !is.na(snrs2) 
-                            &  snrs > SN 
-                            #& snrs2 > SN/2
-            )
-          }else{
-            presel <- which(unlist(res[,"intmax"]) > 0)
-          }
-          
-          if(length(presel) < 1){return(0)}
-          
-          # allwidths <- sapply(seq(length( res[presel,"intensity"])), function(n,its,mI){
-          #   
-          #   if(max(its[[n]]) == 0){return(0)}
-          #   
-          #   
-          #   runs <- rle(its[[n]] > mI[[n]])
-          #   return(max(runs$lengths[runs$values]))
-          #   
-          # }, res[presel,"intensity"], res[presel,"intmean"])
-          # 
-          # if(!any(allwidths >= minWidth)){return(0)}
-          
-          # if(selByWidth){
-          #   
-          #   #now select the peak to be analyzed from those that meet the presel condition:
-          #   pretopint <- which.max(allwidths)
-          #   
-          #   topint <- presel[pretopint]}
-          # else{
-          
-          
-          topint <- presel[which.max(res[presel,scoreBy])]
-          
-          # }
-          # }
-          
-          #unnecessary
-          #if(res[[topint,"intmean"]] == 0){return(0)}
-          
-          
-          middlescans <- as.integer(quantile(seq_along(res[[topint,"rt"]]),0.25)):as.integer(quantile(seq_along(res[[topint,"rt"]]),0.75)) 
-          maxmiddle <- res[[topint,"rt"]][middlescans][which.max(res[[topint,"intensity"]][middlescans])]
-          smallWindowEstimate <- METABOseek:::peakFitter(res[[topint,"rt"]][middlescans], 
-                                                         res[[topint,"intensity"]][middlescans],
-                                                         #median(res[[topint,"rt"]]),
-                                                         maxmiddle,
-                                                         0.2, startdepth = 1, maxdepth = 5)
-          #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
-          
-          
-          ps <- METABOseek:::peakFitter(res[[topint,"rt"]], 
-                                        res[[topint,"intensity"]],
-                                        # median(res[[topint,"rt"]]),
-                                        maxmiddle,
-                                        0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate
-          return(ps)
-          
-        }else{
-          return(res)
+    if(is.null(rt)){
+        if(class(rawdata)  != "OnDiskMSnExp"){
+            sts = lapply(rawdata,slot,"scantime")
+            rt <- data.frame(rtmin = rep(min(unname(sapply(sts,min))),nrow(mz)),
+                             rtmax = rep(max(unname(sapply(sts,max))),nrow(mz)))
+        }
+        else{
+            rt <- data.frame(rtmin = rep(min(onDisk@featureData@data$retentionTime),nrow(mz)),
+                             rtmax = rep(max(onDisk@featureData@data$retentionTime),nrow(mz)))
         }
         
-      })
-      
-      return(summe)
-    }
-  }else{
-    fx4 <- function(onDisk, onDiskChrom, mz, rt, rfile, gauss = getgauss, RTcorrx = NULL){
-      
-      filenum <- which(onDisk@phenoData@data$sampleNames == basename(rfile))
-      selchrom <- onDiskChrom[[which(unlist(lapply(onDiskChrom, slot, "fromFile")) == filenum
-                                     & sapply(lapply(onDiskChrom, slot, "filterMz"),min) == min(mz)
-                                     & sapply(lapply(onDiskChrom, slot, "filterMz"),max) == max(mz))]]
-      scansel <- which(onDisk@featureData@data$fileIdx == filenum
-                       & onDisk@featureData@data$retentionTime >= min(rt)
-                       & onDisk@featureData@data$retentionTime <= max(rt))
-      
-      
-      ls <- list()
-      ls$scan <- onDisk@featureData@data$spIdx[scansel]
-      
-      ls$intensity <- selchrom@intensity
-      ls$rt <- selchrom@rtime
-      
-      ls$tic <-onDisk@featureData@data$totIonCurrent[scansel]
-      
-      
-      ls$mzmin <- mz[1]
-      ls$mzmax <- mz[2]
-      ls$rtmin <- rt[1]
-      ls$rtmax <- rt[2]
-      ls$intmax <- max(ls$intensity)
-      ls$intmin <- min(ls$intensity)
-      ls$intsum <- sum(ls$intensity)
-      ls$intmean <- mean(ls$intensity)
-      if(gauss){
-        middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
-        smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
-        #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
-        return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)}
-      return(ls)
     }
     
-    onDiskChrom <- MSnbase::chromatogram(rawdata,
-                                         mz = mxl, 
-                                         rt = rxl,
-                                         BPPARAM = SerialParam(), #note that the default (BiocParallel::bpparam()) is much slower in the EIC visualization use case
-                                         missing = 0,
-                                         aggregationFun = "sum")
+    mx <- as.matrix(cbind(mz,rt))
     
-    summe <- list()
-    #key step for throughput
-    if(byFile){
-      
-      for(i in as.character(rawdata@phenoData@data$sampleNames)){
-        rawfile <- i
-        
-        summe[[i]] <- t(mapply(fx4, mz = mxl,rt=rxl, MoreArgs=list(onDisk= rawdata,
-                                                                   onDiskChrom = onDiskChrom,
-                                                                   rfile=i, gauss = getgauss,
-                                                                   RTcorrx = NULL)))
-      }
+    if(nrow(mx) ==1){
+        mxl <-unname(as.list(data.frame((mx[,1:2]))))
+        rxl <-unname(as.list(data.frame((mx[,3:4]))))}
+    else{
+        mxl <-unname(as.list(data.frame(t(mx[,1:2]))))
+        rxl <-unname(as.list(data.frame(t(mx[,3:4]))))
+    }    
+    
+    if(class(rawdata)  != "OnDiskMSnExp"){
+        fx3 <- function(ls, mz, rt, rfile, gauss = getgauss, RTcorrx = NULL){
+            
+            if(!is.null(RTcorrx)){
+                ls$rt <- unname(RTcorrx$corr[[which(basename(RTcorrx$fnames) == basename(rfile@filepath@.Data))]])[ls$scan]
+            }else{
+                ls$rt <- rfile@scantime[ls$scan]
+            }
+            
+            ls$tic <- rfile@tic[ls$scan]
+            ls$mzmin <- mz[1]
+            ls$mzmax <- mz[2]
+            ls$rtmin <- rt[1]
+            ls$rtmax <- rt[2]
+            ls$intmax <- max(ls$intensity)
+            ls$intmin <- min(ls$intensity)
+            ls$intsum <- sum(ls$intensity)
+            ls$intmean <- mean(ls$intensity)
+            # ls$intmedian <- median(ls$intensity)
+            #ls$int25perc <- quantile(ls$intensity, 0.25)
+            #ls$intsd <- sd(ls$intensity)/ls$intmean
+            if(ls$intmax == 0){ls$maxrun <- 0}
+            else{
+                runs <- rle(ls$intensity > ls$intmean)
+                ls$maxrun <- max(runs$lengths[runs$values])
+            }
+            
+            if(gauss){
+                #if(ls$intmedian > 0 && (!is.null(SN) && ls$intmax/(ls$intmedian) > SN)){return(0)}
+                middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
+                smallWindowEstimate <- METABOseek:::peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
+                #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
+                return(METABOseek:::peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)
+            }
+            return(ls)
+        }
+        summe <- list()
+        if(byFile){
+            
+            #this works because mxl  and other objects are in the upstream seach path for the function
+            summe <- BiocParallel::bplapply(names(rawdata), function(i){
+                rawfile <- rawdata[[i]]
+                res <- mapply(METABOseek:::rawEICm, mzrange = mxl,
+                              rtrange = rxl, MoreArgs=list(object=rawfile), SIMPLIFY = F)
+                
+                res <- t(mapply(fx3, res, mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss, RTcorrx = RTcorr)))
+                
+            }, BPPARAM = SnowParam(workers = if(nrow(mz) > 500){workers}else{1}))
+            
+            return(summe)
+            
+        }else{
+            summe <- lapply(c(1:nrow(mz)), function(i){
+                #for(i in c(1:nrow(mz))){
+                if(!is.null(rnames)){
+                    featname <- rnames[i]}
+                else{featname <-i}
+                
+                res <- mapply(METABOseek::rawEICm, object=rawdata, 
+                              MoreArgs=list(mzrange = mxl[[i]], rtrange = rxl[[i]]), SIMPLIFY = F)
+                
+                res <- t(mapply(fx3, res, rfile=rawdata, MoreArgs=list(mz = mxl[[i]],
+                                                                       rt = rxl[[i]],
+                                                                       gauss = getgauss,
+                                                                       RTcorrx = RTcorr
+                )
+                ))
+                
+                if(quickshapes){
+                    
+                    #find the best signal to noise ratio:
+                    if(!is.null(SN)){
+                        snrs <- unlist(res[,"intmax"])/unlist(res[,"intmin"])
+                        #snrs2 <- unlist(res[,"intmax"])/unlist(res[,"int25perc"])
+                        presel <- which(!is.na(snrs) 
+                                        #& !is.na(snrs2) 
+                                        &  snrs > SN 
+                                        #& snrs2 > SN/2
+                        )
+                    }else{
+                        presel <- which(unlist(res[,"intmax"]) > 0)
+                    }
+                    
+                    if(length(presel) < 1){return(0)}
+                    
+                    # allwidths <- sapply(seq(length( res[presel,"intensity"])), function(n,its,mI){
+                    #   
+                    #   if(max(its[[n]]) == 0){return(0)}
+                    #   
+                    #   
+                    #   runs <- rle(its[[n]] > mI[[n]])
+                    #   return(max(runs$lengths[runs$values]))
+                    #   
+                    # }, res[presel,"intensity"], res[presel,"intmean"])
+                    # 
+                    # if(!any(allwidths >= minWidth)){return(0)}
+                    
+                    # if(selByWidth){
+                    #   
+                    #   #now select the peak to be analyzed from those that meet the presel condition:
+                    #   pretopint <- which.max(allwidths)
+                    #   
+                    #   topint <- presel[pretopint]}
+                    # else{
+                    
+                    
+                    topint <- presel[which.max(res[presel,scoreBy])]
+                    
+                    # }
+                    # }
+                    
+                    #unnecessary
+                    #if(res[[topint,"intmean"]] == 0){return(0)}
+                    
+                    
+                    middlescans <- as.integer(quantile(seq_along(res[[topint,"rt"]]),0.25)):as.integer(quantile(seq_along(res[[topint,"rt"]]),0.75)) 
+                    maxmiddle <- res[[topint,"rt"]][middlescans][which.max(res[[topint,"intensity"]][middlescans])]
+                    smallWindowEstimate <- METABOseek:::peakFitter(res[[topint,"rt"]][middlescans], 
+                                                                   res[[topint,"intensity"]][middlescans],
+                                                                   #median(res[[topint,"rt"]]),
+                                                                   maxmiddle,
+                                                                   0.2, startdepth = 1, maxdepth = 5)
+                    #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
+                    
+                    
+                    ps <- METABOseek:::peakFitter(res[[topint,"rt"]], 
+                                                  res[[topint,"intensity"]],
+                                                  # median(res[[topint,"rt"]]),
+                                                  maxmiddle,
+                                                  0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate
+                    return(ps)
+                    
+                }else{
+                    return(res)
+                }
+                
+            })
+            
+            return(summe)
+        }
     }else{
-      for(i in c(1:nrow(mz))){
-        if(!is.null(rnames)){
-          featname <- rnames[i]}
-        else{featname <-i}
-        summe[[featname]] <- t(mapply(fx4, rfile=as.character(rawdata@phenoData@data$sampleNames), 
-                                      MoreArgs=list(onDisk= rawdata,
-                                                    onDiskChrom = onDiskChrom,
-                                                    mz = mz,
-                                                    rt = rt,
-                                                    gauss = F,
-                                                    RTcorrx = NULL
-                                      )))
-      }}
-    return(summe)
-  }
+        fx4 <- function(onDisk, onDiskChrom, mz, rt, rfile, gauss = getgauss, RTcorrx = NULL){
+            
+            filenum <- which(onDisk@phenoData@data$sampleNames == basename(rfile))
+            selchrom <- onDiskChrom[[which(unlist(lapply(onDiskChrom, slot, "fromFile")) == filenum
+                                           & sapply(lapply(onDiskChrom, slot, "filterMz"),min) == min(mz)
+                                           & sapply(lapply(onDiskChrom, slot, "filterMz"),max) == max(mz))]]
+            scansel <- which(onDisk@featureData@data$fileIdx == filenum
+                             & onDisk@featureData@data$retentionTime >= min(rt)
+                             & onDisk@featureData@data$retentionTime <= max(rt))
+            
+            
+            ls <- list()
+            ls$scan <- onDisk@featureData@data$spIdx[scansel]
+            
+            ls$intensity <- selchrom@intensity
+            ls$rt <- selchrom@rtime
+            
+            ls$tic <-onDisk@featureData@data$totIonCurrent[scansel]
+            
+            
+            ls$mzmin <- mz[1]
+            ls$mzmax <- mz[2]
+            ls$rtmin <- rt[1]
+            ls$rtmax <- rt[2]
+            ls$intmax <- max(ls$intensity)
+            ls$intmin <- min(ls$intensity)
+            ls$intsum <- sum(ls$intensity)
+            ls$intmean <- mean(ls$intensity)
+            if(gauss){
+                middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
+                smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
+                #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
+                return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)}
+            return(ls)
+        }
+        
+        onDiskChrom <- MSnbase::chromatogram(rawdata,
+                                             mz = mxl, 
+                                             rt = rxl,
+                                             BPPARAM = SerialParam(), #note that the default (BiocParallel::bpparam()) is much slower in the EIC visualization use case
+                                             missing = 0,
+                                             aggregationFun = "sum")
+        
+        summe <- list()
+        #key step for throughput
+        if(byFile){
+            
+            for(i in as.character(rawdata@phenoData@data$sampleNames)){
+                rawfile <- i
+                
+                summe[[i]] <- t(mapply(fx4, mz = mxl,rt=rxl,
+                                       MoreArgs=list(onDisk= rawdata,
+                                                     onDiskChrom = onDiskChrom,
+                                                     rfile=i, gauss = getgauss,
+                                                     RTcorrx = NULL)))
+            }
+        }else{
+            for(i in c(1:nrow(mz))){
+                if(!is.null(rnames)){
+                    featname <- rnames[i]}
+                else{featname <-i}
+                summe[[featname]] <- t(mapply(fx4, rfile=as.character(rawdata@phenoData@data$sampleNames), 
+                                              MoreArgs=list(onDisk= rawdata,
+                                                            onDiskChrom = onDiskChrom,
+                                                            mz = mz,
+                                                            rt = rt,
+                                                            gauss = F,
+                                                            RTcorrx = NULL
+                                              )))
+            }}
+        return(summe)
+    }
+}
+
+#' multiEICplus
+#'
+#' get EICs for adducts, isotopes and neutral loss masses
+#'
+#' @inheritParams multiEIC
+#' @param adducts numeric() of mass shifts
+#' @param ... all other arguments passed on to \code{\link{multiEIC}()}
+#' 
+#' @return a list of extracted ion chromatograms that can be read 
+#' by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}},
+#' extended with EICs of adduct species
+#' 
+#' @export
+multiEICplus <- function (adducts = c(0,1,2,3),
+                          mz,
+                          rt,
+                          ...
+                          #          EICsets = list(mz,
+                          #                        rt,
+                          #    rnames,
+                          #   byFile = F,
+                          #  rawdata) #if true, table will be sorted by rawfile, otherwise by feature
+                          #
+){
+    
+    liEIC <- list()
+    if(is.null(adducts)){adducts <- 0}
+    
+    for (r in 1:length(adducts)){
+        liEIC[[r]] <- mz+adducts[r]
+        
+    }
+    
+    res <- sapply(liEIC,multiEIC,rt, ...)
+    #  rawdata= EICsets$rawdata,
+    
+    # rt = EICsets$rt,
+    # rnames = EICsets$rnames,
+    #byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
+    #XIC = F,
+    #getgauss = F
+    #)
+    return(res)
 }
 
 #' rawEICm
@@ -298,49 +346,49 @@ rawEICm <- function(object,
                     rtrange =numeric(),
                     scanrange = numeric(),
                     viewermode = T)  {
-  #print(paste(mzrange, rtrange))
-  
-  if (length(rtrange) >= 2 ) {
+    #print(paste(mzrange, rtrange))
     
-    if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
-    if(max(rtrange) < min(object@scantime)){return(list(scan = 1, intensity = numeric(1)))} #also fixing behaviour if no scans inside the selected rt range
+    if (length(rtrange) >= 2 ) {
+        
+        if(max(rtrange) <= 0){return(list(scan = 1, intensity = numeric(1)))} #quick fix for extreme cases of rt correction (rtmin and rtmax both negative and then set to 0)
+        if(max(rtrange) < min(object@scantime)){return(list(scan = 1, intensity = numeric(1)))} #also fixing behaviour if no scans inside the selected rt range
+        
+        
+        rtrange <- range(rtrange)
+        
+        #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)
+        if(max(object@scantime) < rtrange[2] ){rtrange[2] <- max(object@scantime)}
+        if(max(object@scantime) < rtrange[1] ){rtrange[1] <- min(object@scantime)}
+        
+        
+        
+        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
+        
+        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)) + 1 ) # +1 is a fix to include last scan that meets condition, fixes problem if only one scan meets condition
+        
+        #this is to handle exceptional situations where through retention time correction, the rtmin and rtmax both are between
+        if(!any(scanidx) 
+           & rtrange[2] <= max(object@scantime) 
+           & rtrange[1] >= min(object@scantime)){
+            scanrange <- range(c(which.min(abs(object@scantime - rtrange[1])),
+                                 which.min(abs(object@scantime - rtrange[2]))))}
+        
+    }  else if (length(scanrange) < 2){
+        scanrange <- c(1, length(object@scantime))}
+    else{
+        scanrange <- range(scanrange)}
+    
+    scanrange[1] <- max(1,scanrange[1])
+    scanrange[2] <- min(length(object@scantime),scanrange[2]) #this should actually avoid the problem..
+    
+    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
+    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
+    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
     
     
-    rtrange <- range(rtrange)
-    
-    #if sccanrange is off, just return EIC for entire range (Viewer only shows the relevant section which then is still empty)
-    if(max(object@scantime) < rtrange[2] ){rtrange[2] <- max(object@scantime)}
-    if(max(object@scantime) < rtrange[1] ){rtrange[1] <- min(object@scantime)}
+    .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
     
     
-    
-    scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-    
-    scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)) + 1 ) # +1 is a fix to include last scan that meets condition, fixes problem if only one scan meets condition
-    
-    #this is to handle exceptional situations where through retention time correction, the rtmin and rtmax both are between
-    if(!any(scanidx) 
-       & rtrange[2] <= max(object@scantime) 
-       & rtrange[1] >= min(object@scantime)){
-      scanrange <- range(c(which.min(abs(object@scantime - rtrange[1])),
-                           which.min(abs(object@scantime - rtrange[2]))))}
-    
-  }  else if (length(scanrange) < 2){
-    scanrange <- c(1, length(object@scantime))}
-  else{
-    scanrange <- range(scanrange)}
-  
-  scanrange[1] <- max(1,scanrange[1])
-  scanrange[2] <- min(length(object@scantime),scanrange[2]) #this should actually avoid the problem..
-  
-  if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
-  if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
-  if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
-  
-  
-  .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
-  
-  
 }
 
 
@@ -362,8 +410,8 @@ rawEICm <- function(object,
 #' @return a series of values approximately representing a peak shape along x
 #'  
 peakFunction <- function(x, theta)  { 
-  m <- theta[1]; s <- theta[2]; a <- theta[3]; b <- theta[4];
-  a*exp(-0.5*((x-m)/s)^2) + b
+    m <- theta[1]; s <- theta[2]; a <- theta[3]; b <- theta[4];
+    a*exp(-0.5*((x-m)/s)^2) + b
 }
 
 
@@ -399,48 +447,48 @@ peakFunction <- function(x, theta)  {
 #' 
 #' @export
 peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate = 0, allowWorseScore = F){
-  
-  if(!is.list(best_estimate)){
-    best_estimate <- list(depth = startdepth,
-                          fit = integer(length(x)),
-                          cor = list(estimate = best_estimate,
-                                     p.value = 1))
-  }
-  
-  if(startdepth < maxdepth && best_estimate$cor$estimate < 0.999){
-    tryCatch({
-      fit <- nls(y ~ peakFunction(x,c(m,s,a,b)), data.frame(x,y), start=list(m=m, s=s, a= max(y), b=0))
-      fittedFit <- fitted(fit)
-      cor <- cor.test(y,fittedFit,method="pearson",use="complete")
-      
-      
-      
-      if(cor$estimate > best_estimate$cor$estimate){
-        best_estimate <- list(depth = startdepth,
-                              fit = fittedFit,
-                              cor = cor)
-            return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
-      }else{
-        
-        if(allowWorseScore){
-          return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate, allowWorseScore = T))
-        }
-        
-        return(best_estimate)
-      }
-      
-      
-    },
-    error = function(e){
-      return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
-    },
-    silent = T)
     
-  }else{
-    return(
-      best_estimate
-    )
-  }
+    if(!is.list(best_estimate)){
+        best_estimate <- list(depth = startdepth,
+                              fit = integer(length(x)),
+                              cor = list(estimate = best_estimate,
+                                         p.value = 1))
+    }
+    
+    if(startdepth < maxdepth && best_estimate$cor$estimate < 0.999){
+        tryCatch({
+            fit <- nls(y ~ peakFunction(x,c(m,s,a,b)), data.frame(x,y), start=list(m=m, s=s, a= max(y), b=0))
+            fittedFit <- fitted(fit)
+            cor <- cor.test(y,fittedFit,method="pearson",use="complete")
+            
+            
+            
+            if(cor$estimate > best_estimate$cor$estimate){
+                best_estimate <- list(depth = startdepth,
+                                      fit = fittedFit,
+                                      cor = cor)
+                return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
+            }else{
+                
+                if(allowWorseScore){
+                    return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate, allowWorseScore = T))
+                }
+                
+                return(best_estimate)
+            }
+            
+            
+        },
+        error = function(e){
+            return(peakFitter(x,y,m,s*3, startdepth+1, maxdepth, best_estimate))
+        },
+        silent = T)
+        
+    }else{
+        return(
+            best_estimate
+        )
+    }
 }
 
 
@@ -462,54 +510,54 @@ peakFitter <- function(x, y, m, s, startdepth = 1, maxdepth = 5, best_estimate =
 #' 
 #' @export
 getgauss <- function (y, pval = 1){
-  
-  
-  #substract "baseline"
-  y <- y - min(y)
-  x <- seq_along(y)
-  
-  #normalize intensities to 1
-  
-  y <- if(max(y)>0){y/max(y)}else{y}
-  
-  #here starts the gaussian test, cf. http://www.metabolomics-forum.com/index.php?topic=1031.0 (Krista Longnecker/Tony Larson)
-  #fit gauss and let failures to fit through as corr=1
-  ## new approach without xcms functions adapted from here: https://stats.stackexchange.com/questions/70153/linear-regression-best-polynomial-or-better-approach-to-use/70184#70184
-  
-  
-  f <- function(x, theta)  { 
-    m <- theta[1]; s <- theta[2]; a <- theta[3]; b <- theta[4];
-    a*exp(-0.5*((x-m)/s)^2) + b
-  }
-  #
-  # Estimate some starting values.
-  # Do the fit.  (It takes no time at all.)
-  fit <- tryCatch({
-    nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/10, a= max(y), b=0))
-  },
-  error = function(e){
-    try(nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/4, a= max(y), b=0)), silent = T)
-  }, silent = T)
-  
-  gauss <-  if(class(fit) == "try-error")
-  {
-    0
-  } else
-  {
-    #calculate correlation of summe$intensity against gaussian fit
-    if(length(which(!is.na(y-fitted(fit)))) > 2 &&
-       length(!is.na(unique(y)))>2 && length(!is.na(unique(fitted(fit))))>2)
-    {
-      cor <- NULL
-      cor <- try(cor.test(y,fitted(fit),method="pearson",use="complete"), silent = T)
-      if(class(fit) != "try-error")
-      {
-        if(cor$p.value <= pval) cor$estimate else 0
-      } else 0
-    } else 0
     
-  }
-  return(gauss)}
+    
+    #substract "baseline"
+    y <- y - min(y)
+    x <- seq_along(y)
+    
+    #normalize intensities to 1
+    
+    y <- if(max(y)>0){y/max(y)}else{y}
+    
+    #here starts the gaussian test, cf. http://www.metabolomics-forum.com/index.php?topic=1031.0 (Krista Longnecker/Tony Larson)
+    #fit gauss and let failures to fit through as corr=1
+    ## new approach without xcms functions adapted from here: https://stats.stackexchange.com/questions/70153/linear-regression-best-polynomial-or-better-approach-to-use/70184#70184
+    
+    
+    f <- function(x, theta)  { 
+        m <- theta[1]; s <- theta[2]; a <- theta[3]; b <- theta[4];
+        a*exp(-0.5*((x-m)/s)^2) + b
+    }
+    #
+    # Estimate some starting values.
+    # Do the fit.  (It takes no time at all.)
+    fit <- tryCatch({
+        nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/10, a= max(y), b=0))
+    },
+    error = function(e){
+        try(nls(y ~ f(x,c(m,s,a,b)), data.frame(x,y), start=list(m=max(x)/2, s=max(x)/4, a= max(y), b=0)), silent = T)
+    }, silent = T)
+    
+    gauss <-  if(class(fit) == "try-error")
+    {
+        0
+    } else
+    {
+        #calculate correlation of summe$intensity against gaussian fit
+        if(length(which(!is.na(y-fitted(fit)))) > 2 &&
+           length(!is.na(unique(y)))>2 && length(!is.na(unique(fitted(fit))))>2)
+        {
+            cor <- NULL
+            cor <- try(cor.test(y,fitted(fit),method="pearson",use="complete"), silent = T)
+            if(class(fit) != "try-error")
+            {
+                if(cor$p.value <= pval) cor$estimate else 0
+            } else 0
+        } else 0
+        
+    }
+    return(gauss)}
 
 
 #' bestgauss
@@ -524,16 +572,16 @@ getgauss <- function (y, pval = 1){
 #' 
 #' @export
 bestgauss <- function(...){
-  res <- multiEIC(..., byFile = T, getgauss = T)
-  
-  return(
-    data.frame(Peak_Quality = suppressWarnings({
-      
-      apply(matrix(unlist(res),ncol = length(res)),1,max, na.rm = T)  
-      
-    })
-    ) 
-  )
+    res <- multiEIC(..., byFile = T, getgauss = T)
+    
+    return(
+        data.frame(Peak_Quality = suppressWarnings({
+            
+            apply(matrix(unlist(res),ncol = length(res)),1,max, na.rm = T)  
+            
+        })
+        ) 
+    )
 }  
 
 #' exIntensities
@@ -563,94 +611,50 @@ exIntensities <- function (rawfile,
                            areaMode = F
                            
 ){
-  
-  ##template for RTcorrection implementation later
-  # if(!is.null(RTcorrx)){
-  #                            ls$rt <- unname(RTcorrx$corr[[which(basename(RTcorrx$fnames) == basename(rfile@filepath@.Data))]])[ls$scan]
-  #                          }else{
-  #                            ls$rt <- rfile@scantime[ls$scan]
-  #                          }
-  
-  mx <- matrix(data= c(mz-ppm*(mz/1000000),
-                       mz+ppm*(mz/1000000),
-                       rowMin(as.matrix(rtw)),
-                       rowMax(as.matrix(rtw))), nrow= length(mz), ncol=4)
-  
-  mxl <-unname(as.list(data.frame(t(mx[,1:2]))))
-  rxl <-unname(as.list(data.frame(t(mx[,3:4]))))
-  
-  
-  summe <- mapply(rawEICm, mzrange = mxl,
-                  rtrange = rxl, MoreArgs=list(object=rawfile, scanrange = numeric(), viewermode = F),
-                  SIMPLIFY = F)
- 
+    
+    ##template for RTcorrection implementation later
+    # if(!is.null(RTcorrx)){
+    #                            ls$rt <- unname(RTcorrx$corr[[which(basename(RTcorrx$fnames) == basename(rfile@filepath@.Data))]])[ls$scan]
+    #                          }else{
+    #                            ls$rt <- rfile@scantime[ls$scan]
+    #                          }
+    
+    mx <- matrix(data= c(mz-ppm*(mz/1000000),
+                         mz+ppm*(mz/1000000),
+                         rowMin(as.matrix(rtw)),
+                         rowMax(as.matrix(rtw))), nrow= length(mz), ncol=4)
+    
+    mxl <-unname(as.list(data.frame(t(mx[,1:2]))))
+    rxl <-unname(as.list(data.frame(t(mx[,3:4]))))
+    
+    
+    summe <- mapply(rawEICm, mzrange = mxl,
+                    rtrange = rxl, MoreArgs=list(object=rawfile, scanrange = numeric(), viewermode = F),
+                    SIMPLIFY = F)
+    
     #substract "baseline" and get rid of scan#
     fx <- function(x){
-      
-       if(baselineSubtract){
-      intens <- x$intensity-min(x$intensity)
-       }
-      else{intens <- x$intensity}
-      
-      if(!is.null(SN)){
-        snf <- max(x$intensity)/min(x$intensity)
-        if(is.na(snf) | snf < SN){return(0)}
-      }
-      
-      if(!areaMode){return(mean(intens))}
-    
-      ret <- rawfile@scantime[x$scan]
-      dret <- c(diff(ret), 0)
-      dintens <- c(diff(intens), 0)
-      return(sum(dintens * dret) + sum(dintens * dret)/2)
-    
+        
+        if(baselineSubtract){
+            intens <- x$intensity-min(x$intensity)
+        }
+        else{intens <- x$intensity}
+        
+        if(!is.null(SN)){
+            snf <- max(x$intensity)/min(x$intensity)
+            if(is.na(snf) | snf < SN){return(0)}
+        }
+        
+        if(!areaMode){return(mean(intens))}
+        
+        ret <- rawfile@scantime[x$scan]
+        dret <- c(diff(ret), 0)
+        dintens <- c(diff(intens), 0)
+        return(sum(dintens * dret) + sum(dintens * dret)/2)
+        
     }
-
-  return(sapply(summe, fx))}
-
-#' multiEICplus
-#'
-#' get EICs for adducts, isotopes and neutral loss masses
-#'
-#' @param adducts numeric() of mass shifts
-#' @param ... all other arguments passed on to \code{\link{multiEIC}()}
-#' 
-#' @return a list of extracted ion chromatograms that can be read 
-#' by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}},
-#' extended with EICs of adduct species
-#' 
-#' @export
-multiEICplus <- function (adducts = c(0,1,2,3),
-                          mz,
-                          rt,
-                          ...
-                          #          EICsets = list(mz,
-                          #                        rt,
-                          #    rnames,
-                          #   byFile = F,
-                          #  rawdata) #if true, table will be sorted by rawfile, otherwise by feature
-                          #
-){
-  
-  liEIC <- list()
-  if(is.null(adducts)){adducts <- 0}
-  
-  for (r in 1:length(adducts)){
-    liEIC[[r]] <- mz+adducts[r]
     
-  }
-  
-  res <- sapply(liEIC,multiEIC,rt, ...)
-  #  rawdata= EICsets$rawdata,
-  
-  # rt = EICsets$rt,
-  # rnames = EICsets$rnames,
-  #byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
-  #XIC = F,
-  #getgauss = F
-  #)
-  return(res)
-}
+    return(sapply(summe, fx))}
 
 #' subsetEICs
 #'
@@ -665,33 +669,33 @@ multiEICplus <- function (adducts = c(0,1,2,3),
 #' @export
 subsetEICs <- function(EIClist,
                        group){
-  
-  maxEIC <- numeric(1)
-  maxTIC <- numeric(1)
-  ##subset lines
-  for(i in 1:length(EIClist)){
-    EIClist[[i]] <- matrix(EIClist[[i]][group,],
-                           nrow = length(group),
-                           ncol = ncol(EIClist[[i]]),
-                           dimnames = list(rows = group,
-                                           columns = colnames(EIClist[[i]])))
-  }
-  
-  for(n in 1:length(EIClist)){
-    #   if(length(group)==1){
-    #    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"][[1]]))
-    #   maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"][[1]]))
     
-    #  }else{
-    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"]))
-    maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"]))
-    # }
-  }
-  
-  out <- list(EIClist,maxEIC,maxTIC)
-  names(out) <- c("EIClist","maxEIC","maxTIC")
-  
-  return (out)
+    maxEIC <- numeric(1)
+    maxTIC <- numeric(1)
+    ##subset lines
+    for(i in 1:length(EIClist)){
+        EIClist[[i]] <- matrix(EIClist[[i]][group,],
+                               nrow = length(group),
+                               ncol = ncol(EIClist[[i]]),
+                               dimnames = list(rows = group,
+                                               columns = colnames(EIClist[[i]])))
+    }
+    
+    for(n in 1:length(EIClist)){
+        #   if(length(group)==1){
+        #    maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"][[1]]))
+        #   maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"][[1]]))
+        
+        #  }else{
+        maxEIC <- max(maxEIC,unlist(EIClist[[n]][,"intensity"]))
+        maxTIC <- max(maxTIC,unlist(EIClist[[n]][,"tic"]))
+        # }
+    }
+    
+    out <- list(EIClist,maxEIC,maxTIC)
+    names(out) <- c("EIClist","maxEIC","maxTIC")
+    
+    return (out)
 }
 
 #' fastPeakShapes
@@ -710,53 +714,53 @@ subsetEICs <- function(EIClist,
 #' 
 #' @export
 fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
-  
-  
-  
-  
-  ints <- as.data.frame(lapply(bplapply(rawdata, 
-                                        METABOseek::exIntensities, 
-                                        mz, ppm, rtw, 
-                                        baselineSubtract = F, 
+    
+    
+    
+    
+    ints <- as.data.frame(lapply(bplapply(rawdata, 
+                                          METABOseek::exIntensities, 
+                                          mz, ppm, rtw, 
+                                          baselineSubtract = F, 
+                                          SN = 10,
+                                          BPPARAM = SnowParam(workers = if(length(mz) > 10000){workers}else{1}
+                                          )),
+                                 unlist))
+    
+    maxind <- apply(ints,1,which.max)
+    
+    
+    scorelist <- bplapply(seq(length(rawdata)), function(n){
+        
+        selfeats <- which(maxind == n)
+        
+        if(length(selfeats) > 0){
+            
+            unlist(METABOseek::multiEIC(rawdata= rawdata[n],
+                                        mz = data.frame(mzmin = mz[selfeats]-ppm*1e-6*mz[selfeats], mzmax=mz[selfeats]+ppm*1e-6*mz[selfeats]),
+                                        rt = rtw[selfeats,],
+                                        rnames = NULL,
+                                        byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
+                                        XIC = F,
+                                        getgauss = F,
+                                        RTcorr = NULL, 
+                                        workers =  1,
+                                        quickshapes = T,
                                         SN = 10,
-                                        BPPARAM = SnowParam(workers = if(length(mz) > 10000){workers}else{1}
-                                        )),
-                               unlist))
-  
-  maxind <- apply(ints,1,which.max)
-  
-  
-  scorelist <- bplapply(seq(length(rawdata)), function(n){
+                                        scoreBy = "intmean"))}
+        else{numeric(0)}},
+        
+        BPPARAM = SnowParam(workers = if(length(mz) > 5000){workers}else{1}))
     
-    selfeats <- which(maxind == n)
     
-    if(length(selfeats) > 0){
-      
-      unlist(METABOseek::multiEIC(rawdata= rawdata[n],
-                                  mz = data.frame(mzmin = mz[selfeats]-ppm*1e-6*mz[selfeats], mzmax=mz[selfeats]+ppm*1e-6*mz[selfeats]),
-                                  rt = rtw[selfeats,],
-                                  rnames = NULL,
-                                  byFile = F,#if true, table will be sorted by rawfile, otherwise by feature
-                                  XIC = F,
-                                  getgauss = F,
-                                  RTcorr = NULL, 
-                                  workers =  1,
-                                  quickshapes = T,
-                                  SN = 10,
-                                  scoreBy = "intmean"))}
-    else{numeric(0)}},
+    scores <- numeric(length(mz))
     
-    BPPARAM = SnowParam(workers = if(length(mz) > 5000){workers}else{1}))
-  
-  
-  scores <- numeric(length(mz))
-  
-  for(n in seq(length(rawdata))){
+    for(n in seq(length(rawdata))){
+        
+        scores[maxind == n] <- scorelist[[n]] 
+    }
     
-    scores[maxind == n] <- scorelist[[n]] 
-  }
-  
-  return(scores)
-  
-  
+    return(scores)
+    
+    
 }

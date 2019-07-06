@@ -28,6 +28,9 @@ gives read and write access to external objects}
 \item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
 expression with settings for this module. See \code{details}.}
 
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
+
 \item{keys}{\code{reactive({})} that reports the current key press. 
 This argument is deprecated and will be removed from all modules.}
 

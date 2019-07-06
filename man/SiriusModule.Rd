@@ -6,7 +6,7 @@
 \title{SiriusModule}
 \usage{
 SiriusModule(input, output, session, values = reactiveValues(GlobalOpts =
-  GlobalOpts))
+  NULL))
 
 SiriusModuleUI(id)
 }

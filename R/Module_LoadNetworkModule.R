@@ -1,14 +1,11 @@
 #' LoadNetworkModule
 #' 
 #' 
-#' server module for loading Tables
+#' Module for loading MS2 molecular networks (graphs)
 #' 
-#' @param input 
-#' @param output 
-#' @param session 
-#' @param tag id to be used in ns()
-#' @param set Import data from the shiny session
+#' @inherit MseekModules
 #' 
+#' @describeIn LoadNetworkModule server logic
 #' @export 
 LoadNetworkModule <- function(input,output, session, values = reactiveValues(featureTables = featureTables,
                                                                              MSData = MSData),
@@ -397,11 +394,8 @@ observe({
 
 return(internalValues)
 }
-#' LoadNetworkModuleUI
-#' 
-#' UI module for load networking module
-#' 
-#' 
+
+#' @describeIn LoadNetworkModule UI elements
 #' @export
 LoadNetworkModuleUI <-  function(id){
   ns <- NS(id)

@@ -39,6 +39,9 @@ adjust retention times.}
 \item{SN}{when calculating peak quality with quickshapes, 
 reject any peaks with a signal-to-noise ratio than this (intensity range 
 within observed rt window, MAX/ MEAN INTENSITY!)}
+
+\item{scoreBy}{specify which column is used to find which EIC to use 
+for quickshapes}
 }
 \value{
 a list of extracted ion chromatograms that can be read 

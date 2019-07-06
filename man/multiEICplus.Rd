@@ -9,6 +9,12 @@ multiEICplus(adducts = c(0, 1, 2, 3), mz, rt, ...)
 \arguments{
 \item{adducts}{numeric() of mass shifts}
 
+\item{mz}{a data.frame with minimum (column 1) and maximum (column 2) 
+m/z values in each row.}
+
+\item{rt}{a data.frame with minimum (column 1) and maximum (column 2) 
+retention time values (in seconds) in each row.}
+
 \item{...}{all other arguments passed on to \code{\link{multiEIC}()}}
 }
 \value{
