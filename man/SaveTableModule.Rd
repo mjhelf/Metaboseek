@@ -6,10 +6,10 @@
 \title{SaveTableModule}
 \usage{
 SaveTableModule(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  NULL), reactives = reactive({     list(df = NULL, filename =
-  "table.csv") }), static = list(tooltip = "Save", label = "Save", format
-  = c("tsv", "csv"), allowformats = NULL))
+  values = reactiveValues(projectData = NULL, featureTables = NULL),
+  reactives = reactive({     list(df = NULL, filename = "table.csv") }),
+  static = list(tooltip = "Save", label = "Save", format = c("tsv",
+  "csv"), allowformats = NULL))
 
 SaveTableModuleUI(id)
 }

@@ -6,7 +6,7 @@
 \title{NetworkModule}
 \usage{
 NetworkModule(input, output, session, values = reactiveValues(Networks =
-  Networks), reactives = reactive({     list(active = T, highlights =
+  NULL), reactives = reactive({     list(active = T, highlights =
   integer(0)) }), static = list(noSelection = T), keys = reactive({    
   "NO" }))
 

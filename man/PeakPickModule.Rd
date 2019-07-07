@@ -5,8 +5,7 @@
 \alias{PeakPickModuleUI}
 \title{PeakPickModule}
 \usage{
-PeakPickModule(input, output, session, values = reactiveValues(MSData =
-  MSData, featureTables = featureTables))
+PeakPickModule(input, output, session, values)
 
 PeakPickModuleUI(id)
 }

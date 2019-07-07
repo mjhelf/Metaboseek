@@ -5,10 +5,9 @@
 \alias{TableAnalysisModuleUI}
 \title{TableAnalysisModule}
 \usage{
-TableAnalysisModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, GlobalOpts =
-  values$GlobalOpts, MSData = MSData), reactives = reactive({    
-  list(fileGrouping = NULL) }), static = list())
+TableAnalysisModule(input, output, session, values,
+  reactives = reactive({     list(fileGrouping = NULL) }),
+  static = list())
 
 TableAnalysisModuleUI(id)
 }

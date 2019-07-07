@@ -9,9 +9,7 @@
 #' @return Returns its internalValues
 #' 
 #' @export 
-MassShiftsModule <- function(input,output, session,
-                             values = reactiveValues(MSData = MSData)
-){
+MassShiftsModule <- function(input,output, session, values){
   
   ns <- NS(session$ns(NULL))
   

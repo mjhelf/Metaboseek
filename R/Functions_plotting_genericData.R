@@ -65,7 +65,6 @@ densplot <-function(densin = stats::rnorm(100),
 groupedplot <- function(...,
                         main = c("boxplot", "barplot","violinplot"),
                         dotplot = TRUE,
-                        dsize = 1,
                         mark = c("mean", "median"),
                         errorbar = c("Standard Deviation", "95% Confidence Interval"),
                         rotate = TRUE

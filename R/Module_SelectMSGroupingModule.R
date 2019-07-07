@@ -9,8 +9,7 @@
 #' @describeIn SelectMSGroupingModule Server logic
 #' 
 #' @export 
-SelectMSGroupingModule <- function(input,output, session,
-                           values = reactiveValues(MSData = MSData),
+SelectMSGroupingModule <- function(input,output, session, values,
                            static = list(editOnly = F)
 ){
   

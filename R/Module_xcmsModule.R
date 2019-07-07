@@ -132,7 +132,7 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
                                             
 
                                             zip(file, flist, flags = "-j")
-                                            if(file.exists(paste0(file, ".zip"))) {file.rename(paste0(fname, ".zip"), fname)}
+                                            if(file.exists(paste0(file, ".zip"))) {file.rename(paste0(file, ".zip"), file)}
                                           },
                                           contentType = "application/zip")
 

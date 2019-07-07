@@ -136,7 +136,7 @@ writeStatus <- function(previous = NULL,
 #' @export
 savetable <- function(xset,
                       status = NULL,
-                      fill = FillChromPeaksParam(expandMz = 0.005,
+                      fill = xcms::FillChromPeaksParam(expandMz = 0.005,
                                                  expandRt = 5, ppm = 3),
                       nonfill = F,
                       filename = "tableoutxx.csv",
@@ -163,9 +163,9 @@ savetable <- function(xset,
   }
   
   if(class(xset) == "xsAnnotate"){
-    tb <- getPeaklist(xset)}
+    tb <- CAMERA::getPeaklist(xset)}
   else{
-    tb <- peakTable(as(xset,"xcmsSet"))
+    tb <- xcms::peakTable(as(xset,"xcmsSet"))
   }
       #set NAs to 0 (mostly important if !fill)
     tb[is.na(tb)]<-0
@@ -279,10 +279,10 @@ savetable <- function(xset,
       }
       
       fparam = fill
-      xset <- fillChromPeaks(xset, fparam,
+      xset <- xcms::fillChromPeaks(xset, fparam,
                              BPPARAM = bparams)
       
-      tbf <- peakTable(as(xset,"xcmsSet"))
+      tbf <- xcms::peakTable(as(xset,"xcmsSet"))
     
     #set NAs to 0 (mostly important if !fill)
       tbf[is.na(tbf)]<-0

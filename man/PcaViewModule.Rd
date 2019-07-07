@@ -5,8 +5,7 @@
 \alias{PcaViewModuleUI}
 \title{PcaViewModule}
 \usage{
-PcaViewModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables))
+PcaViewModule(input, output, session, values)
 
 PcaViewModuleUI(id)
 }

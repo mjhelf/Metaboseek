@@ -6,10 +6,10 @@
 \title{LoadTableModule}
 \usage{
 LoadTableModule(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  NULL), static = list(tooltip = "Load", label = "Load", format =
-  list(header = T, sep = "\\t", quote = "\\"", stringsAsFactors = F),
-  pattern = "\\\\.tGrouping$"))
+  values = reactiveValues(projectData = NULL, featureTables = NULL),
+  static = list(tooltip = "Load", label = "Load", format = list(header =
+  T, sep = "\\t", quote = "\\"", stringsAsFactors = F), pattern =
+  "\\\\.tGrouping$"))
 
 LoadTableModuleUI(id)
 }

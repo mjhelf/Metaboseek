@@ -638,9 +638,9 @@ EICplot <- function(EICs, cx = 1,
 #' @param relto if not NULL, intensities will be given as relative to this numeric(1)
 #' @param liwi line width of plotted lines
 #'
-addLines <- function(EIClist = EICsAdducts,
+addLines <- function(EIClist,
                      TIC = F,
-                     colr = topo.colors(nrow(EIClistItem), alpha=1),
+                     colr = topo.colors(1, alpha=1),
                      relto = NULL,
                      liwi = 2
 ){

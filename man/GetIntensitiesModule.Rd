@@ -5,9 +5,7 @@
 \alias{GetIntensitiesModuleUI}
 \title{GetIntensitiesModule}
 \usage{
-GetIntensitiesModule(input, output, session,
-  values = reactiveValues(MSData = MSData, featureTables = featureTables,
-  GlobalOpts = GlobalOpts))
+GetIntensitiesModule(input, output, session, values)
 
 GetIntensitiesModuleUI(id)
 }

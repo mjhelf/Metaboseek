@@ -5,10 +5,8 @@
 \alias{MultiFilterModuleUI}
 \title{MultiFilterModule}
 \usage{
-MultiFilterModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables),
-  static = list(lab = "Filter", modFeatureTable = T, name = NULL,
-  activate = F))
+MultiFilterModule(input, output, session, values, static = list(lab =
+  "Filter", modFeatureTable = T, name = NULL, activate = F))
 
 MultiFilterModuleUI(id)
 }

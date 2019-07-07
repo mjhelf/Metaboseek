@@ -9,7 +9,8 @@
 #' @return Returns its internalValues
 #' 
 #' @export 
-SimplifyNetworkModule <- function(input,output, session, values = reactiveValues(Networks = Networks),
+SimplifyNetworkModule <- function(input,output, session,
+                                  values = reactiveValues(Networks = NULL),
                                   reactives = reactive({list(activeNetwork = NULL)})){
   
   ns <- NS(session$ns(NULL))

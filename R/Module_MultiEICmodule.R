@@ -11,10 +11,7 @@
 #' 
 #' @describeIn MultiEICmodule server logic for the MultiEICmodule
 #' @export 
-MultiEICmodule <- function(input, output, session, 
-                           values = reactiveValues(MSData = MSData,
-                                                   GlobalOpts = GlobalOpts,
-                                                   featureTables = featureTables)){
+MultiEICmodule <- function(input, output, session, values){
   
   ns <- NS(session$ns(NULL))
   

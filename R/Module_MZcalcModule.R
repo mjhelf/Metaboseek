@@ -9,8 +9,7 @@
 #' @describeIn MZcalcModule Server logic
 #' 
 #' @export 
-MZcalcModule <- function(input,output, session,
-                           values = reactiveValues(featureTables = featureTables)){
+MZcalcModule <- function(input,output, session, values){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)

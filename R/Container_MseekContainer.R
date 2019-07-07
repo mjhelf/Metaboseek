@@ -8,7 +8,7 @@
 #' @describeIn MseekContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
-MseekContainer <- function(input,output, session){
+MseekContainer <- function(input,output, session, values){
   
   ns <- NS(session$ns(NULL))
   

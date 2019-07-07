@@ -9,9 +9,7 @@
 #' 
 #' @export 
 GetIntensitiesModule <- function(input,output, session,
-                           values = reactiveValues(MSData = MSData,
-                                                   featureTables = featureTables,
-                                                   GlobalOpts = GlobalOpts)){
+                           values){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)

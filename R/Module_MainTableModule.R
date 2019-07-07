@@ -27,9 +27,9 @@
 #' 
 #' @export 
 MainTableModule <- function(input, output, session,
-                            values = reactiveValues(featureTables = featureTables,
-                                                    GlobalOpts = GlobalOpts,
-                                                    projectData = projectData),
+                            values = reactiveValues(featureTables = NULL,
+                                                    GlobalOpts = NULL,
+                                                    projectData = NULL),
                             static = list(height = 300,
                                           readOnly = TRUE,
                                           contextMenu = TRUE,

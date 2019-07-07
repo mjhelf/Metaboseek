@@ -12,10 +12,7 @@
 #' @importFrom shinyjs toggle
 #' 
 #' @export 
-TableAnalysisModule <- function(input,output, session,
-                                values = reactiveValues(featureTables = featureTables,
-                                                        GlobalOpts = values$GlobalOpts,
-                                                        MSData = MSData),       
+TableAnalysisModule <- function(input,output, session, values,       
                                 reactives = reactive({list(fileGrouping = NULL)}), ##TODO: reactives probably not needed
                                 static = list()
 ){

@@ -9,8 +9,7 @@
 #' @describeIn MultiFilterModule Server logic
 #' 
 #' @export 
-MultiFilterModule <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables),
+MultiFilterModule <- function(input,output, session, values,
                               static = list(lab = "Filter",
                                             modFeatureTable = T,
                                             name = NULL,

@@ -9,9 +9,7 @@
 #' 
 #' @export 
 MS2BrowserModule <- function(input,output, session, 
-                             values = reactiveValues(featureTables = featureTables,
-                                                     MSData = MSData,
-                                                     GlobalOpts = GlobalOpts),
+                             values,
                              keys = reactive({"NO"})){
   
   ns <- NS(session$ns(NULL))

@@ -5,10 +5,9 @@
 \alias{VennDiagramModuleUI}
 \title{VennDiagramModule}
 \usage{
-VennDiagramModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, GlobalOpts =
-  GlobalOpts), reactives = reactive({     list(active = T, highlights =
-  integer(0)) }), static = list(noSelection = T), keys)
+VennDiagramModule(input, output, session, values, reactives = reactive({ 
+     list(active = T, highlights = integer(0)) }),
+  static = list(noSelection = T), keys)
 
 VennDiagramModuleUI(id)
 }

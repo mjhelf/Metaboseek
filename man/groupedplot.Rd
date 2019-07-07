@@ -5,7 +5,7 @@
 \title{Plot summary data on grouped data}
 \usage{
 groupedplot(..., main = c("boxplot", "barplot", "violinplot"),
-  dotplot = TRUE, dsize = 1, mark = c("mean", "median"),
+  dotplot = TRUE, mark = c("mean", "median"),
   errorbar = c("Standard Deviation", "95\% Confidence Interval"),
   rotate = TRUE)
 }

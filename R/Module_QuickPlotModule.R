@@ -8,8 +8,7 @@
 #' 
 #' @describeIn QuickPlotsModule server logic for QuickPlotsModule
 #' @export
-QuickPlotsModule <- function(input, output, session, 
-                              values = reactiveValues( featureTables = featureTables)){
+QuickPlotsModule <- function(input, output, session, values){
   
   
   

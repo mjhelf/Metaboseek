@@ -5,9 +5,8 @@
 \alias{SelectMSGroupingModuleUI}
 \title{SelectMSGroupingModule}
 \usage{
-SelectMSGroupingModule(input, output, session,
-  values = reactiveValues(MSData = MSData), static = list(editOnly =
-  F))
+SelectMSGroupingModule(input, output, session, values,
+  static = list(editOnly = F))
 
 SelectMSGroupingModuleUI(id)
 }

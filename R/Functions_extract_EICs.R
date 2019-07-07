@@ -25,6 +25,8 @@
 #' @param scoreBy specify which column is used to find which EIC to use 
 #' for quickshapes
 #' 
+#' @importFrom BiocParallel SerialParam
+#' 
 #' @return a list of extracted ion chromatograms that can be read 
 #' by \code{\link{EICplot}}, \code{\link{groupPlot}}, \code{\link{EICgeneral}}
 #' 
@@ -50,8 +52,8 @@ multiEIC <- function (rawdata,
                              rtmax = rep(max(unname(sapply(sts,max))),nrow(mz)))
         }
         else{
-            rt <- data.frame(rtmin = rep(min(onDisk@featureData@data$retentionTime),nrow(mz)),
-                             rtmax = rep(max(onDisk@featureData@data$retentionTime),nrow(mz)))
+            rt <- data.frame(rtmin = rep(min(rawdata@featureData@data$retentionTime),nrow(mz)),
+                             rtmax = rep(max(rawdata@featureData@data$retentionTime),nrow(mz)))
         }
         
     }

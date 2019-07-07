@@ -9,10 +9,7 @@
 #' @describeIn PeakPickModule Server logic
 #' 
 #' @export 
-PeakPickModule <- function(input,output, session,
-                           values = reactiveValues(MSData = MSData,
-                                                   featureTables = featureTables
-                                                   )){
+PeakPickModule <- function(input,output, session, values){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)

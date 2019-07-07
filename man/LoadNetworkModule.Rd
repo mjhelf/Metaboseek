@@ -5,9 +5,8 @@
 \alias{LoadNetworkModuleUI}
 \title{LoadNetworkModule}
 \usage{
-LoadNetworkModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MSData =
-  MSData), reactives = reactive({     list(active = NetMod$active) }))
+LoadNetworkModule(input, output, session, values, reactives = reactive({ 
+     list(active = NULL) }))
 
 LoadNetworkModuleUI(id)
 }

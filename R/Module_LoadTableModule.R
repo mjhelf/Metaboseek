@@ -23,7 +23,7 @@
 #' 
 #' @export 
 LoadTableModule <- function(input,output, session,
-                            values = reactiveValues(projectData = projectData,
+                            values = reactiveValues(projectData = NULL,
                                                     featureTables = NULL),
                             static = list(tooltip = "Load",
                                           label = "Load",

@@ -10,8 +10,7 @@
 #' @return Returns its internalValues
 #' 
 #' @export 
-TableModule2 <- function(input,output, session,
-                         values = reactiveValues(),
+TableModule2 <- function(input,output, session, values,
                          reactives = reactive({list(df = NULL,
                                                    rowFilters = NULL,
                                                    colFilters = NULL)}),

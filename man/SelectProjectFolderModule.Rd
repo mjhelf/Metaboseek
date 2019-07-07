@@ -6,8 +6,8 @@
 \title{SelectProjectFolderModule}
 \usage{
 SelectProjectFolderModule(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  featureTables, MSData = MSData, GlobalOpts = GlobalOpts))
+  values = reactiveValues(projectData = NULL, featureTables = NULL,
+  MSData = NULL, GlobalOpts = NULL))
 
 SelectProjectFolderModuleUI(id)
 }

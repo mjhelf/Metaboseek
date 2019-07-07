@@ -6,12 +6,10 @@
 \title{GetSiriusWidget}
 \usage{
 GetSiriusWidget(input, output, session, reactives = reactive({    
-  list(outfolder = file.path(values$GlobalOpts$siriusFolder, "METABOseek"),
-  ms2 = MergedSpecs, instrument = "orbitrap", parentmz = reactives()$mz, rt
-  = reactives()$rt, comments = reactives()$comments, ion = "[M+H]+", charge
-  = 1, fingerid = T, scanindices = reactives()$scanlist, sirpath =
-  file.path(values$GlobalOpts$siriusFolder, "sirius-console-64.exe"),
-  moreOpts = "") }))
+  list(outfolder = "METABOseek", ms2 = MergedSpecs, instrument =
+  "orbitrap", parentmz = NULL, rt = NULL, comments = NULL, ion = "[M+H]+",
+  charge = 1, fingerid = T, scanindices = NULL, sirpath =
+  "sirius-console-64", moreOpts = "") }))
 
 GetSiriusWidgetUI(id)
 }

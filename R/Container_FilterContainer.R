@@ -7,8 +7,7 @@
 #' 
 #' @export 
 FilterContainer <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables)
-){
+                              values){
   
   
   

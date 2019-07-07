@@ -13,17 +13,17 @@
 #' @export 
 GetSiriusWidget <- function(input,output, session, 
                           reactives = reactive({
-                            list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
+                            list(outfolder =  "METABOseek",
                                  ms2 = MergedSpecs,
                                  instrument = "orbitrap",
-                                 parentmz = reactives()$mz,
-                                 rt = reactives()$rt,
-                                 comments = reactives()$comments,
+                                 parentmz = NULL,
+                                 rt = NULL,
+                                 comments = NULL,
                                  ion = "[M+H]+",
                                  charge= 1,
                                  fingerid = T,
-                                 scanindices = reactives()$scanlist,
-                                 sirpath = file.path(values$GlobalOpts$siriusFolder,"sirius-console-64.exe"),
+                                 scanindices = NULL,
+                                 sirpath = "sirius-console-64",
                                  moreOpts = "")
                           })
 ){

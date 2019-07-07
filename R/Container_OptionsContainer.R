@@ -9,12 +9,12 @@
 #' 
 #' @export 
 OptionsContainer <- function(input,output, session,
-                            values = reactiveValues(projectData = projectData,
-                                                    featureTables = featureTables,
-                                                    MSData = MSData,
-                                                    GlobalOpts = GlobalOpts,
-                                                    MainPlotBox = MainPlotBox,
-                                                    MainTable = MainTable)
+                            values = reactiveValues(projectData = NULL,
+                                                    featureTables = NULL,
+                                                    MSData = NULL,
+                                                    GlobalOpts = NULL,
+                                                    MainPlotBox = NULL,
+                                                    MainTable = NULL)
 ){
   ns <- NS(session$ns(NULL))
   

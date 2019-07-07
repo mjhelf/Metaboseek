@@ -10,7 +10,7 @@
 #' 
 #' @export 
 SaveNetworkModule <- function(input,output, session,
-                            values = reactiveValues(Networks = Networks),
+                            values = reactiveValues(Networks = NULL),
                             reactives = reactive({list(graphname = NULL,
                                                        filename = "table.graphml")}),
                             static = list(tooltip = "Save Network as a graphml file",

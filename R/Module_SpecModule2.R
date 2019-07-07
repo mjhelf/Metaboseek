@@ -26,7 +26,7 @@
 #' @importFrom MassTools mergeMS calcMF
 #' @export 
 SpecModule2 <- function(input,output, session,
-                        values = values,
+                        values,
                         reactives = reactive({
                           list(scantable = NULL,
                                type = "ms2",

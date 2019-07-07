@@ -10,8 +10,8 @@
 #' 
 #' @export 
 ShowSiriusModule <- function(input,output, session, 
-                          values = reactiveValues(SiriusModule = SiriusModule,
-                                                  GlobalOpts = GlobalOpts),
+                          values = reactiveValues(SiriusModule = NULL,
+                                                  GlobalOpts = NULL),
                           reactives = reactive({
                             list(splash = NULL,
                                  ms1splash = NULL,

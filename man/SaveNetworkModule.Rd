@@ -6,8 +6,8 @@
 \title{SaveNetworkModule}
 \usage{
 SaveNetworkModule(input, output, session,
-  values = reactiveValues(Networks = Networks), reactives = reactive({ 
-     list(graphname = NULL, filename = "table.graphml") }),
+  values = reactiveValues(Networks = NULL), reactives = reactive({    
+  list(graphname = NULL, filename = "table.graphml") }),
   static = list(tooltip = "Save Network as a graphml file", label =
   "Save Network", format = c("graphml")))
 

@@ -10,8 +10,8 @@
 #' 
 #' @export 
 SelectActiveTableModule <- function(input,output, session,
-                           values = reactiveValues(featureTables = featureTables,
-                                                   MainTable = MainTable)
+                           values = reactiveValues(featureTables = NULL,
+                                                   MainTable = NULL)
 ){
   
   ns <- NS(session$ns(NULL))

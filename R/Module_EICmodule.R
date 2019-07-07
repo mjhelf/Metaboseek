@@ -10,8 +10,7 @@
 #' @describeIn EICmodule server logic for the EICmodule
 #' @export 
 EICmodule <- function(input, output, session, 
-                      values = reactiveValues(MSData = MSData,
-                                              GlobalOpts = GlobalOpts)){
+                      values){
   
   ####Initialization####
   ns <- NS(session$ns(NULL))

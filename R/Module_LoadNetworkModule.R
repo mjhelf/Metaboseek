@@ -7,9 +7,8 @@
 #' 
 #' @describeIn LoadNetworkModule server logic
 #' @export 
-LoadNetworkModule <- function(input,output, session, values = reactiveValues(featureTables = featureTables,
-                                                                             MSData = MSData),
-                              reactives = reactive({list(active = NetMod$active)})){
+LoadNetworkModule <- function(input,output, session, values,
+                              reactives = reactive({list(active = NULL)})){
   
   ns <- NS(session$ns(NULL))
   

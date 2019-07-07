@@ -6,7 +6,7 @@ runcodeUIns <- function (code = "", type = c("text", "textarea",
     type <- match.arg(type)
     if (type == "ace") {
         if (!requireNamespace("shinyAce", quietly = TRUE)) {
-            errMsg("You need to install the 'shinyAce' package in order to use 'shinyAce' editor.")
+            shinyjs:::errMsg("You need to install the 'shinyAce' package in order to use 'shinyAce' editor.")
         }
     }
     placeholder <- "Enter R code"

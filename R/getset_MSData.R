@@ -72,7 +72,7 @@ getSpectra.OnDiskMSnExp <- function(data, index,
                        
                        if(SpectrumClass){
                            
-                           Spectrum2(msLevel = meta$msLevel, peaksCount = length(spec[,1]), rt = meta$retentionTime,
+                           MSnbase:::Spectrum2(msLevel = meta$msLevel, peaksCount = length(spec[,1]), rt = meta$retentionTime,
                                      acquisitionNum = meta$acquisitionNum, scanIndex = meta$spIdx,
                                      tic = meta$totIonCurrent, mz = spec[,1], intensity = spec[,2],
                                      fromFile = meta$fileIdx, centroided = meta$centroided,

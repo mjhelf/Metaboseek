@@ -13,10 +13,7 @@
 #' @importFrom Rdisop initializeElements
 #' 
 #' @export 
-MzqueryModule <- function(input,output, session, 
-                          values = reactiveValues(featureTables,
-                                                  MainTable,
-                                                  GlobalOpts),
+MzqueryModule <- function(input,output, session, values,
                           reactives = reactive({list(mz = NULL)})){
 ###Enter mz textInput
   ns <- NS(session$ns(NULL))

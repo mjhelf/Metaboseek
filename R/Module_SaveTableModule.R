@@ -12,7 +12,7 @@
 #' 
 #' @export 
 SaveTableModule <- function(input,output, session,
-                            values = reactiveValues(projectData = projectData,
+                            values = reactiveValues(projectData = NULL,
                                                     featureTables = NULL),
                             reactives = reactive({list(df = NULL,
                                                        filename = "table.csv")}),
