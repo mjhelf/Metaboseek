@@ -120,7 +120,7 @@ error = function(e){out$errMsg[["Peak shapes"]] <- paste(e)})
           rawdata= MSData,
           mz = df$mz,
           ppm = ppm,
-          rt = data.frame(rtmin = df$rt-10, rtmax=df$rt+10),
+          rtw = data.frame(rtmin = df$rt-10, rtmax=df$rt+10),
           workers = workers
         ))
         

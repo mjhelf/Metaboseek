@@ -14,7 +14,7 @@
 GetSiriusWidget <- function(input,output, session, 
                           reactives = reactive({
                             list(outfolder =  "METABOseek",
-                                 ms2 = MergedSpecs,
+                                 ms2 = NULL,
                                  instrument = "orbitrap",
                                  parentmz = NULL,
                                  rt = NULL,

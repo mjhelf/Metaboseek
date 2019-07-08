@@ -163,7 +163,7 @@ LoadNetworkModule <- function(input,output, session, values,
               column(3, div( title = "Remove noise (peaks below this reltaive intensity in a merged MS2 spectrum will be ignored)", 
                              numericInput(ns("noise"), "Noise level in %", value = 2))),
               column(1, div( title = "Search MS2 scans", 
-                             METABOseek:::mActionButton(ns("makeNetwork"), "Proceed", red = T)))
+                             mActionButton(ns("makeNetwork"), "Proceed", red = T)))
             )),
           title = "Make edges for network",
           easyClose = T,
@@ -200,7 +200,7 @@ LoadNetworkModule <- function(input,output, session, values,
     
         withProgress(message = 'Please wait!', detail = "Saving changes to Feature Table", value = 0, {
           
-        METABOseek:::TableUpdateChunk()
+        TableUpdateChunk()
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],data.frame(fixed__id = seq(nrow(values$featureTables$tables[[values$featureTables$active]]$df))))
         
         incProgress(0.1, detail = "Extracting MS2 scans")

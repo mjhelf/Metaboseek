@@ -99,7 +99,7 @@ TableModule2 <- function(input,output, session, values,
 
                      if(internalValues$sortCheck && length(internalValues$sortBy) > 0){
                        if(!is.null(reactives()$rowFilters)){
-                       internalValues$row_order <- order(internalValues$df[rowFilters,internalValues$sortBy], decreasing = internalValues$decreasing)}
+                       internalValues$row_order <- order(internalValues$df[reactives()$rowFilters,internalValues$sortBy], decreasing = internalValues$decreasing)}
                        else{
                          internalValues$row_order <- order(internalValues$df[,internalValues$sortBy], decreasing = internalValues$decreasing)
                           }

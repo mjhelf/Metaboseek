@@ -60,7 +60,7 @@ MZcalcModule <- function(input,output, session, values){
     tryCatch({
       withProgress(message = 'Please wait!', detail = "Finding peaks", value = 0.5, {
         
-        METABOseek:::TableUpdateChunk()
+        TableUpdateChunk()
         
         tabid <- paste0("table",length(values$featureTables$index))
         names(tabid) <- paste0("mzcalc_", paste(input$chargesel, collapse = "_"), values$featureTables$tables[[values$featureTables$active]]$tablename)

@@ -193,7 +193,7 @@ SimplifyNetworkModule <- function(input,output, session,
             hr(),
             fluidRow(
               div( title = "Use these parameters to simplify the network", 
-                             METABOseek:::mActionButton(ns("simplifyNow"), "Go", red = T)))
+                             mActionButton(ns("simplifyNow"), "Go", red = T)))
               
             ),
           title = "Simplify network",

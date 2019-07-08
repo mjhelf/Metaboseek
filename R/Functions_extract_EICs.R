@@ -98,9 +98,9 @@ multiEIC <- function (rawdata,
             if(gauss){
                 #if(ls$intmedian > 0 && (!is.null(SN) && ls$intmax/(ls$intmedian) > SN)){return(0)}
                 middlescans <- as.integer(quantile(seq_along(ls$rt),0.25)):as.integer(quantile(seq_along(ls$rt),0.75)) 
-                smallWindowEstimate <- METABOseek:::peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
+                smallWindowEstimate <- peakFitter(ls$rt[middlescans], ls$intensity[middlescans], median(ls$rt), 0.2, startdepth = 1, maxdepth = 5)
                 #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
-                return(METABOseek:::peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)
+                return(peakFitter(ls$rt, ls$intensity, median(ls$rt), 0.4, startdepth = 1, maxdepth = 5, best_estimate = smallWindowEstimate, allowWorseScore = T)$cor$estimate)
             }
             return(ls)
         }
@@ -110,7 +110,7 @@ multiEIC <- function (rawdata,
             #this works because mxl  and other objects are in the upstream seach path for the function
             summe <- BiocParallel::bplapply(names(rawdata), function(i){
                 rawfile <- rawdata[[i]]
-                res <- mapply(METABOseek:::rawEICm, mzrange = mxl,
+                res <- mapply(rawEICm, mzrange = mxl,
                               rtrange = rxl, MoreArgs=list(object=rawfile), SIMPLIFY = F)
                 
                 res <- t(mapply(fx3, res, mz = mxl,rt=rxl, MoreArgs=list(rfile=rawfile, gauss = getgauss, RTcorrx = RTcorr)))
@@ -126,7 +126,7 @@ multiEIC <- function (rawdata,
                     featname <- rnames[i]}
                 else{featname <-i}
                 
-                res <- mapply(METABOseek::rawEICm, object=rawdata, 
+                res <- mapply(rawEICm, object=rawdata, 
                               MoreArgs=list(mzrange = mxl[[i]], rtrange = rxl[[i]]), SIMPLIFY = F)
                 
                 res <- t(mapply(fx3, res, rfile=rawdata, MoreArgs=list(mz = mxl[[i]],
@@ -185,7 +185,7 @@ multiEIC <- function (rawdata,
                     
                     middlescans <- as.integer(quantile(seq_along(res[[topint,"rt"]]),0.25)):as.integer(quantile(seq_along(res[[topint,"rt"]]),0.75)) 
                     maxmiddle <- res[[topint,"rt"]][middlescans][which.max(res[[topint,"intensity"]][middlescans])]
-                    smallWindowEstimate <- METABOseek:::peakFitter(res[[topint,"rt"]][middlescans], 
+                    smallWindowEstimate <- peakFitter(res[[topint,"rt"]][middlescans], 
                                                                    res[[topint,"intensity"]][middlescans],
                                                                    #median(res[[topint,"rt"]]),
                                                                    maxmiddle,
@@ -193,7 +193,7 @@ multiEIC <- function (rawdata,
                     #allowWorseScore so that if the initial fit with the larger rt window is worse, more fits are still tried:
                     
                     
-                    ps <- METABOseek:::peakFitter(res[[topint,"rt"]], 
+                    ps <- peakFitter(res[[topint,"rt"]], 
                                                   res[[topint,"intensity"]],
                                                   # median(res[[topint,"rt"]]),
                                                   maxmiddle,
@@ -721,7 +721,7 @@ fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
     
     
     ints <- as.data.frame(lapply(bplapply(rawdata, 
-                                          METABOseek::exIntensities, 
+                                          exIntensities, 
                                           mz, ppm, rtw, 
                                           baselineSubtract = F, 
                                           SN = 10,
@@ -738,7 +738,7 @@ fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
         
         if(length(selfeats) > 0){
             
-            unlist(METABOseek::multiEIC(rawdata= rawdata[n],
+            unlist(multiEIC(rawdata= rawdata[n],
                                         mz = data.frame(mzmin = mz[selfeats]-ppm*1e-6*mz[selfeats], mzmax=mz[selfeats]+ppm*1e-6*mz[selfeats]),
                                         rt = rtw[selfeats,],
                                         rnames = NULL,
