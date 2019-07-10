@@ -20,6 +20,26 @@
 #' }
 #' }
 #' 
+#' @examples 
+#' \dontrun{
+#' library(shiny)
+#'
+#' ui <- SpecModule2UI("examplemodule")
+#' 
+#' server <- function(input, output) {
+#'     MseekMinimalServer(diagnostics = F, data = F, tables = F)
+#'     
+#'     ExampleModule <- callModule(SpecModule2, "examplemodule", values,
+#'                                 reactives = reactive({
+#'                                     list(spectrum = data.frame(mz = c(100,200,250,300,400),
+#'                                                                intensity = c(1000,2000,3000,1000,3000)))
+#'                                     
+#'                                 }))
+#' }
+#' 
+#' # Create Shiny app ----
+#' shinyApp(ui, server)
+#' }
 #' 
 #' @importFrom xcms getMsnScan
 #' @importFrom xcms getScan

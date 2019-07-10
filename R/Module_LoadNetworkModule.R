@@ -210,7 +210,7 @@ LoadNetworkModule <- function(input,output, session, values,
         incProgress(0.2, detail = "Merging MS2 scans for each feature in Feature Table")
         
         
-        MergedSpecs <- lapply(AllSpecLists, quickMergeMS, ppm = 0, mzdiff = input$mzdiff, removeNoise = input$noise*0.01)
+        MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = 0, mzdiff = input$mzdiff, noiselevel = input$noise*0.01)
         
         tempn <- length(MergedSpecs)
         
