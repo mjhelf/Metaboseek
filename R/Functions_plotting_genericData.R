@@ -110,13 +110,33 @@ groupedplot <- function(...,
 #' @param colscale character vector of colors
 #'
 #' @export
-assignColor <- function(datarange, colscale){
+assignColor <- function(datarange, colscale,
+                        center = NULL){
   
   ncolors <- length(colscale)
   
+  
+      
   if(max(abs(datarange)) > 0){
+      if(!missing(center) && !is.null(center)){
+          
+          #First, set all color selections to the center value
+          middleColInt <- as.integer((ncolors+1)/2)
+          colsel <- rep(middleColInt,length(datarange))
+          
+          #now, modify for the data values above and below the center value:
+          selabove <- which(datarange > center)
+          if(length(selabove)){
+          colsel[selabove] <- middleColInt + round((ncolors - middleColInt) * (datarange[selabove] - center)/(max(datarange[selabove])-center) ,0)
+          }
+          selbelow <- which(datarange < center)
+          if(length(selbelow)){
+          colsel[selbelow] <- round((ncolors - middleColInt) * (datarange[selbelow]-min(datarange[selbelow]))/(max(datarange[selbelow])-min(datarange[selbelow])) ,0)
+          }
+      }else{
+      
     colsel <- round(ncolors * (datarange-min(datarange))/(max(datarange)-min(datarange)) ,0)
-    
+      }
     #introducing minor inaccuracyfor low values, should become less relevant with larger ncolors:
     colsel[colsel == 0] <- 1
     
