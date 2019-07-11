@@ -19,5 +19,10 @@ test_that("peptide annotation and plotting works",{
     
     drange <- c(-10:100)
     colorRampLegend(drange, assignColor(drange,colr, center = 0))
+    colorRampLegend(drange, assignColor(drange,colr, center = 0, symmetric = T))
+    
+    drange <- 1:100
+    colorRampLegend(drange, assignColor(drange,colr, center = 10))
+    colorRampLegend(drange, assignColor(drange,colr, center = 30, symmetric = T))
     
     })

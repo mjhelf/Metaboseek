@@ -416,7 +416,7 @@ makeEdges <- function(speclist,
                       nonmatched = T){
   
   #remove NULLs from the speclist, but keep track of the indices of the non-NULL scans:
-  selNonNulls <- which(!sapply(speclist,is.null))
+  selNonNulls <- which(!sapply(speclist,function(x){return(is.null(x) || nrow(x) == 0)}))
   speclist <- speclist[selNonNulls]
   
   selectlist <- list()

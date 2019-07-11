@@ -212,7 +212,7 @@ LoadNetworkModule <- function(input,output, session, values,
         
         MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = 0, mzdiff = input$mzdiff, noiselevel = input$noise*0.01)
         
-        tempn <- length(MergedSpecs)
+        tempn <- sum(!sapply(MergedSpecs,function(x){return(is.null(x) || nrow(x) == 0)}))
         
         incProgress(0.2, detail = paste0("Calculating similarity between ", tempn, " features (",(tempn*(tempn-1))/2," comparisons)."  ))
         

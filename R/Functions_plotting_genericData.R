@@ -69,34 +69,34 @@ groupedplot <- function(...,
                         errorbar = c("Standard Deviation", "95% Confidence Interval"),
                         rotate = TRUE
 ){
-  
-  
-  p<-ggplot2::ggplot(...) 
-  
-  switch(main,
-         boxplot = {p <- p + ggplot2::geom_boxplot()},
-         barplot = {p <- p + ggplot2::geom_bar(stat = "summary", fun.y = "mean")},
-         violinplot = {p <- p + ggplot2::geom_violin(trim = F)})
-  
-  if(dotplot){#p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)
-    p <- p + ggplot2::geom_point()}
-  
-  switch(mark,
-         mean = {p <- p + ggplot2::stat_summary(fun.y = mean, geom = "point", shape = 17, size = 3, color = "red")},
-         median = {p <- p + ggplot2::stat_summary(fun.y = median, geom = "point", shape = 17, size = 3, color = "red")}
-  )
-  
-  
-  switch(errorbar,
-         "Standard Deviation" = {p <- p + ggplot2::stat_summary(fun.data=mean_sdl, fun.args = list(mult=1),
-                                                       geom="errorbar", color="orange", width = 0.2)},
-         "95% Confidence Interval" = {p <- p + ggplot2::stat_summary(fun.data=mean_cl_normal, fun.args = list(mult=1),
-                                                            geom="errorbar", color="orange", width = 0.2)}
-  )
-  
-  
-  if(rotate){p <- p + ggplot2::theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5))}
-  return(p)
+    
+    
+    p<-ggplot2::ggplot(...) 
+    
+    switch(main,
+           boxplot = {p <- p + ggplot2::geom_boxplot()},
+           barplot = {p <- p + ggplot2::geom_bar(stat = "summary", fun.y = "mean")},
+           violinplot = {p <- p + ggplot2::geom_violin(trim = F)})
+    
+    if(dotplot){#p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)
+        p <- p + ggplot2::geom_point()}
+    
+    switch(mark,
+           mean = {p <- p + ggplot2::stat_summary(fun.y = mean, geom = "point", shape = 17, size = 3, color = "red")},
+           median = {p <- p + ggplot2::stat_summary(fun.y = median, geom = "point", shape = 17, size = 3, color = "red")}
+    )
+    
+    
+    switch(errorbar,
+           "Standard Deviation" = {p <- p + ggplot2::stat_summary(fun.data=mean_sdl, fun.args = list(mult=1),
+                                                                  geom="errorbar", color="orange", width = 0.2)},
+           "95% Confidence Interval" = {p <- p + ggplot2::stat_summary(fun.data=mean_cl_normal, fun.args = list(mult=1),
+                                                                       geom="errorbar", color="orange", width = 0.2)}
+    )
+    
+    
+    if(rotate){p <- p + ggplot2::theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5))}
+    return(p)
 }
 
 
@@ -108,44 +108,62 @@ groupedplot <- function(...,
 #' 
 #' @param datarange the data range for the legend
 #' @param colscale character vector of colors
+#' @param scalerange scale that will be used to spread the colors across
+#' @param center force the middle of the color vector to correspond to this value
+#' @param symmetric if true, will spread colors on both sides of center along 
+#' the same scale
 #'
 #' @export
-assignColor <- function(datarange, colscale,
-                        center = NULL){
-  
-  ncolors <- length(colscale)
-  
-  
-      
-  if(max(abs(datarange)) > 0){
-      if(!missing(center) && !is.null(center)){
-          
-          #First, set all color selections to the center value
-          middleColInt <- as.integer((ncolors+1)/2)
-          colsel <- rep(middleColInt,length(datarange))
-          
-          #now, modify for the data values above and below the center value:
-          selabove <- which(datarange > center)
-          if(length(selabove)){
-          colsel[selabove] <- middleColInt + round((ncolors - middleColInt) * (datarange[selabove] - center)/(max(datarange[selabove])-center) ,0)
-          }
-          selbelow <- which(datarange < center)
-          if(length(selbelow)){
-          colsel[selbelow] <- round((ncolors - middleColInt) * (datarange[selbelow]-min(datarange[selbelow]))/(max(datarange[selbelow])-min(datarange[selbelow])) ,0)
-          }
-      }else{
-      
-    colsel <- round(ncolors * (datarange-min(datarange))/(max(datarange)-min(datarange)) ,0)
-      }
-    #introducing minor inaccuracyfor low values, should become less relevant with larger ncolors:
-    colsel[colsel == 0] <- 1
+assignColor <- function(datarange,
+                         colscale,
+                         scalerange =range(datarange),
+                        center = NULL,
+                        symmetric = F){
     
-    return(colscale[colsel])
-  }
-  else{
-    return(rep(colscale[1], length(datarange)))
-  }
-  
+    ncolors <- length(colscale)
+    
+    
+    
+    if(max(abs(datarange)) > 0){
+        if(!missing(center) && !is.null(center)){
+            
+            #First, set all color selections to the center value
+            middleColInt <- as.integer((ncolors+1)/2)
+            col <- rep(colscale[middleColInt],length(datarange))
+            
+            #now, modify for the data values above and below the center value:
+            selabove <- which(datarange > center)
+            if(length(selabove)){
+                col[selabove] <- assignColor2(datarange[selabove],
+                                              colscale[(middleColInt+1):ncolors],
+                                              scalerange = if(!symmetric){range(datarange[selabove])
+                                                  }else{ c(scalerange[which.max(abs(scalerange-center))], center) })
+            }
+            selbelow <- which(datarange < center)
+            if(length(selbelow)){
+                col[selbelow] <- assignColor2(datarange[selbelow],
+                                              if(!symmetric){colscale[1:(middleColInt-1)]}else{rev(colscale[1:(middleColInt-1)])},
+                                              scalerange = if(!symmetric){range(datarange[selbelow])
+                                              }else{ c(scalerange[which.max(abs(scalerange-center))], center) })
+            }
+            return(col)
+        }else{
+           
+            if(diff(scalerange) == 0){
+                colsel <-ncolors
+            }else{
+                colsel <- abs((ncolors-1)/(max(scalerange)-min(scalerange)) * (datarange-max(scalerange)) + ncolors)
+            colsel <- round(colsel,0)
+            }
+        }
+        #introducing minor inaccuracyfor low values, should become less relevant with larger ncolors:
+        colsel[colsel == 0] <- 1
+        return(colscale[colsel])
+    }
+    else{
+        return(rep(colscale[1], length(datarange)))
+    }
+    
 }
 
 #' colorRampLegend
@@ -159,26 +177,26 @@ assignColor <- function(datarange, colscale,
 #'
 #' @export
 colorRampLegend <- function(datarange, colscale, title = ""){
-  par(oma = c(1,0,1,0),
-      mar = c(1,2,1,2), xpd = FALSE,
-      xaxs = "i") 
-  legend_image <- as.raster(matrix(colscale, nrow=1))
-  
-  plot(numeric(), numeric(),
-       xlim =  c(min(datarange),max(datarange)),
-       ylim = c(0,1),
-       type = 'n', axes = F,xlab = '', ylab = '', main = title)
-  
-  
-  axis(side=1, lwd=1, at = pretty(c(min(datarange),max(datarange))),
-       labels = format(pretty(c(min(datarange),max(datarange))),
-                       scientific = (max(abs(datarange)) > 10000 || min(abs(datarange)) < 0.0001 )),
-       mgp=c(0,0.4,0), cex.axis=1, xaxs = "i")
-  
-  Hmisc::minor.tick(nx=2, ny=1, tick.ratio=0.5, x.args = list(), y.args = list())
-  
-  
-  rasterImage(legend_image,min(datarange), 0, max(datarange), 1)
+    par(oma = c(1,0,1,0),
+        mar = c(1,2,1,2), xpd = FALSE,
+        xaxs = "i") 
+    legend_image <- as.raster(matrix(colscale, nrow=1))
+    
+    plot(numeric(), numeric(),
+         xlim =  c(min(datarange),max(datarange)),
+         ylim = c(0,1),
+         type = 'n', axes = F,xlab = '', ylab = '', main = title)
+    
+    
+    axis(side=1, lwd=1, at = pretty(c(min(datarange),max(datarange))),
+         labels = format(pretty(c(min(datarange),max(datarange))),
+                         scientific = (max(abs(datarange)) > 10000 || min(abs(datarange)) < 0.0001 )),
+         mgp=c(0,0.4,0), cex.axis=1, xaxs = "i")
+    
+    Hmisc::minor.tick(nx=2, ny=1, tick.ratio=0.5, x.args = list(), y.args = list())
+    
+    
+    rasterImage(legend_image,min(datarange), 0, max(datarange), 1)
 }
 
 
@@ -195,11 +213,11 @@ colorRampLegend <- function(datarange, colscale, title = ""){
 #' @importFrom scales trans_new log_breaks
 #'
 reverselog_trans <- function(base = exp(1)) {
-  trans <- function(x) -log(x, base)
-  inv <- function(x) base^(-x)
-  trans_new(paste0("reverselog-", format(base)), trans, inv, 
-            log_breaks(base = base), 
-            domain = c(1e-100, Inf))
+    trans <- function(x) -log(x, base)
+    inv <- function(x) base^(-x)
+    trans_new(paste0("reverselog-", format(base)), trans, inv, 
+              log_breaks(base = base), 
+              domain = c(1e-100, Inf))
 }
 
 #' safelog
@@ -215,8 +233,8 @@ reverselog_trans <- function(base = exp(1)) {
 #' @importFrom scales trans_new log_breaks
 #'
 safelog <- function(x, base = 10, replaceZeros = NULL){
-     if(!any(is.finite(x))){return(numeric(length(x))+1)}
-
+    if(!any(is.finite(x))){return(numeric(length(x))+1)}
+    
     x[x==0]   <- if(is.null(replaceZeros)){min(abs(x[x!=0]))}else{replaceZeros}
     
     x[!is.finite(x)] <- max(abs(x))
@@ -235,20 +253,20 @@ safelog <- function(x, base = 10, replaceZeros = NULL){
 #' @param cols character() of column names to display
 #' 
 plotlyTextFormatter <- function(df, cols){
-  
-  collect <- list()
-  
-  for(i in cols){
-    collect[[i]] <- paste(i, df[[i]], sep = ": ")
-  }
-  
-  collect2 <- collect[[1]]
-  
-  if(length(collect) >1){
-    for (i in 2:length(collect)){
-      collect2 <- paste(collect2, collect[[i]], sep = "\n")
+    
+    collect <- list()
+    
+    for(i in cols){
+        collect[[i]] <- paste(i, df[[i]], sep = ": ")
     }
-  }
-  return(collect2)
-  
+    
+    collect2 <- collect[[1]]
+    
+    if(length(collect) >1){
+        for (i in 2:length(collect)){
+            collect2 <- paste(collect2, collect[[i]], sep = "\n")
+        }
+    }
+    return(collect2)
+    
 }
