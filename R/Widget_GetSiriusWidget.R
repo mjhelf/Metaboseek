@@ -13,7 +13,7 @@
 #' @export 
 GetSiriusWidget <- function(input,output, session, 
                           reactives = reactive({
-                            list(outfolder =  "METABOseek",
+                            list(outfolder =  "Metaboseek",
                                  ms2 = NULL,
                                  instrument = "orbitrap",
                                  parentmz = NULL,

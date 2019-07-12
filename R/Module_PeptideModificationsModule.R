@@ -23,8 +23,8 @@ PeptideModificationsModule <- function(input,output, session, values){
     ns <- NS(session$ns(NULL))
     
     internalValues <- reactiveValues(variableTrigger = 1,
-                                     Peptides.variableMods = if(file.exists(file.path(system.file("config", package = "METABOseek"), "variableMods.tsv"))){
-                                         fixme <- fread(file.path(system.file("config", package = "METABOseek"), "variableMods.tsv"))
+                                     Peptides.variableMods = if(file.exists(file.path(system.file("config", package = "Metaboseek"), "variableMods.tsv"))){
+                                         fixme <- fread(file.path(system.file("config", package = "Metaboseek"), "variableMods.tsv"))
                                          #making sure no problems arise from empty columns(which would be loaded as logical)
                                          fixme$active <- as.logical(fixme$active)
                                          

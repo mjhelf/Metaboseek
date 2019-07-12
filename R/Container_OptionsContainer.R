@@ -72,7 +72,7 @@ OptionsContainer <- function(input,output, session,
   
 }
 
-#' @describeIn OptionsContainer returns the \code{shiny} UI elements for the METABOseek options box, including the surrounding box
+#' @describeIn OptionsContainer returns the \code{shiny} UI elements for the Metaboseek options box, including the surrounding box
 #' 
 #' @export
 OptionsContainerUI <- function(id){

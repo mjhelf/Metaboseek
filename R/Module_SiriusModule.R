@@ -40,7 +40,7 @@ SiriusModule <- function(input,output, session,
     internalValues$siriusIndex <- tryCatch({
       as.data.frame(reactiveFileReader(1500,
                                     NULL,
-                                    file.path(values$GlobalOpts$siriusFolder,"METABOseek", "index.csv"),
+                                    file.path(values$GlobalOpts$siriusFolder,"Metaboseek", "index.csv"),
                                     fread,
                                     stringsAsFactors = F)(), stringsAsFactors = F)
       },
@@ -55,7 +55,7 @@ SiriusModule <- function(input,output, session,
   #     
   #     tryCatch({
   #   internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
-  #      apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "METABOseek_sirius_revision")],
+  #      apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "Metaboseek_sirius_revision")],
   #                                       1, paste, collapse = "//"), sep = "//")
   #     },
   #   error = function(e){print(e); return(character(0))})
@@ -88,7 +88,7 @@ SiriusModule <- function(input,output, session,
     if(!is.null(SirBrowser$selected_rows) && !is.null(SirBrowser$liveView)){
 
       tryCatch({
-              internalValues$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "METABOseek"),
+              internalValues$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "Metaboseek"),
                                                        splash = SirBrowser$liveView[SirBrowser$selected_rows[1],"splash"],
                                                        ts = SirBrowser$liveView[SirBrowser$selected_rows[1],"timestamp"])
 

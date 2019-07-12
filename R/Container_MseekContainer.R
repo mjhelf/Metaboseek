@@ -1,6 +1,6 @@
 #' MseekContainer
 #' 
-#' Module that contains the entire METABOseek program
+#' Module that contains the entire Metaboseek program
 #' 
 #' @return The server module for this container returns nothing
 #' 
@@ -33,7 +33,7 @@ MseekContainer <- function(input,output, session, values){
                                       filePattern = .MseekOptions$filePattern)
   )
   
-  callModule(updaterModule, 'update', tag = ns('update'), set =list(package = "METABOseek",
+  callModule(updaterModule, 'update', tag = ns('update'), set =list(package = "Metaboseek",
                                                                 refs = c("master", "devel", "devel_raw"),
                                                                 active = FALSE))#!.MseekOptions$serverMode))
   
@@ -91,7 +91,7 @@ MseekContainer <- function(input,output, session, values){
   
 }
 
-#' @describeIn MseekContainer returns the \code{shiny} UI elements for the entire METABOseek program
+#' @describeIn MseekContainer returns the \code{shiny} UI elements for the entire Metaboseek program
 #' 
 #' @export
 MseekContainerUI <- function(id){
@@ -101,7 +101,7 @@ MseekContainerUI <- function(id){
                   MseekHeader(id = id,
                               tags$li(actionLink(ns("globaloptshead"), "",
                                                  icon = icon("cog"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
-                                                 title = "Global settings for METABOseek" ),
+                                                 title = "Global settings for Metaboseek" ),
                                       class = "dropdown",
                                       style = "float:left")),
                   MseekSidebar(id = id),
@@ -109,8 +109,8 @@ MseekContainerUI <- function(id){
                     
                     # Load custom CSS
                     tags$head(tags$style(HTML(
-                      readChar(system.file("config", "METABOseek_styles.css", package = "METABOseek"),
-                               file.info(system.file("config", "METABOseek_styles.css", package = "METABOseek"))$size)))),
+                      readChar(system.file("config", "Metaboseek_styles.css", package = "Metaboseek"),
+                               file.info(system.file("config", "Metaboseek_styles.css", package = "Metaboseek"))$size)))),
                     
                     tabItems(
                       tabItem(tabName = "start",

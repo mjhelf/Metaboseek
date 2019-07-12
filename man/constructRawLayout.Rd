@@ -22,7 +22,7 @@ a \code{rawLayout} object
 }
 \description{
 Constructor function for the rawLayout S3 class,
- holding information on MSdata grouping and layout options in METABOseek.
+ holding information on MSdata grouping and layout options in Metaboseek.
 }
 \details{
 If \code{msnExp} is provided, will generate an element called 

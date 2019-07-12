@@ -3,14 +3,14 @@ tryCatch({
 
 
 library(xcms)
-library(METABOseek)
+library(Metaboseek)
 
 fols <- commandArgs(trailingOnly=TRUE)
 
 setwd(fols[1])
 
 history <- writeStatus (previous = NULL,
-                        message = list(Status = paste0("Starting analysis with xcms_runner in METABOseek v",packageVersion("METABOseek")," and xcms version ", packageVersion("xcms")),
+                        message = list(Status = paste0("Starting analysis with xcms_runner in Metaboseek v",packageVersion("Metaboseek")," and xcms version ", packageVersion("xcms")),
                                        Details = "initializing parameters"))
 
 #Load settings from csv files in wd

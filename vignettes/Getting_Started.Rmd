@@ -1,10 +1,10 @@
 ---
-title: "Getting started with METABOseek"
+title: "Getting started with Metaboseek"
 author: "Maximilian Helf"
 date: "May 2019"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting started with METABOseek}
+  %\VignetteIndexEntry{Getting started with Metaboseek}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,9 +16,9 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-METABOseek is an interactive, browser-based tool to analyze and browse your mass spectrometry data. Here is a quick introduction to the basic functions.
+Metaboseek is an interactive, browser-based tool to analyze and browse your mass spectrometry data. Here is a quick introduction to the basic functions.
 
-# Install METABOseek
+# Install Metaboseek
 
 ## System requirements
 
@@ -26,7 +26,7 @@ Recommended minimal system requirements:
 
 * Quad-core processor (or dual core with 4 threads)
 * 8 GB of RAM (16 GB or more are preferred)
-* Recent versions of Firefox or Chrome web browsers (METABOseek should work on any browser, but testing is done for these two)
+* Recent versions of Firefox or Chrome web browsers (Metaboseek should work on any browser, but testing is done for these two)
 
 We recommend computers with a monitor with at least full HD (1920 x 1080 pixels) resolution. You can use the zoom function of your web browser to scale the interface to your liking.
 
@@ -37,7 +37,7 @@ Metaboseek, as pre-packaged in the installer or .zip file for Windows, version 0
 
 
 ## Use the web version
-If you have trouble installing METABOseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
+If you have trouble installing Metaboseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
 
 
 ## Install on Windows
@@ -46,19 +46,19 @@ You will need to get the [appropriate java version](#javainfo), which in the cas
 
 ###Using the installer
 
-1. Download the installer of the most recent release version [here](https://github.com/mjhelf/METABOseek/releases)
+1. Download the installer of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
 2. Follow the installation steps.
-3. METABOseek 0.9 should now be installed and can be launched like any other Windows program. When METABOseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the METABOseek command line window.
+3. Metaboseek 0.9 should now be installed and can be launched like any other Windows program. When Metaboseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the Metaboseek command line window.
 
 ###Using a .zip file
 
-1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/METABOseek/releases)
+1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
 2. Unzip the file on your computer (this may take a while!)
-3. Run METABOseek by executing runMETABOseek.exe In the unzipped folder.
+3. Run Metaboseek by executing runMetaboseek.exe In the unzipped folder.
 
-###Updating METABOseek for Windows
+###Updating Metaboseek for Windows
 
-Windows users can update METABOseek to the newest version from inside the METABOseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to METABOseek.
+Windows users can update Metaboseek to the newest version from inside the Metaboseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to Metaboseek.
    
 ## Install on Mac / Linux
 
@@ -66,57 +66,57 @@ Windows users can update METABOseek to the newest version from inside the METABO
 2.	Mac users: Get [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
 3.	Run R, enter this line:
 ```{r, eval = FALSE}
-source("http://metaboseek.com/files/install_METABOseek.R") 
+source("http://metaboseek.com/files/install_Metaboseek.R") 
 ```
 
 
-5. To run METABOseek, enter this line into your R console:
+5. To run Metaboseek, enter this line into your R console:
 ```{r, eval = FALSE}
-METABOseek::runMseek()
+Metaboseek::runMseek()
 ```
 
 
 
 ##	Experienced R users (Windows, Mac or Linux):
-If you have installed R (and the devtools package) already, you can install METABOseek like this:
+If you have installed R (and the devtools package) already, you can install Metaboseek like this:
 
 ```{r, eval = FALSE}
-devtools::install_github("mjhelf/METABOseek", ref="master")
+devtools::install_github("mjhelf/Metaboseek", ref="master")
 ```
 If you want to make sure you get all the required packages, run the install script with this line:
 
 ```{r, eval = FALSE}
-source("http://metaboseek.com/files/install_METABOseek.R") 
+source("http://metaboseek.com/files/install_Metaboseek.R") 
 ```	
 #Quickstart
 
-#Data analysis with METABOseek
+#Data analysis with Metaboseek
 
-With METABOseek, you can quickly visualize data from batches of high-resolution LC/MS data files and find differences between groups of samples. It is not necessary to do any analysis before looking at your data, but a typical workflow starts with a data analysis step:
+With Metaboseek, you can quickly visualize data from batches of high-resolution LC/MS data files and find differences between groups of samples. It is not necessary to do any analysis before looking at your data, but a typical workflow starts with a data analysis step:
 
 * Detection of MS features (defined by m/z and retention time) with the [xcms analysis module](#runXcms)
   + alternatively, you can use an MS feature list that you generated elsewhere.
 * Molecular networking of MS2 spectra
 * Structure prediction using [SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/)
 
-Then, you can use METABOseek to browse the data, find molecular features of interest, predict the molecular formula and make structure predictions based on MS2 data.
+Then, you can use Metaboseek to browse the data, find molecular features of interest, predict the molecular formula and make structure predictions based on MS2 data.
 
 
 ## Overview
-METABOseek is structured into two major sections, the `Data Explorer` section for visualization and statistical analysis tasks, and the `XCMS analysis` to identify LC/MS features in MS data files. You can switch between these sections with the navigation menu on the left of the screen. 
+Metaboseek is structured into two major sections, the `Data Explorer` section for visualization and statistical analysis tasks, and the `XCMS analysis` to identify LC/MS features in MS data files. You can switch between these sections with the navigation menu on the left of the screen. 
 
 
 ## Data Explorer
 
-At the heart of METABOseek is the interaction between data visualization in the "Data viewer" box, and a table of LC/MS data features in the `Feature table` box
+At the heart of Metaboseek is the interaction between data visualization in the "Data viewer" box, and a table of LC/MS data features in the `Feature table` box
 
-###Load MS Data into METABOseek {#loadMSData}
+###Load MS Data into Metaboseek {#loadMSData}
 
 In most cases, the first thing you want to load is some LC/MS data to look at. You can load files from the `Start page`, or click on the "Load..." icon on the left side of the top navigation bar.
 
 ### Supported file types {#supportedFiles}
 
-METABOseek uses the `MSnbase` and `xcms` packages to load MS data files of the following formats:
+Metaboseek uses the `MSnbase` and `xcms` packages to load MS data files of the following formats:
 
 * .cdf
 * .nc
@@ -127,8 +127,8 @@ METABOseek uses the `MSnbase` and `xcms` packages to load MS data files of the f
 ####1. Select a folder with MS data files.{.unnumbered}
 All files with [supported file extensions](#supportedFiles) in the selected folders and all its subfolders will be imported, so it makes sense to pre-sort your files in a reasonable folder structure. Note that here, unlike for the [xcms analysis](#runXcms), you may want to include widely different samples (e.g. blanks, to visually confirm they do not contain a compound of interest).
 
-####2. Load a METABOseek project folder.{.unnumbered}
-When you run [xcms through METABOseek](#runXcms), the program generates a project folder that contains the results from that xcms analysis run, and all settings that were used in it. If you select a project folder, all MS data files from an analysis will be loaded and grouped in the same way you set up for the xcms analysis. METABOseek will then ask you which feature table you want to load from the project folder, and will load it in the `Feature table` box.  
+####2. Load a Metaboseek project folder.{.unnumbered}
+When you run [xcms through Metaboseek](#runXcms), the program generates a project folder that contains the results from that xcms analysis run, and all settings that were used in it. If you select a project folder, all MS data files from an analysis will be loaded and grouped in the same way you set up for the xcms analysis. Metaboseek will then ask you which feature table you want to load from the project folder, and will load it in the `Feature table` box.  
 
 
 ###Load feature tables
@@ -143,11 +143,11 @@ If you have [loaded MS data files](#loadMSData) which contain MS/MS data, go to 
 
 ####1. Use the feature table{.unnumbered}
 
-When you select one (or multiple) entries in the `Feature Table`, METABOseek will find any MS/MS scans that have a parent mass matching the selected `Feature Table` entry (e.g. within 5 ppm and 200 seconds, customizable).
+When you select one (or multiple) entries in the `Feature Table`, Metaboseek will find any MS/MS scans that have a parent mass matching the selected `Feature Table` entry (e.g. within 5 ppm and 200 seconds, customizable).
 
 ####2. Use the molecular network viewer{.unnumbered}
 
-If you have loaded or generated a molecular network, you can also display spectra for each network node, as long as the files used to generate the network are [loaded into METABOseek.](#loadMSData) Navigate from the network overview to a contingent network cluster (or "subgraph") by clicking on it while holding the `SHIFT` key. The view will now zoom in on the subgraph. You can use the control menu above the network to show node and edge labels of your choice (e.g. Parent m/z and m/z difference between nodes ("deltaMZ")), and apply a coloring scheme (e.g. color by default groups). To select a node and display all MS/MS spectra associated with it, click on a node while holding the `SHIFT` key.
+If you have loaded or generated a molecular network, you can also display spectra for each network node, as long as the files used to generate the network are [loaded into Metaboseek.](#loadMSData) Navigate from the network overview to a contingent network cluster (or "subgraph") by clicking on it while holding the `SHIFT` key. The view will now zoom in on the subgraph. You can use the control menu above the network to show node and edge labels of your choice (e.g. Parent m/z and m/z difference between nodes ("deltaMZ")), and apply a coloring scheme (e.g. color by default groups). To select a node and display all MS/MS spectra associated with it, click on a node while holding the `SHIFT` key.
 
 You can move nodes by dragging them with your mouse while holding the `CTRL` key (this helps make all labels visible in a dense network). Return back to the network overview by double clicking on the graph.
 
@@ -169,7 +169,7 @@ MS/MS spectra are shown on the right side. You can choose to `keep` a spectrum v
 
 ##XCMS analysis {#runXcms}
 
-This section will help you to set up an xcms analysis in METABOseek in order to identify LC/MS features that are differential between sets of data files. This can, for instance, be useful to assess the impact of a mutation on the metabolome of an organism or to identify compounds associated with the activity of an enzyme.
+This section will help you to set up an xcms analysis in Metaboseek in order to identify LC/MS features that are differential between sets of data files. This can, for instance, be useful to assess the impact of a mutation on the metabolome of an organism or to identify compounds associated with the activity of an enzyme.
 
 ![Running an xcms analysis - a description of the highlighted steps is below.](img/XcmsRun1.png)
 

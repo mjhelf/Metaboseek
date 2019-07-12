@@ -13,7 +13,7 @@ MseekHeader(..., id = NULL)
 MseekSidebar(..., id = NULL)
 }
 \arguments{
-\item{...}{UI elements to embed in the METABOseek app}
+\item{...}{UI elements to embed in the Metaboseek app}
 
 \item{diagnostics}{if TRUE, will render diagnostics UI elements}
 
@@ -22,7 +22,7 @@ MseekSidebar(..., id = NULL)
 \item{id}{id for namespacing - must be the id of the enclosing module or NULL}
 }
 \value{
-UI elements for METABOseek
+UI elements for Metaboseek
 }
 \description{
 A minimal UI for Mseek that can be extended with additional objects for 

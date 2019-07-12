@@ -21,6 +21,6 @@ dashboardHeaderM(..., title = NULL, titleWidth = NULL,
 \item{left}{list of UI elements for the left side of the header}
 }
 \description{
-METABOseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
+Metaboseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
 that allows placing icons left and right in the navbar
 }

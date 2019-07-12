@@ -12,7 +12,7 @@ EICplot(EICs, cx = 1, ylim = c(0, max(unlist(EICs[[1]][, "tic"]))),
   midline = 100, lw = 1, yzoom = 1, ylabshift = 0)
 }
 \arguments{
-\item{EICs}{item from a list of EICs from METABOseek:multiEIC}
+\item{EICs}{item from a list of EICs from Metaboseek:multiEIC}
 
 \item{cx}{character expansion (font size) factor}
 

@@ -35,7 +35,7 @@
 #' @export
 MseekOptions <- function(..., defaults = F){
   
-  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json")) 
+  if(!file.exists(file.path(system.file("config", package = "Metaboseek"), "MseekOptions.json")) 
      || defaults){
     .MseekOptions <<- list( activateLocalFiles = T,
                              activateXCMS = T,
@@ -45,7 +45,7 @@ MseekOptions <- function(..., defaults = F){
                              enabledCores = 4,
                             keyinput.down = "NO",
                             
-                             filePaths = c(examples = system.file("extdata","examples", package = "METABOseek"),
+                             filePaths = c(examples = system.file("extdata","examples", package = "Metaboseek"),
                                            if(Sys.info()['sysname'] == "Windows"){checkFolders()}else{c(root ="/")}),
                              filePattern = paste(
                                paste("\\.", 
@@ -71,7 +71,7 @@ MseekOptions <- function(..., defaults = F){
                             colorBy = "file",
                             relPlotToggle = F,
                             raiseToggle = F,
-                           recentProjects = system.file("extdata","examples", "example projectfolder", package = "METABOseek"),
+                           recentProjects = system.file("extdata","examples", "example projectfolder", package = "Metaboseek"),
                            SiriusSelIon = "[M+?]+",
                            SiriusCheckFinger = T,
                            SiriusSelInstrument = "orbitrap",
@@ -98,11 +98,11 @@ MseekOptions <- function(..., defaults = F){
     
   }
   else{
-    .MseekOptions <<- unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "METABOseek"), file.info(system.file("config", "MseekOptions.json", package = "METABOseek"))$size))
+    .MseekOptions <<- unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "Metaboseek"), file.info(system.file("config", "MseekOptions.json", package = "Metaboseek"))$size))
   }
   
   if(!.MseekOptions$serverMode && Sys.info()['sysname'] == "Windows"){
-    .MseekOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "METABOseek"), checkFolders())
+    .MseekOptions$filePaths <<- c("User folders" = Sys.getenv("USERPROFILE"), examples = system.file("extdata","examples", package = "Metaboseek"), checkFolders())
    
     
     
@@ -112,10 +112,10 @@ MseekOptions <- function(..., defaults = F){
   
   if(!.MseekOptions$serverMode && length(checkexfolder) >0 && !file.exists(.MseekOptions$recentProjects[checkexfolder])){
   
-    .MseekOptions$recentProjects[checkexfolder] <<-  system.file("extdata","examples", "example projectfolder", package = "METABOseek")
-    rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "METABOseek"), stringsAsFactors = F, row.names = 1)
-    rawgroups$File <- file.path(system.file("extdata", "examples", package = "METABOseek"), rawgroups$File)
-    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "METABOseek"), "filegroups.csv"))
+    .MseekOptions$recentProjects[checkexfolder] <<-  system.file("extdata","examples", "example projectfolder", package = "Metaboseek")
+    rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "Metaboseek"), stringsAsFactors = F, row.names = 1)
+    rawgroups$File <- file.path(system.file("extdata", "examples", package = "Metaboseek"), rawgroups$File)
+    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "Metaboseek"), "filegroups.csv"))
     
   }
   
@@ -135,8 +135,8 @@ MseekOptions <- function(..., defaults = F){
   }
   
   #prevent saving config while building project
-  if(dirname(system.file(package = "METABOseek")) %in% .libPaths() && !.MseekOptions$testMode){
-    write(jsonlite::serializeJSON(.MseekOptions, pretty = T), file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))
+  if(dirname(system.file(package = "Metaboseek")) %in% .libPaths() && !.MseekOptions$testMode){
+    write(jsonlite::serializeJSON(.MseekOptions, pretty = T), file.path(system.file("config", package = "Metaboseek"), "MseekOptions.json"))
   }
   
 }

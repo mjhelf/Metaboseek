@@ -40,7 +40,7 @@ TableAnalysisModule <- function(input,output, session, values,
                                    analysesSelected = "Basic analysis",
                                    analysesSelected = NULL,
                                    numClusters = 2,
-                                   dbselected = system.file("db", "smid-db_pos.csv", package = "METABOseek")
+                                   dbselected = system.file("db", "smid-db_pos.csv", package = "Metaboseek")
   )
   
   observeEvent(values$featureTables,{
@@ -236,12 +236,12 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   
   output$seldbs <- renderUI({ 
     selectizeInput(ns("selDB"), "select reference table for mz matching", 
-                   choices = list("SMID-DB negative" = system.file("db", "smid-db_neg.csv", package = "METABOseek"),
-                                  "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "METABOseek"),
-                                  "LipidBLAST negative" = system.file("db", "LipidBLAST_mz_trimmed_neg.csv", package = "METABOseek"),
-                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "METABOseek"),
-                                  "HMDB negative (endogenous detected)" = system.file("db", "HMDB_detected_neg.csv", package = "METABOseek"),
-                                  "HMDB positive (endogenous detected)" = system.file("db", "HMDB_detected_pos.csv", package = "METABOseek")
+                   choices = list("SMID-DB negative" = system.file("db", "smid-db_neg.csv", package = "Metaboseek"),
+                                  "SMID-DB positive" = system.file("db", "smid-db_pos.csv", package = "Metaboseek"),
+                                  "LipidBLAST negative" = system.file("db", "LipidBLAST_mz_trimmed_neg.csv", package = "Metaboseek"),
+                                  "LipidBLAST positive" = system.file("db", "LipidBLAST_mz_trimmed_pos.csv", package = "Metaboseek"),
+                                  "HMDB negative (endogenous detected)" = system.file("db", "HMDB_detected_neg.csv", package = "Metaboseek"),
+                                  "HMDB positive (endogenous detected)" = system.file("db", "HMDB_detected_pos.csv", package = "Metaboseek")
                                   
                                   ),
                    selected = internalValues$dbselected, multiple = T)

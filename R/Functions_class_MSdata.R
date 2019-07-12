@@ -1,7 +1,7 @@
 #' constructRawLayout
 #' 
 #' Constructor function for the rawLayout S3 class,
-#'  holding information on MSdata grouping and layout options in METABOseek.
+#'  holding information on MSdata grouping and layout options in Metaboseek.
 #' 
 #' @param rawgrouptable a data.frame with columns File and Group ,
 #'  holding file paths and group names, respectively.

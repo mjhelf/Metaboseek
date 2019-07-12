@@ -33,9 +33,9 @@ runcodeUIns <- function (code = "", type = c("text", "textarea",
 #' A minimal UI for Mseek that can be extended with additional objects for 
 #' testing and development purposes
 #'
-#' @return UI elements for METABOseek
+#' @return UI elements for Metaboseek
 #' 
-#' @param ... UI elements to embed in the METABOseek app
+#' @param ... UI elements to embed in the Metaboseek app
 #' @param diagnostics if TRUE, will render diagnostics UI elements
 #' @param dashboard if TRUE, will render a dashboard layout
 #' @param id id for namespacing - must be the id of the enclosing module or NULL
@@ -93,7 +93,7 @@ MseekMinimalUI <- function(..., diagnostics = T, dashboard = F, id = NULL){
 
 #' dashboardHeaderM
 #'
-#' METABOseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
+#' Metaboseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
 #' that allows placing icons left and right in the navbar
 #' 
 #' @param ... additional UI elements for the header
@@ -142,7 +142,7 @@ MseekHeader <- function(..., id = NULL){
 #    ns <- function(id){return(id)}
  # }
   
-  dashboardHeaderM(title = "METABOseek",
+  dashboardHeaderM(title = "Metaboseek",
                    #style = "width:95%",
                    # dropdownMenu(messageItem("Tip of the day", "Press F11 to enter/exit full screen mode.",
                    #                          icon = shiny::icon("fullscreen", lib = "glyphicon"),
@@ -152,7 +152,7 @@ MseekHeader <- function(..., id = NULL){
                    left = list(
                      tags$li(actionLink(ns("loadAll"), "",
                                         icon = icon("folder-open"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
-                                        title = "Load Projects, MS data or feature tables into METABOseek" ),
+                                        title = "Load Projects, MS data or feature tables into Metaboseek" ),
                              class = "dropdown",
                              style = "float:left"),
                      ...),
@@ -230,8 +230,8 @@ MseekSidebar <- function(..., id = NULL){
       #bookmarkButton(label ="Bookmark this session"),
       #SelectActiveTableModuleUI("selectactivetable"),
       hr(),
-      h5(a(paste0("METABOseek version ",packageVersion("METABOseek")), 
-           href="https://github.com/mjhelf/METABOseek", target="_blank"), align = "center")
+      h5(a(paste0("Metaboseek version ",packageVersion("Metaboseek")), 
+           href="https://github.com/mjhelf/Metaboseek", target="_blank"), align = "center")
       
     )
     

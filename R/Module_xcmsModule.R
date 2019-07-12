@@ -30,22 +30,22 @@ xcmsModule <- function(input,output, session,
   
  
 internalValues <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Groups = character(1), stringsAsFactors = F),
-                                             centWave = read.csv(system.file("config", "xcms_defaults", "centWave.csv",package = "METABOseek"),
+                                             centWave = read.csv(system.file("config", "xcms_defaults", "centWave.csv",package = "Metaboseek"),
                                                                  row.names = 1,
                                                                  stringsAsFactors = F),
-                                             group = read.csv(system.file("config", "xcms_defaults", "group.csv",package = "METABOseek"),
+                                             group = read.csv(system.file("config", "xcms_defaults", "group.csv",package = "Metaboseek"),
                                                               row.names = 1,
                                                               stringsAsFactors = F),
-                                             retcor = read.csv(system.file("config", "xcms_defaults", "retcor.csv",package = "METABOseek"),
+                                             retcor = read.csv(system.file("config", "xcms_defaults", "retcor.csv",package = "Metaboseek"),
                                                                row.names = 1,
                                                                stringsAsFactors = F),
-                                             outputs = read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "METABOseek"),
+                                             outputs = read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "Metaboseek"),
                                                                 row.names = 1,
                                                                 stringsAsFactors = F),
-                                             peakfilling = read.csv(system.file("config", "xcms_defaults", "peakfilling.csv",package = "METABOseek"),
+                                             peakfilling = read.csv(system.file("config", "xcms_defaults", "peakfilling.csv",package = "Metaboseek"),
                                                                     row.names = 1,
                                                                     stringsAsFactors = F),
-                                             camera = read.csv(system.file("config", "xcms_defaults", "camera.csv",package = "METABOseek"),
+                                             camera = read.csv(system.file("config", "xcms_defaults", "camera.csv",package = "Metaboseek"),
                                                                row.names = 1,
                                                                stringsAsFactors = F)
 ),
@@ -107,7 +107,7 @@ observeEvent(input$xcms_settingsLoad$datapath,{
   
   #if an old outputs.csv file is loaded, replace it with the new default.
   if(ncol(internalValues$params$outputs) < 5) {
-    internalValues$params$outputs <- read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "METABOseek"),
+    internalValues$params$outputs <- read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "Metaboseek"),
                                             row.names = 1,
                                             stringsAsFactors = F)
   }
@@ -162,7 +162,7 @@ observeEvent(input$xcms_loadfolder,{
 })
 
 observeEvent(input$xcms_loadfolderOffline,{
-  fol <- gsub("\\\\","/",choose.dir())
+  fol <- gsub("\\\\","/",utils::choose.dir())
   if(length(fol)>0 &&!is.na(fol)){
     #taken from xcms package
     flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
@@ -206,7 +206,7 @@ observeEvent(input$xcms_start,{
   
   write.csv(data.frame(X=1,Time=0,Status="",Details="",elapsed_time=0), file = file.path(fo,"status.csv"))
   internalValues$jobs <- c(internalValues$jobs, fo)
-  file.copy(system.file("scripts", "xcms_runner_i.R",package = "METABOseek"),fo)
+  file.copy(system.file("scripts", "xcms_runner_i.R",package = "Metaboseek"),fo)
   
   for(i in 1:length(internalValues$params)){
     write.csv(internalValues$params[[i]], file = file.path(fo,paste0(names(internalValues$params)[i],".csv")), row.names = T)
@@ -221,7 +221,7 @@ observeEvent(input$xcms_start,{
   
   zip(file.path(fo,"settings.zip"), grep(list.files(fo, full.names = T), pattern = "status.csv", invert = T, value = T), flags = "-j")
   
-  runner <- system.file("scripts", "xcms_runner_i.R",package = "METABOseek")
+  runner <- system.file("scripts", "xcms_runner_i.R",package = "Metaboseek")
   rpath <- file.path(R.home(component = "bin"), "Rscript")
   
   
@@ -236,7 +236,7 @@ observeEvent(input$xcms_start,{
          wait = F)
   
   showModal(modalDialog(p("The xcms analysis is running in a separate process now.
-                          You can continue using METABOseek or close METABOseek now without interrupting the analysis.
+                          You can continue using Metaboseek or close Metaboseek now without interrupting the analysis.
                           The results of this analysis can be found in ", strong(fo)),
                         title = "xcms analysis is running!",
                         easyClose = T
@@ -356,7 +356,7 @@ fluidPage(
         
         p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
         
-        p(strong("Not on by default in Server mode!")," Currently only one xcms job per METABOseek session (concurrent job monitoring coming later)."),
+        p(strong("Not on by default in Server mode!")," Currently only one xcms job per Metaboseek session (concurrent job monitoring coming later)."),
         fluidRow(
           column(6,
                  actionButton(ns('xcms_loadfolderOffline'), "load MS file folder"),

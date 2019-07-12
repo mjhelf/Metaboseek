@@ -44,7 +44,7 @@ analyzeTable <- function(df, intensities,
                          numClusters = 2,
                          mzMatchParam = list(system.file("db",
                                                          "smid-db_pos.csv",
-                                                         package = "METABOseek"),
+                                                         package = "Metaboseek"),
                                                ppm = 5,
                                                mzdiff = 0.001),
                          workers = 1){

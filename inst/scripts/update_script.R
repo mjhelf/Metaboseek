@@ -1,44 +1,44 @@
 
 tryCatch({
-  message("Please wait while METABOseek is being updated")
+  message("Please wait while Metaboseek is being updated")
   Sys.sleep(5)
-  oldver <- packageVersion("METABOseek")[1]  
+  oldver <- packageVersion("Metaboseek")[1]  
   
-  if(!file.exists(file.path(system.file("config", package = "METABOseek"), "MseekOptions.json"))){
+  if(!file.exists(file.path(system.file("config", package = "Metaboseek"), "MseekOptions.json"))){
     oldSettings <- NULL
     
   }else{
-    oldSettings <- jsonlite::unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "METABOseek"), file.info(system.file("config", "MseekOptions.json", package = "METABOseek"))$size))
+    oldSettings <- jsonlite::unserializeJSON(readChar(system.file("config", "MseekOptions.json", package = "Metaboseek"), file.info(system.file("config", "MseekOptions.json", package = "Metaboseek"))$size))
   }
   
 
   tryCatch({
-devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F, dependencies = FALSE)
+devtools::install_github("mjhelf/Metaboseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F, dependencies = FALSE)
 },
 error = function(e){
   message("Dependncies have to be installed...")
-  devtools::install_github("mjhelf/METABOseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F)
+  devtools::install_github("mjhelf/Metaboseek", ref = commandArgs(trailingOnly=TRUE)[1], quiet = F)
   
    
 })
 
   message("Mseek version before update: ", oldver)
-  message("Mseek version after update: ", packageVersion("METABOseek")[1])
-  message(paste0("Update complete! (from ", commandArgs(trailingOnly=TRUE)[1], " branch on GitHub: https://github.com/mjhelf/METABOseek)"))
-  message("You can close this window now and restart METABOseek.")
+  message("Mseek version after update: ", packageVersion("Metaboseek")[1])
+  message(paste0("Update complete! (from ", commandArgs(trailingOnly=TRUE)[1], " branch on GitHub: https://github.com/mjhelf/Metaboseek)"))
+  message("You can close this window now and restart Metaboseek.")
   
-  do.call(METABOseek::MseekOptions, oldSettings)
+  do.call(Metaboseek::MseekOptions, oldSettings)
   
   Sys.sleep(10000)
 },
 error = function(e){
   
   tryCatch({
-   source("http://metaboseek.com/files/install_METABOseek.R")
+   source("http://metaboseek.com/files/install_Metaboseek.R")
     },
     error = function(e){
   message("Installation failed. Try to install from the R console using the command:")
-  message(paste0('devtools::install_github("mjhelf/METABOseek", ref ="',commandArgs(trailingOnly=TRUE)[1],'")'))
+  message(paste0('devtools::install_github("mjhelf/Metaboseek", ref ="',commandArgs(trailingOnly=TRUE)[1],'")'))
   message("You can close this window now.")
   Sys.sleep(10000)
 })

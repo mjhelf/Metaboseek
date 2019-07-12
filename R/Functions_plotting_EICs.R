@@ -524,7 +524,7 @@ groupPlot <- function(EIClist,
 #' 
 #' @return sends a single EIC plot to the current plotting device
 #' 
-#' @param EICs item from a list of EICs from METABOseek:multiEIC
+#' @param EICs item from a list of EICs from Metaboseek:multiEIC
 #' @param cx character expansion (font size) factor
 #' @param ylim numeric(2) min and max visible rt value (in seconds)
 #' @param xlim numeric(2) min and max visible intensity value (in seconds)

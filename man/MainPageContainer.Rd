@@ -33,7 +33,7 @@ Container for modules in the Metaboseek main page
 \itemize{
 \item \code{MainPageContainer}: server logic module, to be called with \link[shiny]{callModule}()
 
-\item \code{MainPageContainerUI}: returns the \code{shiny} UI elements for the METABOseek main page
+\item \code{MainPageContainerUI}: returns the \code{shiny} UI elements for the Metaboseek main page
 }}
 
 \section{MseekContainers}{

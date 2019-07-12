@@ -153,7 +153,7 @@ findMSnScans.OnDiskMSnExp <- function(data, mz, rt,
         res <- data@featureData@data[presel,][sel,][rtsel,]
         
     }else{
-        if(length(mz) != length(rt)){warning("mz and rt were not of equal length in call to METABOseek::findMSnScans")}
+        if(length(mz) != length(rt)){warning("mz and rt were not of equal length in call to Metaboseek::findMSnScans")}
         
         
         sel <- (data@featureData@data$msLevel == MSlevel 

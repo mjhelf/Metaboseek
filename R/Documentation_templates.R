@@ -31,7 +31,7 @@
 #' @importFrom grDevices as.raster colorRampPalette dev.off pdf recordPlot replayPlot topo.colors
 #' @importFrom graphics abline axis layout lcm legend lines mtext par plot points polygon rasterImage segments strheight strwidth text title
 #' @importFrom stats df median na.omit sd
-#' @importFrom utils choose.dir installed.packages packageVersion read.csv read.delim relist type.convert unzip write.csv zip
+#' @importFrom utils installed.packages packageVersion read.csv read.delim relist type.convert unzip write.csv zip
 #' 
 NULL
 

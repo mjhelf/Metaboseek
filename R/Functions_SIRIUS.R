@@ -37,7 +37,7 @@ writeMS <- function(filename,
   
   write(paste(
     if(appending){"\n"}else{paste0('# Generated with MOSAiC version ',
-                                   packageVersion("METABOseek"),', timestamp: ',
+                                   packageVersion("Metaboseek"),', timestamp: ',
                                    strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
     paste0(">compound ", splashtag),
     paste0(">parentmass ", parentmz),
@@ -159,11 +159,11 @@ runSirius <- function(outfolder,
    newjobs$charge = charge
    newjobs$fingerid = fingerid
    newjobs$moreOpts = paste0(moreOpts, instrument)
-   newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
-   newjobs$METABOseek_sirius_revision = 2
+   newjobs$Metaboseek_version = as.character(packageVersion("Metaboseek"))
+   newjobs$Metaboseek_sirius_revision = 2
    newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge",
                                             "fingerid", "moreOpts",
-                                            "METABOseek_sirius_revision"),
+                                            "Metaboseek_sirius_revision"),
                                          drop = F], 1, digest,
                                  algo = "xxhash64")
    
@@ -184,7 +184,7 @@ runSirius <- function(outfolder,
                                        fill = T))[,c("mz", "splash",
                                                      "ion", "charge", 
                                                      "fingerid", "moreOpts",
-                                                     "METABOseek_sirius_revision")]
+                                                     "Metaboseek_sirius_revision")]
     
     #To avoid problems with m/z digits possibly not retained when 
     #exporting and reimporting of siriusIndex to/from index.csv

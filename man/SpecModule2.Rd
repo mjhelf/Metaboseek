@@ -41,7 +41,7 @@ Module for interactive mass spectrum view
 \details{
 \subsection{reactives}{
 Can either be a list with entries \code{scanTable} and \code{type}, 
-specifying inputs for the \link[METABOseek]{getScanInfo}, OR
+specifying inputs for the \link[Metaboseek]{getScanInfo}, OR
 a list with entries \code{spectrum} and \code{specinfo}. 
 
 \describe{

@@ -26,7 +26,7 @@ test_that("peptide annotation and plotting works",{
     colorRampLegend(drange, assignColor(drange,colr, center = 30, symmetric = T))
     
     MseekExamplePreload(data=F)
-    testdf <- METABOseek:::analyzeTable(tab2$df, tab2$intensities,
+    testdf <- Metaboseek:::analyzeTable(tab2$df, tab2$intensities,
                                        tab2$anagroupnames,
                                        analyze = c("Basic analysis"), 
                                        normalize = T,

@@ -6,7 +6,7 @@
 \title{GetSiriusWidget}
 \usage{
 GetSiriusWidget(input, output, session, reactives = reactive({    
-  list(outfolder = "METABOseek", ms2 = NULL, instrument = "orbitrap",
+  list(outfolder = "Metaboseek", ms2 = NULL, instrument = "orbitrap",
   parentmz = NULL, rt = NULL, comments = NULL, ion = "[M+H]+", charge = 1,
   fingerid = T, scanindices = NULL, sirpath = "sirius-console-64", moreOpts
   = "") }))

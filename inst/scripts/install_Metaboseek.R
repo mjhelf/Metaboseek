@@ -14,7 +14,7 @@ devtools::install_github("mjhelf/MassTools")
 install.packages("shinyFiles")
 
 
-devtools::install_github("mjhelf/METABOseek",
+devtools::install_github("mjhelf/Metaboseek",
                          dependencies = TRUE,
                          ref = if(length(commandArgs(trailingOnly=TRUE)) > 0 ){
                            commandArgs(trailingOnly=TRUE)[1]
@@ -24,6 +24,6 @@ devtools::install_github("mjhelf/METABOseek",
 
 
 ## Start Metaboseek; this is all you need to run once you have installed Mosaic.
-library(METABOseek)
+library(Metaboseek)
 
 runMseek(launch.browser = T)

@@ -54,7 +54,7 @@ WelcomePageModule <- function(input,output, session,
         #   ),
         fluidRow(
           shinydashboard::box(status = "primary", width = 12, solidHeader = T,
-                              title = "Welcome to METABOseek!",
+                              title = "Welcome to Metaboseek!",
                               fluidPage(
                                 fluidRow(
                                   
@@ -75,7 +75,7 @@ WelcomePageModule <- function(input,output, session,
         fluidRow(
           div(class = "box box-solid box-primary",
               div(class = "box-header",
-                  h3(class = "box-title", paste0("This is METABOseek version ",packageVersion("METABOseek")))))
+                  h3(class = "box-title", paste0("This is Metaboseek version ",packageVersion("Metaboseek")))))
          
         ),
         
@@ -83,13 +83,13 @@ WelcomePageModule <- function(input,output, session,
         
         fluidRow(
           tryCatch({
-            rl <- readLines(paste0('http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = ".")), n = 1)
+            rl <- readLines(paste0('http://metaboseek.com/integrated/', paste(packageVersion("Metaboseek")[[1]],collapse = ".")), n = 1)
             
             HTML('
 <iframe id="inlineFrameWelcome"
 title="webpage" 
 style="border:none;width:100%;height:500px;" ',
-                 paste0('src="http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = "."),'">'),
+                 paste0('src="http://metaboseek.com/integrated/', paste(packageVersion("Metaboseek")[[1]],collapse = "."),'">'),
                  #paste0('src="http://metaboseek.com">'),
                  '</iframe>
               ')

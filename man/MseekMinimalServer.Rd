@@ -14,7 +14,7 @@ MseekMinimalServer(data = T, tables = T, diagnostics = T)
 \item{diagnostics}{if TRUE, run diagnostics (shinyjs::runcodeServer())}
 }
 \value{
-provides a shiny session with basic elements needed for METABOseek.
+provides a shiny session with basic elements needed for Metaboseek.
 }
 \description{
 A minimal server logic for Mseek. Function has to be called in a shiny server

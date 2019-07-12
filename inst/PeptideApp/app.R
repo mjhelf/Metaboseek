@@ -19,8 +19,8 @@ ui <- MseekMinimalUI(
         dashboardBody(
             # Load custom CSS
             tags$head(tags$style(HTML(
-                readChar(system.file("config", "METABOseek_styles.css", package = "METABOseek"),
-                         file.info(system.file("config", "METABOseek_styles.css", package = "METABOseek"))$size)))),
+                readChar(system.file("config", "Metaboseek_styles.css", package = "Metaboseek"),
+                         file.info(system.file("config", "Metaboseek_styles.css", package = "Metaboseek"))$size)))),
             tabItems(
                 tabItem(tabName = "PeptideAnnotation",
                         box(width = 5,

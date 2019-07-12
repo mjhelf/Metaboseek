@@ -1,11 +1,11 @@
 ---
-title: "METABOseek Developer Handbook"
+title: "Metaboseek Developer Handbook"
 author: "Max Helf"
 date: "June 2019"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{METABOseek Developer Handbook}
+  %\VignetteIndexEntry{Metaboseek Developer Handbook}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -20,7 +20,7 @@ For feedback, please email me: maximilian.helf@gmail.com.
 
 ##Getting started
 
-METABOseek is built in [Shiny](http://shiny.rstudio.com/), an R package that makes it straightforward to develop web apps using R code. These web apps can be run on a public server as well as on any computer that runs R and has a web browser. This allows developers to provide a graphical user interface for software written in R, both locally and on the internet. To follow along with the examples in this tutorial, make sure to [install METABOseek](https://metaboseek.com/doc.html) first. **For all examples to work, install all dependencies, including the packages that `METABOseek` merely `Suggests`!**
+Metaboseek is built in [Shiny](http://shiny.rstudio.com/), an R package that makes it straightforward to develop web apps using R code. These web apps can be run on a public server as well as on any computer that runs R and has a web browser. This allows developers to provide a graphical user interface for software written in R, both locally and on the internet. To follow along with the examples in this tutorial, make sure to [install Metaboseek](https://metaboseek.com/doc.html) first. **For all examples to work, install all dependencies, including the packages that `Metaboseek` merely `Suggests`!**
 
 ###Helpful links{#helpfulLinks}
 
@@ -32,13 +32,13 @@ Shiny is extremely well documented, and it will be helpful to keep these resourc
 * [Collection of Shiny documentation articles](http://shiny.rstudio.com/articles/)
 
 If this is your first time working with Shiny, I highly recommend looking at these 
-websites before we dive into the architecture of METABOseek.
+websites before we dive into the architecture of Metaboseek.
 
 
 ###Reactive programming
 
 **If you are curious now about seeing some example app code, you can skip this part 
-for now and take a look at [METABOseek modules](#MseekModules) first**
+for now and take a look at [Metaboseek modules](#MseekModules) first**
 
 Shiny is a reactive programming framework, and there are two important consequences of that:
 
@@ -129,7 +129,7 @@ changingValues()
 ```
 
 reactiveValues share some properties with [environments](http://adv-r.had.co.nz/Environments.html),
-including the pass-by-reference behavior we just saw. METABOseek makes extensive
+including the pass-by-reference behavior we just saw. Metaboseek makes extensive
 use of this property to exchange data between modules without cluttering the code.
 
 ###Reactive Values in practice
@@ -181,7 +181,7 @@ server <- shinyServer(function(input, output, session) {
       })
   
   output$diag <- renderPrint({
-      print(METABOseek:::ListToReactiveValues(internalValues))
+      print(Metaboseek:::ListToReactiveValues(internalValues))
   })
   
 })
@@ -264,17 +264,17 @@ to `reactivevalues2` in `reactivevalues1$aliasforRV2`. This can be very useful, 
 now showing, changing or adding values in `reactivevalues1$aliasforRV2` will be the same
 thing as doing it to `reactivevalues2`, because both refer to the exact same object in memory.
 
-###Setters and getters in METABOseek
+###Setters and getters in Metaboseek
 
 In the example above, we saw observers changing values in the internalValues `reactivevalues` object.
-In METABOseek, the most commonly used values can be accessed by getter and setter functions.
+In Metaboseek, the most commonly used values can be accessed by getter and setter functions.
 This not only makes the code much easier to read and understand, but it also means that
 if the structure of `values` changes, the only functions that have to be adjusted are the
 getter and setter functions, not all modules and functions that use any of the reactiveValues that are available.
 Here is an example for an S3-style setter function used with a reactiveValues object 
 in a shiny app, just do demonstrate that functionality, there is no difference to the previous implementation:
 
-METABOseek uses one central `reactivevalues` object, called `values`,
+Metaboseek uses one central `reactivevalues` object, called `values`,
 to let Shiny modules interact with each other. `values` contains a set of `reactivevalues` objects.
 This is seems quite convenient because modifications in that central `values` object can be observed
 in all modules, and rearranging modules is much easier when objects that need to be accessed by
@@ -288,7 +288,7 @@ However, accessing the correct objects inside `values` gets verbose, and if the 
 In regular R programming, the natural reflex would be to formalize the `values` object 
 into a S3 or S4 class and write methods that know how to safely retrieve or modify data.
 
-Because of the special (and necessary) properties of `reactivevalues`, METABOseek uses some generics to get and set values in the `reactivevalues` `values` object. 
+Because of the special (and necessary) properties of `reactivevalues`, Metaboseek uses some generics to get and set values in the `reactivevalues` `values` object. 
 I started assigning a custom class name to the `values` object and S3 generics type
 getters and setters to make things easier to navigate.  In the future, `values` will get its own class definition:
 `c("MseekTree", "reactivevalues")`, but that implementation has to be tested first for conflicts with base shiny.
@@ -405,9 +405,9 @@ ui <- fluidPage(
 shinyApp(ui,server)
 ```
 
-##METABOseek modules {#MseekModules}
+##Metaboseek modules {#MseekModules}
 
- `METABOseek` is built from a set of Shiny modules which interact with each other. Modularization makes the code a lot easier to extend and rearrange - one important effect of this is that you can easily use individual METABOseek modules to build a lightweight, specialized app (e.g. an MS data viewer to share data with colleagues). There will be executable examples throughout this tutorial, so feel free to jump ahead and take a look at the example code to get a feel for the code structure of METABOseek. I will assume that you have some experience in R programming and a basic understanding of the structure of Shiny apps as described in this [Introduction to Shiny](http://shiny.rstudio.com/articles/basics.html). 
+ `Metaboseek` is built from a set of Shiny modules which interact with each other. Modularization makes the code a lot easier to extend and rearrange - one important effect of this is that you can easily use individual Metaboseek modules to build a lightweight, specialized app (e.g. an MS data viewer to share data with colleagues). There will be executable examples throughout this tutorial, so feel free to jump ahead and take a look at the example code to get a feel for the code structure of Metaboseek. I will assume that you have some experience in R programming and a basic understanding of the structure of Shiny apps as described in this [Introduction to Shiny](http://shiny.rstudio.com/articles/basics.html). 
 
 ###Let's build a module
 
@@ -416,7 +416,7 @@ in the app and can be used to modify the Feature Table with some custom function
 
 ```{r, eval = F}
 library(shiny)
-library(METABOseek)
+library(Metaboseek)
 MseekOptions()
 
 Add1toMzs <- function(df){
@@ -492,17 +492,17 @@ shinyApp(ui, server)
 
 
 
-###METABOseek modules overview
+###Metaboseek modules overview
 
-Modules in METABOseek come in three flavours:
+Modules in Metaboseek come in three flavours:
 
 ####Widgets
 These should work in a "vanilla" shiny environment, i.e. any shiny app, making it easy to use them in other shiny projects without significant overhead. The only expected argument they need is a list supplied as reactives, and potentially additional arguments for which default values exist. Widgets are typically wrappers for plotting functions with some additional functionality. 
 
-Here is a complete shiny app that uses the  `METABOseek::SpecplotWidget` to display a mock mass spectrum. In additon to passing arguments to a plotting function, it also takes care of setting up a selectCallback to register click and brush events, and adds a zoom functionality.
+Here is a complete shiny app that uses the  `Metaboseek::SpecplotWidget` to display a mock mass spectrum. In additon to passing arguments to a plotting function, it also takes care of setting up a selectCallback to register click and brush events, and adds a zoom functionality.
 
 ```{r, eval = F}
-library(METABOseek)
+library(Metaboseek)
 library(shiny)
 
 #user interface
@@ -523,16 +523,16 @@ shinyApp(ui, server)
 
 ```
 
-If this example runs succesfully on your computer, METABOseek is installed and working! **Try out the zoom function: you can select a range with you mouse (hold left mouse button), and zoom in by double-clicking. To zoom out, just double-click again.**
+If this example runs succesfully on your computer, Metaboseek is installed and working! **Try out the zoom function: you can select a range with you mouse (hold left mouse button), and zoom in by double-clicking. To zoom out, just double-click again.**
 
 ####Modules
-Regular modules in METABOseek take a `shiny::reactiveValues` object called `values` as their first argument. `values` is the primary interface allowing communication between modules and is generated by `MseekMinimalServer()`. Modules expect this input to work properly, and will only work in shiny apps that provide the proper environment set up by `MseekMinimalServer()`.
+Regular modules in Metaboseek take a `shiny::reactiveValues` object called `values` as their first argument. `values` is the primary interface allowing communication between modules and is generated by `MseekMinimalServer()`. Modules expect this input to work properly, and will only work in shiny apps that provide the proper environment set up by `MseekMinimalServer()`.
 
-We will now run a modified app that uses the METABOseek environment, and a full-fledged module:
+We will now run a modified app that uses the Metaboseek environment, and a full-fledged module:
 
 
 ```{r, eval = F}
-library(METABOseek)
+library(Metaboseek)
 library(shiny)
 
 ui <- MseekMinimalUI(
@@ -582,9 +582,9 @@ Modules which contain other Modules, but do not contain add any functionality
 themselves. They should not contain any observers and are only here to pass 
 `values` into modules, or provide ways for individual Modules to interact with each other.
 
-Here we use the container for the entire METABOseek app:
+Here we use the container for the entire Metaboseek app:
 ```{r, eval = F}
-library(METABOseek)
+library(Metaboseek)
 
 #load .MseekOptions in case they have been deleted from environment
 MseekOptions(develMode = F,
@@ -603,8 +603,8 @@ shiny::shinyApp(ui, server)
 
 ```
 
-###METABOseek modules in detail
+###Metaboseek modules in detail
 
-Now that we have seen the different types of METABOseek modules, let's look 
+Now that we have seen the different types of Metaboseek modules, let's look 
 closer at how they are different and what the implications of those differences are.
 We will build our own set of modules into a small app here.

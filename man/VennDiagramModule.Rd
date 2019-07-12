@@ -41,7 +41,7 @@ for the server Module)}
 Returns its internalValues
 }
 \description{
-server module for Venn diagrams in METABOseek
+server module for Venn diagrams in Metaboseek
 }
 \section{Functions}{
 \itemize{

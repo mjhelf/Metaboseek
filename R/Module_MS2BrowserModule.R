@@ -381,7 +381,7 @@ MS2BrowserModule <- function(input,output, session,
                  
 
                  
-                 list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
+                 list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"Metaboseek"),
                       ms2 = splashsource()$AllSpecLists,
                       ms1 = list(internalValues$ms1),
                       instrument = values$GlobalOpts$SiriusSelInstrument,
