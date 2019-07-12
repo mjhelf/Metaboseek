@@ -25,4 +25,22 @@ test_that("peptide annotation and plotting works",{
     colorRampLegend(drange, assignColor(drange,colr, center = 10))
     colorRampLegend(drange, assignColor(drange,colr, center = 30, symmetric = T))
     
+    MseekExamplePreload(data=F)
+    testdf <- METABOseek:::analyzeTable(tab2$df, tab2$intensities,
+                                       tab2$anagroupnames,
+                                       analyze = c("Basic analysis"), 
+                                       normalize = T,
+                                       useNormalized = T,
+                                       logNormalized = F,
+                                       MSData = NULL,
+                                       ppm = 5)
+    
+    colorRampLegend((testdf$df$mut__foldOverRest),
+                    assignColor(sort((testdf$df$mut__foldOverRest)),
+                                colr,
+                                center = 0,
+                                symmetric = T),
+                    #internalValues$colscale,
+                    "TEST")
+    
     })
