@@ -170,7 +170,7 @@ output$mzInfo2 <- renderUI({
            "from ", mzauto()$source)
            
   }else{
-    p("No molecular mormulas found for current query!")
+    p("No molecular formulas found for current query!")
     
   }
 })

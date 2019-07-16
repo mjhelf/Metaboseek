@@ -412,6 +412,7 @@ network1 <- function(spec1, spec2, mztol = 0.005,
 makeEdges <- function(speclist,
                       parentmasses = NULL,
                       mztol = 0.005, 
+                      method = "cosine",
                       minpeaks = 6, 
                       nonmatched = T){
   
@@ -440,6 +441,7 @@ makeEdges <- function(speclist,
              MoreArgs = list(spec2 = specs[[sel[1]]],
                              mztol = mztol,
                              minpeaks = minpeaks,
+                             method = method,
                              nonmatched = nonmatched))
     }, 
     sel = selectlist, 
@@ -452,6 +454,7 @@ makeEdges <- function(speclist,
     alledges <-  lapply(selectlist, function(sel, specs, mzt, mp, nonm){
       lapply(specs[sel[-1]],network1,
              spec2 = specs[[sel[1]]],
+             method = method,
              mztol = mzt, 
              minpeaks = mp, 
              nonmatched = nonm)
@@ -465,9 +468,10 @@ makeEdges <- function(speclist,
   
   sz <- sum(sapply(alledges, length))
   
-  dt <- data.table(from = integer(sz),
+  dt <- data.frame(from = integer(sz),
                    to = integer(sz),
-                   cosine = numeric(sz))
+                   cosine = numeric(sz),
+                   stringsAsFactors = F)
   
   seq(6,1)
   dt$from = unlist(mapply(rep, 1:length(alledges), sapply(alledges, length)))
@@ -485,7 +489,7 @@ makeEdges <- function(speclist,
   dt$from <- selNonNulls[dt$from]
   dt$to <- selNonNulls[dt$to]
   
-  return(as.data.frame(dt))
+  return(dt)
   
 }
 
