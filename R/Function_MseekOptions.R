@@ -71,7 +71,7 @@ MseekOptions <- function(..., defaults = F){
                             colorBy = "file",
                             relPlotToggle = F,
                             raiseToggle = F,
-                           recentProjects = system.file("extdata","examples", "example projectfolder", package = "Metaboseek"),
+                           recentProjects = system.file("extdata","examples", "example_projectfolder", package = "Metaboseek"),
                            SiriusSelIon = "[M+?]+",
                            SiriusCheckFinger = T,
                            SiriusSelInstrument = "orbitrap",
@@ -108,14 +108,14 @@ MseekOptions <- function(..., defaults = F){
     
   }  
   
-  checkexfolder <- grep("extdata/examples/example projectfolder", .MseekOptions$recentProjects, fixed = T)
+  checkexfolder <- grep("extdata/examples/example_projectfolder", .MseekOptions$recentProjects, fixed = T)
   
   if(!.MseekOptions$serverMode && length(checkexfolder) >0 && !file.exists(.MseekOptions$recentProjects[checkexfolder])){
   
-    .MseekOptions$recentProjects[checkexfolder] <<-  system.file("extdata","examples", "example projectfolder", package = "Metaboseek")
-    rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "Metaboseek"), stringsAsFactors = F, row.names = 1)
+    .MseekOptions$recentProjects[checkexfolder] <<-  system.file("extdata","examples", "example_projectfolder", package = "Metaboseek")
+    rawgroups <- read.csv(system.file("extdata", "examples", "example_projectfolder", "filegroups_base.csv", package = "Metaboseek"), stringsAsFactors = F, row.names = 1)
     rawgroups$File <- file.path(system.file("extdata", "examples", package = "Metaboseek"), rawgroups$File)
-    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "Metaboseek"), "filegroups.csv"))
+    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example_projectfolder", package = "Metaboseek"), "filegroups.csv"))
     
   }
   

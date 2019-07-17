@@ -910,7 +910,7 @@
       ]
     },
     "Mseek-startpage-startdataload-projectfolder-selrecent": {
-      "html": "<div title=\"<RECENT_PROJECT>\">\n  <div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n    <label class=\"control-label\" for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">Recent projects: <\/label>\n    <div>\n      <select id=\"Mseek-startpage-startdataload-projectfolder-selRecent\" class=\"form-control\"><option value=\"<RECENT_PROJECT>\" selected>example projectfolder<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div title=\"<RECENT_PROJECT>\">\n  <div class=\"form-group shiny-input-container\" style=\"width: 100%;\">\n    <label class=\"control-label\" for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">Recent projects: <\/label>\n    <div>\n      <select id=\"Mseek-startpage-startdataload-projectfolder-selRecent\" class=\"form-control\"><option value=\"<RECENT_PROJECT>\" selected>example_projectfolder<\/option><\/select>\n      <script type=\"application/json\" data-for=\"Mseek-startpage-startdataload-projectfolder-selRecent\">{}<\/script>\n    <\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "selectize",

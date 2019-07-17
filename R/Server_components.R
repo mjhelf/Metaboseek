@@ -150,30 +150,30 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
 MseekExamplePreload <- function(tables = T, data = T){
   if(tables){
     eval.parent(quote({
-      tab1 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example projectfolder", "mini_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
+      tab1 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example_projectfolder", "mini_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
                                      rtcol= "rt", #column in df with mz values (columnname)
                                      commentcol = "comments",
                                      fragmentcol = "fragments",
                                      rtFormat = "sec", # "sec" or "min" 
-                                     anagrouptable = read.csv(system.file("extdata","examples", "example projectfolder", "analysis_groups.csv", package = "Metaboseek"), stringsAsFactors = F),
+                                     anagrouptable = read.csv(system.file("extdata","examples", "example_projectfolder", "analysis_groups.csv", package = "Metaboseek"), stringsAsFactors = F),
                                      tablename = "mini_example_features.csv",
                                      editable = F)
       
-      tab2 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example projectfolder", "large_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
+      tab2 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example_projectfolder", "large_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
                                      rtcol= "rt", #column in df with mz values (columnname)
                                      commentcol = "comments",
                                      fragmentcol = "fragments",
                                      rtFormat = "sec", # "sec" or "min" 
-                                     anagrouptable = read.csv(system.file("extdata","examples", "example projectfolder", "analysis_groups.csv", package = "Metaboseek"), stringsAsFactors = F),
+                                     anagrouptable = read.csv(system.file("extdata","examples", "example_projectfolder", "analysis_groups.csv", package = "Metaboseek"), stringsAsFactors = F),
                                      tablename = "large_example_features.csv",
                                      editable = F)
     }))}
   
   if(data){
     eval.parent(quote({
-      rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "Metaboseek"), stringsAsFactors = F)
+      rawgroups <- read.csv(system.file("extdata", "examples", "example_projectfolder", "filegroups.csv", package = "Metaboseek"), stringsAsFactors = F)
       
 
       MSD <- list(rawgrouptable = NULL,

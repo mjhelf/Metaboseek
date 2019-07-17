@@ -17,12 +17,12 @@
   
     #Update example ms file locations
   if(dirname(system.file(package = "Metaboseek")) %in% .libPaths()
-     && !file.exists(system.file("extdata", "examples", "example projectfolder", "filegroups.csv", package = "Metaboseek"))){
-    rawgroups <- read.csv(system.file("extdata", "examples", "example projectfolder", "filegroups_base.csv", package = "Metaboseek"), stringsAsFactors = F, row.names = 1)
+     && !file.exists(system.file("extdata", "examples", "example_projectfolder", "filegroups.csv", package = "Metaboseek"))){
+    rawgroups <- read.csv(system.file("extdata", "examples", "example_projectfolder", "filegroups_base.csv", package = "Metaboseek"), stringsAsFactors = F, row.names = 1)
     rawgroups$File <- file.path(system.file("extdata", "examples", package = "Metaboseek"), rawgroups$File)
-    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example projectfolder", package = "Metaboseek"), "filegroups.csv"))
-    #write.csv(rawgroups[rawgroups$Group != "MS2",], file.path(system.file("extdata", "examples", "example projectfolder", package = "Metaboseek"), "filegroups_ms1.csv"))
-   # write.csv(rawgroups[rawgroups$Group == "MS2",], file.path(system.file("extdata", "examples", "example projectfolder", package = "Metaboseek"), "filegroups_ms2.csv"))
+    write.csv(rawgroups, file.path(system.file("extdata", "examples", "example_projectfolder", package = "Metaboseek"), "filegroups.csv"))
+    #write.csv(rawgroups[rawgroups$Group != "MS2",], file.path(system.file("extdata", "examples", "example_projectfolder", package = "Metaboseek"), "filegroups_ms1.csv"))
+   # write.csv(rawgroups[rawgroups$Group == "MS2",], file.path(system.file("extdata", "examples", "example_projectfolder", package = "Metaboseek"), "filegroups_ms2.csv"))
   }
   
   
