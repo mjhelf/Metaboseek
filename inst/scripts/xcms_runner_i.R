@@ -4,10 +4,14 @@ tryCatch({
 
 library(xcms)
 library(Metaboseek)
+library(CAMERA)
+
 
 fols <- commandArgs(trailingOnly=TRUE)
 
 setwd(fols[1])
+
+writeLines(utils::capture.output(utils::sessionInfo()), "AnalysisSessionInfo.txt")
 
 history <- writeStatus (previous = NULL,
                         message = list(Status = paste0("Starting analysis with xcms_runner in Metaboseek v",packageVersion("Metaboseek")," and xcms version ", packageVersion("xcms")),
@@ -285,7 +289,6 @@ if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
                           message = list(Status = "CAMERA annotation",
                                          Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
   
-  library(CAMERA)
   an   <- xsAnnotate(as(xset, "xcmsSet"),
                      nSlaves = as.integer(centWave["workers",1]),
                      polarity = cam_param$polarity)###CHANGE POLARITY
