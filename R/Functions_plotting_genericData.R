@@ -112,11 +112,11 @@ groupedplot <- function(...,
 #' @param center force the middle of the color vector to correspond to this value
 #' @param symmetric if true, will spread colors on both sides of center along 
 #' the same scale
-#'
+#' 
 #' @export
 assignColor <- function(datarange,
-                         colscale,
-                         scalerange =range(datarange),
+                        colscale,
+                        scalerange = range(1,length(colscale)),
                         center = NULL,
                         symmetric = F){
     
@@ -133,27 +133,54 @@ assignColor <- function(datarange,
             
             #now, modify for the data values above and below the center value:
             selabove <- which(datarange > center)
-            if(length(selabove)){
-                col[selabove] <- assignColor(datarange[selabove],
-                                              colscale[(middleColInt+1):ncolors],
-                                              scalerange = if(!symmetric){range(datarange[selabove])
-                                                  }else{ c(scalerange[which.max(abs(scalerange-center))], center) })
-            }
             selbelow <- which(datarange < center)
+            
+            if(length(selabove) 
+               && length(selbelow)){
+            
+            restrictor <- max(abs(center - datarange[selabove]))/max(abs(center - datarange[selbelow]))
+            
+            if(restrictor < 1){
+                
+                abovescale <- (middleColInt+1):ncolors
+                belowscale <- (middleColInt-middleColInt*restrictor+1):(middleColInt-1)
+                
+                }else{
+                 
+                abovescale <- (middleColInt+1):((middleColInt+1) + round(ncolors/2/restrictor,0))
+                belowscale <- 1:(middleColInt-1)
+                       
+                }
+            
+            abovescale[abovescale > ncolors] <- ncolors
+            belowscale[belowscale > middleColInt - 1] <- middleColInt-1
+            abovescale[abovescale <  middleColInt + 1] <- middleColInt + 1
+            belowscale[belowscale < 1] <- 1
+            }
+            
+            if(length(selabove)){
+                print( middleColInt:ncolors)
+                col[selabove] <- colscale[scales::rescale(x = datarange[selabove],
+                                                          to = range(middleColInt:ncolors),
+                                                          from = range(c(center, center + abs(datarange[which.max(abs(datarange - center))]))))]
+                    # assignColor(datarange = datarange[selabove],
+                    #                          colscale = if(!length(selbelow) || !symmetric){colscale[(middleColInt + 1):ncolors]}else{colscale[belowscale]})
+            }
             if(length(selbelow)){
-                col[selbelow] <- assignColor(datarange[selbelow],
-                                              if(!symmetric){colscale[1:(middleColInt-1)]}else{rev(colscale[1:(middleColInt-1)])},
-                                              scalerange = if(!symmetric){range(datarange[selbelow])
-                                              }else{ c(scalerange[which.max(abs(scalerange-center))], center) })
+                col[selbelow] <- colscale[scales::rescale(datarange[selbelow],
+                                                          c(1,middleColInt),
+                                                          from = range(c(center-abs(datarange[which.max(abs(datarange - center))]),center)))]
+                    # assignColor(datarange[selbelow],
+                    #                          colscale = if(!length(selabove) || !symmetric){colscale[1:(middleColInt-1)]}else{colscale[abovescale]})
             }
             return(col)
         }else{
-           
-            if(diff(scalerange) == 0){
-                colsel <-ncolors
+            
+            if(diff(range(datarange)) == 0){
+                colsel <- rep(colscale[1], length(datarange))
             }else{
-                colsel <- abs((ncolors-1)/(max(scalerange)-min(scalerange)) * (datarange-max(scalerange)) + ncolors)
-            colsel <- round(colsel,0)
+                colsel <- scales::rescale(datarange, c(1,ncolors))#   abs((ncolors-1)/(max(datarange)-min(datarange)) * (datarange-max(datarange)))
+                colsel <- round(colsel,0)
             }
         }
         #introducing minor inaccuracyfor low values, should become less relevant with larger ncolors:
