@@ -108,7 +108,6 @@ groupedplot <- function(...,
 #' 
 #' @param datarange the data range for the legend
 #' @param colscale character vector of colors
-#' @param scalerange scale that will be used to spread the colors across
 #' @param center force the middle of the color vector to correspond to this value
 #' @param symmetric if true, will spread colors on both sides of center along 
 #' the same scale
@@ -116,7 +115,6 @@ groupedplot <- function(...,
 #' @export
 assignColor <- function(datarange,
                         colscale,
-                        scalerange = range(1,length(colscale)),
                         center = NULL,
                         symmetric = F){
     
@@ -159,17 +157,16 @@ assignColor <- function(datarange,
             }
             
             if(length(selabove)){
-                print( middleColInt:ncolors)
-                col[selabove] <- colscale[scales::rescale(x = datarange[selabove],
+                col[selabove] <- colscale[round(scales::rescale(x = datarange[selabove],
                                                           to = range(middleColInt:ncolors),
-                                                          from = range(c(center, center + abs(datarange[which.max(abs(datarange - center))]))))]
+                                                          from = range(c(center, center + max(abs(datarange - center))))),0)]
                     # assignColor(datarange = datarange[selabove],
                     #                          colscale = if(!length(selbelow) || !symmetric){colscale[(middleColInt + 1):ncolors]}else{colscale[belowscale]})
             }
             if(length(selbelow)){
-                col[selbelow] <- colscale[scales::rescale(datarange[selbelow],
+                col[selbelow] <- colscale[round(scales::rescale(datarange[selbelow],
                                                           c(1,middleColInt),
-                                                          from = range(c(center-abs(datarange[which.max(abs(datarange - center))]),center)))]
+                                                          from = range(c(center - max(abs(datarange - center)),center))),0)]
                     # assignColor(datarange[selbelow],
                     #                          colscale = if(!length(selabove) || !symmetric){colscale[1:(middleColInt-1)]}else{colscale[abovescale]})
             }

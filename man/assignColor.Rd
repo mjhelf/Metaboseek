@@ -4,15 +4,12 @@
 \alias{assignColor}
 \title{assignColor}
 \usage{
-assignColor(datarange, colscale, scalerange = range(datarange),
-  center = NULL, symmetric = F)
+assignColor(datarange, colscale, center = NULL, symmetric = F)
 }
 \arguments{
 \item{datarange}{the data range for the legend}
 
 \item{colscale}{character vector of colors}
-
-\item{scalerange}{scale that will be used to spread the colors across}
 
 \item{center}{force the middle of the color vector to correspond to this value}
 

@@ -97,7 +97,7 @@ test_that("peptide annotation and plotting works",{
     
     
     
-    colr <- crange(50)
+    colr <- crange(500)
     
     
     colorRampLegend(datarange = Metaboseek:::safelog(testdf$df$mut__foldOverRest),
@@ -119,17 +119,26 @@ test_that("peptide annotation and plotting works",{
                     "TEST")
     
     colorRampLegend(datarange = Metaboseek:::safelog(testdf$df$mut__foldOverRest),
-                    assignColor2(datarange = sort(Metaboseek:::safelog(testdf$df$mut__foldOverRest)),
+                    assignColor(datarange = sort(Metaboseek:::safelog(testdf$df$mut__foldOverRest)),
                                 colscale = colr,
-                                scalerange = range(datarange),
-                                center = 0,
-                                symmetric = T),
+                                center = NULL,
+                                symmetric = F),
                     #internalValues$colscale,
                     "TEST")
     
     
     colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
-                    assignColor2(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
+                    assignColor(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
+                                colr,
+                                center = 0,
+                                symmetric = T),
+                    #internalValues$colscale,
+                    "TEST")
+    
+    colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
+                    assignColor(seq(min(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
+                                    max(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
+                                    length.out = 200),
                                 colr,
                                 center = 0,
                                 symmetric = T),
@@ -137,44 +146,40 @@ test_that("peptide annotation and plotting works",{
                     "TEST")
     
     
-    colorRampLegend(datarange = -50:1000,
-                    assignColor2(datarange = -50:1000,
+    colorRampLegend(datarange = -5000:100000,
+                    assignColor(datarange = -5000:100000,
                                  colscale = colr,
-                                 scalerange = range(datarange),
                                  center = 0,
                                  symmetric = T),
                     #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -10:100,
-                    assignColor2(datarange = -10:100,
+                    assignColor(datarange = -10:100,
                                  colscale = colr,
-                                 scalerange = range(datarange),
                                  center = NULL,
                                  symmetric = F),
                     #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -10:100,
-                    assignColor2(datarange = -10:100,
+                    assignColor(datarange = -10:100,
                                  colscale = colr,
-                                 scalerange = range(datarange),
-                                 center = 50,
+                                 center = 90,
                                  symmetric = T),
                     #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = 1:1000,
-                    assignColor2(datarange = 1:1000,
+                    assignColor(datarange = 1:1000,
                                  colscale = colr,
-                                 scalerange = range(datarange),
                                  center = 0,
                                  symmetric = T),
                     "TEST")
     
                     #internalValues$colscale,
     colorRampLegend(datarange = -1000:1000,
-                    assignColor2(datarange = -1000:1000,
+                    assignColor(datarange = -1000:1000,
                                  colscale = colr,
                                  center = 0,
                                  symmetric = T),
@@ -182,16 +187,9 @@ test_that("peptide annotation and plotting works",{
                     "TEST")
     
     
-    colorRampLegend(datarange = -1000:1000,
-                    assignColor2(datarange = -1000:1000,
-                                 colscale = colr,
-                                 center = 0,
-                                 symmetric = T),
-                    #internalValues$colscale,
-                    "TEST")
     
     colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
-                    assignColor2(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
+                    assignColor(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
                                  colr,
                                  center = 0,
                                  symmetric = T),
