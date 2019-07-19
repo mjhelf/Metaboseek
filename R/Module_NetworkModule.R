@@ -272,8 +272,8 @@ sliderInput(ns("seledges"), "Filter edges",
           
           vc <- assignColor(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)),
                             internalValues$colscale,
-                            center = 0,
-                            symmetric = T)
+                            manualRange = safelog(vertex_attr(internalValues$graph,input$vlabelcol)),
+                            center = 0)
           
         }
         
@@ -449,14 +449,14 @@ sliderInput(ns("seledges"), "Filter edges",
                  cex = 1, horiz = T)
       }else{
         
-          legendranges <- range(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)))
+          legendranges <- range(safelog(vertex_attr(internalValues$graph,input$vlabelcol)))
           legendranges <- seq(min(legendranges), max(legendranges), length.out = 200)
           
-        colorRampLegend(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)),
+        colorRampLegend(safelog(vertex_attr(internalValues$graph,input$vlabelcol)),
                         assignColor(legendranges,
                                     internalValues$colscale,
-                                    center = 0,
-                                    symmetric = T),
+                                    manualRange = safelog(vertex_attr(internalValues$graph,input$vlabelcol)),
+                                    center = 0),
                         #internalValues$colscale,
                         input$vlabelcol)
         

@@ -4,7 +4,7 @@
 \alias{assignColor}
 \title{assignColor}
 \usage{
-assignColor(datarange, colscale, center = NULL, symmetric = F)
+assignColor(datarange, colscale, center = NULL, manualRange = NULL)
 }
 \arguments{
 \item{datarange}{the data range for the legend}
@@ -13,8 +13,7 @@ assignColor(datarange, colscale, center = NULL, symmetric = F)
 
 \item{center}{force the middle of the color vector to correspond to this value}
 
-\item{symmetric}{if true, will spread colors on both sides of center along 
-the same scale}
+\item{manualRange}{enter a range to fit the color range to, if not range(datarange)}
 }
 \value{
 a character vector of same length as \code{datarange} with color values
