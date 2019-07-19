@@ -41,7 +41,7 @@ MultiFilterModule <- function(input,output, session, values,
     internalValues$applyButton <- internalValues$applyButton + 1
     
     #let's try if this causes problems here:
-    TableUpdateChunk()
+    updateFT(values)
     
     logilist <- list()
     

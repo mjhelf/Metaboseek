@@ -29,8 +29,8 @@ GroupedEICModule <- function(input,output, session,
     return(paste0(titleout,".pdf"))}, 
     content = function(file){
       
-      TableUpdateChunk()
-      
+        updateFT(values)
+        
      subtitles <- NULL
 
      if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){

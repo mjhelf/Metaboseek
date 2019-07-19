@@ -137,11 +137,11 @@ output$xcms_settingsDL <- downloadHandler(filename= function(){paste("settings.z
                                           contentType = "application/zip")
 
 
-toggle(id ="xcms_loadfolderOffline", condition = (!internalStatic$servermode && Sys.info()['sysname'] == "Windows"))
-toggle(id = "xcms_loadfolder", condition = ((internalStatic$servermode) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
+#toggle(id ="xcms_loadfolderOffline", condition = (!internalStatic$servermode && Sys.info()['sysname'] == "Windows"))
+#toggle(id = "xcms_loadfolder", condition = ((internalStatic$servermode) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
 
 observe({
-  toggleState(id = "xcms_loadfolder", condition = ((internalStatic$servermode && internalStatic$activateXCMS) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
+  #toggleState(id = "xcms_loadfolder", condition = ((internalStatic$servermode && internalStatic$activateXCMS) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
   toggleState(id = "xcms_start", condition = (length(internalValues$wd)>0 && (!internalStatic$servermode || (internalStatic$servermode && internalStatic$activateXCMS))))
 })
 
@@ -161,18 +161,18 @@ observeEvent(input$xcms_loadfolder,{
   }
 })
 
-observeEvent(input$xcms_loadfolderOffline,{
-  fol <- gsub("\\\\","/",utils::choose.dir())
-  if(length(fol)>0 &&!is.na(fol)){
-    #taken from xcms package
-    flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
-    internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
-    internalValues$wd <- fol
-    internalValues$active <- "filegroups"
-    internalValues$xcmsModule_loaded <- T
-  }
-  
-})
+# observeEvent(input$xcms_loadfolderOffline,{
+#   fol <- gsub("\\\\","/",utils::choose.dir())
+#   if(length(fol)>0 &&!is.na(fol)){
+#     #taken from xcms package
+#     flist = list.files(fol, pattern=internalStatic$filePattern, recursive = TRUE, full.names=T)
+#     internalValues$params$filegroups <- data.frame(File = flist, Group = rep("G1", length(flist)), stringsAsFactors = F)
+#     internalValues$wd <- fol
+#     internalValues$active <- "filegroups"
+#     internalValues$xcmsModule_loaded <- T
+#   }
+#   
+# })
 
 output$xcms_selectTab <- renderUI({selectizeInput(ns('xcms_selectTab'),"Change settings for...", 
                                                   choices = list("File Grouping" = "filegroups",
@@ -236,7 +236,8 @@ observeEvent(input$xcms_start,{
          wait = F)
   
   showModal(modalDialog(p("The xcms analysis is running in a separate process now.
-                          You can continue using Metaboseek or close Metaboseek now without interrupting the analysis.
+                          You can continue using Metaboseek now.
+                         Closing the Metaboseek command line window will interrupt the xcms run!
                           The results of this analysis can be found in ", strong(fo)),
                         title = "xcms analysis is running!",
                         easyClose = T
@@ -359,7 +360,7 @@ fluidPage(
         p(strong("Not on by default in Server mode!")," Currently only one xcms job per Metaboseek session (concurrent job monitoring coming later)."),
         fluidRow(
           column(6,
-                 actionButton(ns('xcms_loadfolderOffline'), "load MS file folder"),
+                 #actionButton(ns('xcms_loadfolderOffline'), "load MS file folder"),
                  shinyDirButton(ns('xcms_loadfolder'), "load MS file folder", title = "select a folder with MS data files"),
                  
                  

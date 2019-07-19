@@ -64,6 +64,24 @@ the readOnly rule (e.g. only allow editing on comments column)
 \item \code{MainTableModuleUI}: UI elements
 }}
 
+\examples{
+\dontrun{
+library(shiny)
+
+ui <- MseekMinimalUI(MainTableModuleUI("examplemodule"),
+                     diagnostics = F, dashboard = F)
+
+server <- function(input, output) {
+    MseekMinimalServer(diagnostics = F, data = F, tables = T)
+    
+    callModule(MainTableModule, "examplemodule", values = reactiveValues(featureTables = values$featureTables,
+                                                                                          GlobalOpts = values$GlobalOpts,
+                                                                                          projectData = values$projectData))
+}
+# Create Shiny app ----
+shinyApp(ui, server)
+}
+}
 \seealso{
 \code{\link{values}} for a description of the \code{values} object
 }

@@ -143,8 +143,7 @@ ColumnSelModule <- function(input, output, session,
                    internalValues$othersSelected,
                    internalValues$rtMin),{
                        
-                       
-                       TableUpdateChunk()                   
+                       updateFT(values)
                        
                        values$featureTables$selectedCols <- unique(unname(c(values$featureTables$tables[[values$featureTables$active]]$core,
                                                                             values$featureTables$tables[[values$featureTables$active]]$comments,

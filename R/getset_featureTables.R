@@ -180,6 +180,7 @@ updateFT <- function(values){
     
     if(!is.null(values$featureTables) 
        && values$featureTables$Maintable$hasUpdates
+       && values$featureTables$Maintable$updatedFrom == activeFT(values)
     ){
         if((!is.null(values$featureTables$tables[[values$featureTables$active]]$editable) 
             && values$featureTables$tables[[values$featureTables$active]]$editable)

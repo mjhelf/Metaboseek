@@ -26,13 +26,14 @@ SelectActiveTableModule <- function(input,output, session,
   
   observeEvent(input$activeTable, { 
     
-    TableUpdateChunk()
-    
-    values$featureTables$tableSwitch <- T
+    #  if(values$featureTables$active != input$activeTable){
+
+    updateFT(values)
+    values$featureTables$tableSwitch <- TRUE
     values$featureTables$active <- input$activeTable
     values$featureTables$row_filters <- TRUE
-    
-  })
+    #  }
+  }, priority = 1000)
   
 }
 

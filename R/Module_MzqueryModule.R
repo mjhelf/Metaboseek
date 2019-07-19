@@ -262,8 +262,8 @@ observeEvent(input$mzButton2,{
         ele <- initializeElements(input$selelements)
       }
     
-    TableUpdateChunk()
-
+        updateFT(values)
+        
       res <- data.frame(predicted_MFs =if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$predicted_MFs)){
         values$featureTables$tables[[values$featureTables$active]]$df$predicted_MFs}
         else{

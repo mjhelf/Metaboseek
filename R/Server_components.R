@@ -113,13 +113,15 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
                                                 "mini_example_features.csv" = "table1",
                                                 "large_example_features.csv" = "table2"),
                                       active = "table1",
+                                      row_filters = TRUE,
                                       activerow = 1)
     }))
   }else{
     eval.parent(quote({
       featureTables <- reactiveValues(tables = list(table0 = constructFeatureTable()),
                                       index = c("Custom Table" = "table0"),
-                                      active = "table0"
+                                      active = "table0",
+                                      row_filters = TRUE
       )
     }))
   }

@@ -200,7 +200,7 @@ LoadNetworkModule <- function(input,output, session, values,
     
         withProgress(message = 'Please wait!', detail = "Saving changes to Feature Table", value = 0, {
           
-        TableUpdateChunk()
+        updateFT(values)
         values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],data.frame(fixed__id = seq(nrow(values$featureTables$tables[[values$featureTables$active]]$df))))
         
         incProgress(0.1, detail = "Extracting MS2 scans")

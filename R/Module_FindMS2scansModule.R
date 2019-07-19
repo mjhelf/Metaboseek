@@ -73,8 +73,8 @@ FindMS2ScansModule <- function(input,output, session, values,
   observeEvent(input$startMS2search,{
     
     tryCatch({
-      TableUpdateChunk()
-      
+        updateFT(values)
+        
       withProgress(message = 'Please wait!', detail = "Finding MS2 scans", value = 0.5, {
         
         MS2s <-  data.frame(MS2scans = listMS2scans(mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,

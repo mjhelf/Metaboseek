@@ -93,7 +93,8 @@ SaveTableModule <- function(input,output, session,
   observeEvent(input$savetable,{
     
     if(!is.null(values$featureTables)){
-      TableUpdateChunk()}
+        updateFT(values)
+    }
     
     showModal(
       modalDialog(
@@ -184,7 +185,9 @@ SaveTableModule <- function(input,output, session,
                                      file.path(dirname(reactives()$filename),
                                                input$tabname))), recursive = T)
       }
-      if(is.null(values$featureTables)){TableUpdateChunk()}
+      if(is.null(values$featureTables)){
+          updateFT(values)
+          }
       
       written <- tableWriter(if(is.null(values$featureTables)){reactives()$df}
                              else{

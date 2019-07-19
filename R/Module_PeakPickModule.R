@@ -103,8 +103,8 @@ If this is selected, the rt window setting for peak intensity calculation starts
     tryCatch({
       withProgress(message = 'Please wait!', detail = "Finding peaks", value = 0.5, {
         
-        TableUpdateChunk()
-        
+          updateFT(values)
+          
         tabid <- paste0("table",length(values$featureTables$index))
         names(tabid) <- paste0("peakpick_", values$featureTables$tables[[values$featureTables$active]]$tablename)
         

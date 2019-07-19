@@ -134,14 +134,14 @@ assignColor <- function(datarange,
             #now, modify for the data values above and below the center value:
             selabove <- which(datarange > center)
             if(length(selabove)){
-                col[selabove] <- assignColor2(datarange[selabove],
+                col[selabove] <- assignColor(datarange[selabove],
                                               colscale[(middleColInt+1):ncolors],
                                               scalerange = if(!symmetric){range(datarange[selabove])
                                                   }else{ c(scalerange[which.max(abs(scalerange-center))], center) })
             }
             selbelow <- which(datarange < center)
             if(length(selbelow)){
-                col[selbelow] <- assignColor2(datarange[selbelow],
+                col[selbelow] <- assignColor(datarange[selbelow],
                                               if(!symmetric){colscale[1:(middleColInt-1)]}else{rev(colscale[1:(middleColInt-1)])},
                                               scalerange = if(!symmetric){range(datarange[selbelow])
                                               }else{ c(scalerange[which.max(abs(scalerange-center))], center) })
