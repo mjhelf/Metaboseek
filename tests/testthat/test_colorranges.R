@@ -16,26 +16,18 @@ test_that("peptide annotation and plotting works",{
     expect_equal(assignColor(1:10,1:5, center = NULL),
                  c(1,1,2,2,3,3,4,4,5,5))
     
-    expect_equal(assignColor(c(1,2,3,NA,5),1:5, center = NULL),
-                 c(1,1,2,2,3,3,4,4,5,5))
+    expect_equal(assignColor(1:11,1:5, center = 6),
+                 c(1,1,2,2,3,3,3,4,4,5,5))
     
-    assignColor(1:10,c("1","2","3","4","5"), center = 4)
+    expect_equal(assignColor(1:11,1:5, center = 8),
+                 c(1,1,2,2,3,3,3,4,4,5,5))
     
-    assignColor(1:20,c("1","2","3","4","5"), center = 4)
+    expect_equal(assignColor(c(1,2,3,NA,5),
+                             1:5,
+                             center = NULL,
+                             NAcolor = 0),
+                 c(1,2,3,0,5))
     
-    crange <- colorRampPalette(c("blue", "gray", "red"))
-    colr <- crange(200)
-    
-    drange <- c(-10:10)
-    colorRampLegend(drange, assignColor(drange,colr, center = 0))
-    
-    drange <- c(-10:100)
-    colorRampLegend(drange, assignColor(drange,colr, center = 0))
-    colorRampLegend(drange, assignColor(drange,colr, center = 0, symmetric = T))
-    
-    drange <- 1:100
-    colorRampLegend(drange, assignColor(drange,colr, center = 10))
-    colorRampLegend(drange, assignColor(drange,colr, center = 30, symmetric = T))
     
     MseekExamplePreload(data=F)
     testdf <- Metaboseek:::analyzeTable(tab2$df, tab2$intensities,
@@ -47,41 +39,21 @@ test_that("peptide annotation and plotting works",{
                                        MSData = NULL,
                                        ppm = 5)
     
-        colr <- crange(500)
+    crange <- colorRampPalette(c("blue", "gray", "red"))
+    colr <- crange(200)
     
     
     
     colorRampLegend(datarange = Metaboseek:::safelog(testdf$df$mut__foldOverRest),
-                    assignColor(datarange = sort(Metaboseek:::safelog(testdf$df$mut__foldOverRest)),
+                    assignColor(datarange = seq(min(Metaboseek:::safelog(testdf$df$mut__foldOverRest)),
+                                                max(Metaboseek:::safelog(testdf$df$mut__foldOverRest)),
+                                                length.out = 200),
                                 colscale = colr,
                                 center = 0),
                     #internalValues$colscale,
                     "TEST")
     
     
-    colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
-                    assignColor(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
-                                colr,
-                                center = 0,
-                                symmetric = T),
-                    #internalValues$colscale,
-                    "TEST")
-    
-    colorRampLegend(datarange = Metaboseek:::safelog(testdf$df$mut__foldOverRest),
-                    assignColor(datarange = sort(Metaboseek:::safelog(testdf$df$mut__foldOverRest)),
-                                colscale = colr,
-                                center = NULL,
-                                symmetric = F),
-                    #internalValues$colscale,
-                    "TEST")
-    
-    
-    colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
-                    assignColor(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
-                                colr,
-                                center = 0),
-                    #internalValues$colscale,
-                    "TEST")
     
     colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
                     assignColor(seq(min(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
@@ -97,14 +69,12 @@ test_that("peptide annotation and plotting works",{
                     assignColor(datarange = -5000:100000,
                                  colscale = colr,
                                  center = 0),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -10:100,
                     assignColor(datarange = -10:100,
                                  colscale = colr,
                                  center = NULL),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -10:100,
@@ -112,14 +82,12 @@ test_that("peptide annotation and plotting works",{
                                 colscale = colr,
                                 manualRange = -1000:1000,
                                 center = NULL),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -10:100,
                     assignColor(datarange = -10:100,
                                  colscale = colr,
                                  center = 90),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = 1:1000,
@@ -128,12 +96,10 @@ test_that("peptide annotation and plotting works",{
                                  center = 0),
                     "TEST")
     
-                    #internalValues$colscale,
     colorRampLegend(datarange = -1000:1000,
                     assignColor(datarange = -1000:1000,
                                  colscale = colr,
                                  center = 0),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -1000:1000,
@@ -141,7 +107,6 @@ test_that("peptide annotation and plotting works",{
                                 colscale = colr,
                                 manualRange = -5000:5000,
                                 center = 0),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -1000:1000,
@@ -149,7 +114,6 @@ test_that("peptide annotation and plotting works",{
                                 colscale = colr,
                                 manualRange = -50:50,
                                 center = 0),
-                    #internalValues$colscale,
                     "TEST")
     
     colorRampLegend(datarange = -100:1000,
@@ -157,7 +121,6 @@ test_that("peptide annotation and plotting works",{
                                 colscale = colr,
                                 manualRange = NULL,
                                 center = 0),
-                    #internalValues$colscale,
                     "TEST")
     
     
@@ -165,36 +128,12 @@ test_that("peptide annotation and plotting works",{
                     assignColor(datarange = -10:10,
                                 colscale = colr,
                                 manualRange = -5:5,
-                                center = 0),
-                    #internalValues$colscale,
-                    "TEST")
+                                center = 0))
     
-    colorRampLegend(Metaboseek:::safelog(testdf$df$wt__foldOverRest),
-                    assignColor(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
-                                 colr,
-                                 center = 0,
-                                 symmetric = T),
-                    #internalValues$colscale,
-                    "TEST")
-    
-    Metaboseek:::safelog(testdf$df$wt__foldOverRest)[which.min(abs(Metaboseek:::safelog(testdf$df$wt__foldOverRest)))]
-    
-    assignColor(sort(Metaboseek:::safelog(testdf$df$wt__foldOverRest)),
-                colr,
-                center = 0,
-                symmetric = T)[which.min(abs(Metaboseek:::safelog(testdf$df$wt__foldOverRest)))]
-    
-    colr[100]
-    
-    
-    
-    
-    colorRampLegend(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol)),
-                    assignColor(sort(safelog(vertex_attr(internalValues$activelayout$graph,input$vlabelcol))),
-                                internalValues$colscale,
-                                center = 0,
-                                symmetric = T),
-                    #internalValues$colscale,
-                    input$vlabelcol)
+    colorRampLegend(datarange = -10:10,
+                    assignColor(datarange = -10:10,
+                                colscale = colr,
+                                manualRange = -10:10,
+                                center = 0))
     
     })

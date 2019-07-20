@@ -376,8 +376,8 @@ featureCalcs <- function(df,
 #' Columns in the returned data.frame:
 #' \itemize{
 #' \item \code{maxint} maximum intensity value across all samples
-#' \item \code{topgroup} maximum intensity value across all samples
-#' \item \code{maxfold} maximum intensity value across all samples
+#' \item \code{topgroup} the group that has the highes mean intensity
+#' \item \code{maxfold} maximum fold change between any two group mean intensities
 #' \item \code{maxfoldoverK} (where K is an integer) fold change of Max 
 #' intensity over kth largest intensity across all samples
 #' \item \code{GX__minInt} minimum intensity value within a group

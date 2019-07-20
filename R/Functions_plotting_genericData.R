@@ -115,58 +115,76 @@ groupedplot <- function(...,
 assignColor <- function(datarange,
                         colscale,
                         center = NULL,
-                        manualRange = NULL){
+                        manualRange = NULL,
+                        NAcolor = "FFFFFF"){
     
     ncolors <- length(colscale)
     
+    nonas <- datarange[!is.na(datarange)]
+    
     if(!missing(manualRange) 
        && !is.null(manualRange)){
-            datarange[datarange > max(manualRange)] <- max(manualRange)
-           datarange[datarange < min(manualRange)] <- min(manualRange)
-                    }
+        manualRange <- manualRange[!is.na(manualRange)]
+        if(length(manualRange)){
+            nonas[nonas > max(manualRange)] <- max(manualRange)
+            nonas[nonas < min(manualRange)] <- min(manualRange)
+        }         
+           }
     
 
-    if(max(abs(datarange)) > 0){
+    if(
+        max(abs(nonas)) > 0){
         if(!missing(center) && !is.null(center)){
             
             #First, set all color selections to the center value
             middleColInt <- as.integer((ncolors+1)/2)
-            col <- rep(colscale[middleColInt],length(datarange))
-            
+            col <- rep(colscale[middleColInt],length(nonas))
+            col[]
             #now, modify for the data values above and below the center value:
-            selabove <- which(datarange > center)
-            selbelow <- which(datarange < center)
+            selabove <- which(nonas > center)
+            selbelow <- which(nonas < center)
             
-             scalerange <- max(abs(c(manualRange,datarange) - center))
+             scalerange <- max(abs(c(manualRange,nonas) - center))
 
            
             if(length(selabove)){
-                col[selabove] <- colscale[round(scales::rescale(x = datarange[selabove],
+                col[selabove] <- colscale[round(scales::rescale(x = nonas[selabove],
                                                           to = range(middleColInt:ncolors),
                                                           from = range(c(center, center + scalerange))),0)]
                     }
             if(length(selbelow)){
-                col[selbelow] <- colscale[round(scales::rescale(datarange[selbelow],
+                col[selbelow] <- colscale[round(scales::rescale(nonas[selbelow],
                                                           c(1,middleColInt),
                                                           from = range(c(center - scalerange,center))),0)]
                     }
-            return(col)
         }else{
             
-            if(diff(range(datarange)) == 0){
-                colsel <- rep(colscale[1], length(datarange))
+            if(diff(range(nonas)) == 0){
+                col <- rep(colscale[1], length(nonas))
             }else{
-                colsel <- scales::rescale(datarange, c(1,ncolors), from = range(c(manualRange,datarange)))#   abs((ncolors-1)/(max(datarange)-min(datarange)) * (datarange-max(datarange)))
+                colsel <- scales::rescale(nonas,
+                                          c(1,ncolors),
+                                          from = range(c(manualRange,nonas)))
                 colsel <- round(colsel,0)
-            }
+            
+                col <- colscale[colsel]
+                }
+            
         }
-        #introducing minor inaccuracyfor low values, should become less relevant with larger ncolors:
-        colsel[colsel == 0] <- 1
-        return(colscale[colsel])
+        
+        
     }
     else{
-        return(rep(colscale[1], length(datarange)))
+        col <- rep(colscale[1], length(nonas))
     }
+    
+    if(length(nonas) == length(datarange)){
+        return(col)
+        }else{
+            res <- rep(NAcolor, length(datarange))
+            res[!is.na(datarange)] <- col   
+            return(res)
+        }
     
 }
 
