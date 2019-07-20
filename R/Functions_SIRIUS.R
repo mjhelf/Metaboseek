@@ -116,7 +116,7 @@ writeMS <- function(filename,
 #'    collision energy.}
 #' }
 #' 
-#' @importFrom data.table fread fwrite
+#' @importFrom data.table fread fwrite data.table
 #' @importFrom digest digest
 #' 
 #' @export

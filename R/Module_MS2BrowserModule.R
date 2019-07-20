@@ -135,7 +135,7 @@ MS2BrowserModule <- function(input,output, session,
   SpecView1 <- callModule(SpecModule2, "specview1",
                           reactives = reactive({
                               if(is.null(specEngine()$spec$sel)
-                                 && length(specEngine()$spec$sel$scan) > 0){NULL}else{
+                                 || !length(specEngine()$spec$sel$scan)){NULL}else{
                                      return(list(scantable = data.frame(file = specEngine()$spec$sel$File,
                                                                         scan = specEngine()$spec$sel$scan,
                                                                         stringsAsFactors = F),

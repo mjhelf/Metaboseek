@@ -5,7 +5,7 @@
 \title{assignColor}
 \usage{
 assignColor(datarange, colscale, center = NULL, manualRange = NULL,
-  NAcolor = "FFFFFF")
+  NAcolor = "#FFFFFF")
 }
 \arguments{
 \item{datarange}{the data range for the legend}

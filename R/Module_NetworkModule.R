@@ -132,7 +132,7 @@ NetworkModule <- function(input,output, session,
     
     output$netinfo <- renderUI({ 
         if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$graph)){
-            if(internalValues$overview && !is.null(internalValues$hover$subgraph)){
+            if(internalValues$overview && length(internalValues$hover$subgraph)){
                 p("Subgraph #", internalValues$hover$subgraph, "with ",
                   strong(vcount(internalValues$layouts$subgraphs[[internalValues$hover$subgraph]])),
                   "nodes and",
@@ -286,7 +286,7 @@ NetworkModule <- function(input,output, session,
                         vc <- assignColor((vertex_attr(internalValues$activelayout$graph,input$vlabelcol)),
                                           internalValues$colscale,
                                           manualRange = (vertex_attr(internalValues$graph,input$vlabelcol)),
-                                          center = 0)   
+                                          center = NULL)   
                     }
                     
                 }
@@ -450,7 +450,8 @@ NetworkModule <- function(input,output, session,
         if(internalValues$vlabccheck){
             
             if(!is.numeric(vertex_attr(internalValues$graph,input$vlabelcol)) 
-               || length(unique(vertex_attr(internalValues$graph,input$vlabelcol))) <= 5){
+               #|| length(unique(vertex_attr(internalValues$graph,input$vlabelcol))) <= 5
+               ){
                 
                 colfacs <- as.factor(vertex_attr(internalValues$graph,input$vlabelcol))
                 cols <- Mseek.colors(n = length(levels(colfacs)), alpha = 1)
@@ -464,10 +465,13 @@ NetworkModule <- function(input,output, session,
             }else{
                 
                 if(internalValues$logscale){
-                legendranges <- range(safelog(vertex_attr(internalValues$graph,input$vlabelcol)))
+                legendranges <- safelog(vertex_attr(internalValues$graph,input$vlabelcol))
+                legendranges <- range(legendranges[is.finite(legendranges)])
                 }else{
                     legendranges <- range((vertex_attr(internalValues$graph,input$vlabelcol)))
-                }
+                    legendranges <- range(legendranges[is.finite(legendranges)])
+                    
+                    }
                 
                 legendranges <- seq(min(legendranges), max(legendranges), length.out = 200)
                 
@@ -475,7 +479,7 @@ NetworkModule <- function(input,output, session,
                                 assignColor(legendranges,
                                             internalValues$colscale,
                                             manualRange = legendranges,
-                                            center = 0),
+                                            center = if(internalValues$logscale){0}else{NULL}),
                                 #internalValues$colscale,
                                 input$vlabelcol)
                 

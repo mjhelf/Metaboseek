@@ -116,15 +116,15 @@ assignColor <- function(datarange,
                         colscale,
                         center = NULL,
                         manualRange = NULL,
-                        NAcolor = "FFFFFF"){
+                        NAcolor = "#FFFFFF"){
     
     ncolors <- length(colscale)
     
-    nonas <- datarange[!is.na(datarange)]
+    nonas <- datarange[is.finite(datarange)]
     
     if(!missing(manualRange) 
        && !is.null(manualRange)){
-        manualRange <- manualRange[!is.na(manualRange)]
+        manualRange <- manualRange[is.finite(manualRange)]
         if(length(manualRange)){
             nonas[nonas > max(manualRange)] <- max(manualRange)
             nonas[nonas < min(manualRange)] <- min(manualRange)
@@ -182,7 +182,7 @@ assignColor <- function(datarange,
         return(col)
         }else{
             res <- rep(NAcolor, length(datarange))
-            res[!is.na(datarange)] <- col   
+            res[is.finite(datarange)] <- col   
             return(res)
         }
     
@@ -250,16 +250,22 @@ reverselog_trans <- function(base = exp(1)) {
 #' 
 #' @param x numeric vector of positive values
 #' @param base of log
-#' @param replaceZeros replace zeros with this value, if NULL will use smallest non-zero absolute value in x
+#' @param replaceZeros replace zeros with this value, if NULL will use 
+#' smallest non-zero absolute value in x
+#' @param replaceNonFinites replace non-finite values (\code{Inf, -Inf, NA}) 
+#' with this value before applying log
 #' 
 #' @importFrom scales trans_new log_breaks
 #'
-safelog <- function(x, base = 10, replaceZeros = NULL){
-    if(!any(is.finite(x))){return(numeric(length(x))+1)}
+safelog <- function(x,
+                    base = 10,
+                    replaceZeros = NULL,
+                    replaceNonFinites = NA_real_){
+    if(!any(is.finite(x))){return(rep(replaceNonFinites, length(x)))}
     
     x[x==0]   <- if(is.null(replaceZeros)){min(abs(x[x!=0]))}else{replaceZeros}
     
-    x[!is.finite(x)] <- max(abs(x))
+    x[!is.finite(x)] <- replaceNonFinites
     
     return(log(abs(x), base))
 }
