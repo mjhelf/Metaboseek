@@ -25,8 +25,8 @@ MseekContainer <- function(input,output, session, values){
   
   callModule(MainPageContainer, "mainpagecontent", values)
   
-  xcmsOut <- callModule(xcmsModule, "xcmsMod",
-                        values = values,
+  xcmsOut <- callModule(xcmsWidget, "xcmsMod",
+                        externalFilegroups = reactive({values$MSData$layouts[[values$MSData$active]]$rawgrouptable}),
                         static = list(servermode = .MseekOptions$serverMode,
                                       activateXCMS = .MseekOptions$activateXCMS,
                                       rootpath = .MseekOptions$filePaths,
@@ -121,7 +121,7 @@ MseekContainerUI <- function(id){
                       ),
                       
                       tabItem(tabName = "XCMSrunpanel",
-                              xcmsModuleUI(ns("xcmsMod"))
+                              xcmsWidgetUI(ns("xcmsMod"))
                       ),
                       tabItem(tabName = "exploredata",
                               MainPageContainerUI(ns("mainpagecontent"))

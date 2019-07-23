@@ -14,6 +14,7 @@
 #'   
 #' @importFrom shinyjs runcodeServer 
 #' @importFrom BiocParallel register bpstart SnowParam MulticoreParam
+#' @import shinyBS
 #' 
 #' @export
 MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
