@@ -6,6 +6,22 @@
 #' 
 #' @return Returns nothing
 #' 
+#' @examples 
+#' \dontrun{
+#' library(shiny)
+#' 
+#' ui <- SelectProjectFolderModuleUI("examplemodule")
+#' 
+#' server <- function(input, output) {
+#'   MseekMinimalServer(diagnostics = F, data = F, tables = F)
+#'   
+#'   ExampleModule <- callModule(SelectProjectFolderModule, "examplemodule", values)
+#' }
+#' 
+#' Run Shiny app ----
+#' shinyApp(ui, server)
+#' }
+#' 
 #' @describeIn SelectProjectFolderModule Server logic
 #' 
 #' @export 
@@ -103,6 +119,14 @@ SelectProjectFolderModule <- function(input,output, session,
           selectizeInput(ns("modalSelect"), "select feature table to load",
                          choices = internalValues$fileSelection,
                          multiple = F),
+          div(title = "Try to load Metaboseek intensities (columns with '__XIC' 
+              suffix rather than xcms provided intensities. 
+              Recommended if no xcms peak filling was performed. NOTE: If the 
+              project folder contains a .tGrouping file (Feature Table grouping 
+              saved by Metaboseek), the pre-saved grouping is loaded.",
+              checkboxInput(ns("checkMseekIntensities"), 
+                        "Load Metaboseek intensities if available",
+                        value = values$GlobalOpts$preferMseekIntensities)),
           actionButton(ns("projectLoadOk"), "OK"),
           
           title = "Import xcms results",
@@ -144,12 +168,18 @@ SelectProjectFolderModule <- function(input,output, session,
           ColumnNames <- gsub("-",
                               ".",
                               paste0(basename(internalValues$filegroups$File),
-                                     "__XIC"))
+                                     if(values$GlobalOpts$preferMseekIntensities){"__XIC"}else{""})
+                              )
           
           ColumnNames2 <- ColumnNames
           ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))])
           
+          if(values$GlobalOpts$preferMseekIntensities){
           intColRange <- grep("__XIC$",colnames(feats))
+          }else{
+            intColRange <- grep(values$GlobalOpts$filePattern,colnames(feats))
+          }
+          
           #look for a .tGrouping file in same folder as table and load it
           if(file.exists(gsub("\\.csv$",".tGrouping",input$modalSelect))){
             anagroup <-read.delim(gsub("\\.csv$",
@@ -159,8 +189,16 @@ SelectProjectFolderModule <- function(input,output, session,
                                   header = T, sep = "\t")
           }
           #look for a .tGrouping file for this table in the entire project folder and load the first match
-          else if(length(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)) > 0){
-            anagroup <- read.delim(list.files(values$projectData$projectFolder, pattern = gsub("\\.csv$",".tGrouping",basename(input$modalSelect)), recursive = T, full.names = T)[1], stringsAsFactors = F, header = T, sep = "\t")
+          else if(length(list.files(values$projectData$projectFolder,
+                                    pattern = gsub("\\.csv$",
+                                                   ".tGrouping",
+                                                   basename(input$modalSelect)),
+                                    recursive = T, full.names = T)) > 0){
+            anagroup <- read.delim(list.files(values$projectData$projectFolder,
+                                              pattern = gsub("\\.csv$",
+                                                             ".tGrouping",
+                                                             basename(input$modalSelect)),
+                                              recursive = T, full.names = T)[1], stringsAsFactors = F, header = T, sep = "\t")
           }
           #backwards compatibility
           else if(file.exists(file.path(values$projectData$projectFolder,
@@ -170,24 +208,18 @@ SelectProjectFolderModule <- function(input,output, session,
                                  stringsAsFactors = F, header = T)
             
           }else if(all(ColumnNames %in% colnames(feats))){
-            
             anagroup <- data.frame(Column=ColumnNames,
                                    Group = internalValues$filegroups$Group,
                                    stringsAsFactors = F)
           }else if(all(ColumnNames2 %in% colnames(feats))){
-            
             anagroup <- data.frame(Column=ColumnNames2,
                                    Group = internalValues$filegroups$Group,
                                    stringsAsFactors = F)
           }
-          #no __XIC columns? No automatic grouping suggestion
+          #no __XIC intColrange found? No automatic grouping suggestion
           else if(length(intColRange)==0){
-            
             anagroup <- NULL
-            
-          }
-          
-          else{
+          }else{
             
             anagroup <- data.frame(Column=colnames(feats)[intColRange],
                                    Group = rep("G1",(length(intColRange))),
@@ -243,6 +275,9 @@ SelectProjectFolderModule <- function(input,output, session,
     
   })
   
+  observeEvent(input$checkMseekIntensities,{
+    values$GlobalOpts$preferMseekIntensities <- input$checkMseekIntensities
+  })
   
   observeEvent(c(AltFileFolder$dir),{
     #print(AltFileFolder$dir)

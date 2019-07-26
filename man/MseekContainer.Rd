@@ -5,7 +5,7 @@
 \alias{MseekContainerUI}
 \title{MseekContainer}
 \usage{
-MseekContainer(input, output, session, values)
+MseekContainer(input, output, session)
 
 MseekContainerUI(id)
 }
@@ -15,8 +15,6 @@ MseekContainerUI(id)
 \item{output}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
 
 \item{session}{arguments necessary for use with \code{\link[shiny]{callModule}()}}
-
-\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect gives read and write access to external objects}
 
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} (must match \code{id} in \code{\link[shiny]{callModule}()} for the server Module)}
 }

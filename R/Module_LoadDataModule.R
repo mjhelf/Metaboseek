@@ -7,6 +7,23 @@
 #' 
 #' @return returns its internalValues
 #' 
+#' @examples 
+#' \dontrun{
+#' library(shiny)
+#' 
+#' ui <- MseekMinimalUI(SelectProjectFolderModuleUI("examplemodule"), diagnostics = T)
+#' 
+#' server <- function(input, output) {
+#'   MseekMinimalServer(diagnostics = T, data = F, tables = F)
+#'   
+#'   ExampleModule <- callModule(SelectProjectFolderModule, "examplemodule", values)
+#' }
+#' 
+#' # Create Shiny app ----
+#' shinyApp(ui, server)
+#' 
+#' }
+#' 
 #' @describeIn LoadDataModule server logic
 #' 
 #' @export 

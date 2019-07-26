@@ -85,7 +85,7 @@ xcmsWidget <- function(input,output, session,
        &&  is(externalFilegroups(),"data.frame") 
        && !internalValues$xcmsModule_loaded #only do this if loadFolder button in xcms module hasnt been used yet
     ){
-      internalValues$params$filegroups <- externalFilegroups()$rawgrouptable[,c("File", "Group")]
+      internalValues$params$filegroups <- externalFilegroups()[,c("File", "Group")]
       internalValues$params$filegroups$File <- as.character(internalValues$params$filegroups$File)
       internalValues$params$filegroups$Group <- as.character(internalValues$params$filegroups$Group)
       tryCatch({

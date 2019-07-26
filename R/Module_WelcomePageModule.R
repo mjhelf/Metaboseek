@@ -11,6 +11,22 @@
 #' 
 #' @import shiny shinyFiles
 #' 
+#' @examples 
+#' \dontrun{
+#' library(shiny)
+#' 
+#' ui <- MseekMinimalUI(WelcomePageModuleUI("examplemodule"), diagnostics = T)
+#' 
+#' server <- function(input, output, session) {
+#'   MseekMinimalServer(diagnostics = T, data = F, tables = F)
+#'   
+#'   ExampleModule <- callModule(WelcomePageModule, "examplemodule", values)
+#' }
+#' 
+#' # Run Shiny app
+#' shinyApp(ui, server)
+#' }
+#' 
 #' @export
 WelcomePageModule <- function(input,output, session,
                               values = reactiveValues(projectData = values$projectData,

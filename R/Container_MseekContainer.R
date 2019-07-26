@@ -8,7 +8,7 @@
 #' @describeIn MseekContainer server logic module, to be called with \link[shiny]{callModule}()
 #' 
 #' @export 
-MseekContainer <- function(input,output, session, values){
+MseekContainer <- function(input,output, session){
   
   ns <- NS(session$ns(NULL))
   
@@ -16,8 +16,6 @@ MseekContainer <- function(input,output, session, values){
                      
                      data = .MseekOptions$loadExampleData,
                      tables = .MseekOptions$loadExampleTable)
-  
-  
   
   StartPage <- callModule(WelcomePageModule,"startpage",
                           values = values,
@@ -37,13 +35,13 @@ MseekContainer <- function(input,output, session, values){
                                                                 refs = c("master", "devel", "devel_raw"),
                                                                 active = FALSE))#!.MseekOptions$serverMode))
   
-  
+
  observeEvent(StartPage$explore,{
    if(StartPage$explore){
         updateTabItems(session, "MseekSB", "exploredata")
    }
-   
-   
+
+
  })
  
  HeaderDataLoad <- callModule(LoadDataModule, "modaldataload",
