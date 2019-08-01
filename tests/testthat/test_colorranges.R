@@ -20,7 +20,7 @@ test_that("peptide annotation and plotting works",{
                  c(1,1,2,2,3,3,3,4,4,5,5))
     
     expect_equal(assignColor(1:11,1:5, center = 8),
-                 c(1,1,2,2,3,3,3,4,4,5,5))
+                 c(1,1,2,2,2,2,3,3,3,4,4))
     
     expect_equal(assignColor(c(1,2,3,NA,5),
                              1:5,
