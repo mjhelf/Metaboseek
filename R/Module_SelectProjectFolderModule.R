@@ -125,7 +125,7 @@ SelectProjectFolderModule <- function(input,output, session,
               project folder contains a .tGrouping file (Feature Table grouping 
               saved by Metaboseek), the pre-saved grouping is loaded.",
               checkboxInput(ns("checkMseekIntensities"), 
-                        "Load Metaboseek intensities if available",
+                        "Load Metaboseek intensities if available (WARNING: if the selected table has already been analyzed (e.g. calculation of foldChanges during 'Basic Analysis'), make sure this selection is in line with the previous analysis, or reanalyze the table!)",
                         value = values$GlobalOpts$preferMseekIntensities)),
           actionButton(ns("projectLoadOk"), "OK"),
           

@@ -91,32 +91,69 @@ WelcomePageModule <- function(input,output, session,
         fluidRow(
           div(class = "box box-solid box-primary",
               div(class = "box-header",
-                  h3(class = "box-title", paste0("This is Metaboseek version ",packageVersion("Metaboseek")))))
+                  h3(class = "box-title", paste0("This is Metaboseek version ",
+                                                 packageVersion("Metaboseek")))))
          
         ),
         
         div(style="height:4px;"),
         
+        ##NEWS work now, except when using MseekContainer for a version that does not have a website..
         fluidRow(
           tryCatch({
-            rl <- readLines(paste0('http://metaboseek.com/integrated/', paste(packageVersion("Metaboseek")[[1]],collapse = ".")), n = 1)
+              
+            rl <- readLines(paste0('http://metaboseek.com/integrated/',
+                                   paste(strsplit(paste(packageVersion("Metaboseek")[[1]]),
+                                                  "\\.")[[1]][1:3],
+                                         collapse = ".")), n = 1)
+
             
+    #using only first three numbers of version to determine site to load:
             HTML('
 <iframe id="inlineFrameWelcome"
 title="webpage" 
 style="border:none;width:100%;height:500px;" ',
-                 paste0('src="http://metaboseek.com/integrated/', paste(packageVersion("Metaboseek")[[1]],collapse = "."),'">'),
-                 #paste0('src="http://metaboseek.com">'),
+                 paste0('src="http://metaboseek.com/integrated/',
+                        paste(strsplit(paste(packageVersion("Metaboseek")[[1]]),
+                                       "\\.")[[1]][1:3],collapse = "."),'">'),
                  '</iframe>
               ')
             
             
           },
           error = function(e){
+              if(!file.exists(system.file("app/www/NEWS.html", package = 'Metaboseek'))){
+                  file.copy(system.file("NEWS.html", package = 'Metaboseek'),
+                            file.path(system.file("app/www", package = 'Metaboseek'),
+                                      "NEWS.html"))
+              }
+              
+              HTML('
+<iframe id="inlineFrameWelcome"
+title="webpage" 
+style="border:none;width:100%;height:500px;" ',
+                   paste0('src="',"NEWS.html",'">'),
+                   '</iframe>
+              ')
             
-            
-            
-          })
+          },
+    warning = function(w){
+        
+        if(!file.exists(system.file("app/www/NEWS.html", package = 'Metaboseek'))){
+            file.copy(system.file("NEWS.html", package = 'Metaboseek'),
+                      file.path(system.file("app/www", package = 'Metaboseek'),
+                                "NEWS.html"))
+        }
+        
+        HTML('
+             <iframe id="inlineFrameWelcome"
+             title="webpage" 
+             style="border:none;width:100%;height:500px;" ',
+             paste0('src="',"NEWS.html",'">'),
+             '</iframe>
+             ')
+        
+    })
         )
         
       )

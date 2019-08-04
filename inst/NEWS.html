@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>Metaboseek</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../custom.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container fullwidth">
+
+<!-- START INSERT -->
+          <div class="panel panel-default">
+              <div class="panel-heading">Update Log</div>
+            </div>
+            
+             <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.9.5</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-08-04</p>
+
+                <h3>Notes:</h3>
+                <ul>
+                    <li>The name of the package and the repository is now Metaboseek (previously: METABOseek).</li>
+                    <li>Folder selection dialog for xcms analysis when using Windows has been changed to match other folder selection dialogs and is now the same as when using Linux or Mac OS.</li>
+                    <li>Spectrum averaging is now done using the MassTools::mergeMS() function in all instances (slightly different averaging results than before). Spectrum comparison functions (for molecular networking) have been modified and moved to the MassTools package</li>
+                    <li>Get the newest Windows version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li>
+                </ul>
+                <h3>New features:</h3>
+                <ul>
+                    <li>Metaboseek is now available as a <a href = "https://hub.docker.com/r/mjhelf/metaboseek" target = "_blank">Docker module</a>, making it easy to install it on desktops or servers as a webservice to showcase your data. More information available in the Metaboseek documentation.</li>
+                  </ul>
+                  <h3>Improvements:</h3>
+                  <ul>
+                      <li>More options for node coloring in networking module, and more consistent color scales</li>
+                      <li>Side buttons for export and molecular formula calculation added to the new Spectrum viewer module</li>
+                      <li>Added more user friendly selection options for xcms output files in the xcms module</li>
+                      <li>xcms runs now save SessionInfo (listing the versions of all packages loaded during the xcms analysis to help with reproducibility)</li>
+
+                    </ul>
+                    <h3>Bug fixes</h3>
+                  <ul>
+                      <li>Major bug fixed: When adding comments to a table, switching to a different table immediately afterwards no longer overrides rows of the newly selected table.</li>
+                      <li>Changing control group in pre-processing in xcms no longer causes Metaboseek to get stuck</li>
+                      <li>Selecting folders without MS data files in xcms module no longer causes Metaboseek to crash</li>
+
+                    </ul>
+                 
+              </div>
+            </div>
+            
+             <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.9.4</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-06-21</p>
+
+                <h3>Notes:</h3>
+                <ul>
+                    <li>Windows users: integrated updater is deactivated until further notice. Get the newest Windows version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li>
+
+                </ul>
+                <h3>New features:</h3>
+                <ul>
+                    <li>Added a peptide annotation app that can be started from R with <code>runPeptideApp()</code>. Allows annotation of MS2 spectra with fragment ions and variable modifications. </li>  
+                    <li>Added a draft vignette with information about METABOseek for developers</li>
+                  </ul>
+                  <h3>Improvements:</h3>
+                  <ul>
+                      <li>Revamped function documentation and cleaned up code</li>
+
+                    </ul>
+                 
+              </div>
+            </div>
+
+
+  <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.9.3</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-05-24</p>
+
+                <h3>Notes:</h3>
+                <ul>
+                    <li>Windows users: do not use the integrated updater to update to version 0.9.3. Get the newest Windows version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li>
+
+                        <li>Problems with Firefox are fixed. Chrome or Firefox are recommended for running METABOseek</li>
+                </ul>
+                <h3>New features:</h3>
+                <ul>
+                    <li>New molecular formula prediction module based on the Rdisop package, with many additional filter options to get reasonable formulas</li>  
+                    <li>Molecular formula prediction can now be used on-the fly in the MS2 Spectrum view (next to the MS2 scan table). This improved Spectrum viewer will soon be used throughout the app.</li>                      <li>Batch molecular formula prediction for all features in the feature table</li>
+                  </ul>
+                  <h3>Improvements:</h3>
+                  <ul>
+                      <li>SIRIUS module UI changed again and now shows proposed molecular structures.</li>
+                      <li>Metaboseek now sends all selected MS2 spectra individually to SIRIUS, which should improve results especially when different fragmentation energies were used.</li>
+                      <li>Database for FingerID searches can be specified</li>                        
+                      <li>MS2Browser UI changed again, changed looks of Network visualization (e.g. log scale used for coloring nodes by numeric values)</li>  
+                      <li>Added more database options to MzMatch functionality</li>
+                      <li>Improvements to code structure that will make it easier to add functionality in the future</li>
+
+                    </ul>
+         
+                <h3>Bug fixes:</h3>
+                <ul>
+                 <li> Fixed crashes in VennDiagramm section</li>
+                 <li> Fixed various issues with SIRIUS modules</li>
+
+                  </ul>  
+                 
+              </div>
+            </div>
+
+
+
+            <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.9.2</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-04-09</p>
+
+                <h3>Notes:</h3>
+                <ul>
+                    <li>Windows users: do not use the integrated updater to update to version 0.9.2. Get the newest Windows version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li>
+
+                        <li>It is recommended to use Chrome as a browser. There are issues with Firefox when loading data into METABOseek</li>
+                </ul>
+                <h3>New features:</h3>
+                <ul>
+                    <li>Secondary grouping to MS data views, allowing to color EIC traces by custom groups instead of by file</li>  
+                    <li>Recently used project folders can be loaded quickly without browsing for them</li>
+                    <li>Additional EIC plotting options: raise EIC (makes 0 intensity scans visible in EICs), relative Intensities (which shows % relative intensity instead of absolute values on y-axis) </li>
+                    <li>New FeatureReport module in MS2Browser, allowing to make one-page summaries on a molecular feature with EICs, MS1 and MS2 scans plus SIRIUS fragmentation tree and fragment annotation</li>  
+                    <li>Feature Table can be exported as inclusion or exclusion list for Thermo QE(-HF) instruments</li>  
+
+                  </ul>
+                  <h3>Improvements:</h3>
+                  <ul>
+                      <li>SIRIUS module UI changed and shows more results for fragmentation trees</li>                        
+                      <li>MS2Browser UI changed, increased size of Network visualization</li>  
+
+                    </ul>
+         
+                <h3>Bug fixes:</h3>
+                <ul>
+                 <li>Comments made right before filtering the feature table are no longer ignored by filters </li>
+
+                  </ul>  
+                 
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.9.1</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-03-25</p>
+
+                <h3>Notes:</h3>
+                <ul>
+                    <li>Windows users: do not use the integrated updater to update to version 0.9.1. Get the newest Windows version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li> 
+
+                        <li>It is recommended to use Chrome as a browser. There are issues with Firefox when loading data into METABOseek</li>
+                </ul>
+
+         
+                <h3>Bug fixes:</h3>
+                <ul>
+                 <li>Sorting MS2 scan list table now works as it should </li>
+                 <li>Fixed errors occuring when using the peak picking module </li>
+                 <li>Internal update module is now less likely to cause problems when updating METABOseek</li>
+                 <li>Undefined page number in Feature Table (e.g. deleting page number before entering a new one) no longer crashes METABOseek </li>
+
+                  </ul>  
+                 
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.9.0</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-03-14</p>
+
+                <h3>Notes:</h3>
+                <ul>
+                <li>This version can be installed in parallel with older versions even when using the Windows installer</li>
+                <li>You cannot use the integrated updater to go from version 0.8.X to 0.9.X. Get the new Windows version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li> 
+                <li>Linux/ MacOS users can update using this command: <code>source("http://metaboseek.com/files/install_METABOseek.R")</code> </li> 
+
+                <li>It is recommended to use Chrome as a browser. There are issues with Firefox when loading data into METABOseek</li>
+                </ul>
+
+              <h3>New features:</h3>
+                <ul>
+                    <li>Added SIRIUS analysis module</li>  
+                    <li>Added option to change filename before saving tables</li>
+                    <li>Added option to see retention time in minutes (in Table Filter box)</li>
+                    <li>MS2 scan search can now be set to only match MS2 scans with the feature with closest RT (within tolerance), instead of all features within RT tolerance. </li>  
+                   <li>Additional options to simplify networks (can now use two conditions for edge merging concurrently)</li>
+                   <li>Freestyle data plotting in quickplots now applies active filters to the feature table items before plotting. Also increased limit for interactive plots from 1000 to 2000 data points.</li>
+                   <li>Changed and improved peak picking algorithm</li>
+                   <li>Added option to get peak intensities for tables with mz and rt values</li>
+                   <li>New "Fast peak shapes" analysis option is orders of magnitude faster than the older version</li>
+
+                  </ul> 
+                <h3>Bug fixes:</h3>
+                <ul>
+                 <li>Fixed issue with saving tables that contain commas (e.g. in comments) and improved speed of saving tables </li>
+                 <li>Tables no longer "wrap around" (which led to going back to row one when hitting the bottom of a table page) </li>
+                 <li>Fixed bug in Network viewer that caused the plot to frequently crash in overview mode</li>
+                 <li>Old/slow peak shapes analysis is now faster than it used to be thanks to multithreading</li>
+
+                  </ul>  
+                 
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.8.6</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-02-19</p>
+
+
+              <h3>New features:</h3>
+                <ul>
+                    <li>Added m/z calculator to Analyze Table Tab: Calculate m/z of different charge states for molecular formulas</li>  
+                    <li>mzMatch function added to Analyze Table Tab: Find m/z values in Feature table that match compunds in a database </li>  
+                    <li>METABOseek options are no longer reset when updating through the internal updater</li>  
+                    <li>Changes to welcome page layout</li>  
+                    
+                  </ul> 
+                <h3>Bug fixes:</h3>
+                <ul>
+                 <li>Fixed rescaling and performance issue in multi EIC Tab when using MS data layouts for subsets of MS data files</li>
+
+                  </ul>  
+                 
+              </div>
+            </div>
+  
+            <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.8.5</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-02-04</p>
+
+
+              <h3>New features:</h3>
+                <ul>
+                    <li>Added Venn Diagrams</li>  
+                    <li>Added volcano plots in Quickplots</li>  
+                    <li>Added customizable subtitles in grouped EIC plots</li>  
+                    <li>Added "Load data" button to dashboard header</li>  
+                    <li>Added an early version of peak picking (for targeted metabolomics) to Analyze Table Tab</li>  
+
+
+
+                  </ul> 
+                <h3>Bug fixes:</h3>
+                <ul>
+                  <li>Fixed issue when feature rt was outside a file's rt range</li>  
+                  <li>Fixed multiple crash issues when making or simplifying a METABOseek network and when viewing MS2 spectra</li>  
+                  <li>Fixed issue with networking when applying a noise threshold</li>  
+
+                  </ul>  
+                 
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading red-heading">Version 0.8.4</div>
+              <div class="panel-body">
+                <p class="release-date">Last changed 2018-01-18</p>
+
+
+              <h3>Renamed MOSAiC to METABOseek</h3>
+
+                <h3>New features:</h3>
+                <ul>
+                    <li>Table analysis: Added ANOVA-like analysis</li>  
+                    
+                  </ul> 
+                <h3>Bug fixes:</h3>
+                <ul>
+                    <li>Fixed issue where comments were not fixed in column 3 of the feature table</li>
+                    <li>Fixed file naming issue for saving tables when using "Save locally"</li>
+                    <li>Applying log10 to normalized intensities now also works in xcms post-processing</li>
+                    <li>Fixed y-axis rescaling issue when RT correction was selected in grouped EICs</li>
+
+
+                  </ul>  
+                 
+              </div>
+            </div>
+
+
+          <div class="panel panel-default">
+            <div class="panel-heading red-heading">Version 0.8.3</div>
+            <div class="panel-body">
+              <p class="release-date">Last changed 2018-01-08</p>
+
+              <h3>New features:</h3>
+              <ul>
+                  <li>MS2 Browser: Added button to find all MS2 scans for features in Feature Table (results are added to Feature Table)</li>
+                  <li>MS2 Browser: Added functionality to create, browse and simplify MS2 networks</li>
+                  <li>Analyze Table: Added option to apply log10 during normalization of intensity values</li>
+
+                  
+                </ul> 
+              <h3>Bug fixes:</h3>
+              <ul>
+                  <li>Fixed crashing issue when filtering for strings in columns of the Feature Table</li>
+                </ul> 
+
+                <h3>Coming soon:</h3>
+              <ul>
+                  <li>Saving and loading METABOseek sessions from .METABOseekXML files</li>
+              </ul> 
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading red-heading">Version 0.8.2</div>
+            <div class="panel-body">
+              <p class="release-date">Released 2018-11-09</p>
+              <h3>Usability upgrades:</h3>
+              <ul>
+                  <li>xcms analysis saves a version of the resulting feature tables now before applying (potentially very time-consuming) post-processing (e.g. peak shapes analysis)</li>
+                  <li>Molecular formula prediction on any peak in any spectrum (select "spectrum" as source in the Molecular Formula tab, optionally select "Calculate automatically" and SHIFT + click on a peak in any MS1 or MS2 spectrum). NOTE: currently will use the marker on the last spectrum that the cursor was moved over, not necessarily the last marker that was set.</li>
+                  <li>Export individual spectra as .pdf or .tsv (tab-separated peak list)</li>
+                  <li>Rescale EICs to the maximum intensity across all EIC groups in Grouped EICs tab ("Rescale" checkbox)</li>
+
+
+                </ul> 
+              <h3>Bug fixes:</h3>
+              <ul>
+                  <li>Comments column now gets imported correctly when loading a table with an all-empty comments column</li>
+                  <li>METABOseek no longer crashes when folder selection is canceled in XCMS module</li>
+                  <li>Fixed problem with MS browser when only a single MS data file was loaded</li>
+                </ul> 
+
+                <h3>Coming soon:</h3>
+              <ul>
+                  <li>Saving and loading METABOseek sessions from .METABOseekXML files</li>
+              </ul> 
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading red-heading">Version 0.8.1</div>
+            <div class="panel-body">
+              <p class="release-date">Released 2018-10-18</p>
+              <h3>Bug fixes:</h3>
+              <ul>
+                  <li>METABOseek no longer crashes when switching Feature Tables when certain filters are selected</li>
+                  <li>The columns that can be selected for filtering are now updated when new columns are added to a Feature Table</li>
+                  <li>When entering filter values, the input field is no longer automatically deselected</li>
+                </ul> 
+            </div>
+          </div>
+    <div class="panel panel-default">
+        <div class="panel-heading red-heading">Version 0.8.0</div>
+        <div class="panel-body">
+          <p class="release-date">Released 2018-10-15</p>
+          <h3>New in this version:</h3>
+          <ul>
+              <li>New start page with update news and quick access to data loading opotions</li>
+              <li>Option to show small EIC plots</li>
+              <li>Feature Table selection remains highlighted when clicking elsewhere in the program</li>
+              <li>When a project folder is selected, Feature Tables can be saved there directly</li>
+              <li>Complete internal do-over that should improve performance and future expansion</li>
+            </ul> 
+            <strong>Note:</strong> There are currently problems when loading data in Firefox - please use a different browser (Chrome, Safari...) until this has been fixed.
+        </div>
+      </div>
+<!-- END INSERT -->
+
+</div>
+</body>
+</html>

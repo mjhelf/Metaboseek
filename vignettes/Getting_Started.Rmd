@@ -39,6 +39,41 @@ Metaboseek, as pre-packaged in the installer or .zip file for Windows, version 0
 ## Use the web version
 If you have trouble installing Metaboseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
 
+## Get the Docker image {#Docker}
+
+As they put it on their website, "Docker provides a way to run applications securely isolated in a container, packaged with all its dependencies and libraries.". This is also a convenient way to reproduce analysis results that were generated with a particular version of Metaboseek. Once you have set up Docker on your computer, this is the easiest and most reproducible way to get fully functional Metaboseek, including [SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/) integration. 
+
+1. [Install](https://docs.docker.com/install/) and [set up](https://docs.docker.com/get-started/) Docker. Please note that there are limitations for Windows users (Windows 10 Pro is required and using Docker prevents running Virtual Machines with VM VirtualBox).
+2. You can now get the [Metaboseek Docker image](https://hub.docker.com/r/mjhelf/metaboseek) using this terminal command:
+```
+docker pull mjhelf/metaboseek
+```
+The metaboseek Docker image is based on the [`bioconductor/release_metabolomics2`](https://hub.docker.com/r/bioconductor/release_metabolomics2) image.
+3. Running this command will execute the latest version of the Metaboseek container (and download it if not already available on your computer):
+```
+docker run -d -v HOSTFOLDER:/home/shiny/data -p 3840:80 -e PASSWORD=YOURPASSWORD mjhelf/metaboseek
+```
+Lets take a look at some key settings here:
+
+* `HOSTFOLDER` should be the path of a folder on your computer that contains all data that you want to analyze with Metaboseek, for example if used like this:
+```
+docker run -d -v /home/user123:/home/shiny/data -p 3840:80 -e PASSWORD=YOURPASSWORD mjhelf/metaboseek
+```
+**NOTE: The apps hosted inside the container will be accessible from the internet (for anyone connecting to your computer's IP address and the correct port number). By default, they will be protected by HTTP basic authentication, but that is not 100% secure. Once authenticated, the apps allow seeing the data structure of the specified HOSTFOLDER, and it is possible to download arbitrary .csv files and MS data from that folder. We are not liable for any data exposure to unauthorized parties or other [damages](https://github.com/mjhelf/METABOseek/blob/master/LICENSE).**
+
+All contents of the `/home/user123` folder will be acessible in Metaboseek.
+* `-p 3838:3838` means that port 3838 from the container will be accessible as port 3840 on the host computer.
+
+* `-e PASSWORD=YOURPASSWORD` this password has to be set. It can be used if you want to access rstudio inside the container, and is necessary to access the Metaboseek apps.
+
+* You can disable authentication for the apps by adding `-e PROTECTED=false` to this command, for instance to provide convenient public access to your data. **WARNING: This makes the apps accessible from the internet (see note above)**
+
+4. Check if the Metaboseek container is running:
+```
+docker ps
+```
+5. Go to your web browser and go to the website `localhost:3840`, where the port number after the colon may differ based on your `-p` setting (see above). By default, you will have to log in, with the username `metaboseek` and the password you specified (`YOURPASSWORD` in our example). This will open a website, hosted inside the metaboseek container. Select the app you want to run and analyze your data!
+
 
 ## Install on Windows
 
@@ -61,6 +96,7 @@ You will need to get the [appropriate java version](#javainfo), which in the cas
 Windows users can update Metaboseek to the newest version from inside the Metaboseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to Metaboseek.
    
 ## Install on Mac / Linux
+Consider getting the [Metaboseek Docker image](#Docker), or follow these steps to install Metaboseek:
 
 1.	[Download](https://cloud.r-project.org/) and install R.
 2.	Mac users: Get [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
@@ -68,20 +104,17 @@ Windows users can update Metaboseek to the newest version from inside the Metabo
 ```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_Metaboseek.R") 
 ```
-
-
 5. To run Metaboseek, enter this line into your R console:
 ```{r, eval = FALSE}
 Metaboseek::runMseek()
 ```
 
-
-
 ##	Experienced R users (Windows, Mac or Linux):
 If you have installed R (and the devtools package) already, you can install Metaboseek like this:
 
 ```{r, eval = FALSE}
-devtools::install_github("mjhelf/Metaboseek", ref="master")
+devtools::install_github("mjhelf/MassTools")
+devtools::install_github("mjhelf/Metaboseek")
 ```
 If you want to make sure you get all the required packages, run the install script with this line:
 
