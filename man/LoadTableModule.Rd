@@ -6,10 +6,10 @@
 \title{LoadTableModule}
 \usage{
 LoadTableModule(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  NULL), static = list(tooltip = "Load", label = "Load", format =
-  list(header = T, sep = "\\t", quote = "\\"", stringsAsFactors = F),
-  pattern = "\\\\.tGrouping$"))
+  values = reactiveValues(projectData = NULL, featureTables = NULL),
+  static = list(tooltip = "Load", label = "Load", format = list(header =
+  T, sep = "\\t", quote = "\\"", stringsAsFactors = F), pattern =
+  "\\\\.tGrouping$"))
 
 LoadTableModuleUI(id)
 }
@@ -31,8 +31,6 @@ gives read and write access to external objects}
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}
-
-\item{static}{Import data from the shiny session}
 }
 \value{
 returns its internalValues, most notably element \code{df} that contains 

@@ -6,7 +6,9 @@
 #' @return Returns nothing, but writes a SIRIUS \code{.ms} file.
 #' 
 #' @param filename path of file to write to
-#' @param ms2 a matrix with columns mz and intensity
+#' @param ms2 a matrix with columns mz and intensity, or a list of ms2 spectra 
+#' in the same format
+#' @param ms1 a matrix with columns mz and intensity for a single MS1 spectrum
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
@@ -35,7 +37,7 @@ writeMS <- function(filename,
   
   write(paste(
     if(appending){"\n"}else{paste0('# Generated with MOSAiC version ',
-                                   packageVersion("METABOseek"),', timestamp: ',
+                                   packageVersion("Metaboseek"),', timestamp: ',
                                    strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
     paste0(">compound ", splashtag),
     paste0(">parentmass ", parentmz),
@@ -87,11 +89,14 @@ writeMS <- function(filename,
 #' run SIRIUS externally for a list of ms2 spectra
 #' 
 #' @param outfolder output folder for the SIRIUS results
+#' @param ms1 if not NULL, a list of MS1 spectra
 #' @param ms2 a list (or list of lists) of ms2 spectra 
 #' (matrices with columns mz and intensity), see \code{Details}
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
+#' @param instrument specify instrument, can be \code{"orbitrap", "qtof" or "fticr"}
+#' @param fingerid if TRUE, will try to predict structures with CSI:FingerID
 #' @param ion ion type (e.g. \eqn{[M+H]+})
 #' @param charge charge (positive or negative integer)
 #' @param scanindices which scans were averaged into this ms2 spectrum
@@ -111,7 +116,7 @@ writeMS <- function(filename,
 #'    collision energy.}
 #' }
 #' 
-#' @importFrom data.table fread fwrite
+#' @importFrom data.table fread fwrite data.table
 #' @importFrom digest digest
 #' 
 #' @export
@@ -154,11 +159,11 @@ runSirius <- function(outfolder,
    newjobs$charge = charge
    newjobs$fingerid = fingerid
    newjobs$moreOpts = paste0(moreOpts, instrument)
-   newjobs$METABOseek_version = as.character(packageVersion("METABOseek"))
-   newjobs$METABOseek_sirius_revision = 2
+   newjobs$Metaboseek_version = as.character(packageVersion("Metaboseek"))
+   newjobs$Metaboseek_sirius_revision = 2
    newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge",
                                             "fingerid", "moreOpts",
-                                            "METABOseek_sirius_revision"),
+                                            "Metaboseek_sirius_revision"),
                                          drop = F], 1, digest,
                                  algo = "xxhash64")
    
@@ -179,7 +184,7 @@ runSirius <- function(outfolder,
                                        fill = T))[,c("mz", "splash",
                                                      "ion", "charge", 
                                                      "fingerid", "moreOpts",
-                                                     "METABOseek_sirius_revision")]
+                                                     "Metaboseek_sirius_revision")]
     
     #To avoid problems with m/z digits possibly not retained when 
     #exporting and reimporting of siriusIndex to/from index.csv

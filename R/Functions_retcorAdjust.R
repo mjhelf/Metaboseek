@@ -67,16 +67,18 @@ RTplot <- function(rtt,
 #' \item \code{corr} list of numeric vectors with retention times for each scan for each file, after RT correction
 #' \item \code{fnames} character() of filenames for each of the lists in \code{noncorr} and \code{corr} 
 #' }
+#' 
+#' 
 #' @export
 rtexport <- function(xset){
   res <- NULL
 if(class(xset)=="XCMSnExp"){
-  if(!hasAdjustedRtime(xset)){
+  if(!xcms::hasAdjustedRtime(xset)){
     message("XCMSnExp object did not contain RT correction information.")
   }
   res <- list(
-      noncorr = rtime(xset, bySample=T, adjusted = F),
-  corr = rtime(xset, bySample=T, adjusted = T),
+      noncorr = xcms::rtime(xset, bySample=T, adjusted = F),
+  corr = xcms::rtime(xset, bySample=T, adjusted = T),
   fnames = xset@processingData@files
     )
   

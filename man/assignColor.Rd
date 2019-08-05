@@ -4,12 +4,17 @@
 \alias{assignColor}
 \title{assignColor}
 \usage{
-assignColor(datarange, colscale)
+assignColor(datarange, colscale, center = NULL, manualRange = NULL,
+  NAcolor = "#FFFFFF")
 }
 \arguments{
 \item{datarange}{the data range for the legend}
 
 \item{colscale}{character vector of colors}
+
+\item{center}{force the middle of the color vector to correspond to this value}
+
+\item{manualRange}{enter a range to fit the color range to, if not range(datarange)}
 }
 \value{
 a character vector of same length as \code{datarange} with color values

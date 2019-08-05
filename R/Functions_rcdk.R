@@ -3,7 +3,7 @@
 #' draw single molecule from a SMILE
 #' 
 #' @param SMILE a character(1) SMILE term
-#' @param ... additional arguments passed to \link[adsf]{view.image.2d}()
+#' @param ... additional arguments passed to \link[rcdk]{view.image.2d}()
 #' 
 #' @return plots a molecule in the current plotting device
 #' 

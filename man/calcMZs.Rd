@@ -4,23 +4,14 @@
 \alias{calcMZs}
 \title{calcMZs}
 \usage{
-calcMZs(df, charges = c(1), carrier = "H", monoisotopic = T,
-  mf_column = "formula", adduct = NULL)
+calcMZs(df, mf_column = "formula", ...)
 }
 \arguments{
 \item{df}{data.frame that contains a column with molecular formulas (MFs)}
 
-\item{charges}{vector of positive or negative integers indicating the charge 
-states to calculate}
-
-\item{carrier}{charge carrier - Molecular formula will be added to or removed 
-from MFs for each charge}
-
-\item{monoisotopic}{if true, will calculate the monoisotopic mass m/z values,
-will calculate m/z of the most abundant isotope peak otherwise (will be 
-preferrable e.g. for large organic molecules)}
-
 \item{mf_column}{name of column in df that contains MFs}
+
+\item{...}{additional arguments passed to \code{\link[MassTools]{calcIons}()}}
 }
 \value{
 input data.frame with additional columns \code{ion} and \code{charge},

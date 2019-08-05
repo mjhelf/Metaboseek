@@ -9,10 +9,7 @@
 #' @describeIn PeakPickModule Server logic
 #' 
 #' @export 
-PeakPickModule <- function(input,output, session,
-                           values = reactiveValues(MSData = MSData,
-                                                   featureTables = featureTables
-                                                   )){
+PeakPickModule <- function(input,output, session, values){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)
@@ -106,8 +103,8 @@ If this is selected, the rt window setting for peak intensity calculation starts
     tryCatch({
       withProgress(message = 'Please wait!', detail = "Finding peaks", value = 0.5, {
         
-        METABOseek:::TableUpdateChunk()
-        
+          updateFT(values)
+          
         tabid <- paste0("table",length(values$featureTables$index))
         names(tabid) <- paste0("peakpick_", values$featureTables$tables[[values$featureTables$active]]$tablename)
         
@@ -146,14 +143,14 @@ If this is selected, the rt window setting for peak intensity calculation starts
           
           h <- lapply(mz, mzR::header)
           
-          normby <- data.frame(file = MSD$filelist,
+          normby <- data.frame(file = values$MSData$filelist,
                                ticmean = sapply(h,function(x){mean(x$basePeakIntensity[x$msLevel == 1])}),
                                bpmean = sapply(h,function(x){mean(x$totIonCurrent[x$msLevel == 1])}))
           normby$normfactor_bp <- mean(normby$bpmean)/normby$bpmean
           normby$normfactor_tic <- mean(normby$ticmean)/normby$ticmean
           
           intens <- as.data.frame(lapply(bplapply(values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist], 
-                                                 METABOseek::exIntensities, 
+                                                 exIntensities, 
                                                  mz = newdf$mz,
                                                  ppm = input$intensppm,
                                                  rtw = if(input$intensRangeCheck){data.frame(rtmin = newdf$rtmin-input$intensRTsec,

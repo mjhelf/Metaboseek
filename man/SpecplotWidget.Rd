@@ -6,11 +6,11 @@
 \title{SpecplotWidget}
 \usage{
 SpecplotWidget(input, output, session, reactives = reactive({     list(x
-  = sc[, 1], y = sc[, 2], norm = max(y)/100, cx = 1.5, k = 10, fileName =
-  "title", yrange = c(0, 100), xrange = range(x), maxi = max(y), labels =
-  NULL, mar = c(4, 6, 6, 2), ylab = "Relative Intensity (\%)", ylabshift =
-  0) }), layout = reactive({     list(active = T, height = 550,
-  selectCallback = T) }), keys = reactive({     "NO" }))
+  = NULL, y = NULL, norm = NULL, cx = 1.5, k = 10, fileName = "title",
+  yrange = c(0, 100), xrange = NULL, maxi = NULL, labels = NULL, mar = c(4,
+  6, 6, 2), ylab = "Relative Intensity (\%)", ylabshift = 0) }),
+  layout = reactive({     list(active = T, height = 550, selectCallback =
+  T) }), keys = reactive({     "NO" }))
 
 SpecplotWidgetUI(id)
 }
@@ -26,6 +26,8 @@ SpecplotWidgetUI(id)
 
 \item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
 expression with settings for this module. See \code{details}.}
+
+\item{layout}{a \link[shiny]{reactive} list with layout options}
 
 \item{keys}{a \link[shiny]{reactive} object registering keystrokes}
 

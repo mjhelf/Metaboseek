@@ -1,7 +1,7 @@
 #' constructRawLayout
 #' 
 #' Constructor function for the rawLayout S3 class,
-#'  holding information on MSdata grouping and layout options in METABOseek.
+#'  holding information on MSdata grouping and layout options in Metaboseek.
 #' 
 #' @param rawgrouptable a data.frame with columns File and Group ,
 #'  holding file paths and group names, respectively.
@@ -93,9 +93,9 @@ constructRawLayout <- function(rawgrouptable, stem=NULL, msnExp = NULL){
 #' Updates the file path information in a \code{rawLayout} object
 #' 
 #' @param MSD a \code{rawLayout} object with a defined stem
-#' @param stem if the file paths in rawgrouptable are not full
+#' @param new.stem if the file paths in rawgrouptable are not full
 #'  (e.g. subdirectories of the working directory), this should 
-#'  be the path of the working directory.
+#'  be the path of the new working directory.
 #' 
 #' @return An updated \code{rawLayout} object
 #' 

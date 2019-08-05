@@ -5,8 +5,7 @@
 \alias{EICOptionsModuleUI}
 \title{EICOptionsModule}
 \usage{
-EICOptionsModule(input, output, session,
-  values = reactiveValues(GlobalOpts = GlobalOpts))
+EICOptionsModule(input, output, session, values)
 
 EICOptionsModuleUI(id)
 }

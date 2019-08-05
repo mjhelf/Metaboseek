@@ -5,9 +5,7 @@
 \alias{ColumnSelModuleUI}
 \title{ColumnSelModule}
 \usage{
-ColumnSelModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MainTable =
-  MainTable))
+ColumnSelModule(input, output, session, values)
 
 ColumnSelModuleUI(id)
 }

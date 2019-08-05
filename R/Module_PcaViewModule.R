@@ -11,9 +11,7 @@
 #' @import shiny
 #' 
 #' @export 
-PcaViewModule <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables)
-){
+PcaViewModule <- function(input,output, session, values){
   #### Initialization ####
   
   ns <- NS(session$ns(NULL))

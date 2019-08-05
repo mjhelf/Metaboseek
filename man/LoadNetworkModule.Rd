@@ -2,23 +2,48 @@
 % Please edit documentation in R/Module_LoadNetworkModule.R
 \name{LoadNetworkModule}
 \alias{LoadNetworkModule}
+\alias{LoadNetworkModuleUI}
 \title{LoadNetworkModule}
 \usage{
-LoadNetworkModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MSData =
-  MSData), reactives = reactive({     list(active = NetMod$active) }))
+LoadNetworkModule(input, output, session, values, reactives = reactive({ 
+     list(active = NULL) }))
+
+LoadNetworkModuleUI(id)
 }
 \arguments{
-\item{input}{}
+\item{input}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{output}{}
+\item{output}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{session}{}
+\item{session}{arguments necessary for use with 
+\code{\link[shiny]{callModule}()}}
 
-\item{tag}{id to be used in ns()}
+\item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
+gives read and write access to external objects}
 
-\item{set}{Import data from the shiny session}
+\item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
+expression with settings for this module. See \code{details}.}
+
+\item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
+(must match \code{id} in \code{\link[shiny]{callModule}} 
+for the server Module)}
+}
+\value{
+If the server module for this Module returns something,
+ it is described in \code{Details}.
 }
 \description{
-server module for loading Tables
+Module for loading MS2 molecular networks (graphs)
+}
+\section{Functions}{
+\itemize{
+\item \code{LoadNetworkModule}: server logic
+
+\item \code{LoadNetworkModuleUI}: UI elements
+}}
+
+\seealso{
+\code{\link{values}} for a description of the \code{values} object
 }

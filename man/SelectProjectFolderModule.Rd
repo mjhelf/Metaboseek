@@ -6,8 +6,8 @@
 \title{SelectProjectFolderModule}
 \usage{
 SelectProjectFolderModule(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  featureTables, MSData = MSData, GlobalOpts = GlobalOpts))
+  values = reactiveValues(projectData = NULL, featureTables = NULL,
+  MSData = NULL, GlobalOpts = NULL))
 
 SelectProjectFolderModuleUI(id)
 }
@@ -41,6 +41,23 @@ Module for loading a Project Folder
 \item \code{SelectProjectFolderModuleUI}: UI elements
 }}
 
+\examples{
+\dontrun{
+library(shiny)
+
+ui <- SelectProjectFolderModuleUI("examplemodule")
+
+server <- function(input, output) {
+  MseekMinimalServer(diagnostics = F, data = F, tables = F)
+  
+  ExampleModule <- callModule(SelectProjectFolderModule, "examplemodule", values)
+}
+
+Run Shiny app ----
+shinyApp(ui, server)
+}
+
+}
 \seealso{
 \code{\link{values}} for a description of the \code{values} object
 }

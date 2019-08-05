@@ -1,5 +1,5 @@
 library(testthat)
-library(METABOseek)
+library(Metaboseek)
 library(shinytest)
 # 
   if (!dependenciesInstalled()) {installDependencies()}
@@ -7,6 +7,6 @@ library(shinytest)
 
 #test_dir("./tests/testthat/")
 
-test_check("METABOseek")
+test_check("Metaboseek")
 
 

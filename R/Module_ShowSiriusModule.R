@@ -10,8 +10,8 @@
 #' 
 #' @export 
 ShowSiriusModule <- function(input,output, session, 
-                          values = reactiveValues(SiriusModule = SiriusModule,
-                                                  GlobalOpts = GlobalOpts),
+                          values = reactiveValues(SiriusModule = NULL,
+                                                  GlobalOpts = NULL),
                           reactives = reactive({
                             list(splash = NULL,
                                  ms1splash = NULL,
@@ -51,7 +51,7 @@ ShowSiriusModule <- function(input,output, session,
     }else{
       tryCatch({
         
-        values$SiriusModule$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "METABOseek"),
+        values$SiriusModule$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "Metaboseek"),
                                                       splash = internalValues$query$splash, 
                                                       ts = internalValues$query$timestamp)
 
@@ -87,7 +87,7 @@ ShowSiriusModule <- function(input,output, session,
                                                           && values$GlobalOpts$SiriusCheckFinger){paste0("--fingerid-db ", values$GlobalOpts$SiriusDBselected," -e ")}else{"-e "},
                                                        values$GlobalOpts$SiriusElements,
                                                        " -p ", values$GlobalOpts$SiriusSelInstrument),
-                                     METABOseek_sirius_revision =  2,
+                                     Metaboseek_sirius_revision =  2,
                                      stringsAsFactors = F),1,
                           digest, algo = "xxhash64")
           

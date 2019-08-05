@@ -5,8 +5,7 @@
 \alias{MZcalcModuleUI}
 \title{MZcalcModule}
 \usage{
-MZcalcModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables))
+MZcalcModule(input, output, session, values)
 
 MZcalcModuleUI(id)
 }

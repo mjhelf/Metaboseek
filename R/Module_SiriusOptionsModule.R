@@ -10,8 +10,7 @@
 #' @importFrom data.table fread
 #' 
 #' @export 
-SiriusOptionsModule <- function(input,output, session, 
-                                values = reactiveValues(GlobalOpts = GlobalOpts)){
+SiriusOptionsModule <- function(input,output, session, values){
   
   ns <- NS(session$ns(NULL))
   

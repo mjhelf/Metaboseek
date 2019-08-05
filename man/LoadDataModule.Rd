@@ -6,8 +6,8 @@
 \title{LoadDataModule}
 \usage{
 LoadDataModule(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  featureTables, MSData = MSData, GlobalOpts = GlobalOpts))
+  values = reactiveValues(projectData = NULL, featureTables = NULL,
+  MSData = NULL, GlobalOpts = NULL))
 
 LoadDataModuleUI(id)
 }
@@ -46,14 +46,19 @@ Containers are used to keep the code organised and can be characterized
 
 \examples{
 \dontrun{
-ui <- function(request){
-MseekContainerUI("Mseek")
+library(shiny)
+
+ui <- MseekMinimalUI(SelectProjectFolderModuleUI("examplemodule"), diagnostics = T)
+
+server <- function(input, output) {
+  MseekMinimalServer(diagnostics = T, data = F, tables = F)
+  
+  ExampleModule <- callModule(SelectProjectFolderModule, "examplemodule", values)
 }
-server <- function(input, output, session) {
-   callModule(MseekContainer, "Mseek")
-}
-Create Shiny app ----
+
+# Create Shiny app ----
 shinyApp(ui, server)
+
 }
 
 }

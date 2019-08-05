@@ -13,10 +13,7 @@
 #' @importFrom Rdisop initializeElements
 #' 
 #' @export 
-MzqueryModule <- function(input,output, session, 
-                          values = reactiveValues(featureTables,
-                                                  MainTable,
-                                                  GlobalOpts),
+MzqueryModule <- function(input,output, session, values,
                           reactives = reactive({list(mz = NULL)})){
 ###Enter mz textInput
   ns <- NS(session$ns(NULL))
@@ -173,7 +170,7 @@ output$mzInfo2 <- renderUI({
            "from ", mzauto()$source)
            
   }else{
-    p("No molecular mormulas found for current query!")
+    p("No molecular formulas found for current query!")
     
   }
 })
@@ -265,8 +262,8 @@ observeEvent(input$mzButton2,{
         ele <- initializeElements(input$selelements)
       }
     
-    TableUpdateChunk()
-
+        updateFT(values)
+        
       res <- data.frame(predicted_MFs =if(!is.null(values$featureTables$tables[[values$featureTables$active]]$df$predicted_MFs)){
         values$featureTables$tables[[values$featureTables$active]]$df$predicted_MFs}
         else{

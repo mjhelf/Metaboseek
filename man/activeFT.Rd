@@ -2,16 +2,22 @@
 % Please edit documentation in R/getset_featureTables.R
 \name{activeFT}
 \alias{activeFT}
+\alias{activeFT<-}
 \title{activeFT}
 \usage{
 activeFT(x)
+
+activeFT(x) <- value
 }
 \arguments{
 \item{x}{an MseekTree (reactivevalues) object}
+
+\item{value}{a character() value corresponding to a table ID}
 }
 \value{
 returns the ID (character(1)) of the currently active Feature Table
 }
 \description{
-activeFT
+changes or returns the currently active Feature Table if 
+supplied value is a valid table ID
 }

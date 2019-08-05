@@ -6,8 +6,8 @@
 \title{GroupedEICModule}
 \usage{
 GroupedEICModule(input, output, session, values = reactiveValues(MSData =
-  MSData, featureTables = featureTables, GlobalOpts = GlobalOpts,
-  projectData = projectData), keys = reactive({     keyin$keyd }))
+  NULL, featureTables = NULL, GlobalOpts = NULL, projectData = NULL),
+  keys = reactive({     "NO" }))
 
 GroupedEICModuleUI(id)
 }

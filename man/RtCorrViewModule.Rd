@@ -5,8 +5,7 @@
 \alias{RtCorrViewModuleUI}
 \title{RtCorrViewModule}
 \usage{
-RtCorrViewModule(input, output, session, values = reactiveValues(MSData =
-  MSData, GlobalOpts = GlobalOpts))
+RtCorrViewModule(input, output, session, values)
 
 RtCorrViewModuleUI(id)
 }

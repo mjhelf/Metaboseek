@@ -9,7 +9,7 @@ plotSMILE(SMILE, ...)
 \arguments{
 \item{SMILE}{a character(1) SMILE term}
 
-\item{...}{additional arguments passed to \link[adsf]{view.image.2d}()}
+\item{...}{additional arguments passed to \link[rcdk]{view.image.2d}()}
 }
 \value{
 plots a molecule in the current plotting device

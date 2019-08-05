@@ -5,9 +5,7 @@
 \alias{ChangeFTGroupingModuleUI}
 \title{ChangeFTGroupingModule}
 \usage{
-ChangeFTGroupingModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MSData = MSData,
-  projectData = projectData))
+ChangeFTGroupingModule(input, output, session, values)
 
 ChangeFTGroupingModuleUI(id)
 }

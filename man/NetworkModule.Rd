@@ -6,7 +6,7 @@
 \title{NetworkModule}
 \usage{
 NetworkModule(input, output, session, values = reactiveValues(Networks =
-  Networks), reactives = reactive({     list(active = T, highlights =
+  NULL), reactives = reactive({     list(active = T, highlights =
   integer(0)) }), static = list(noSelection = T), keys = reactive({    
   "NO" }))
 
@@ -27,6 +27,9 @@ gives read and write access to external objects}
 
 \item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
 expression with settings for this module. See \code{details}.}
+
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
 
 \item{keys}{\code{reactive({})} that reports the current key press}
 

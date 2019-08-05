@@ -20,11 +20,10 @@
 #' }
 #' 
 #' @describeIn LoadTableModule server logic
-#' @param static Import data from the shiny session
 #' 
 #' @export 
 LoadTableModule <- function(input,output, session,
-                            values = reactiveValues(projectData = projectData,
+                            values = reactiveValues(projectData = NULL,
                                                     featureTables = NULL),
                             static = list(tooltip = "Load",
                                           label = "Load",

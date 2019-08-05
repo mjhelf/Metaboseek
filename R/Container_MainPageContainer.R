@@ -42,7 +42,7 @@ MainPageContainer <- function(input,output, session,
 }
 
 
-#' @describeIn MainPageContainer returns the \code{shiny} UI elements for the METABOseek main page
+#' @describeIn MainPageContainer returns the \code{shiny} UI elements for the Metaboseek main page
 #' 
 #' @export
 MainPageContainerUI <- function(id){

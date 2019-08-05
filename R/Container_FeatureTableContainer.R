@@ -7,10 +7,10 @@
 #' 
 #' @export 
 FeatureTableContainer <- function(input,output, session,
-                            values = reactiveValues(featureTables = featureTables,
-                                                    MSData = MSData,
-                                                    GlobalOpts = GlobalOpts,
-                                                    projectData = projectData)
+                            values = reactiveValues(featureTables = NULL,
+                                                    MSData = NULL,
+                                                    GlobalOpts = NULL,
+                                                    projectData = NULL)
 ){
   
   callModule(MainTableModule, "maintable",

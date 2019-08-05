@@ -17,8 +17,18 @@ context("Run Mseek")
 #testApp("./tests/testthat/FullMseek", "mytest.R", compareImages = FALSE, quiet = F)
 
 
-test_that("Mseek app starts up", {
-  expect_pass(testApp("FullMseek", "mytest.R", compareImages = FALSE, quiet = T))
+# test_that("Mseek app starts up", {
+#   expect_pass(testApp("FullMseek", "mytest.R", compareImages = FALSE, quiet = T))
+# })
+
+test_that("Mseek app starts up without shinytest",{
+  
+  app <- shiny::shinyApp(ui = MseekContainerUI("test"),
+         server = function(input,output){shiny::callModule(MseekContainer, "test")})
+  
+  expect_s3_class(app, "shiny.appobj")
+  
+
 })
 
 

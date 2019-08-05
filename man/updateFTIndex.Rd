@@ -7,7 +7,7 @@
 updateFTIndex(tables)
 }
 \arguments{
-\item{table}{named list of MseekFT objects}
+\item{tables}{named list of MseekFT objects}
 }
 \value{
 named list of MseekFT tablenames

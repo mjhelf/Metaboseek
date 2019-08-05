@@ -1,6 +1,6 @@
 #' updaterModule
 #' 
-#' module to update METABOseek from inside the UI. Currently not working.
+#' module to update Metaboseek from inside the UI. Currently not working.
 #' 
 #' @inherit MseekModules
 #' @describeIn updaterModule Server logic
@@ -11,7 +11,7 @@
 #' 
 #' @export 
 updaterModule <- function(input,output, session,
-                          tag, set = list(package = "METABOseek",
+                          tag, set = list(package = "Metaboseek",
                                           refs = c("master", "devel", "devel_raw"),
                                           active = T
                           )){
@@ -29,10 +29,10 @@ updaterModule <- function(input,output, session,
         if(Sys.info()['sysname'] != "Windows"){
           fluidRow(
             p("The updater is currently only available for Windows system. enter the following line into your R terminal after closing all running R sessions:"),
-            p("devtools::install_github('mjhelf/METABOseek', ref = 'master')"),
+            p("devtools::install_github('mjhelf/Metaboseek', ref = 'master')"),
             p("You can enter 'devel' or 'devel_raw' instead of 'master', but 'master' is strongly recommended."),
             p("If you encounter problems with the installation, try to  enter the following line into your R terminal after closing all running R sessions:"),
-            p("source('http://metaboseek.com/files/install_METABOseek.R')")
+            p("source('http://metaboseek.com/files/install_Metaboseek.R')")
             
           )}else{
             fluidRow(
@@ -51,12 +51,12 @@ updaterModule <- function(input,output, session,
     
     showModal(
       modalDialog(
-        p(strong("WARNING: This will shut down the current METABOseek session and unsaved work will be lost!")),
-        p("METABOseek will shut down, and a terminal window will appear with information on the update progress."),
+        p(strong("WARNING: This will shut down the current Metaboseek session and unsaved work will be lost!")),
+        p("Metaboseek will shut down, and a terminal window will appear with information on the update progress."),
         p("The terminal Window may not show up on Linux or macOS systems. In that case, check after a few minutes if the update has worked."),
         
         actionButton(ns('startUpdate'), 'Start Update Now!'),
-        title = paste0('Update to latest "',input$branch,'" branch of METABOseek?'),
+        title = paste0('Update to latest "',input$branch,'" branch of Metaboseek?'),
         easyClose = T,
         footer = modalButton("Cancel")
         
@@ -66,7 +66,7 @@ updaterModule <- function(input,output, session,
   
   observeEvent(input$startUpdate,{
     
-    runner <- system.file("scripts", "update_script.R",package = "METABOseek")
+    runner <- system.file("scripts", "update_script.R",package = "Metaboseek")
     rpath <- file.path(R.home(component = "bin"), "Rscript")
     
     
@@ -114,7 +114,7 @@ updaterModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      shinydashboard::box(title = "Update METABOseek!",
+      shinydashboard::box(title = "Update Metaboseek!",
                           status = "primary", collapsible = F, width = 12,
                           htmlOutput(ns('updateUI'))
       )

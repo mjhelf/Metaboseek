@@ -9,9 +9,7 @@
 #' 
 #' @export 
 MS2BrowserModule <- function(input,output, session, 
-                             values = reactiveValues(featureTables = featureTables,
-                                                     MSData = MSData,
-                                                     GlobalOpts = GlobalOpts),
+                             values,
                              keys = reactive({"NO"})){
   
   ns <- NS(session$ns(NULL))
@@ -137,7 +135,7 @@ MS2BrowserModule <- function(input,output, session,
   SpecView1 <- callModule(SpecModule2, "specview1",
                           reactives = reactive({
                               if(is.null(specEngine()$spec$sel)
-                                 && length(specEngine()$spec$sel$scan) > 0){NULL}else{
+                                 || !length(specEngine()$spec$sel$scan)){NULL}else{
                                      return(list(scantable = data.frame(file = specEngine()$spec$sel$File,
                                                                         scan = specEngine()$spec$sel$scan,
                                                                         stringsAsFactors = F),
@@ -383,7 +381,7 @@ MS2BrowserModule <- function(input,output, session,
                  
 
                  
-                 list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"METABOseek"),
+                 list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"Metaboseek"),
                       ms2 = splashsource()$AllSpecLists,
                       ms1 = list(internalValues$ms1),
                       instrument = values$GlobalOpts$SiriusSelInstrument,

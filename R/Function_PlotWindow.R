@@ -16,9 +16,10 @@
 #' @param ylab y axis label
 #' @param relto show y axis values relative to relto if not NULL.
 #' @param ysci if TRUE, y axis label numbers are shown in scientific format
+#' @param liwi line width for axes
 #' @param textadj passed on to mtext adj for orientation 
 #' of plot description/title text line
-#' @param ylabfactor factor to adjust the position of the y axis label
+#' @param ylabshift integer to adjust the position of the y axis label
 #'
 PlotWindow <- function(cx = 1, 
                        ylim = c(0,1), 

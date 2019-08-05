@@ -12,6 +12,10 @@ EICplot(EICs, cx = 1, ylim = c(0, max(unlist(EICs[[1]][, "tic"]))),
   midline = 100, lw = 1, yzoom = 1, ylabshift = 0)
 }
 \arguments{
+\item{EICs}{item from a list of EICs from Metaboseek:multiEIC}
+
+\item{cx}{character expansion (font size) factor}
+
 \item{ylim}{numeric(2) min and max visible rt value (in seconds)}
 
 \item{xlim}{numeric(2) min and max visible intensity value (in seconds)}
@@ -35,8 +39,6 @@ EICplot(EICs, cx = 1, ylim = c(0, max(unlist(EICs[[1]][, "tic"]))),
 \item{yzoom}{zoom factor into y-axis}
 
 \item{ylabshift}{shift horizontal position of y axis label}
-
-\item{EIClistItem}{item from a list of EICs from METABOseek:multiEIC}
 }
 \value{
 sends a single EIC plot to the current plotting device

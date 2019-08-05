@@ -10,6 +10,8 @@ plotTree(tree, resolution = 2000, filename = NULL)
 \item{tree}{DiagrammeR::grViz output object}
 
 \item{resolution}{resolution  of the image along its longest edge}
+
+\item{filename}{if not NULL, will generate plot in a .pdf file with this name}
 }
 \value{
 plots a grViz- generated tree in an R plotting device

@@ -221,6 +221,7 @@ featureReport <- function(pdf_settings = list(file = "testReport.pdf", width = N
 #'
 #' @param tree DiagrammeR::grViz output object
 #' @param resolution resolution  of the image along its longest edge
+#' @param filename if not NULL, will generate plot in a .pdf file with this name
 #' 
 #' @return plots a grViz- generated tree in an R plotting device
 #'

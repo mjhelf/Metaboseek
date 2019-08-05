@@ -8,9 +8,7 @@
 #' @inherit MseekModules
 #' 
 #' @export 
-FindMS2ScansModule <- function(input,output, session,
-                            values = reactiveValues(MSData = MSData,
-                                                    featureTables = featureTables),
+FindMS2ScansModule <- function(input,output, session, values,
                             static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table",
                                           label = "Find MS2 scans")
 ){
@@ -75,8 +73,8 @@ FindMS2ScansModule <- function(input,output, session,
   observeEvent(input$startMS2search,{
     
     tryCatch({
-      TableUpdateChunk()
-      
+        updateFT(values)
+        
       withProgress(message = 'Please wait!', detail = "Finding MS2 scans", value = 0.5, {
         
         MS2s <-  data.frame(MS2scans = listMS2scans(mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,

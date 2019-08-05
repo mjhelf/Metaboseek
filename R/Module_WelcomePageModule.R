@@ -11,6 +11,22 @@
 #' 
 #' @import shiny shinyFiles
 #' 
+#' @examples 
+#' \dontrun{
+#' library(shiny)
+#' 
+#' ui <- MseekMinimalUI(WelcomePageModuleUI("examplemodule"), diagnostics = T)
+#' 
+#' server <- function(input, output, session) {
+#'   MseekMinimalServer(diagnostics = T, data = F, tables = F)
+#'   
+#'   ExampleModule <- callModule(WelcomePageModule, "examplemodule", values)
+#' }
+#' 
+#' # Run Shiny app
+#' shinyApp(ui, server)
+#' }
+#' 
 #' @export
 WelcomePageModule <- function(input,output, session,
                               values = reactiveValues(projectData = values$projectData,
@@ -54,7 +70,7 @@ WelcomePageModule <- function(input,output, session,
         #   ),
         fluidRow(
           shinydashboard::box(status = "primary", width = 12, solidHeader = T,
-                              title = "Welcome to METABOseek!",
+                              title = "Welcome to Metaboseek!",
                               fluidPage(
                                 fluidRow(
                                   
@@ -75,32 +91,69 @@ WelcomePageModule <- function(input,output, session,
         fluidRow(
           div(class = "box box-solid box-primary",
               div(class = "box-header",
-                  h3(class = "box-title", paste0("This is METABOseek version ",packageVersion("METABOseek")))))
+                  h3(class = "box-title", paste0("This is Metaboseek version ",
+                                                 packageVersion("Metaboseek")))))
          
         ),
         
         div(style="height:4px;"),
         
+        ##NEWS work now, except when using MseekContainer for a version that does not have a website..
         fluidRow(
           tryCatch({
-            rl <- readLines(paste0('http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = ".")), n = 1)
+              
+            rl <- readLines(paste0('http://metaboseek.com/integrated/',
+                                   paste(strsplit(paste(packageVersion("Metaboseek")[[1]]),
+                                                  "\\.")[[1]][1:3],
+                                         collapse = ".")), n = 1)
+
             
+    #using only first three numbers of version to determine site to load:
             HTML('
 <iframe id="inlineFrameWelcome"
 title="webpage" 
 style="border:none;width:100%;height:500px;" ',
-                 paste0('src="http://metaboseek.com/integrated/', paste(packageVersion("METABOseek")[[1]],collapse = "."),'">'),
-                 #paste0('src="http://metaboseek.com">'),
+                 paste0('src="http://metaboseek.com/integrated/',
+                        paste(strsplit(paste(packageVersion("Metaboseek")[[1]]),
+                                       "\\.")[[1]][1:3],collapse = "."),'">'),
                  '</iframe>
               ')
             
             
           },
           error = function(e){
+              if(!file.exists(system.file("app/www/NEWS.html", package = 'Metaboseek'))){
+                  file.copy(system.file("NEWS.html", package = 'Metaboseek'),
+                            file.path(system.file("app/www", package = 'Metaboseek'),
+                                      "NEWS.html"))
+              }
+              
+              HTML('
+<iframe id="inlineFrameWelcome"
+title="webpage" 
+style="border:none;width:100%;height:500px;" ',
+                   paste0('src="',"NEWS.html",'">'),
+                   '</iframe>
+              ')
             
-            
-            
-          })
+          },
+    warning = function(w){
+        
+        if(!file.exists(system.file("app/www/NEWS.html", package = 'Metaboseek'))){
+            file.copy(system.file("NEWS.html", package = 'Metaboseek'),
+                      file.path(system.file("app/www", package = 'Metaboseek'),
+                                "NEWS.html"))
+        }
+        
+        HTML('
+             <iframe id="inlineFrameWelcome"
+             title="webpage" 
+             style="border:none;width:100%;height:500px;" ',
+             paste0('src="',"NEWS.html",'">'),
+             '</iframe>
+             ')
+        
+    })
         )
         
       )

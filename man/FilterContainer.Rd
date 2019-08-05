@@ -5,8 +5,7 @@
 \alias{FilterContainerUI}
 \title{FilterContainer}
 \usage{
-FilterContainer(input, output, session,
-  values = reactiveValues(featureTables = featureTables))
+FilterContainer(input, output, session, values)
 
 FilterContainerUI(id)
 }

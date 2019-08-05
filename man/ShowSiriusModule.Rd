@@ -6,9 +6,9 @@
 \title{ShowSiriusModule}
 \usage{
 ShowSiriusModule(input, output, session,
-  values = reactiveValues(SiriusModule = SiriusModule, GlobalOpts =
-  GlobalOpts), reactives = reactive({     list(splash = NULL, ms1splash =
-  NULL, mz = NULL) }))
+  values = reactiveValues(SiriusModule = NULL, GlobalOpts = NULL),
+  reactives = reactive({     list(splash = NULL, ms1splash = NULL, mz =
+  NULL) }))
 
 ShowSiriusModuleUI(id)
 }

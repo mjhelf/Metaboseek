@@ -9,10 +9,7 @@
 #' @describeIn RtCorrViewModule Server logic
 #' 
 #' @export 
-RtCorrViewModule <- function(input,output, session,
-                             values = reactiveValues(MSData = MSData,
-                                                     GlobalOpts = GlobalOpts)
-){
+RtCorrViewModule <- function(input,output, session, values){
   
   ns <- NS(session$ns(NULL))
   

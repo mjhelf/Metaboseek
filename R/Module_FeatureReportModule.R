@@ -17,10 +17,8 @@
 #' 
 #' @export 
 FeatureReportModule <- function(input,output, session,
-                                   values = reactiveValues(MSData = MSData,
-                                                           featureTables = featureTables,
-                                                           GlobalOpts = GlobalOpts),
-                                MS2feed = NULL,                                #TODO: simplify inputs
+                                   values,
+                                MS2feed = NULL,  #TODO: simplify inputs
                                 tree = reactive({}),
                                 fragments = NULL){
   

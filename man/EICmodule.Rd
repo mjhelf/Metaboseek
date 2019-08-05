@@ -5,8 +5,7 @@
 \alias{EICmoduleUI}
 \title{EICmodule}
 \usage{
-EICmodule(input, output, session, values = reactiveValues(MSData =
-  MSData, GlobalOpts = GlobalOpts))
+EICmodule(input, output, session, values)
 
 EICmoduleUI(id)
 }

@@ -151,6 +151,7 @@ listMS2scans <- function(mz,rt,ppm,rtw,MSData, rtMatch = F){
 #' @param MS2 if TRUE, looks for MS2 scans
 #' 
 #' @return a data.frame with metadata for MS2 scans as specified by \code{splitme}
+#' @importFrom data.table data.table
 #' 
 #' @export
 makeScanlist2 <- function(splitme, MSData = NULL, MS2 = T){

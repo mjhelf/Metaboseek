@@ -5,8 +5,7 @@
 \alias{MultiEICmoduleUI}
 \title{MultiEICmodule}
 \usage{
-MultiEICmodule(input, output, session, values = reactiveValues(MSData =
-  MSData, GlobalOpts = GlobalOpts, featureTables = featureTables))
+MultiEICmodule(input, output, session, values)
 
 MultiEICmoduleUI(id)
 }

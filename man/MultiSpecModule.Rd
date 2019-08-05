@@ -30,6 +30,9 @@ MultiSpecmoduleUI(id)
 \item{keys}{\code{reactive({})} that reports the current key press. 
 This argument is deprecated and will be removed from all modules.}
 
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
+
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}

@@ -9,8 +9,7 @@
 #' @describeIn MultiFilterModule Server logic
 #' 
 #' @export 
-MultiFilterModule <- function(input,output, session,
-                              values = reactiveValues(featureTables = featureTables),
+MultiFilterModule <- function(input,output, session, values,
                               static = list(lab = "Filter",
                                             modFeatureTable = T,
                                             name = NULL,
@@ -42,7 +41,7 @@ MultiFilterModule <- function(input,output, session,
     internalValues$applyButton <- internalValues$applyButton + 1
     
     #let's try if this causes problems here:
-    TableUpdateChunk()
+    updateFT(values)
     
     logilist <- list()
     
