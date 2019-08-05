@@ -10,11 +10,11 @@
 #' 
 #' @export 
 GroupedEICModule <- function(input,output, session,
-                                   values = reactiveValues(MSData = MSData,
-                                                           featureTables = featureTables,
-                                                           GlobalOpts = GlobalOpts,
-                                                           projectData = projectData),
-                             keys = reactive({keyin$keyd})
+                                   values = reactiveValues(MSData = NULL,
+                                                           featureTables = NULL,
+                                                           GlobalOpts = NULL,
+                                                           projectData = NULL),
+                             keys = reactive({"NO"})
 ){
   
   ns <- NS(session$ns(NULL))
@@ -29,8 +29,8 @@ GroupedEICModule <- function(input,output, session,
     return(paste0(titleout,".pdf"))}, 
     content = function(file){
       
-      TableUpdateChunk()
-      
+        updateFT(values)
+        
      subtitles <- NULL
 
      if(length(internalValues$subtitleColumns) > 0  && internalValues$subtitleColumns != ""){

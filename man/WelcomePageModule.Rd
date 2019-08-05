@@ -44,6 +44,23 @@ Start page module, shows update news and allows loading of data.
 \item \code{WelcomePageModuleUI}: UI elements
 }}
 
+\examples{
+\dontrun{
+library(shiny)
+
+ui <- MseekMinimalUI(WelcomePageModuleUI("examplemodule"), diagnostics = T)
+
+server <- function(input, output, session) {
+  MseekMinimalServer(diagnostics = T, data = F, tables = F)
+  
+  ExampleModule <- callModule(WelcomePageModule, "examplemodule", values)
+}
+
+# Run Shiny app
+shinyApp(ui, server)
+}
+
+}
 \seealso{
 \code{\link{values}} for a description of the \code{values} object
 }

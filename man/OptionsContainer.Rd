@@ -6,9 +6,8 @@
 \title{OptionsContainer}
 \usage{
 OptionsContainer(input, output, session,
-  values = reactiveValues(projectData = projectData, featureTables =
-  featureTables, MSData = MSData, GlobalOpts = GlobalOpts, MainPlotBox =
-  MainPlotBox, MainTable = MainTable))
+  values = reactiveValues(projectData = NULL, featureTables = NULL,
+  MSData = NULL, GlobalOpts = NULL, MainPlotBox = NULL, MainTable = NULL))
 
 OptionsContainerUI(id)
 }
@@ -33,7 +32,7 @@ Container for modules in the Metaboseek Options box
 \itemize{
 \item \code{OptionsContainer}: server logic module, to be called with \link[shiny]{callModule}()
 
-\item \code{OptionsContainerUI}: returns the \code{shiny} UI elements for the METABOseek options box, including the surrounding box
+\item \code{OptionsContainerUI}: returns the \code{shiny} UI elements for the Metaboseek options box, including the surrounding box
 }}
 
 \section{MseekContainers}{

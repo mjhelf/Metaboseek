@@ -9,7 +9,8 @@
 #' @return Returns its internalValues
 #' 
 #' @export 
-SimplifyNetworkModule <- function(input,output, session, values = reactiveValues(Networks = Networks),
+SimplifyNetworkModule <- function(input,output, session,
+                                  values = reactiveValues(Networks = NULL),
                                   reactives = reactive({list(activeNetwork = NULL)})){
   
   ns <- NS(session$ns(NULL))
@@ -192,7 +193,7 @@ SimplifyNetworkModule <- function(input,output, session, values = reactiveValues
             hr(),
             fluidRow(
               div( title = "Use these parameters to simplify the network", 
-                             METABOseek:::mActionButton(ns("simplifyNow"), "Go", red = T)))
+                             mActionButton(ns("simplifyNow"), "Go", red = T)))
               
             ),
           title = "Simplify network",

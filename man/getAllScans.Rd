@@ -12,6 +12,9 @@ getAllScans(scanlist, MSData, removeNoise = NULL, type = c("ms2",
 
 \item{MSData}{list of xcmsRaw objects}
 
+\item{removeNoise}{if not NULL, a numeric specifying a relative intensity
+cutoff (<1, relative to maximum peak intensity)}
+
 \item{type}{specify what the scan number represents, either 
 "acquisition", "ms1" or "ms2".}
 }

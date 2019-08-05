@@ -68,6 +68,8 @@ parseTitle <- function(scanInfo){
 #' 
 #' @param x mz coordinates
 #' @param y intensity coordinates
+#' @param spectrum matrix or data.frame, where the first column is m/z values,
+#'  and the second column are intensity values
 #' @param norm normalize by
 #' @param cx font size
 #' @param k top k intensity peaks will be labeled 
@@ -113,8 +115,8 @@ parseTitle <- function(scanInfo){
 #' @importFrom TeachingDemos spread.labs
 #' @importFrom Hmisc minor.tick
 #' @export
-specplot2 <- function (x=sc[,1],
-                       y=sc[,2],
+specplot2 <- function (x,
+                       y,
                        spectrum,
                        norm= NULL,
                        cx=1,

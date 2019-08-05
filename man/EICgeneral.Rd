@@ -8,7 +8,7 @@ EICgeneral(rtmid, mzmid, glist, cols = NULL, colrange = "Mseek.colors",
   transparency = 1, RTall = FALSE, TICall = FALSE, rtw = 30,
   ppm = 5, rdata, pdfFile = "plotOutput.pdf", leadingTIC = T,
   lw = 1, adducts = c(0), cx = 1, midline = T, yzoom = 1,
-  RTcorrect = NULL, importEIC = NULL, globalYmax = NULL,
+  RTcorrect = NULL, importEIC = NULL, globalYmax = FALSE,
   subtitles = NULL, raise = F, relPlot = F, margins = NULL,
   ylabshift = 0, RescaleExclude = NULL)
 }
@@ -59,6 +59,12 @@ pdf file with this name.}
 \item{RTcorrect}{if not NULL, this RTcorr object will be used to 
 adjust retention times.}
 
+\item{importEIC}{a \code{\link{multiEICplus}()} output object to plot here, If NULL,
+\code{multiEICplus()} is called with the other supplied parameters}
+
+\item{globalYmax}{if TRUE, all EICs are scaled to the maximum value across all 
+plotting groups instead of the maximum within each group}
+
 \item{subtitles}{subtitles for each EIC, must be character of 
 same length as rtmid and mzmid or NULL}
 
@@ -72,8 +78,6 @@ same length as rtmid and mzmid or NULL}
 \item{ylabshift}{shift horizontal position of y axis label}
 
 \item{RescaleExclude}{character(), exclude this group from rescaling, or NULL to use all}
-
-\item{exportmode}{if TRUE, $EIC list is exported along with $plot (as list)}
 }
 \value{
 sends a grouped EIC plot to the current plotting device, or 

@@ -3,6 +3,7 @@
 #' A simple Table module without sorting or pagination
 #' 
 #' @inherit MseekWidgets
+#' @param df reactive containing the data.frame to display
 #' 
 #' @return Returns its internalValues, most importantly elements \code{df} 
 #' and \code{liveView}

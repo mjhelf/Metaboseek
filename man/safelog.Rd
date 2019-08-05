@@ -4,14 +4,19 @@
 \alias{safelog}
 \title{safelog}
 \usage{
-safelog(x, base = 10, replaceZeros = NULL)
+safelog(x, base = 10, replaceZeros = NULL,
+  replaceNonFinites = NA_real_)
 }
 \arguments{
 \item{x}{numeric vector of positive values}
 
 \item{base}{of log}
 
-\item{replaceZeros}{replace zeros with this value, if NULL will use smallest non-zero absolute value in x}
+\item{replaceZeros}{replace zeros with this value, if NULL will use 
+smallest non-zero absolute value in x}
+
+\item{replaceNonFinites}{replace non-finite values (\code{Inf, -Inf, NA}) 
+with this value before applying log}
 }
 \value{
 a numeric vector of same length as \code{x}, with logarithmized values

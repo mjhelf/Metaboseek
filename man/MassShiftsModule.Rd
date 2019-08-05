@@ -5,8 +5,7 @@
 \alias{MassShiftsModuleUI}
 \title{MassShiftsModule}
 \usage{
-MassShiftsModule(input, output, session, values = reactiveValues(MSData =
-  MSData))
+MassShiftsModule(input, output, session, values)
 
 MassShiftsModuleUI(id)
 }

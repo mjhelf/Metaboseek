@@ -9,9 +9,7 @@
 #' 
 #' @export 
 GetIntensitiesModule <- function(input,output, session,
-                           values = reactiveValues(MSData = MSData,
-                                                   featureTables = featureTables,
-                                                   GlobalOpts = GlobalOpts)){
+                           values){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)
@@ -74,11 +72,11 @@ If this is selected, the rt window setting for peak intensity calculation starts
   observeEvent(input$getIntensities,{
     tryCatch({
       withProgress(message = 'Please wait!', detail = "Calculating peak intensities", value = 0.5, {
-        METABOseek:::TableUpdateChunk()
-        
+          updateFT(values)
+          
 
         newdf <- as.data.frame(lapply(bplapply(values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist], 
-                                              METABOseek::exIntensities, 
+                                              exIntensities, 
                                               mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,
                                               ppm = input$intensppm,
                                               rtw = if(input$intensRangeCheck){data.frame(rtmin = values$featureTables$tables[[values$featureTables$active]]$df$rtmin-input$intensRTsec,

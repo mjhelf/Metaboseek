@@ -39,6 +39,8 @@ TableUpdateChunk <- function(){
 #' 
 #' @param scanlist as returned by makeScanlist2()
 #' @param MSData list of xcmsRaw objects
+#' @param removeNoise if not NULL, a numeric specifying a relative intensity
+#' cutoff (<1, relative to maximum peak intensity)
 #' @inheritParams getScanInfo
 #' 
 #' @return a list of MS spectra (each in matrix format)
@@ -132,8 +134,8 @@ getAllScans <- function(scanlist, MSData, removeNoise = NULL,
 #' @importFrom TeachingDemos spread.labs
 #' @importFrom Hmisc minor.tick
 #' @export
-specplot <- function (x=sc[,1],
-                      y=sc[,2],
+specplot <- function (x,
+                      y,
                       norm=max(y)/100,
                       cx=1.5,
                       k = 10,

@@ -10,8 +10,8 @@
 #' 
 #' @export 
 SelectActiveTableModule <- function(input,output, session,
-                           values = reactiveValues(featureTables = featureTables,
-                                                   MainTable = MainTable)
+                           values = reactiveValues(featureTables = NULL,
+                                                   MainTable = NULL)
 ){
   
   ns <- NS(session$ns(NULL))
@@ -26,13 +26,14 @@ SelectActiveTableModule <- function(input,output, session,
   
   observeEvent(input$activeTable, { 
     
-    TableUpdateChunk()
-    
-    values$featureTables$tableSwitch <- T
+    #  if(values$featureTables$active != input$activeTable){
+
+    updateFT(values)
+    values$featureTables$tableSwitch <- TRUE
     values$featureTables$active <- input$activeTable
     values$featureTables$row_filters <- TRUE
-    
-  })
+    #  }
+  }, priority = 1000)
   
 }
 

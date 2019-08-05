@@ -5,10 +5,8 @@
 \alias{FeatureReportModuleUI}
 \title{FeatureReportModule}
 \usage{
-FeatureReportModule(input, output, session,
-  values = reactiveValues(MSData = MSData, featureTables = featureTables,
-  GlobalOpts = GlobalOpts), MS2feed = NULL, tree = reactive({ }),
-  fragments = NULL)
+FeatureReportModule(input, output, session, values, MS2feed = NULL,
+  tree = reactive({ }), fragments = NULL)
 
 FeatureReportModuleUI(id)
 }

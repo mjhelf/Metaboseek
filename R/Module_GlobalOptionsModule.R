@@ -10,8 +10,7 @@
 #' @importFrom parallel detectCores
 #' 
 #' @export 
-GlobalOptionsModule <- function(input,output, session,
-                                values = reactiveValues(GlobalOpts = GlobalOpts)){
+GlobalOptionsModule <- function(input,output, session, values){
   #### Initialization ####
   
   ns <- NS(session$ns(NULL))

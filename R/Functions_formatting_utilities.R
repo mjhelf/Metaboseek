@@ -95,6 +95,9 @@ filenamemaker <- function(projectName,
 #' @export
 get_common_dir <- function(paths, delim = "/")
 {
+  if(!length(paths)){
+    simpleError("cannot find common dir on an object of length 0.")
+    }
   if(length(unique(dirname(paths))) == 1){
     return(dirname(paths)[1])
   }else{

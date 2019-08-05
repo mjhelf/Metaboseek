@@ -12,8 +12,8 @@
 #' 
 #' @export 
 FilterModule <- function(input,output, session,
-                                    values = reactiveValues(featureTables = featureTables,
-                                                            MultiFilter = MultiFilter),
+                                    values = reactiveValues(featureTables = NULL,
+                                                            MultiFilter = NULL),
                          static = list(lab = "Filter"),
                          initValues = list(active = F,
                                            filter = TRUE,

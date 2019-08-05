@@ -6,10 +6,10 @@
 \title{MainTableModule}
 \usage{
 MainTableModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, GlobalOpts =
-  GlobalOpts, projectData = projectData), static = list(height = 300,
-  readOnly = TRUE, contextMenu = TRUE, fixedColumnsLeft = 1, invertReadOnly
-  = NULL, controls = TRUE, format = list(col = NULL, format = NULL)))
+  values = reactiveValues(featureTables = NULL, GlobalOpts = NULL,
+  projectData = NULL), static = list(height = 300, readOnly = TRUE,
+  contextMenu = TRUE, fixedColumnsLeft = 1, invertReadOnly = NULL, controls
+  = TRUE, format = list(col = NULL, format = NULL)))
 
 MainTableModuleUI(id)
 }
@@ -25,6 +25,9 @@ MainTableModuleUI(id)
 
 \item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
 gives read and write access to external objects}
+
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
 
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
@@ -61,6 +64,24 @@ the readOnly rule (e.g. only allow editing on comments column)
 \item \code{MainTableModuleUI}: UI elements
 }}
 
+\examples{
+\dontrun{
+library(shiny)
+
+ui <- MseekMinimalUI(MainTableModuleUI("examplemodule"),
+                     diagnostics = F, dashboard = F)
+
+server <- function(input, output) {
+    MseekMinimalServer(diagnostics = F, data = F, tables = T)
+    
+    callModule(MainTableModule, "examplemodule", values = reactiveValues(featureTables = values$featureTables,
+                                                                                          GlobalOpts = values$GlobalOpts,
+                                                                                          projectData = values$projectData))
+}
+# Create Shiny app ----
+shinyApp(ui, server)
+}
+}
 \seealso{
 \code{\link{values}} for a description of the \code{values} object
 }

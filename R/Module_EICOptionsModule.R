@@ -14,7 +14,7 @@
 #' 
 #' @export 
 EICOptionsModule <- function(input,output, session,
-                             values = reactiveValues(GlobalOpts = GlobalOpts)){
+                             values){
   #### Initialization ####
   
   ns <- NS(session$ns(NULL))

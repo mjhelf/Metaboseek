@@ -22,13 +22,13 @@ MseekContainerUI(id)
 The server module for this container returns nothing
 }
 \description{
-Module that contains the entire METABOseek program
+Module that contains the entire Metaboseek program
 }
 \section{Functions}{
 \itemize{
 \item \code{MseekContainer}: server logic module, to be called with \link[shiny]{callModule}()
 
-\item \code{MseekContainerUI}: returns the \code{shiny} UI elements for the entire METABOseek program
+\item \code{MseekContainerUI}: returns the \code{shiny} UI elements for the entire Metaboseek program
 }}
 
 \section{MseekContainers}{

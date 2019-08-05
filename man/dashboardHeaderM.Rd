@@ -7,7 +7,20 @@
 dashboardHeaderM(..., title = NULL, titleWidth = NULL,
   disable = FALSE, .list = NULL, left = NULL)
 }
+\arguments{
+\item{...}{additional UI elements for the header}
+
+\item{title}{App title}
+
+\item{titleWidth}{custom width of title}
+
+\item{disable}{if TRUE, header will not be shown}
+
+\item{.list}{additional uI elements for the header, passed as a list}
+
+\item{left}{list of UI elements for the left side of the header}
+}
 \description{
-METABOseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
+Metaboseek-specific, modified version of \code{\link[shinydashboard]{dashboardHeader}()} 
 that allows placing icons left and right in the navbar
 }

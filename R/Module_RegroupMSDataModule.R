@@ -12,8 +12,8 @@
 #' 
 #' @export 
 RegroupMSDataModule <- function(input,output, session,
-                                values = reactiveValues(MSData = MSData,
-                                                        projectData = projectData)
+                                values = reactiveValues(MSData = NULL,
+                                                        projectData = NULL)
 ){
   
   ns <- NS(session$ns(NULL))

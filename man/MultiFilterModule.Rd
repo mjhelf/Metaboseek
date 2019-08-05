@@ -5,10 +5,8 @@
 \alias{MultiFilterModuleUI}
 \title{MultiFilterModule}
 \usage{
-MultiFilterModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables),
-  static = list(lab = "Filter", modFeatureTable = T, name = NULL,
-  activate = F))
+MultiFilterModule(input, output, session, values, static = list(lab =
+  "Filter", modFeatureTable = T, name = NULL, activate = F))
 
 MultiFilterModuleUI(id)
 }
@@ -24,6 +22,9 @@ MultiFilterModuleUI(id)
 
 \item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
 gives read and write access to external objects}
+
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
 
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 

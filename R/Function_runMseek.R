@@ -11,10 +11,10 @@
 runMseek <- function(...) {
     
     
-    appDir <- system.file("app", package = "METABOseek")
+    appDir <- system.file("app", package = "Metaboseek")
     if (appDir == "") {
-        stop("Could not find METABOseek directory.
-             Try re-installing `METABOseek`.",
+        stop("Could not find Metaboseek directory.
+             Try re-installing `Metaboseek`.",
              call. = FALSE)
     }
     
@@ -27,10 +27,10 @@ runMseek <- function(...) {
 runPeptideApp <- function(...) {
     
     
-    appDir <- system.file("PeptideApp", package = "METABOseek")
+    appDir <- system.file("PeptideApp", package = "Metaboseek")
     if (appDir == "") {
-        stop("Could not find METABOseek directory.
-             Try re-installing `METABOseek`.",
+        stop("Could not find Metaboseek directory.
+             Try re-installing `Metaboseek`.",
              call. = FALSE)
     }
     

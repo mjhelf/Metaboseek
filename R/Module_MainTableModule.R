@@ -7,6 +7,23 @@
 #' @return returns its internalValues and modifies \code{\link{values}}
 #' @describeIn MainTableModule server logic
 #' 
+#' @examples
+#' \dontrun{
+#' library(shiny)
+#' 
+#' ui <- MseekMinimalUI(MainTableModuleUI("examplemodule"),
+#'                      diagnostics = F, dashboard = F)
+#' 
+#' server <- function(input, output) {
+#'     MseekMinimalServer(diagnostics = F, data = F, tables = T)
+#'     
+#'     callModule(MainTableModule, "examplemodule", values = reactiveValues(featureTables = values$featureTables,
+#'                                                                                           GlobalOpts = values$GlobalOpts,
+#'                                                                                           projectData = values$projectData))
+#' }
+#' # Create Shiny app ----
+#' shinyApp(ui, server)
+#' }
 #' @details 
 #' \describe{
 #' \item{static}{
@@ -24,12 +41,11 @@
 #' 
 #' }
 #' }
-#' 
 #' @export 
 MainTableModule <- function(input, output, session,
-                            values = reactiveValues(featureTables = featureTables,
-                                                    GlobalOpts = GlobalOpts,
-                                                    projectData = projectData),
+                            values = reactiveValues(featureTables = NULL,
+                                                    GlobalOpts = NULL,
+                                                    projectData = NULL),
                             static = list(height = 300,
                                           readOnly = TRUE,
                                           contextMenu = TRUE,
@@ -53,7 +69,10 @@ MainTableModule <- function(input, output, session,
                                    page = 1,
                                    set = NULL,
                                    liveView = NULL,
-                                   hasUpdates = F
+                                   hasUpdates = F,
+                                   updatedFrom = NULL,
+                                   resortTrigger = FALSE,
+                                   renderedTable = NULL
   )
   
   observeEvent(values,{
@@ -61,7 +80,12 @@ MainTableModule <- function(input, output, session,
   }, once = TRUE)
   
   
-  observe({internalValues$hasUpdates <- !is.null(input$maintable$changes$changes)})
+  observeEvent(input$maintable$changes$changes,{
+      internalValues$hasUpdates <- !is.null(input$maintable$changes$changes)
+     # if(internalValues$hasUpdates){
+          internalValues$updatedFrom <- internalValues$renderedTable
+         # }
+      }, priority = 2000, ignoreNULL = F)
   
   callModule(SelectActiveTableModule, "tablechange", values = reactiveValues(featureTables = values$featureTables,
                                                                              MainTable = internalValues))
@@ -87,11 +111,10 @@ MainTableModule <- function(input, output, session,
                  internalValues$decreasing,
                  internalValues$sortBy,
                  internalValues$sortCheck,
-                 values$featureTables$tableSwitch,
+                 #values$featureTables$tableSwitch,
                  values$featureTables$row_filters),{
                    
-                  
-                   
+
                    #update the df with any possible changes before changing anything else
                    if(!is.null(input$maintable)
                       && !identical(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage,], internalValues$liveView)
@@ -99,18 +122,33 @@ MainTableModule <- function(input, output, session,
                       && !is.null(input$maintable$changes$changes)
                       && !values$featureTables$tableSwitch
                    ){
-                     values$featureTables$tables[[values$featureTables$active]]$df[row.names( internalValues$liveView),colnames( internalValues$liveView)] <-  internalValues$liveView
+                       updateFT(values)
+                     #values$featureTables$tables[[values$featureTables$active]]$df[row.names( internalValues$liveView),colnames( internalValues$liveView)] <-  internalValues$liveView
+                   }
                      
-                   }               
-                   
-                   if(is.null(internalValues$sortBy) || !internalValues$sortBy %in% colnames(values$featureTables$tables[[values$featureTables$active]]$df)){
+                     internalValues$resortTrigger <- !internalValues$resortTrigger
+                 })
+  
+  observeEvent(c(internalValues$resortTrigger,
+                 values$featureTables$tableSwitch),{
+                 
+                     # if(is.null(values$featureTables$tableSwitch)
+                     #    || !values$featureTables$tableSwitch){
+                     #    isolate({values$featureTables$row_filters <- TRUE})
+                     # }
+                     
+                   if(is.null(internalValues$sortBy) 
+                      || !internalValues$sortBy %in% colnames(values$featureTables$tables[[values$featureTables$active]]$df)){
                      internalValues$sortBy <- colnames(values$featureTables$tables[[values$featureTables$active]]$df)[1]
                    }
                    
                    if(internalValues$sortCheck && length(internalValues$sortBy) > 0){
                      #this seems like it might be slow
-                     whi <- if(length(values$featureTables$row_filters) ==1 && values$featureTables$row_filters){seq(nrow(values$featureTables$tables[[values$featureTables$active]]$df))}else{which(values$featureTables$row_filters)}
-                     ord <- order(values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$row_filters,internalValues$sortBy], decreasing = internalValues$decreasing)
+                     whi <- if(length(values$featureTables$row_filters) ==1 
+                               && values$featureTables$row_filters){seq(nrow(values$featureTables$tables[[values$featureTables$active]]$df))
+                         }else{which(values$featureTables$row_filters)}
+                     ord <- order(values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$row_filters,internalValues$sortBy],
+                                  decreasing = internalValues$decreasing)
                      internalValues$order <- whi[ord]
                    }
                    #case that includes NULL (at initialization) and TRUE if no filter is active               
@@ -128,21 +166,28 @@ MainTableModule <- function(input, output, session,
                      if(internalValues$page < 1){internalValues$page <- 1}
                      internalValues$order[c((internalValues$page*values$GlobalOpts$perPage-(values$GlobalOpts$perPage-1)):(internalValues$page*values$GlobalOpts$perPage))]}
                    
-                   values$featureTables$tableSwitch <- F
+                   values$featureTables$tableSwitch <- FALSE
                    
                    
                  })
   
   
   output$maintable <- renderRHandsontable({
-    if(length(internalValues$inpage > 0 )){
+    if(!is.null(FeatureTable(values))
+        && length(internalValues$inpage > 0 )){
       
+      selcols <- if(!is.null(values$featureTables$selectedCols)){
+          values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(FeatureTable(values)$df)]
+      }else{colnames(FeatureTable(values)$df)}
       
-      rhandsontable(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage,values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(values$featureTables$tables[[values$featureTables$active]]$df)]],
-                    readOnly = !values$featureTables$tables[[values$featureTables$active]]$editable,
-                    contextMenu = values$featureTables$tables[[values$featureTables$active]]$editable,
+              internalValues$renderedTable <- activeFT(values)
+
+      rhandsontable(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage, selcols],
+                    readOnly = !FeatureTable(values)$editable,
+                    contextMenu = FeatureTable(values)$editable,
                     selectCallback = TRUE,
-                    height = if(length(internalValues$inpage) < 22){NULL}else{500},
+                    height = if(length(internalValues$inpage) < 22){
+                        NULL}else{500},
                     outsideClickDeselects = FALSE,
                     digits=8,
                     highlightCol = TRUE, 
@@ -151,9 +196,8 @@ MainTableModule <- function(input, output, session,
                     autoWrapRow = FALSE) %>%
         hot_col("comments", readOnly = FALSE)%>%
         hot_cols(columnSorting = FALSE,format="0.000")%>%
-        hot_col(col = grep("^mz",values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(values$featureTables$tables[[values$featureTables$active]]$df)], value = T), format="0.000000")%>%
+        hot_col(col = grep("^mz", selcols, value = T), format="0.000000")%>%
         hot_cols(fixedColumnsLeft = 3)
-      
       
       
       
@@ -284,7 +328,7 @@ MainTableModuleUI <- function(id){
   
   ns <- NS(id)
   fluidPage(
-    useShinyjs(),
+   # shinyjs::useShinyjs(),
     htmlOutput(ns("tabUI")),
     htmlOutput(ns('tabCtrls'))
     

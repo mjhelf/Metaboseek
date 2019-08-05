@@ -11,9 +11,7 @@
 #' @describeIn ChangeFTGroupingModule server logic for ChangeFTGroupingModule
 #' @export 
 ChangeFTGroupingModule <- function(input,output, session,
-                                   values = reactiveValues(featureTables = featureTables,
-                                                           MSData = MSData,
-                                                           projectData = projectData)){
+                                   values){
   
   ns <- NS(session$ns(NULL))
   

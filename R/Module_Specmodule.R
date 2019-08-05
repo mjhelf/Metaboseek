@@ -103,7 +103,7 @@ Specmodule <- function(input,output, session,
           
           #make sure signal to other functions that the spectrum IS a merge product
           if(length(speclist) > 1){
-            selections$plots$spec$MSmerge <- quickMergeMS(speclist)
+            selections$plots$spec$MSmerge <- mergeMS(speclist)
             
             res <- selections$plots$spec$MSmerge}
           else{

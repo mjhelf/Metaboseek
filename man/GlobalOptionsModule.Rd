@@ -5,8 +5,7 @@
 \alias{GlobalOptionsModuleUI}
 \title{GlobalOptionsModule}
 \usage{
-GlobalOptionsModule(input, output, session,
-  values = reactiveValues(GlobalOpts = GlobalOpts))
+GlobalOptionsModule(input, output, session, values)
 
 GlobalOptionsModuleUI(id)
 }

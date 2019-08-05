@@ -9,9 +9,9 @@ updateRawLayout(MSD, new.stem = NULL)
 \arguments{
 \item{MSD}{a \code{rawLayout} object with a defined stem}
 
-\item{stem}{if the file paths in rawgrouptable are not full
+\item{new.stem}{if the file paths in rawgrouptable are not full
 (e.g. subdirectories of the working directory), this should 
-be the path of the working directory.}
+be the path of the new working directory.}
 }
 \value{
 An updated \code{rawLayout} object

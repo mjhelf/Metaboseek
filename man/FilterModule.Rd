@@ -6,12 +6,12 @@
 \title{FilterModule}
 \usage{
 FilterModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables, MultiFilter =
-  MultiFilter), static = list(lab = "Filter"), initValues = list(active
-  = F, filter = TRUE, colSelected = NULL, summary = NULL, numeric = T,
-  minSel = NULL, maxSel = NULL, modeSel = NULL, txtSel = NULL, minSelInit =
-  NULL, maxSelInit = NULL, modeSelInit = NULL, txtSelInit = NULL,
-  loadingFilters = F))
+  values = reactiveValues(featureTables = NULL, MultiFilter = NULL),
+  static = list(lab = "Filter"), initValues = list(active = F, filter =
+  TRUE, colSelected = NULL, summary = NULL, numeric = T, minSel = NULL,
+  maxSel = NULL, modeSel = NULL, txtSel = NULL, minSelInit = NULL,
+  maxSelInit = NULL, modeSelInit = NULL, txtSelInit = NULL, loadingFilters
+  = F))
 
 FilterModuleUI(id)
 }
@@ -27,6 +27,9 @@ FilterModuleUI(id)
 
 \item{values}{a \code{\link[shiny]{reactiveValues}} object that in effect 
 gives read and write access to external objects}
+
+\item{static}{a list of arguments that are not in a reactive context 
+and hence do not change while the app is running.}
 
 \item{initValues}{set initial values for input fields}
 

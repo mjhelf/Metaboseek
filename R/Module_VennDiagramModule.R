@@ -1,6 +1,6 @@
 #' VennDiagramModule
 #' 
-#' server module for Venn diagrams in METABOseek
+#' server module for Venn diagrams in Metaboseek
 #' 
 #' @inherit MseekModules
 #' @describeIn VennDiagramModule Server logic
@@ -9,9 +9,7 @@
 #' 
 #' 
 #' @export 
-VennDiagramModule <- function(input,output, session, 
-                         values = reactiveValues(featureTables = featureTables,
-                                                 GlobalOpts = GlobalOpts),
+VennDiagramModule <- function(input,output, session, values,
                          reactives = reactive({list(active = T,
                                                     highlights = integer(0) # fixed__id values of nodes to be highlighted
                          )

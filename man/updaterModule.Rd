@@ -6,7 +6,7 @@
 \title{updaterModule}
 \usage{
 updaterModule(input, output, session, tag, set = list(package =
-  "METABOseek", refs = c("master", "devel", "devel_raw"), active = T))
+  "Metaboseek", refs = c("master", "devel", "devel_raw"), active = T))
 
 updaterModuleUI(id)
 }
@@ -32,7 +32,7 @@ for the server Module)}
 Returns nothing
 }
 \description{
-module to update METABOseek from inside the UI. Currently not working.
+module to update Metaboseek from inside the UI. Currently not working.
 }
 \section{Functions}{
 \itemize{

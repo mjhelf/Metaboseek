@@ -5,8 +5,7 @@
 \alias{QuickPlotsModuleUI}
 \title{QuickPlotsModule}
 \usage{
-QuickPlotsModule(input, output, session,
-  values = reactiveValues(featureTables = featureTables))
+QuickPlotsModule(input, output, session, values)
 
 QuickPlotsModuleUI(id)
 }

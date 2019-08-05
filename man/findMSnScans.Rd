@@ -16,6 +16,8 @@ findMSnScans(data, ...)
 \arguments{
 \item{data}{an OnDiskMSnExp or MseekValues (reactivevalues) object}
 
+\item{...}{arguments passed to \code{findMSnScans.OnDiskMSnExp}}
+
 \item{mz}{parentMZ value to search for. mz and rt can be vectors,
 but need to be of equal length}
 

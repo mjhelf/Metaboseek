@@ -5,9 +5,9 @@
 \alias{SpecModule2UI}
 \title{SpecModule2}
 \usage{
-SpecModule2(input, output, session, values = values,
-  reactives = reactive({     list(scantable = NULL, type = "ms2",
-  spectrum = NULL, specinfo = NULL, xrange = NULL, markermz = NULL) }))
+SpecModule2(input, output, session, values, reactives = reactive({    
+  list(scantable = NULL, type = "ms2", spectrum = NULL, specinfo = NULL,
+  xrange = NULL, markermz = NULL) }))
 
 SpecModule2UI(id)
 }
@@ -41,7 +41,7 @@ Module for interactive mass spectrum view
 \details{
 \subsection{reactives}{
 Can either be a list with entries \code{scanTable} and \code{type}, 
-specifying inputs for the \link[METABOseek]{getScanInfo}, OR
+specifying inputs for the \link[Metaboseek]{getScanInfo}, OR
 a list with entries \code{spectrum} and \code{specinfo}. 
 
 \describe{
@@ -59,6 +59,28 @@ a list with entries \code{spectrum} and \code{specinfo}.
 \item \code{SpecModule2UI}: UI function for SpecModule2
 }}
 
+\examples{
+\dontrun{
+library(shiny)
+
+ui <- SpecModule2UI("examplemodule")
+
+server <- function(input, output) {
+    MseekMinimalServer(diagnostics = F, data = F, tables = F)
+    
+    ExampleModule <- callModule(SpecModule2, "examplemodule", values,
+                                reactives = reactive({
+                                    list(spectrum = data.frame(mz = c(100,200,250,300,400),
+                                                               intensity = c(1000,2000,3000,1000,3000)))
+                                    
+                                }))
+}
+
+# Create Shiny app ----
+shinyApp(ui, server)
+}
+
+}
 \seealso{
 \code{\link{values}} for a description of the \code{values} object
 }
