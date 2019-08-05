@@ -7,7 +7,7 @@ Metaboseek is here to help you analyze your mass spectrometry data!
 
 Visit our website at https://metaboseek.com to test Metaboseek online
 
-<a href = "https://metaboseek.com/doc.html">Installation and data analysis documentation</a>
+<a href = "https://metaboseek.com/doc/index.html">Installation and data analysis documentation</a>
 
 Metaboseek is an interactive tool to analyze and browse your mass spectrometry data.
 It is built on functions from the <a href = "https://github.com/sneumann/xcms">xcms</a> package, and provides a web-based graphical user interface built with <a href = "http://shiny.rstudio.com/">shiny</a>.
