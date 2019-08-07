@@ -156,15 +156,20 @@ LoadNetworkModule <- function(input,output, session, values,
             fluidRow(
               column(2, div(title = "Use parent m/z information for networking",
                             checkboxInput(ns("useparentmasses"),"Use parent masses", value = T))),
-              column(3, div(title = "Define m/z tolerance for MS2 fragment peak matching",
+              column(2, div(title = "Define m/z tolerance for MS2 fragment peak matching. Peaks will be matched if they are within m/z tolerance AND/OR ppm tolerance!",
                             numericInput(ns("mzdiff"),"m/z tolerance", value = 0.002))),
-              column(3, div(title = "Minimum number of peaks that need to match between each pair of MS2 spectra",
+              column(2, div(title = "Define m/z tolerance for MS2 fragment peak matching in ppm. Peaks will be matched if they are within m/z tolerance AND/OR ppm tolerance!",
+                            numericInput(ns("ppmdiff"),"ppm tolerance", value = 5))),
+              column(2, div(title = "Minimum number of peaks that need to match between each pair of MS2 spectra",
                             numericInput(ns("minpeaks"),"min. peaks", value = 6))),
               column(3, div( title = "Remove noise (peaks below this reltaive intensity in a merged MS2 spectrum will be ignored)", 
                              numericInput(ns("noise"), "Noise level in %", value = 2))),
               column(1, div( title = "Search MS2 scans", 
                              mActionButton(ns("makeNetwork"), "Proceed", red = T)))
-            )),
+            ),
+            fluidRow(column(2, div(title = "Remove peaks below m/z 100 before running the networking analysis",
+                                   checkboxInput(ns("removesmallfrags"),"Ignore small fragments", value = FALSE))))
+            ),
           title = "Make edges for network",
           easyClose = T,
           fade = F,
@@ -207,10 +212,19 @@ LoadNetworkModule <- function(input,output, session, values,
         
         AllSpecLists <- lapply(makeScanlist2(values$featureTables$tables[[values$featureTables$active]]$df$MS2scans), getAllScans, values$MSData$data, removeNoise = input$noise*0.01)
         
+        
         incProgress(0.2, detail = "Merging MS2 scans for each feature in Feature Table")
         
         
-        MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = 0, mzdiff = input$mzdiff, noiselevel = input$noise*0.01)
+        MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = input$ppmdiff, mzdiff = input$mzdiff, noiselevel = input$noise*0.01)
+        
+        if(input$removesmallfrags){
+            MergedSpecs <- lapply(MergedSpecs,
+                                  function(x){if(is.matrix(x)|is.data.frame(x)){
+                                      return(x[x[,1]>100,,drop = FALSE]) }else{
+                                          return(x)
+                                          }})
+            }
         
         tempn <- sum(!sapply(MergedSpecs,function(x){return(is.null(x) || nrow(x) == 0)}))
         
