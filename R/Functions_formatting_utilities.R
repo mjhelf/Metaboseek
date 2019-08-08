@@ -28,6 +28,63 @@ ListToReactiveValues <- function(ls){
   
 }
 
+#' reactiveValuesToListRec
+#' 
+#' recursively converts reactiveValues to lists, essentially a recursive version of 
+#' \code{\link[shiny]{reactiveValuesToList}()}. Has to be called in a shiny
+#'  session.
+#' 
+#' @param x a \code{\link[shiny]{reactiveValues}} object
+#' 
+#' @importFrom shiny reactiveValues is.reactivevalues
+#' 
+#' @return a list object
+#' 
+#' @export
+reactiveValuesToListRec <- function(x){
+    
+    #note: 
+    if(!is.reactivevalues(x)){
+        return(x)
+    }
+    
+    re <- reactiveValuesToList(x)
+    class(re) <- "reactiveValuesInList"
+    for (i in names(re)){
+        re[[i]] <- reactiveValuesToListRec(re[[i]])
+    }
+    return(re)
+    
+}
+
+
+#' reconstructValues
+#' 
+#' reconstructs the MseekTree (values object) from a saved values object (that 
+#' contains all data to be loaded as lists rather than reactiveValues).
+#' 
+#' @param values an MseekTree (reactivevalues) object
+#' @param savedValues a saved values object (created by applying
+#'  \code{reactiveValuesToListRec()} to an MseekTree object)
+#' 
+#' @return nothing, but modifies the global values object
+#' 
+#' @export
+reconstructValues <- function(values, savedValues){
+    
+    for(n in names(savedValues)){
+        
+        if(n %in% names(values) && is.reactivevalues(values[[n]])){
+            
+            reconstructValues(values[[n]], savedValues[[n]])
+            
+        }else{
+            values[[n]] <- savedValues[[n]]
+        }
+        
+    }
+}
+
 #' checkFolders
 #'
 #' Looks for folders as specified in \code{query}
