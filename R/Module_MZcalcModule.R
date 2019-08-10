@@ -25,7 +25,7 @@ MZcalcModule <- function(input,output, session, values){
   })
   
   
-  dialog <- callModule(MseekModalModule, "mzcalcbutton",
+  dialog <- callModule(ModalWidget, "mzcalcbutton",
                        reactives = reactive({  
                          list(fp = fluidPage(
                            fluidRow(
@@ -124,6 +124,6 @@ MZcalcModuleUI <- function(id)
 {
   ns <- NS(id)
   
-  MseekModalModuleUI(ns("mzcalcbutton"))
+  ModalWidgetUI(ns("mzcalcbutton"))
   
 }

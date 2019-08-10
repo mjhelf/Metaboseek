@@ -17,7 +17,7 @@ GetIntensitiesModule <- function(input,output, session,
 
   
   
-  dialog <- callModule(MseekModalModule, "getintbutton",
+  dialog <- callModule(ModalWidget, "getintbutton",
                        reactives = reactive({  
                          list(fp = fluidPage(
                          
@@ -127,6 +127,6 @@ GetIntensitiesModuleUI <- function(id)
 {
   ns <- NS(id)
   
-  MseekModalModuleUI(ns("getintbutton"))
+  ModalWidgetUI(ns("getintbutton"))
   
 }

@@ -1,4 +1,4 @@
-#' MseekModalModule
+#' ModalWidget
 #' 
 #' Generic module for modal dialogs that are launched from a button.
 #' 
@@ -26,10 +26,10 @@
 #' 
 #' @return returns its internalValues
 #' 
-#' @describeIn MseekModalModule Server logic
+#' @describeIn ModalWidget Server logic
 #' 
 #' @export 
-MseekModalModule <- function(input,output, session,
+ModalWidget <- function(input,output, session,
                              reactives = reactive({fp = NULL}),
                                static = list(tooltip = "Tooltip",
                                              title = "title", 
@@ -82,9 +82,9 @@ MseekModalModule <- function(input,output, session,
  return(internalValues)
 }
 
-#' @describeIn MseekModalModule UI elements
+#' @describeIn ModalWidget UI elements
 #' @export
-MseekModalModuleUI <- function(id)
+ModalWidgetUI <- function(id)
 {
   ns <- NS(id)
   
