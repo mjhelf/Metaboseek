@@ -4,6 +4,9 @@
 #' 
 #' @inherit MseekModules
 #' 
+#' @param useActionLink if TRUE, will use an \code{actionLink} instead 
+#' of an \code{actionButton} to open the modal Dialog
+#' 
 #' @return nothing, but modifies values
 #' 
 #' @param static see \code{Details}
