@@ -105,8 +105,15 @@ background-color: #C41230;
     background-color: #404040;
       color: #ffffff;
   }
+  
+  .navbar .nav .shiny-html-output{
+      margin-top: 15px;
+      margin-bottom: 15px;
+  }
 
-
+ .navbar .nav .dropdown:hover{
+    background-color: #404040;
+  }
 
 
 .skin-black.box.box-solid.box-primary>.box-header {

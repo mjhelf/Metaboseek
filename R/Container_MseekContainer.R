@@ -50,7 +50,7 @@ MseekContainer <- function(input,output, session){
  
  callModule(GlobalOptionsModule, "globaloptshe", values = values)#reactiveValues(GlobalOpts = GlobalOpts) )
  
-    
+ callModule(SaveSessionModule, "saveSession", values, useActionLink = T)
  
  observeEvent(input$loadAll,{
    showModal(
@@ -97,11 +97,15 @@ MseekContainerUI <- function(id){
   
   MseekMinimalUI(skin = "black",
                   MseekHeader(id = id,
+                              tags$li(SaveSessionModuleUI(ns("saveSession")),
+                                      class = "dropdown",
+                                      style = "float:left"),
                               tags$li(actionLink(ns("globaloptshead"), "",
                                                  icon = icon("cog"), style="color:#ffffff;border-left-width:0;border-right:1px solid #eee",
                                                  title = "Global settings for Metaboseek" ),
                                       class = "dropdown",
-                                      style = "float:left")),
+                                      style = "float:left")
+                 ),
                   MseekSidebar(id = id),
                   dashboardBody(
                     

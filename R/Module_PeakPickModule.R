@@ -24,7 +24,7 @@ PeakPickModule <- function(input,output, session, values){
   })
   
   
-  dialog <- callModule(MseekModalModule, "peakpickbutton",
+  dialog <- callModule(ModalWidget, "peakpickbutton",
                        reactives = reactive({  
                          list(fp = fluidPage(
                            fluidRow(
@@ -228,6 +228,6 @@ PeakPickModuleUI <- function(id)
 {
   ns <- NS(id)
   
-  MseekModalModuleUI(ns("peakpickbutton"))
+  ModalWidgetUI(ns("peakpickbutton"))
   
 }
