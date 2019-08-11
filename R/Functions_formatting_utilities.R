@@ -57,6 +57,39 @@ reactiveValuesToListRec <- function(x){
     
 }
 
+#' saveMseekSession
+#' 
+#' save the current Metaboseek session
+#' 
+#' @param values a \code{\link[shiny]{reactiveValues}} object that in effect 
+#' gives read and write access to external objects
+#' @param path file path to save to. if NULL, the MseekSession object is returned
+#' @param MSData if TRUE, MSData will be included in saved file. If false, only 
+#' MS data file paths will be saved
+#' 
+#' @return an MseekSession object
+#' 
+#' @export
+saveMseekSession <- function(values, path = NULL, MSData = T){
+    
+    isolate({
+    savedValues <- reactiveValuesToListRec(values)
+    
+    class(savedValues) <- "MseekSession"
+    
+    if(!MSData){
+        savedValues$MSData$MSnExp <- NULL
+        savedValues$MSData$data <- names(values$MSData$data)
+    }
+    
+    if(!is.null(path)){
+    saveRDS(savedValues, path)
+    }else{
+    return(savedValues)
+    }
+    })
+}
+
 
 #' reconstructValues
 #' 
@@ -84,6 +117,40 @@ reconstructValues <- function(values, savedValues){
         
     }
 }
+
+#' loadMseekSession
+#' 
+#' load a Metaboseek session
+#' 
+#' @param values a \code{\link[shiny]{reactiveValues}} object that in effect 
+#' gives read and write access to external objects 
+#' @param savedValues an MseekSession object or a file path to an MseekSession
+#' saved as RDS file.
+#' 
+#' @return nothing, but modifies the global values object
+#' 
+#' @export
+loadMseekSession <- function(values, savedValues){
+    
+    isolate({
+        if(is.character(savedValues)){
+        savedValues <- readRDS(savedValues)
+        }
+        
+        if(is.character(savedValues$MSData$data)){
+            savedValues$MSData$MSnExp <- MSnbase::readMSData(savedValues$MSData$data, pdata = NULL, verbose = F,
+                                                        centroided. = T,
+                                                        smoothed. = NA, mode = "onDisk")
+            savedValues$MSData$data <- loadRawM(savedValues$MSData$data,
+                                                workers = values$GlobalOpts$enabledCores)
+            
+            
+            }
+        
+        reconstructValues(values, savedValues)
+    })
+}
+
 
 #' checkFolders
 #'

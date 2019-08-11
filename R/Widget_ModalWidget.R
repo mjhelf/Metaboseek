@@ -47,7 +47,7 @@ ModalWidget <- function(input,output, session,
       
       
       actionLink(ns("modbutton"), static$label,
-                 icon = static$icon, style="color:#ffffff;border-left-width:0;border-right:1px solid #eee;padding:15px;",
+                 icon = static$icon, style="color:#ffffff;padding:15px;border-left-width:0;border-right:1px solid #eee",
                  title = static$tooltip )
       
     }else{
