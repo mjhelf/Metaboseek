@@ -142,7 +142,9 @@ FindPatternsModule <- function(input,output, session, values,
 
                 incProgress(0.1, detail = "Extracting MS2 scans")
                 
-                AllSpecLists <- lapply(makeScanlist2(FeatureTable(values)$df$MS2scans), getAllScans, values$MSData$data, removeNoise = input$noise*0.01)
+                AllSpecLists <- lapply(makeScanlist2(FeatureTable(values)$df$MS2scans),
+                                       getAllScans, values$MSData$data,
+                                       removeNoise = NULL)#input$noise*0.01)
                 
                 
                 incProgress(0.2, detail = "Merging MS2 scans for each feature in Feature Table")
