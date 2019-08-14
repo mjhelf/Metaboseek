@@ -336,6 +336,9 @@ getSirius <- function(outfolder, splash, ts){
                                           full.names = T, recursive = T),
                                value = T)
   
+  if(length(grep(paste0("summary_csi_fingerid.csv"),
+                      res[["allfiles"]],value = T))){
+  
   res[["summary_fingerid"]] <-  grep(paste0("summary_csi_fingerid.csv"),
                                      res[["allfiles"]],value = T)
   
@@ -350,7 +353,7 @@ getSirius <- function(outfolder, splash, ts){
   res[["fingerprints"]] <-  list.files(file.path(dirname(res[["summary"]]),
                                                  "fingerprints"),
                                        full.names = T, recursive = T)
-  
+  }
   
   
   return(res)
