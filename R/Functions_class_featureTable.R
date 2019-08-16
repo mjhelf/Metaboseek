@@ -108,12 +108,33 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
+    FT$.processHistory <- list(FTProcessHistory(info = paste0("Generated MseekFT object")))
+    
     class(FT) <- "MseekFT"
     
     return(FT)
 
 }
 
+history <- function(x){
+    
+    UseMethod('history',x)
+    
+}
+
+history.MseekFT <- function(x){
+    x$.processHistory
+}
+
+previousStep <- function(x){
+    
+    UseMethod('previousStep',x)
+    
+}
+
+previousStep.MseekFT <- function(x){
+    x$.processHistory[[length(x$.processHistory)]]
+}
 
 
 

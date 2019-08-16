@@ -148,34 +148,34 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
           
       #  }
         
-        res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
-                            intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
-                            groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
-                            analyze = c(internalValues$analysesSelected, internalValues$analysesSelected2), 
-                            normalize = internalValues$normalize,
-                            useNormalized = internalValues$useNormalized,
-                            logNormalized = internalValues$logNormalized,
-                            MSData = values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
-                            ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
-                            controlGroup = internalValues$controlGroups,
-                            numClusters = internalValues$numClusters,
-                            mzMatchParam = list(db = internalValues$dbselected,
-                                                ppm = 5,
-                                                mzdiff = 0.001),
-                            workers = values$GlobalOpts$enabledCores)
+       
+        FeatureTable(values) <- analyzeFT(object = FeatureTable(values),
+                                          MSData = values$MSData$data,
+                                          param = FTAnalysisParam(analyze = c(internalValues$analysesSelected, internalValues$analysesSelected2), 
+                                                                  normalize = internalValues$normalize,
+                                                                  useNormalized = internalValues$useNormalized,
+                                                                  logNormalized = internalValues$logNormalized,
+                                                                  .files = values$MSData$layouts[[values$MSData$active]]$filelist,
+                                                                  ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
+                                                                  controlGroup = internalValues$controlGroups,
+                                                                  numClusters = internalValues$numClusters,
+                                                                  mzMatchParam = list(db = internalValues$dbselected,
+                                                                                      ppm = 5,
+                                                                                      mzdiff = 0.001),
+                                                                  workers = values$GlobalOpts$enabledCores
+                                                                  ))
         
-        values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
-        values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,
-                                                                                             values$featureTables$tables[[values$featureTables$active]]$anagrouptable)
         
 
-        if(length(res$errmsg) >0){
+        if(hasError(previousStep(FeatureTable(values)))){
           
           showModal(
             modalDialog(
-              p(strong("A problem has oocured!")),
+              p(strong("A problem has occured!")),
               hr(),
-              p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "\n" )),
+              p( paste0(names(error(previousStep(FeatureTable(values)))), ": ",
+                        unlist(error(previousStep(FeatureTable(values)))),
+                 collapse = "\n" )),
               hr(),
               p("Other analyses completed without error."),
               title = "Warning",
