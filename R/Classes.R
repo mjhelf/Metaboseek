@@ -124,7 +124,7 @@ setClass("FTProcessHistory",
                                   algo = "xxhash64"),
              outputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
                                            algo = "xxhash64"),
-             sessionInfo = utils::sessionInfo()
+             sessionInfo = NULL#utils::sessionInfo()
          ),
          validity = function(object) {
              msg <- character()
