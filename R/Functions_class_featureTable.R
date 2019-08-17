@@ -21,6 +21,7 @@
 #' @param tablename Name of the table as displayed by Mseek
 #' @param editable allow editing of this table in the Mseek app? if FALSE, only
 #'  comments column can be edited. editable tables are also not paginated.
+#' @param processHistory a list of \code{\link[xcms]{processHistory}} objects
 #' 
 #' @return an \code{MseekFT} object containing a feature table and metadata
 #' 
@@ -33,7 +34,8 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
                           rtFormat = "sec", # "sec" or "min" 
                           anagrouptable = NULL,
                           tablename = "Custom Table",
-                          editable = T){ #T: free editing (add rows), but always see all columns in viewer, F: only comments can be edited directly, no adding of columns
+                          editable = T,
+                          processHistory = list()){ #T: free editing (add rows), but always see all columns in viewer, F: only comments can be edited directly, no adding of columns
     
     #make columns if they don't exist:
     if (class(try(df[,mzcol], silent = T))=="try-error"){ df[,mzcol] <- numeric(nrow(df)) }
@@ -108,7 +110,11 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
-    FT$.processHistory <- list(FTProcessHistory(info = paste0("Generated MseekFT object")))
+    FT$.processHistory <- c(processHistory,
+                            FTProcessHistory(info = paste0("Generated MseekFT object"),
+                                                  sessionInfo = sessionInfo(),
+                                                  outputDFhash = digest::digest(FT$df,
+                                                                                algo = "xxhash64")))
     
     class(FT) <- "MseekFT"
     
@@ -116,27 +122,56 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
 
 }
 
+
+#' history
+#'
+#' extract a list of \code{ProcessHistory} objects from an object,
+#'  representing changes made to the object.
+#'
+#' @rdname history
+#' @export
 history <- function(x){
     
     UseMethod('history',x)
     
 }
 
+#' @rdname history
+#' @export
 history.MseekFT <- function(x){
     x$.processHistory
 }
 
+#' @rdname history
+#' @export
+history.xsAnnotate <- function(x){
+    x@xcmsSet@.processHistory
+}
+
+#' @rdname history
+#' @export
+history.XCMSnExp <- function(x){
+    x@.processHistory
+}
+
+#' previousStep
+#'
+#' extract the most recent \code{ProcessHistory} object from an object,
+#'  representing the last recorded changes made to the object.
+#'
+#' @rdname previousStep
+#' @export
 previousStep <- function(x){
     
     UseMethod('previousStep',x)
     
 }
 
+#' @rdname previousStep
+#' @export
 previousStep.MseekFT <- function(x){
     x$.processHistory[[length(x$.processHistory)]]
 }
-
-
 
 #' updateDF
 #' 

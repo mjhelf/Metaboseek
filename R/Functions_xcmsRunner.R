@@ -182,9 +182,9 @@ savetable <- function(xset,
       
   rtx <-  rtexport(xset)    
   
- rta <- rtadjust(rtx, # XCMSnExp, xcmsSet or xsAnnotate object
-                      tb[,c("rt","rtmin","rtmax")])
+ rta <- rtadjust(rtx, tb[,c("rt","rtmin","rtmax")])
  
+ ###Get Mseek Intensities
  intens <- data.frame(pholder = numeric(nrow(tb)))
  
       for(i in 1:length(rawdata)){
@@ -219,6 +219,12 @@ savetable <- function(xset,
                                             Details = "Writing file"))
     }
     
+    saveMseekFT <- constructFeatureTable <- function(df = tb,
+                                                     anagrouptable = NULL,
+                                                     tablename = gsub("\\.csv$","_unprocessed.csv",filename),
+                                                     editable = F,
+                                                     processHistory = NULL)
+        
     write.csv(tb, file = gsub("\\.csv$","_unprocessed.csv",filename))
     if(saveR){saveRDS(xset,file = paste0(filename,".Rdata"))}
     
@@ -352,4 +358,79 @@ savetable <- function(xset,
 
   }
   return(status)
+}
+
+
+#' cameraWrapper
+#' 
+#' converts a \code{XCMSnExp} object to \code{xcmsSet}, then consecutively calls
+#' \code{xsAnnotate}, \code{groupFWHM}, \code{groupCorr}, \code{findIsotopes} and 
+#' \code{findAdducts} from the \code{CAMERA} package, and finally adds an entry to
+#' its \code{.processHistory} slot.
+#' 
+#' @param workers number of workers, passed on to \code{\link[CAMERA]{xsAnnotate}()}
+#' (as \code{nSlaves})
+#' @param polarity passed on to \code{\link[CAMERA]{xsAnnotate}()} and 
+#' \code{\link[CAMERA]{findAdducts}()}
+#' @param sigma passed on to \code{\link[CAMERA]{groupFWHM}()}
+#' @param perfwhm passed on to \code{\link[CAMERA]{groupFWHM}()}
+#' @param cor_eic_th passed on to \code{\link[CAMERA]{groupCorr}()}
+#' @param pval passed on to \code{\link[CAMERA]{groupCorr}()}
+#' @param maxcharge passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' @param maxiso passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' @param ppm passed on to \code{\link[CAMERA]{findIsotopes}()} and 
+#' \code{\link[CAMERA]{findAdducts}()}
+#' @param mzabs passed on to \code{\link[CAMERA]{findIsotopes}()} and 
+#' \code{\link[CAMERA]{findAdducts}()}
+#' @param minfrac passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' @param filter passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' 
+#' @return an \code{xsAnnotate} object
+#' 
+#' @export
+cameraWrapper <- function(xset,
+                          polarity = NULL,
+                          sigma = 6, perfwhm = 0.6,
+                          cor_eic_th = 0.75, pval = 0.05,
+                          maxcharge = 3, maxiso = 4,
+                          ppm = 5, mzabs = 0.01,
+                          minfrac = 0.5, filter = TRUE,
+                          workers = 1){
+    
+    allargs <- as.list(environment())
+    params <- xcms::GenericParam(fun = "Metaboseek::cameraWrapper",
+                                 args = allargs[names(allargs) != "xset"])
+
+an   <- xsAnnotate(as(xset, "xcmsSet"),
+                   nSlaves = workers,
+                   polarity = cam_param$polarity)###CHANGE POLARITY
+
+an <- groupFWHM(an,
+                sigma = cam_param$sigma,
+                perfwhm = cam_param$perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
+#verify grouping
+an <- groupCorr(an,
+                cor_eic_th = cam_param$cor_eic_th,
+                pval = cam_param$pval)
+
+an <- findIsotopes(an,
+                   maxcharge = cam_param$maxcharge,
+                   maxiso = cam_param$maxiso,
+                   ppm = cam_param$ppm,
+                   mzabs = cam_param$mzabs,
+                   minfrac = max(0.001,cam_param$minfrac), #minFrac of 0 throws error otherwise
+                   filter = cam_param$filter)
+an <- findAdducts(an,
+                  ppm = cam_param$ppm,
+                  mzabs = cam_param$mzabs,
+                  polarity= cam_param$polarity)
+
+cleanParallel(an)
+
+
+record <- XProcessHistory(info = "Converted to CAMERA::xsAnnotate, analyzed",
+                          param = params)
+
+an@xcmsSet@.processHistory <- c(an@xcmsSet@.processHistory, record)
+
 }
