@@ -5,6 +5,7 @@ tryCatch({
 library(xcms)
 library(Metaboseek)
 library(CAMERA)
+library(BiocParallel)
 
 
 fols <- commandArgs(trailingOnly=TRUE)
@@ -42,7 +43,18 @@ cparam <- CentWaveParam(ppm = as.numeric(centWave["ppm",1]),
                         fitgauss = as.logical(centWave["fitgauss",1]), 
                         verboseColumns = FALSE ) 
 
-bparam <- SnowParam(workers = as.integer(centWave["workers",1]))
+BiocParallel::register(
+    BiocParallel::bpstart(
+        if(Sys.info()['sysname'] == "Windows"){
+            BiocParallel::SnowParam(centWave["workers",1])
+        }else{
+            BiocParallel::MulticoreParam(centWave["workers",1])
+        }
+    )
+)
+
+
+#bparam <- SnowParam(workers = as.integer(centWave["workers",1]))
 ##########################
 groupparam = read.csv("group.csv",
                  row.names = 1,
@@ -151,13 +163,19 @@ history <- writeStatus (previous = history,
                                        Details = "XcmsSet peak detection"))
 
 xset <- findChromPeaks(fileaccess, cparam,
-                               BPPARAM = bparam, return.type = "XCMSnExp")
+                               BPPARAM = bpparam(), return.type = "XCMSnExp")
 
   history <- writeStatus (previous = history,
                           message = list(Status = "Exporting data",
                                          Details = "peaktable_all.csv"))
   
-   write.csv(chromPeaks(xset),file = "peaktable_all_unfilled.csv")
+  # write.csv(chromPeaks(xset),file = "peaktable_all_unfilled.csv")
+   data.table::fwrite(chromPeaks(xset),
+                      "peaktable_all_unfilled.csv",
+          sep = ",",
+          quote = T,
+          row.names = F
+   )
 
 #only run this if anything other than the peaktable_all is requested
 if(any(outputs[-1,1])){
@@ -178,8 +196,8 @@ xset <- groupChromPeaks(xset,
                                   fparam}
                                else{NULL},
                         nonfill = outputs["peaktable_grouped", "Value"],
-                        filename = "peaktable_grouped.csv",
-                        bparams = bparam,
+                        filename = "peaktable_grouped",
+                        bparams = bpparam(),
                         intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                         rawdata = rfiles,
                         postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
@@ -221,8 +239,8 @@ xset <- groupChromPeaks(xset,
                           status = history,
                           fill = NULL,
                           nonfill = T,
-                          filename = "peaktable_noRTcorr_CAMERA.csv",
-                          bparams = bparam,
+                          filename = "peaktable_noRTcorr_CAMERA",
+                          bparams = bpparam(),
                           intensities = if(outputs["peaktable_grouped", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                           rawdata = rfiles,
                           postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
@@ -276,8 +294,8 @@ history  <- savetable(xset,
                         fparam}
                       else{NULL},
                       nonfill = outputs["peaktable_grouped_Rtcorr", "Value"],
-                      filename = "peaktable_grouped_Rtcorr.csv",
-                      bparams = bparam,
+                      filename = "peaktable_grouped_Rtcorr",
+                      bparams = bpparam(),
                       intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                       rawdata = rfiles,
                       postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
@@ -320,8 +338,8 @@ if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
                         status = history,
                         fill = NULL,
                         nonfill = T,
-                        filename = "peaktable_RTcorr_CAMERA.csv",
-                        bparams = bparam,
+                        filename = "peaktable_RTcorr_CAMERA",
+                        bparams = bpparam(),
                         intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                         rawdata = rfiles,
                         postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  

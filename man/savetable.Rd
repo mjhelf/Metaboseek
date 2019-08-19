@@ -6,7 +6,7 @@
 \usage{
 savetable(xset, status = NULL,
   fill = xcms::FillChromPeaksParam(expandMz = 0.005, expandRt = 5, ppm =
-  3), nonfill = F, filename = "tableoutxx.csv",
+  3), nonfill = F, filename = "tableoutxx",
   bparams = SnowParam(workers = 1), intensities = list(ppm = 5, rtw =
   5, rtrange = T), rawdata = NULL, saveR = T, postProc = NULL)
 }
@@ -38,7 +38,7 @@ intensities = NULL.}
 Mseek::loadRawM), required for Mseek EIC intensity extraction which 
 is not performed if NULL.}
 
-\item{saveR}{save the xset object as .Rdata file}
+\item{saveR}{save the xset object as .Rds file}
 
 \item{postProc}{list of SOME arguments passed to \code{\link{analyzeTable}()}
 for post processing, or NULL to skip processing. 

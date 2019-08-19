@@ -123,36 +123,6 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
 }
 
 
-#' history
-#'
-#' extract a list of \code{ProcessHistory} objects from an object,
-#'  representing changes made to the object.
-#'
-#' @rdname history
-#' @export
-history <- function(x){
-    
-    UseMethod('history',x)
-    
-}
-
-#' @rdname history
-#' @export
-history.MseekFT <- function(x){
-    x$.processHistory
-}
-
-#' @rdname history
-#' @export
-history.xsAnnotate <- function(x){
-    x@xcmsSet@.processHistory
-}
-
-#' @rdname history
-#' @export
-history.XCMSnExp <- function(x){
-    x@.processHistory
-}
 
 #' previousStep
 #'
