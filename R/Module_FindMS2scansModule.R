@@ -32,7 +32,7 @@ FindMS2ScansModule <- function(input,output, session, values,
         fluidPage(
           fluidRow(
             p(strong("Find all MS2 scans for parent m/z values in your Feature table")),
-            p("A column named MS2scans will be generated in your Feature Table that liosts all scans matching a feature. Empty entries mean no hits. If this column already exists, it will be overriden.")
+            p("A column named MS2scans will be generated in your Feature Table that lists all scans matching a feature. Empty entries mean no hits. If this column already exists, it will be overriden.")
           ),
           hr(),
           fluidRow(

@@ -9,6 +9,7 @@ setGeneric("addProcessHistory", function(object, ...) standardGeneric("addProces
 setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistory"))
 #setGeneric("processHistory", function(object, ...) standardGeneric("processHistory"))
 setGeneric("rename", function(object, ...) standardGeneric("rename"))
+setGeneric("FTNormalize", function(object, fun, ...) standardGeneric("FTNormalize"))
 
 
 ## Registered S3 classes
@@ -123,17 +124,17 @@ setClass("FunParam",
          validity = function(object) {
              msg <- character()
               
-             if (!length(fun) && !length(args)){
+             if (!length(object@fun) && !length(object@args)){
                  msg <- c(msg, paste0("No function specified!"))}    
              
-             if (!length(args) && !length(args)){
+             if (!length(object@args) && !length(object@args)){
                  msg <- c(msg, paste0("No arguments for function specified!"))}
              
-             if (length(args) != length(grep("^$",names(args), invert = TRUE))){
+             if (length(object@args) != length(grep("^$",names(object@args), invert = TRUE))){
                  msg <- c(msg, paste0("args is not a named list"))}
              
-             if (length(shortArgs) != length(grep("^$",names(shortArgs), invert = TRUE))){
-                 msg <- c(msg, paste0("shortArgs is not a named list"))}    
+             if (length(object@longArgs) != length(grep("^$",names(object@longArgs), invert = TRUE))){
+                 msg <- c(msg, paste0("longArgs is not a named list"))}    
              
              if (length(msg)){ msg}else{TRUE}
          }
@@ -201,7 +202,9 @@ setMethod("initialize", "FTAnalysisParam", function(.Object, ...) {
 #' @aliases analyzeFT
 #' 
 #' @description analyze Tables using \code{\link{analyzeTable}()},
-#'  recording processing history if \code{object} is of class \code{MseekFT}
+#'  recording processing history if \code{object} is of class \code{MseekFT}.
+#'  Will use intensity columns and grouping information from the MseekFT object
+#'  if available
 #'
 #' @param object an MseekFT or data.frame object.
 #' @param MSData list of xcmsRaw objects
@@ -216,7 +219,7 @@ setMethod("analyzeFT",
           function(object, MSData, param){
               params <- xcms:::.param2list(param)
               do.call(Metaboseek:::analyzeTable,
-                      c(list(df = object, MSData = MSData[param@.files]),
+                      c(list(df = object, MSData = MSData),
                         params))
               })
           
@@ -279,13 +282,53 @@ setMethod("initialize", "FunParam", function(.Object, ...) {
 #' @rdname FTProcessHistory-class
 setMethod("show", "FTProcessHistory", function(object) {
     callNextMethod()
-    erLabel <- if(length(object@error)){object@error}else{"-none-"}
-    cat(" error:", erLabel, "\n")
+    erLabel <- if(length(object@error)){""}else{"-none-"}
+    cat(" errors:", erLabel, "\n")
+    if (length(object@error) > 0) {
+        for (i in 1:length(object@error)) {
+            if (!is.null(names(object@error)))
+                cat(" ", names(object@error)[i], "= ")
+            cat(object@error[[i]], "\n")
+        }
+    }
     chLabel <- if(object@changes){"yes"}else{"no"}
-    cat(" error:", chLabel, "\n")
-    cat("input data.frame hash:", object@inputDFhash)
-    cat("output data.frame hash:", object@outputDFhash)
+    
+    cat(" changes:", chLabel, "\n")
+    cat(" input data.frame hash:", object@inputDFhash, "\n")
+    cat(" output data.frame hash:", object@outputDFhash, "\n")
     cat(" contains sessionInfo:", !is.null(object@sessionInfo), "\n")
+})
+
+setMethod("show", "XProcessHistory", function(object) {
+    callNextMethod()
+    pcLabel <- "-none-"
+    if (length(object@param)){
+        pcLabel <- class(object@param)}
+    cat(" Parameter class:", pcLabel, "\n")
+    if (length(object@param)){
+        show(object@param)}
+    if (!is.na(msLevel(object)))
+        cat(" MS level(s)", paste(msLevel(object), sep = " "), "\n")
+    
+})
+
+#' @rdname FunParam
+setMethod("show", "FunParam", function(object) {
+    callNextMethod()
+    cat(" long (summarized) arguments:\n")
+    if (length(object@longArgs) > 0) {
+        for (i in 1:length(object@longArgs)) {
+            cat(" ", names(object@longArgs)[i], "= ")
+            if (is.atomic(object@longArgs[[i]]) && !length(names(object@longArgs[[i]]))){
+                cat(object@longArgs[[i]], "\n")
+                }else{
+                cat("\n")    
+                print(object@longArgs[[i]]); cat("\n")    
+                }
+            
+            
+        }
+    }
 })
 
 #' @description
@@ -373,12 +416,16 @@ setMethod("buildMseekFT",  "xsAnnotate",
               
               oldHistory <- if(length(processHistory)){processHistory}else{processHistory(object)}
               
-              constructFeatureTable(df = CAMERA::getPeaklist(object),
+              res <- constructFeatureTable(df = CAMERA::getPeaklist(object),
                                     processHistory = c(oldHistory,
                                                        xcms:::XProcessHistory(info = "Extracted Feature Table from CAMERA::xsAnnotate using CAMERA::getPeaklist and built MseekFT object",
                                                                        param = xcms::GenericParam(fun = "buildMseekFT",
                                                                                                   args = list(...)))),
                                     ...)
+              res$sampleNames <- object@xcmsSet@phenoData$sampleNames
+              
+              return(res)
+              
           })
 
 #' @rdname buildMseekFT
@@ -389,12 +436,16 @@ setMethod("buildMseekFT",
               oldHistory <- if(length(processHistory)){processHistory}else{processHistory(object)}
               
               
-              constructFeatureTable(df = xcms::peakTable(as(object,"xcmsSet")),
+              res <- constructFeatureTable(df = xcms::peakTable(as(object,"xcmsSet")),
                                     processHistory = c(oldHistory,
                                                        xcms:::XProcessHistory(info = "Extracted Feature Table from xcms::XCMSnExp using xcms::peakTable(as(xset,'xcmsSet')) and built MseekFT object",
                                                                       param = xcms::GenericParam(fun = "buildMseekFT",
                                                                                                  args = list(...)))),
                                     ...)
+              
+              res$sampleNames <- as.character(object@phenoData@data$sampleNames)
+              
+              return(res)
           })
 
 #' @rdname buildMseekFT
@@ -425,7 +476,7 @@ setMethod("saveMseekFT",
           "MseekFT",
           function(object, file, writeCSV = FALSE, writeRDS = TRUE){
               
-              object <- addProcessHistory(object, xcms:::XProcessHistory(info = "Built MseekFT object from a data.frame.",
+              object <- addProcessHistory(object, xcms:::XProcessHistory(info = "Saved MseekFT object to a file.",
                                                        param = xcms::GenericParam(fun = "Metaboseek::saveMseekFT",
                                                                                   args = list(file = file,
                                                                                               writeCSV = writeCSV,
@@ -500,7 +551,7 @@ setMethod("rename",
                 
               tryCatch({
                res <- do.call(fun,
-                      c(args, shortArgs)
+                      c(args, longArgs)
                       )
                 },
               error = function(e){
@@ -517,7 +568,7 @@ setMethod("rename",
                                                error = errlist,
                                                param = FunParam(fun = "Metaboseek::saveMseekFT",
                                                                     args = args,
-                                                                longArgs = lapply(summary,shortArgs)))
+                                                                longArgs = lapply(summary,longArgs)))
               if(addHistory){
                   tryCatch({
                   res <- addProcessHistory(object = res, hstry)
@@ -553,7 +604,7 @@ setMethod("rename",
 #' @param sessionInfo a \code{\link[utils]{sessionInfo}} object, should be generated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
-#' @param ... additional arguments passed to \code{\link[xcms]{XProcessHistory}()}
+#' @param msLevel,... additional arguments passed to \code{\link[xcms]{XProcessHistory}()}
 #'
 #' @return a \code{\link{FTProcessHistory-class}} object
 #' 
@@ -574,8 +625,9 @@ FTProcessHistory <- function(error = list(),
                              inputDFhash = NULL,
                              outputDFhash = NULL,
                              sessionInfo = NULL,
+                             msLevel = NA_integer_,
                              ...) {
-    obj <- xcms:::XProcessHistory(...)
+    obj <- xcms:::XProcessHistory(msLevel = msLevel, ...)
     obj <- as(obj, "FTProcessHistory")
     obj@error <- error
     obj@changes <- as.logical(changes)
@@ -589,7 +641,7 @@ FTProcessHistory <- function(error = list(),
     return(obj)
 }
 
-## FunParam
+#' @title FunParam
 #' @return returns a \code{FunParam} object.
 #'
 #' @param fun \code{character} representing the name of the function.

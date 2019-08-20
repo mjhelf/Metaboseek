@@ -5,7 +5,8 @@
 \title{Constructor for FTProcessHistory class}
 \usage{
 FTProcessHistory(error = list(), changes = TRUE, inputDFhash = NULL,
-  outputDFhash = NULL, sessionInfo = NULL, ...)
+  outputDFhash = NULL, sessionInfo = NULL, msLevel = NA_integer_,
+  ...)
 }
 \arguments{
 \item{error}{a named list of character() vectors, reporting errors that 
@@ -22,7 +23,7 @@ did not result in relevant changes and could be dropped for reporting}
 at time of the recorded event and at least once in every session (by default,
 will be populated by load and constructor methods for MseekFT class).}
 
-\item{...}{additional arguments passed to \code{\link[xcms]{XProcessHistory}()}}
+\item{msLevel, ...}{additional arguments passed to \code{\link[xcms]{XProcessHistory}()}}
 }
 \value{
 a \code{\link{FTProcessHistory-class}} object

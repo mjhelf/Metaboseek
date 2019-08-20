@@ -23,6 +23,8 @@ ttt<- buildMseekFT(xset2)
 
 ttt<- buildMseekFT(an)
 
+analyzeFT(ttt)
+
 if(file.exists("./AA_Local")){
     setwd("./AA_Local/")
 }

@@ -1,3 +1,38 @@
+#' @include Classes.R
+
+
+
+.FTAnalysis <- function(object, intensities,
+                        groups,
+                        analyze = c("Basic analysis", "clara_cluster",
+                                    "t-test", "Peak shapes",
+                                    "Fast peak shapes", "PCA features",
+                                    "PCA samples", "mzMatch"), 
+                        normalize = T,
+                        useNormalized = T,
+                        logNormalized = F,
+                        MSData = NULL,
+                        ppm = 5,
+                        controlGroup = NULL,
+                        numClusters = 2,
+                        mzMatchParam = list("smid-db_pos.csv",
+                                            ppm = 5,
+                                            mzdiff = 0.001),
+                        workers = 1){
+    
+    object <- .withHistory(fun = "FTNormalize",
+                         args = list(logNormalized = logNormalized),
+                         longArgs = list(),
+                         addHistory = TRUE,
+                         continueWithErrors = TRUE,
+                         returnIfError = object)
+    
+    
+    
+    
+}
+
+
 #' analyzeTable
 #'
 #' Run a series of analyses on a feature table data.frame
@@ -46,29 +81,27 @@ analyzeTable <- function(df, intensities,
                                                ppm = 5,
                                                mzdiff = 0.001),
                          workers = 1){
-  out <- list(errmsg = list())
+  out <- list(errmsg = list(),
+              history = list())
   
   if(normalize 
      || (useNormalized && !identical(grep("__norm",colnames(df), value = T), paste0(intensities,"__norm")))
   ){
     
     tryCatch({
+    temp <- .withHistory(fun = "FTNormalize",
+                 args = list(logNormalized = logNormalized),
+                 longArgs = list(object = df),
+                 addHistory = FALSE,
+                 continueWithErrors = TRUE,
+                 returnIfError = df)
     
-    #normalize data and save it in matrix
-    mx <- as.matrix(df[,intensities])
-    mx <- featureTableNormalize(mx,
-                                raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-    # 
-    mx <- featureTableNormalize(mx, normalize = "colMeans")
-    if(!is.null(logNormalized) && logNormalized){
-      mx <- featureTableNormalize(mx, log =  "log10")
+    df <- temp$df
+    out$history <- c(out$history, temp$history)
+    if(length(temp$history@error)){
+    out$errMsg[["normalize"]] <- temp$history@error[[1]]
     }
-    
-    #make copy of normalized intensities in active table df
-    mx <- as.data.frame(mx)
-    colnames(mx) <- paste0(colnames(mx),"__norm")
-    df <- updateDF (mx,df)
-    
+
     },
     error = function(e){out$errMsg[["normalize"]] <- paste(e)})
     
@@ -90,6 +123,9 @@ analyzeTable <- function(df, intensities,
     }else if (!"mz" %in% colnames(df) || !"rt" %in% colnames(df)){
       out$errmsg[["Peak shapes"]] <- "Peak shapes analysis was not performed because table does not contain 'rt' and 'mz' columns."
     }else{
+        
+        
+        
       inp <- bestgauss(
         rawdata= MSData,
         mz = data.frame(mzmin = df$mz-ppm*1e-6*df$mz, mzmax=df$mz+ppm*1e-6*df$mz),
@@ -128,6 +164,8 @@ error = function(e){out$errMsg[["Peak shapes"]] <- paste(e)})
     },
     error = function(e){out$errMsg[["Fast peak shapes"]] <- paste(e)})
     
+      
+      
   }
   
   if("Basic analysis" %in% analyze){
@@ -259,9 +297,58 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
   
 }
 
-#' featureTableNormalize
+#' @aliases FTNormalize
 #' 
-#' Function to normalize data in a matrix.
+#' @param selCols selected columns (with intensity values)
+#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
+#' @rdname featureTableNormalize
+#' @export
+setMethod("FTNormalize", "data.frame",
+          function(object, selCols, logNormalized = FALSE){
+    
+    #normalize data and save it in matrix
+    mx <- as.matrix(object[,selCols])
+    mx <- featureTableNormalize(mx,
+                                raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
+    # 
+    mx <- featureTableNormalize(mx, normalize = "colMeans")
+    if(!is.null(logNormalized) && logNormalized){
+        mx <- featureTableNormalize(mx, log =  "log10")
+    }
+    
+    #make copy of normalized intensities in active table df
+    mx <- as.data.frame(mx)
+    colnames(mx) <- paste0(colnames(mx),"__norm")
+    object <- updateDF (mx,object)
+    return(object)
+})
+
+#' @rdname featureTableNormalize
+#' @export
+setMethod("FTNormalize", "MseekFT",
+          function(object, logNormalized = FALSE){
+              
+             
+              #normalize data and save it in matrix
+              mx <- as.matrix(object$df[,object$intensities])
+              mx <- featureTableNormalize(mx,
+                                          raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
+              # 
+              mx <- featureTableNormalize(mx, normalize = "colMeans")
+              if(!is.null(logNormalized) && logNormalized){
+                  mx <- featureTableNormalize(mx, log =  "log10")
+              }
+              
+              #make copy of normalized intensities in active table df
+              mx <- as.data.frame(mx)
+              colnames(mx) <- paste0(colnames(mx),"__norm")
+              object$df <- updateDF (mx,object$df)
+              return(object)
+          })
+
+#' @title featureTableNormalize
+#' 
+#' @description Function to normalize data in a matrix.
 #' 
 #' 
 #' @param mx a matrix of numeric (intensity) values
@@ -280,6 +367,8 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 #' 
 #' @return \code{mx}, normalized so that all columns have the same mean value 
 #' which is also the mean of all values in \code{mx} 
+#' 
+#' @rdname featureTableNormalize
 #' 
 #' @export
 featureTableNormalize <- function (mx,

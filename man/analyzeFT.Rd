@@ -26,5 +26,7 @@ defined by \code{param}
 }
 \description{
 analyze Tables using \code{\link{analyzeTable}()},
- recording processing history if \code{object} is of class \code{MseekFT}
+ recording processing history if \code{object} is of class \code{MseekFT}.
+ Will use intensity columns and grouping information from the MseekFT object
+ if available
 }

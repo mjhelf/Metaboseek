@@ -46,9 +46,9 @@ cparam <- CentWaveParam(ppm = as.numeric(centWave["ppm",1]),
 BiocParallel::register(
     BiocParallel::bpstart(
         if(Sys.info()['sysname'] == "Windows"){
-            BiocParallel::SnowParam(centWave["workers",1])
+            BiocParallel::SnowParam(as.integer(centWave["workers",1]))
         }else{
-            BiocParallel::MulticoreParam(centWave["workers",1])
+            BiocParallel::MulticoreParam(as.integer(centWave["workers",1]))
         }
     )
 )

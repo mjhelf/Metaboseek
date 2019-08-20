@@ -160,7 +160,7 @@ savetable <- function(xset,
   
         if(length(postProc$fileGrouping)){      
   grouptable <- data.frame(Column = unlist(postProc$fileGrouping),
-                           Group = unlist(lapply(seq_len(length(tl)),
+                           Group = unlist(lapply(seq_len(length(postProc$fileGrouping)),
                                                  function(i){rep(names(postProc$fileGrouping)[i],
                                                                  lengths(postProc$fileGrouping)[i])})),
                            stringsAsFactors = FALSE)
@@ -176,11 +176,7 @@ savetable <- function(xset,
                                          Details = "Extracting peaktable"))
   }
   
-  # if(class(xset) == "xsAnnotate"){
-  #   tb <- CAMERA::getPeaklist(xset)}
-  # else{
-  #   tb <- xcms::peakTable(as(xset,"xcmsSet"))
-  # }
+ 
     
  tb_mskFT <- buildMseekFT(object = xset,
                  anagrouptable = grouptable,
@@ -211,10 +207,10 @@ savetable <- function(xset,
       
   rtx <-  rtexport(xset)    
   
- rta <- rtadjust(rtx, tb[,c("rt","rtmin","rtmax")])
+ rta <- rtadjust(rtx, tb_mskFT$df[,c("rt","rtmin","rtmax")])
  
  ###Get Mseek Intensities
- intens <- data.frame(pholder = numeric(nrow(tb)))
+ intens <- data.frame(pholder = numeric(nrow(tb_mskFT$df)))
  
       for(i in 1:length(rawdata)){
         if(intensities$rtrange){
@@ -228,7 +224,7 @@ savetable <- function(xset,
         }
         
         intens[[paste0(basename(names(rawdata)[i]),"__XIC")]] <- exIntensities(rawfile= rawdata[[i]],
-                                                               mz = tb$mz,
+                                                               mz = tb_mskFT$df$mz,
                                                                ppm=intensities$ppm,
                                                                rtw= rtwin
                                                                )
@@ -301,11 +297,12 @@ savetable <- function(xset,
     
     if(!is.null(status)){
       status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Saving table ", paste0(filename,"_unprocessed.csv")),
+                             message = list(Status = paste0("Saving table ", paste0(tb_mskFT$tablename,
+                                                                                    "_unprocessed.csv")),
                                             Details = "Writing file"))
     }
     
-      saveMseekFT(tb_mskFT, file = paste0(filename,"_unprocessed"), 
+      saveMseekFT(tb_mskFT, file = tb_mskFT$tablename, 
                   writeCSV = TRUE, writeRDS = TRUE)
         
    # write.csv(tb, file = gsub("\\.csv$","_unprocessed.csv",filename))
@@ -326,7 +323,7 @@ savetable <- function(xset,
       
        tb_mskFT <- analyzeFT(object = tb_mskFT,
                        MSData = rawdata,
-                       param = list(
+                       param = FTAnalysisParam(
                           intensities = if(!is.null(intens)){
                             colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
                           groups = postProc$fileGrouping,
@@ -334,7 +331,6 @@ savetable <- function(xset,
                           normalize = postProc$normalize,
                           useNormalized = postProc$useNormalized,
                           logNormalized = postProc$logNormalized,
-                          MSData = rawdata,
                           ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
                           controlGroup = postProc$controlGroups,
                           numClusters = postProc$numClusters,
@@ -349,9 +345,11 @@ savetable <- function(xset,
                                           ))
     }
        
+       tb_mskFT <- rename(tb_mskFT, filename)
+       
        if(!is.null(status)){
          status <- writeStatus (previous = status,
-                                message = list(Status = paste0("Saving table ", filename),
+                                message = list(Status = paste0("Saving table ", tb_mskFT$tablename),
                                                Details = "Writing file"))
        }
        
@@ -361,100 +359,6 @@ savetable <- function(xset,
   }
   }
       
-  
-  #   if(!is.null(fill) & class(xset) == "XCMSnExp"){
-  #     
-  #     if(!is.null(status)){
-  #       status <- writeStatus (previous = status,
-  #                               message = list(Status = paste0("Saving table ", filename),
-  #                                              Details = "Filling peaks (xcms fillChromPeaks)"))
-  #     }
-  #     
-  #     fparam = fill
-  #     xset <- xcms::fillChromPeaks(xset, fill,
-  #                            BPPARAM = bparams)
-  #     
-  #     tbf <- xcms::peakTable(as(xset,"xcmsSet"))
-  #   
-  #   #set NAs to 0 (mostly important if !fill)
-  #     tbf[is.na(tbf)]<-0
-  #     
-  #     if(!is.null(intens)){
-  #       tbf <- cbind(tbf,intens) } 
-  #     
-  #   
-  # 
-  #   fn <- unlist(strsplit(filename, split="\\."))
-  #   if(length(fn)==1){fn <- paste0(fn,"_filled")}
-  #   else{
-  #   fn <-  paste(paste0(paste(fn[1:(length(fn)-1)], collapse = "."),"_filled"),fn[length(fn)], sep = ".", collapse = NULL)
-  #   }
-  # 
-  #   if(!is.null(status)){
-  #     status <- writeStatus (previous = status,
-  #                            message = list(Status = paste0("Saving table ", gsub("\\.csv$","_unprocessed.csv",fn)),
-  #                                           Details = "Writing file"))
-  #   }
-  #   
-  #   #write.csv(tbf, file = gsub("\\.csv$","_unprocessed.csv",fn))
-  #   data.table::fwrite(tbf,
-  #                      gsub("\\.csv$","_unprocessed.csv",fn),
-  #                      sep = ",",
-  #                      quote = T,
-  #                      row.names = F
-  #   )
-  #   
-  #   if(saveR){saveRDS(xset,file = paste0(fn,".Rds"))}
-  #   
-  #   
-  #   if(!is.null(postProc)){
-  #     if(!is.null(status)){
-  #       status <- writeStatus (previous = status,
-  #                              message = list(Status = paste0("Post-Processing ", filename),
-  #                                             Details = paste(c("selected analyses:", postProc$analysesSelected, postProc$analysesSelected2), collapse = " ")))
-  #     }
-  #     
-  #     res <- analyzeTable(df = tb,
-  #                         intensities = if(!is.null(intens)){
-  #                           colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
-  #                         groups = postProc$fileGrouping,
-  #                         analyze =c(postProc$analysesSelected,postProc$analysesSelected2), 
-  #                         normalize = postProc$normalize,
-  #                         useNormalized = postProc$useNormalized,
-  #                         logNormalized = postProc$logNormalized,
-  #                         MSData = rawdata,
-  #                         ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
-  #                         controlGroup = postProc$controlGroups,
-  #                         numClusters = postProc$numClusters)
-  #     
-  #     tb <- res$df
-  #     
-  #     
-  #     if(!is.null(status)){
-  #       status <- writeStatus (previous = status,
-  #                              message = list(Status = paste0("Post-Processing finished", filename),
-  #                                             Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
-  #                              ))
-  #     }
-  #     
-  #         if(!is.null(status)){
-  #     status <- writeStatus (previous = status,
-  #                             message = list(Status = paste0("Saving table ", fn),
-  #                                            Details = "Writing file"))
-  #   }
-  #   
-  #  # write.csv(tbf, file = fn)
-  #   data.table::fwrite(tbf,
-  #                      fn,
-  #                      sep = ",",
-  #                      quote = T,
-  #                      row.names = F
-  #   )
-  #     
-  #   }
-  #   
-  # 
-  # }
   return(status)
 }
 
