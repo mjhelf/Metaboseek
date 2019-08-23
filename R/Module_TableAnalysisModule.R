@@ -252,7 +252,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   observeEvent(input$selDB,{
     
     internalValues$dbselected <- input$selDB
-    
+    print(internalValues$dbselected)
   })
   
 

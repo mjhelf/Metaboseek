@@ -1,15 +1,17 @@
 ## Generics
 setGeneric("analyzeFT", function(object, MSData, param) standardGeneric("analyzeFT"))
-setGeneric("hasError", function(object) standardGeneric("hasError"))
-setGeneric("error", function(object) standardGeneric("error"))
-setGeneric("buildMseekFT", function(object, ...) standardGeneric("buildMseekFT"))
-setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseekFT"))
-setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
 setGeneric("addProcessHistory", function(object, ...) standardGeneric("addProcessHistory"))
-setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistory"))
-#setGeneric("processHistory", function(object, ...) standardGeneric("processHistory"))
-setGeneric("rename", function(object, ...) standardGeneric("rename"))
+setGeneric("buildMseekFT", function(object, ...) standardGeneric("buildMseekFT"))
+setGeneric("error", function(object) standardGeneric("error"))
 setGeneric("FTNormalize", function(object, fun, ...) standardGeneric("FTNormalize"))
+setGeneric("getMseekIntensities", function(object, rawdata, ...) standardGeneric("getMseekIntensities"))
+setGeneric("hasError", function(object) standardGeneric("hasError"))
+setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
+setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
+setGeneric("rename", function(object, ...) standardGeneric("rename"))
+setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseekFT"))
+#setGeneric("processHistory", function(object, ...) standardGeneric("processHistory"))
+setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistory"))
 
 
 ## Registered S3 classes
@@ -157,17 +159,21 @@ setClass("FunParam",
 #' @slot sessionInfo a \code{\link[utils]{sessionInfo}} object, should be genereated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
+#' @param fileNames names of files used in this analysis step (a more human-readable 
+#' variant of the fileIndex slot)
 #' 
 #' @rdname FTProcessHistory-class
 setClass("FTProcessHistory",
          slots = c(error = "listOrNULL",
                    changes = "logical",
+                   fileNames = "characterOrNULL",
                    inputDFhash = "characterOrNULL",
                    outputDFhash = "characterOrNULL",
                    sessionInfo = "sessionInfoOrNULL"),
          contains = "XProcessHistory",
          prototype = prototype(
              error = list(),
+             fileNames = character(),
              changes = FALSE,
              inputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
                                   algo = "xxhash64"),
@@ -257,10 +263,10 @@ setMethod("analyzeFT",
                   }
               
               object$.processHistory <- c(object$.processHistory,
-                                          ProcessHistory(param = param,
+                                          FTProcessHistory(param = param,
                                                            changes = changes,
                                                            error = res$errmsg,
-                                                           info = param@analyze,
+                                                           info = paste(param@analyze, collapse = "|")[1],
                                                            inputDFhash = inputHash,
                                                            outputDFhash = digest::digest(object$df,
                                                                                          algo = "xxhash64")
@@ -418,11 +424,13 @@ setMethod("buildMseekFT",  "xsAnnotate",
               
               res <- constructFeatureTable(df = CAMERA::getPeaklist(object),
                                     processHistory = c(oldHistory,
-                                                       xcms:::XProcessHistory(info = "Extracted Feature Table from CAMERA::xsAnnotate using CAMERA::getPeaklist and built MseekFT object",
+                                                       FTProcessHistory(info = "Extracted Feature Table from CAMERA::xsAnnotate using CAMERA::getPeaklist and built MseekFT object",
                                                                        param = xcms::GenericParam(fun = "buildMseekFT",
                                                                                                   args = list(...)))),
                                     ...)
               res$sampleNames <- object@xcmsSet@phenoData$sampleNames
+              res$RTcorr <- rtexport(object)
+              res$RTcorrected <- !identical(res$RTcorr$corr, res$RTcorr$noncorr)
               
               return(res)
               
@@ -438,12 +446,14 @@ setMethod("buildMseekFT",
               
               res <- constructFeatureTable(df = xcms::peakTable(as(object,"xcmsSet")),
                                     processHistory = c(oldHistory,
-                                                       xcms:::XProcessHistory(info = "Extracted Feature Table from xcms::XCMSnExp using xcms::peakTable(as(xset,'xcmsSet')) and built MseekFT object",
+                                                       FTProcessHistory(info = "Extracted Feature Table from xcms::XCMSnExp using xcms::peakTable(as(xset,'xcmsSet')) and built MseekFT object",
                                                                       param = xcms::GenericParam(fun = "buildMseekFT",
                                                                                                  args = list(...)))),
                                     ...)
               
               res$sampleNames <- as.character(object@phenoData@data$sampleNames)
+              res$RTcorr <- rtexport(object)
+              res$RTcorrected <- !identical(res$RTcorr$corr, res$RTcorr$noncorr)
               
               return(res)
           })
@@ -455,7 +465,7 @@ setMethod("buildMseekFT",
               
               constructFeatureTable(df = object,
                                     processHistory = c(processHistory,
-                                                       xcms:::XProcessHistory(info = "Built MseekFT object from a data.frame.",
+                                                       FTProcessHistory(info = "Built MseekFT object from a data.frame.",
                                                                       param = xcms::GenericParam(fun = "buildMseekFT",
                                                                                                  args = list(...)))),
                                     ...)
@@ -564,7 +574,7 @@ setMethod("rename",
                       }
                   
                   })
-              hstry <-  xcms:::XProcessHistory(info = paste0("Applied function ", fun, "and returned a ", class(res)),
+              hstry <-  xcms:::XProcessHistory(info = paste0("Applied function ", fun, "and returned a ", class(res))[1],
                                                error = errlist,
                                                param = FunParam(fun = "Metaboseek::saveMseekFT",
                                                                     args = args,
@@ -604,6 +614,8 @@ setMethod("rename",
 #' @param sessionInfo a \code{\link[utils]{sessionInfo}} object, should be generated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
+#' @param fileNames names of files used in this analysis step (a more human-readable 
+#' variant of the fileIndex slot)
 #' @param msLevel,... additional arguments passed to \code{\link[xcms]{XProcessHistory}()}
 #'
 #' @return a \code{\link{FTProcessHistory-class}} object
@@ -625,6 +637,7 @@ FTProcessHistory <- function(error = list(),
                              inputDFhash = NULL,
                              outputDFhash = NULL,
                              sessionInfo = NULL,
+                             fileNames = character(),
                              msLevel = NA_integer_,
                              ...) {
     obj <- xcms:::XProcessHistory(msLevel = msLevel, ...)
@@ -634,6 +647,7 @@ FTProcessHistory <- function(error = list(),
     obj@inputDFhash <- inputDFhash
     obj@outputDFhash <- outputDFhash
     obj@sessionInfo <- sessionInfo
+    obj@fileNames <- fileNames
     Biobase::classVersion(obj)["FTProcessHistory"] <- "0.0.1"
     OK <- validObject(obj)
     if (is.character(OK))

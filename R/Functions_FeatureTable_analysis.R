@@ -297,54 +297,7 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
   
 }
 
-#' @aliases FTNormalize
-#' 
-#' @param selCols selected columns (with intensity values)
-#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
-#' @rdname featureTableNormalize
-#' @export
-setMethod("FTNormalize", "data.frame",
-          function(object, selCols, logNormalized = FALSE){
-    
-    #normalize data and save it in matrix
-    mx <- as.matrix(object[,selCols])
-    mx <- featureTableNormalize(mx,
-                                raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-    # 
-    mx <- featureTableNormalize(mx, normalize = "colMeans")
-    if(!is.null(logNormalized) && logNormalized){
-        mx <- featureTableNormalize(mx, log =  "log10")
-    }
-    
-    #make copy of normalized intensities in active table df
-    mx <- as.data.frame(mx)
-    colnames(mx) <- paste0(colnames(mx),"__norm")
-    object <- updateDF (mx,object)
-    return(object)
-})
 
-#' @rdname featureTableNormalize
-#' @export
-setMethod("FTNormalize", "MseekFT",
-          function(object, logNormalized = FALSE){
-              
-             
-              #normalize data and save it in matrix
-              mx <- as.matrix(object$df[,object$intensities])
-              mx <- featureTableNormalize(mx,
-                                          raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-              # 
-              mx <- featureTableNormalize(mx, normalize = "colMeans")
-              if(!is.null(logNormalized) && logNormalized){
-                  mx <- featureTableNormalize(mx, log =  "log10")
-              }
-              
-              #make copy of normalized intensities in active table df
-              mx <- as.data.frame(mx)
-              colnames(mx) <- paste0(colnames(mx),"__norm")
-              object$df <- updateDF (mx,object$df)
-              return(object)
-          })
 
 #' @title featureTableNormalize
 #' 
@@ -767,6 +720,15 @@ MseekAnova <- function(df, groups){
 #'  \code{mzMatches} and \code{mzMatchError})
 #'
 #' @importFrom data.table rbindlist
+#' 
+#' @examples 
+#' testdb <- read.csv(system.file("extdata", "examples", "example_projectfolder",
+#'  "mini_example_features.csv", package = "Metaboseek"))
+#' testdb
+#' 
+#' matches <- mzMatch(df = testdb, db = c(system.file("db", "smid-db_pos.csv", package = "Metaboseek")))
+#' 
+#' updateDF(matches,testdb)
 #'
 #' @export
 mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){

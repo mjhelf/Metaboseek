@@ -14,8 +14,14 @@ RtCorrViewModule <- function(input,output, session, values){
   ns <- NS(session$ns(NULL))
   
   observeEvent(input$RtCorrLoad$datapath,{
+  
+      tryCatch({    
+      if(grepl("\\.[Rr][Dd][Ss]$", input$RtCorrLoad$datapath)){
+      values$MSData$RTcorr <- readRDS(file.path(values$projectData$projectFolder, 
+                                                "RTcorr_data.Rds"))
+      }else{
     values$MSData$RTcorr <- attach(input$RtCorrLoad$datapath)$rtx
-    
+      }
     for(i in 1:length(values$MSData$RTcorr$noncorr)){
       
       values$MSData$RTcorr[["rtdiff"]][[i]] <- values$MSData$RTcorr$noncorr[[i]]-values$MSData$RTcorr$corr[[i]]
@@ -33,6 +39,13 @@ RtCorrViewModule <- function(input,output, session, values){
     }
     
   })
+  },
+  error = function(e){
+      
+      showNotification(paste("ERROR: Loading of RT correction information failed:", e), type = "error", duration = NULL)
+      
+      
+      })
   
 }
 

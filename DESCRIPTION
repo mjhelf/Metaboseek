@@ -155,5 +155,6 @@ Collate:
     'Widget_xcmsWidget.R'
     'getset_MSData.R'
     'getset_featureTables.R'
+    'methods-MseekFT.R'
     'methods-Spectrum.R'
     'zzz.R'

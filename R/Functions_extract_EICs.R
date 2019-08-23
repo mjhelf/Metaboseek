@@ -602,7 +602,7 @@ bestgauss <- function(...){
 #' \code{mz} and \code{rt} in \code{rawfile}
 #' 
 #' @importFrom Biobase rowMax rowMin
-#' 
+#' @describeIn exIntensities
 #' @export
 exIntensities <- function (rawfile,
                            mz,

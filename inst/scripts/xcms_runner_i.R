@@ -277,8 +277,8 @@ history <- writeStatus (previous = history,
                                        Details = "Retention time correction information"))
 
 rtx <-  rtexport(xset)    
-save(rtx, file = "RTcorr_data.Rdata")
-
+#save(rtx, file = "RTcorr_data.Rdata")
+saveRDS(rtx, file = "RTcorr_data.Rds")
 
 
  history <- writeStatus (previous = history,

@@ -14,6 +14,10 @@
 
 \S4method{error}{FTProcessHistory}(object)
 }
+\arguments{
+\item{fileNames}{names of files used in this analysis step (a more human-readable 
+variant of the fileIndex slot)}
+}
 \description{
 Objects of this class hold parameters for feature table analysis,
 to be used with \code{\link{analyzeFT}()}

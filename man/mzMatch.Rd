@@ -39,3 +39,13 @@ the prefix \code{mzMatch_}. If there are multiple hits across the \code{db}
  files, they will be separated by "|" within each column (including 
  \code{mzMatches} and \code{mzMatchError})
 }
+\examples{
+testdb <- read.csv(system.file("extdata", "examples", "example_projectfolder",
+ "mini_example_features.csv", package = "Metaboseek"))
+testdb
+
+matches <- mzMatch(df = testdb, db = c(system.file("db", "smid-db_pos.csv", package = "Metaboseek")))
+
+updateDF(matches,testdb)
+
+}

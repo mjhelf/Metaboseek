@@ -63,6 +63,19 @@ SelectProjectFolderModule <- function(input,output, session,
       
       if(length(internalValues$filegroupsfile) >0 ){
         
+          if(file.exists(file.path(values$projectData$projectFolder, 
+                                   pattern="RTcorr_data.Rds"))){
+              values$MSData$RTcorr <- readRDS(file.path(values$projectData$projectFolder, 
+                                                        "RTcorr_data.Rds"))
+              
+              for(i in 1:length(values$MSData$RTcorr$noncorr)){
+                  
+                  values$MSData$RTcorr[["rtdiff"]][[i]] <- values$MSData$RTcorr$noncorr[[i]]-values$MSData$RTcorr$corr[[i]]
+                  
+              }
+              
+          }else{
+          #for backwards compatibility with old project folders
         rtfile <- list.files(values$projectData$projectFolder, 
                              pattern="RTcorr_data.Rdata",
                              recursive = TRUE, full.names=T)
@@ -75,6 +88,8 @@ SelectProjectFolderModule <- function(input,output, session,
             
           }
         }
+          }
+        
         internalValues$filegroups <- read.csv(internalValues$filegroupsfile,
                                               stringsAsFactors = F, header = T)
         

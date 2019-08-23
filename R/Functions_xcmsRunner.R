@@ -185,16 +185,7 @@ savetable <- function(xset,
                  processHistory = NULL)
     
  #set NAs to 0 (mostly important if !fill)
- beforeHash <- digest::digest(tb_mskFT$df,
-                              algo = "xxhash64")
- tb_mskFT$df[is.na(tb_mskFT$df)]<-0
- afterHash <- digest::digest(tb_mskFT$df,
-                             algo = "xxhash64")
- tb_mskFT <- addProcessHistory(tb_mskFT, FTProcessHistory(changes = afterHash != beforeHash,
-                                                          inputDFhash = beforeHash,
-                                                          outputDFhash = afterHash,
-                                                          sessionInfo = NULL,
-                                                          info = "Replaced NA values in df by 0!"))
+ tb_mskFT <- removeNAs(tb_mskFT)
 
     
     if(!is.null(intensities) & !is.null(rawdata)){
@@ -283,7 +274,7 @@ savetable <- function(xset,
         tb_mskFT$df <- cbind(tb_mskFT$df,intens) 
         afterHash <- digest::digest(tb_mskFT$df,
                                      algo = "xxhash64")
-        tb_mskFT <- addProcessHistory(tb_mskFT, FTProcessHistory(info = "Added Mseek intensities NA values in df by 0!",
+        tb_mskFT <- addProcessHistory(tb_mskFT, FTProcessHistory(info = "Added Mseek intensities!",
                                                                  inputDFhash = beforeHash,
                                                                  outputDFhash = afterHash,
                                                                     param = FunParam(fun = "Metaboseek::savetable",

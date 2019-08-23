@@ -75,13 +75,18 @@ rtexport <- function(xset){
 if(class(xset)=="XCMSnExp"){
   if(!xcms::hasAdjustedRtime(xset)){
     message("XCMSnExp object did not contain RT correction information.")
-  }
+      res <- list(
+          noncorr = xcms::rtime(xset, bySample = TRUE, adjusted = FALSE),
+          corr = xcms::rtime(xset, bySample = TRUE, adjusted = FALSE),
+          fnames = xset@processingData@files
+      )
+  }else{
   res <- list(
       noncorr = xcms::rtime(xset, bySample=T, adjusted = F),
   corr = xcms::rtime(xset, bySample=T, adjusted = T),
   fnames = xset@processingData@files
     )
-  
+  }
 }
 
 #get the embedded xcmsSet out of a CAMERA object
