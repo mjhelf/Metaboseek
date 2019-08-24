@@ -209,32 +209,7 @@ xset <- groupChromPeaks(xset,
                                            Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
     
     an <- do.call(cameraWrapper, c(list(xset = xset, workers = as.integer(centWave["workers",1])),cam_param))
-   # library(CAMERA)
-    # an   <- xsAnnotate(as(xset, "xcmsSet"),
-    #                    nSlaves = as.integer(centWave["workers",1]),
-    #                    polarity = cam_param$polarity)###CHANGE POLARITY
-    # 
-    # an <- groupFWHM(an,
-    #                 sigma = cam_param$sigma,
-    #                 perfwhm = cam_param$perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
-    # #verify grouping
-    # an <- groupCorr(an,
-    #                 cor_eic_th = cam_param$cor_eic_th,
-    #                 pval = cam_param$pval)
-    # 
-    # an <- findIsotopes(an,
-    #                    maxcharge = cam_param$maxcharge,
-    #                    maxiso = cam_param$maxiso,
-    #                    ppm = cam_param$ppm,
-    #                    mzabs = cam_param$mzabs,
-    #                    minfrac = max(0.001,cam_param$minfrac), #minFrac of 0 throws error otherwise
-    #                    filter = cam_param$filter)
-    # an <- findAdducts(an,
-    #                   ppm = cam_param$ppm,
-    #                   mzabs = cam_param$mzabs,
-    #                   polarity= cam_param$polarity)
-    #peaklist <- getPeaklist(an)
-    
+   
     history  <- savetable(an,
                           status = history,
                           fill = NULL,
@@ -308,31 +283,6 @@ if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
                                          Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
   
   an <- do.call(cameraWrapper, c(list(xset = xset, workers = as.integer(centWave["workers",1])),cam_param))
-  # 
-  # an   <- xsAnnotate(as(xset, "xcmsSet"),
-  #                    nSlaves ,
-  #                    polarity = cam_param$polarity)###CHANGE POLARITY
-  # 
-  # an <- groupFWHM(an,
-  #                 sigma = cam_param$sigma,
-  #                 perfwhm = cam_param$perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
-  # #verify grouping
-  # an <- groupCorr(an,
-  #                 cor_eic_th = cam_param$cor_eic_th,
-  #                 pval = cam_param$pval)
-  # 
-  # an <- findIsotopes(an,
-  #                    maxcharge = cam_param$maxcharge,
-  #                    maxiso = cam_param$maxiso,
-  #                    ppm = cam_param$ppm,
-  #                    mzabs = cam_param$mzabs,
-  #                    minfrac = max(0.001,cam_param$minfrac), #minFrac of 0 throws error otherwise
-  #                    filter = cam_param$filter)
-  # an <- findAdducts(an,
-  #                   ppm = cam_param$ppm,
-  #                   mzabs = cam_param$mzabs,
-  #                   polarity= cam_param$polarity)
-  # #peaklist <- getPeaklist(an)
   
   history  <- savetable(an,
                         status = history,

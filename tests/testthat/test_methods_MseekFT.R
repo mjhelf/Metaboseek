@@ -1,7 +1,7 @@
 context("methods MseekFT")
 
 
-#MseekExamplePreload()
+MseekExamplePreload()
 
 wtfiles <-  list.files(system.file("extdata", "examples", "ms1", "wt", package = "Metaboseek"), full.names = T, pattern = ".mzXML")
 
@@ -38,7 +38,9 @@ test_that("utility functions", {
 test_that("removeNAs works", {
     tab1wNAs <- tab1
     
-    tab1wNAs$df[tab1wNAs$df == 0] <- NA
+    tab1$df[is.na(tab1$df)] <- 0
+    
+#    tab1wNAs$df[tab1wNAs$df == 0] <- NA
     
     expect_true(any(is.na(tab1wNAs$df)))
     
@@ -53,8 +55,35 @@ test_that("removeNAs works", {
   }
 )
 
+test_that("we can get Mseek intensities",{
+    
+    expect_true(hasError(previousStep(getMseekIntensities(tab1, MSD$data[1:2]))))
+    expect_true(all(paste0(basename(names(MSD$data[1:2])), "__XIC") %in% colnames(getMseekIntensities(ints, MSD$data[1:2], adjustedRT = FALSE)$df)))
+})
 
-ints <- getMseekIntensities(tab1, MSD$data[1:2])
+with_ints <- getMseekIntensities(ints, MSD$data, adjustedRT = FALSE)
+
+test_that("intensityCols and FTNormalize work",{
+  expect_true(hasError(previousStep(FTNormalize(with_ints))))
+  
+    expect_null(intensityCols(with_ints))
+    
+  intensityCols(with_ints) <- paste0(basename(names(MSD$data)), "__XIC")
+  
+  expect_equal(intensityCols(with_ints),
+                             paste0(basename(names(MSD$data)), "__XIC"))
+  
+  with_ints <- FTNormalize(with_ints)
+  
+  expect_true(!hasError(previousStep(FTNormalize(with_ints))))
+  
+  allmeans <- sapply(paste0(intensityCols(with_ints), "__norm"), function(n){
+      mean(with_ints$df[[n]])
+      })
+  
+  expect_equal(min(allmeans), max(allmeans))
+  
+})
 
 ##a data.frame for testing mass deffect function
 dfdef <- data.frame(mz = c(101.11111, 102.22222, 103.33333, 104.44444, 105.55555),
@@ -72,10 +101,7 @@ test_that("log arg works after normalization", {
   expect_that(mxt[2,1], equals(0))
 })
 
-test_that("normalization arg works after normalization",{
-  mxt <- featureTableNormalize(mx1, normalize = 1)
-  expect_that(mxt[2,1], equals (5))
-})
+
 
 
 

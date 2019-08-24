@@ -6,7 +6,7 @@
 \usage{
 FTProcessHistory(error = list(), changes = TRUE, inputDFhash = NULL,
   outputDFhash = NULL, sessionInfo = NULL, fileNames = character(),
-  msLevel = NA_integer_, ...)
+  processingTime = NA_real_, msLevel = NA_integer_, ...)
 }
 \arguments{
 \item{error}{a named list of character() vectors, reporting errors that 
@@ -25,6 +25,8 @@ will be populated by load and constructor methods for MseekFT class).}
 
 \item{fileNames}{names of files used in this analysis step (a more human-readable 
 variant of the fileIndex slot)}
+
+\item{processingTime}{time spent on processing this step, in seconds}
 
 \item{msLevel, ...}{additional arguments passed to \code{\link[xcms]{XProcessHistory}()}}
 }

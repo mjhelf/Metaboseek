@@ -196,36 +196,46 @@ savetable <- function(xset,
                                              Details = "Getting Mseek intensities"))
        }
       
-  rtx <-  rtexport(xset)    
-  
- rta <- rtadjust(rtx, tb_mskFT$df[,c("rt","rtmin","rtmax")])
+ #  rtx <-  rtexport(xset)    
+ #  
+ # rta <- rtadjust(rtx, tb_mskFT$df[,c("rt","rtmin","rtmax")])
+ # 
+ # ###Get Mseek Intensities
+ # intens <- data.frame(pholder = numeric(nrow(tb_mskFT$df)))
+ # 
+ #      for(i in 1:length(rawdata)){
+ #        if(intensities$rtrange){
+ #        rtwin <- data.frame(rtmin = rta[[i]]$rtmin-intensities$rtw,
+ #                            rtmax = rta[[i]]$rtmax+intensities$rtw)
+ #        rtwin[rtwin < 0]<-0
+ #        }else{
+ #          rtwin <- data.frame(rtmin = rta[[i]]$rt-intensities$rtw,
+ #                              rtmax = rta[[i]]$rt+intensities$rtw)
+ #          rtwin[rtwin < 0]<-0
+ #        }
+ #        
+ #        intens[[paste0(basename(names(rawdata)[i]),"__XIC")]] <- exIntensities(rawfile= rawdata[[i]],
+ #                                                               mz = tb_mskFT$df$mz,
+ #                                                               ppm=intensities$ppm,
+ #                                                               rtw= rtwin
+ #                                                               )
+ #      }
+ # intens <- intens[,which(colnames(intens) != "pholder")]
  
- ###Get Mseek Intensities
- intens <- data.frame(pholder = numeric(nrow(tb_mskFT$df)))
- 
-      for(i in 1:length(rawdata)){
-        if(intensities$rtrange){
-        rtwin <- data.frame(rtmin = rta[[i]]$rtmin-intensities$rtw,
-                            rtmax = rta[[i]]$rtmax+intensities$rtw)
-        rtwin[rtwin < 0]<-0
-        }else{
-          rtwin <- data.frame(rtmin = rta[[i]]$rt-intensities$rtw,
-                              rtmax = rta[[i]]$rt+intensities$rtw)
-          rtwin[rtwin < 0]<-0
-        }
+        tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata,
+                            adjustedRT = TRUE, ppm = intensities$ppm, 
+                            rtrange = intensities$rtrange, 
+                            rtw = intensities$rtw)
         
-        intens[[paste0(basename(names(rawdata)[i]),"__XIC")]] <- exIntensities(rawfile= rawdata[[i]],
-                                                               mz = tb_mskFT$df$mz,
-                                                               ppm=intensities$ppm,
-                                                               rtw= rtwin
-                                                               )
-      }
- intens <- intens[,which(colnames(intens) != "pholder")]
+        if(hasError(previousStep(tb_mskFT))){
+            tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata,
+                                            adjustedRT = FALSE, ppm = intensities$ppm, 
+                                            rtrange = intensities$rtrange, 
+                                            rtw = intensities$rtw)
+            
+            }
  
- 
-    }else{
-        intens <- NULL
-        }
+    }
  
  analysisIterations <- character()
  

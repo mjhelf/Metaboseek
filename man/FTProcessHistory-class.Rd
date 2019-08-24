@@ -4,19 +4,15 @@
 \name{FTProcessHistory-class}
 \alias{FTProcessHistory-class}
 \alias{show,FTProcessHistory-method}
-\alias{hasError,FTProcessHistory-method}
+\alias{hasError,ProcessHistory-method}
 \alias{error,FTProcessHistory-method}
 \title{Parameter class for Feature Table analysis}
 \usage{
 \S4method{show}{FTProcessHistory}(object)
 
-\S4method{hasError}{FTProcessHistory}(object)
+\S4method{hasError}{ProcessHistory}(object)
 
 \S4method{error}{FTProcessHistory}(object)
-}
-\arguments{
-\item{fileNames}{names of files used in this analysis step (a more human-readable 
-variant of the fileIndex slot)}
 }
 \description{
 Objects of this class hold parameters for feature table analysis,
@@ -41,5 +37,10 @@ did not result in relevant changes and could be dropped for reporting}
 \item{\code{sessionInfo}}{a \code{\link[utils]{sessionInfo}} object, should be genereated
 at time of the recorded event and at least once in every session (by default,
 will be populated by load and constructor methods for MseekFT class).}
+
+\item{\code{fileNames}}{names of files used in this analysis step (a more human-readable 
+variant of the fileIndex slot)}
+
+\item{\code{processingTime}}{time spent on processing this step, in seconds}
 }}
 

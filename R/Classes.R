@@ -6,10 +6,21 @@ setGeneric("error", function(object) standardGeneric("error"))
 setGeneric("FTNormalize", function(object, fun, ...) standardGeneric("FTNormalize"))
 setGeneric("getMseekIntensities", function(object, rawdata, ...) standardGeneric("getMseekIntensities"))
 setGeneric("hasError", function(object) standardGeneric("hasError"))
+setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
+setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
+
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
+setGeneric("previousStep", function(object, ...) standardGeneric("previousStep"))
 setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
 setGeneric("rename", function(object, ...) standardGeneric("rename"))
 setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseekFT"))
+
+setGeneric("searchStep", function(object, file, ...) standardGeneric("searchStep"))
+
+
+setGeneric("transferMseekIntensities", function(from, to, ...) standardGeneric("transferMseekIntensities")) #transfer Mseek intensities and history entry about making them
+
+
 #setGeneric("processHistory", function(object, ...) standardGeneric("processHistory"))
 setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistory"))
 
@@ -159,8 +170,9 @@ setClass("FunParam",
 #' @slot sessionInfo a \code{\link[utils]{sessionInfo}} object, should be genereated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
-#' @param fileNames names of files used in this analysis step (a more human-readable 
+#' @slot fileNames names of files used in this analysis step (a more human-readable 
 #' variant of the fileIndex slot)
+#' @slot processingTime time spent on processing this step, in seconds
 #' 
 #' @rdname FTProcessHistory-class
 setClass("FTProcessHistory",
@@ -169,7 +181,8 @@ setClass("FTProcessHistory",
                    fileNames = "characterOrNULL",
                    inputDFhash = "characterOrNULL",
                    outputDFhash = "characterOrNULL",
-                   sessionInfo = "sessionInfoOrNULL"),
+                   sessionInfo = "sessionInfoOrNULL",
+                   processingTime = "numeric"),
          contains = "XProcessHistory",
          prototype = prototype(
              error = list(),
@@ -179,7 +192,8 @@ setClass("FTProcessHistory",
                                   algo = "xxhash64"),
              outputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
                                            algo = "xxhash64"),
-             sessionInfo = NULL
+             sessionInfo = NULL,
+             processingTime = NA_real_
          ),
          validity = function(object) {
              msg <- character()
@@ -291,13 +305,26 @@ setMethod("show", "FTProcessHistory", function(object) {
     erLabel <- if(length(object@error)){""}else{"-none-"}
     cat(" errors:", erLabel, "\n")
     if (length(object@error) > 0) {
-        for (i in 1:length(object@error)) {
+        for (i in seq_len(length(object@error))) {
             if (!is.null(names(object@error)))
                 cat(" ", names(object@error)[i], "= ")
             cat(object@error[[i]], "\n")
         }
     }
     chLabel <- if(object@changes){"yes"}else{"no"}
+    
+    if(length(object@fileNames)){
+    cat(" fileNames:", object@fileNames, "\n")
+    }
+        
+    if(!is.na(object@processingTime)){
+        if(object@processingTime > 60){
+            timeform <- paste0(format(object@processingTime/60, nsmall = 2, scientific = FALSE), " min.")
+        }else{
+            timeform <- paste0(format(object@processingTime, nsmall = 3, scientific = NA), " sec.")
+            }
+        cat(" processing time:", timeform, "\n")
+        }
     
     cat(" changes:", chLabel, "\n")
     cat(" input data.frame hash:", object@inputDFhash, "\n")
@@ -325,7 +352,9 @@ setMethod("show", "FunParam", function(object) {
     if (length(object@longArgs) > 0) {
         for (i in 1:length(object@longArgs)) {
             cat(" ", names(object@longArgs)[i], "= ")
-            if (is.atomic(object@longArgs[[i]]) && !length(names(object@longArgs[[i]]))){
+            if (is.atomic(object@longArgs[[i]]) 
+                && !length(names(object@longArgs[[i]]))
+                && ! "summaryDefault" %in% class(object@longArgs[[i]])){
                 cat(object@longArgs[[i]], "\n")
                 }else{
                 cat("\n")    
@@ -351,7 +380,7 @@ setMethod("show", "FunParam", function(object) {
 #'
 #' @author Johannes Rainer, Maximilian Helf
 #'
-#' @noRd
+#' @export
 setMethod("addProcessHistory", "MseekFT", function(object, ph) {
     if (!inherits(ph, "ProcessHistory"))
         stop("Argument 'ph' has to be of type 'ProcessHistory' or a class ",
@@ -389,7 +418,8 @@ setMethod("addProcessHistory", "xsAnnotate", function(object, ph) {
 
 
 #' @rdname FTProcessHistory-class
-setMethod("hasError", "FTProcessHistory",
+#' @export
+setMethod("hasError", "ProcessHistory",
           function(object){
               length(object@error) > 0
           })
@@ -616,6 +646,7 @@ setMethod("rename",
 #'  will be populated by load and constructor methods for MseekFT class).
 #' @param fileNames names of files used in this analysis step (a more human-readable 
 #' variant of the fileIndex slot)
+#' @param processingTime time spent on processing this step, in seconds
 #' @param msLevel,... additional arguments passed to \code{\link[xcms]{XProcessHistory}()}
 #'
 #' @return a \code{\link{FTProcessHistory-class}} object
@@ -638,6 +669,7 @@ FTProcessHistory <- function(error = list(),
                              outputDFhash = NULL,
                              sessionInfo = NULL,
                              fileNames = character(),
+                             processingTime = NA_real_,
                              msLevel = NA_integer_,
                              ...) {
     obj <- xcms:::XProcessHistory(msLevel = msLevel, ...)
@@ -648,6 +680,7 @@ FTProcessHistory <- function(error = list(),
     obj@outputDFhash <- outputDFhash
     obj@sessionInfo <- sessionInfo
     obj@fileNames <- fileNames
+    obj@processingTime <- processingTime
     Biobase::classVersion(obj)["FTProcessHistory"] <- "0.0.1"
     OK <- validObject(obj)
     if (is.character(OK))

@@ -122,27 +122,6 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
 
 }
 
-
-
-#' previousStep
-#'
-#' extract the most recent \code{ProcessHistory} object from an object,
-#'  representing the last recorded changes made to the object.
-#'
-#' @rdname previousStep
-#' @export
-previousStep <- function(x){
-    
-    UseMethod('previousStep',x)
-    
-}
-
-#' @rdname previousStep
-#' @export
-previousStep.MseekFT <- function(x){
-    x$.processHistory[[length(x$.processHistory)]]
-}
-
 #' updateDF
 #' 
 #' Update dataframe b with data from dataframe a; must have equal number of rows
