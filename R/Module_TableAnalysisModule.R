@@ -147,6 +147,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
         #if("mzMatch" %in% internalValues$analysesSelected){
           
       #  }
+          stepsbefore <- length(processHistory(FeatureTable(values)))
         
        
         FeatureTable(values) <- analyzeFT(object = FeatureTable(values),
@@ -165,17 +166,22 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                                   workers = values$GlobalOpts$enabledCores
                                                                   ))
         
-        
+        errorIndices <- which(sapply(processHistory(FeatureTable(values)), hasError))
 
-        if(hasError(previousStep(FeatureTable(values)))){
+        if(any(errorIndices > stepsbefore)){
+            
+            allerrs <- c(lapply(processHistory(FeatureTable(values))[errorIndices[errorIndices > stepsbefore]],
+                              error))
           
           showModal(
             modalDialog(
               p(strong("A problem has occured!")),
               hr(),
-              p( paste0(names(error(previousStep(FeatureTable(values)))), ": ",
-                        unlist(error(previousStep(FeatureTable(values)))),
+              p( paste0(names(allerrs), ": ",
+                        unlist(allerrs),
                  collapse = "\n" )),
+              
+              
               hr(),
               p("Other analyses completed without error."),
               title = "Warning",

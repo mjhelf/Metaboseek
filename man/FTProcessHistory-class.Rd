@@ -5,14 +5,14 @@
 \alias{FTProcessHistory-class}
 \alias{show,FTProcessHistory-method}
 \alias{hasError,ProcessHistory-method}
-\alias{error,FTProcessHistory-method}
+\alias{error,ProcessHistory-method}
 \title{Parameter class for Feature Table analysis}
 \usage{
 \S4method{show}{FTProcessHistory}(object)
 
 \S4method{hasError}{ProcessHistory}(object)
 
-\S4method{error}{FTProcessHistory}(object)
+\S4method{error}{ProcessHistory}(object)
 }
 \description{
 Objects of this class hold parameters for feature table analysis,

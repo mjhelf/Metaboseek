@@ -98,7 +98,6 @@ writeStatus <- function(previous = NULL,
   return(res)
 }
 
-
 #' savetable
 #' 
 #' Save a peakTable from an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate
@@ -111,11 +110,9 @@ writeStatus <- function(previous = NULL,
 #' 
 #' @param xset an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 
 #' which to extract the peaklist
-#' @param status a \code{\link{writeStatus}} object to be modified and returned
-#'  by the function, or NULL to start a new status.csv file
-#' @param fill xcms::FillChromPeaksParam object to specify how to fill peaks
-#'  (only works if xset is an XCMSnExp object). No peak filling if NULL.
-#' @param nonfill also write the non-filled peaktable data? TRUE or FALSE
+#' @param importResultsFrom if an MseekFT object is supplied here, will import Mseek intensities
+#' and other post-processing results if appropriate (same feature definitions,
+#'  same files, same intensities)
 #' @param filename filename to use when writing the csv file (including file 
 #' extension). "_filled" will be added for filled data.
 #' @param bparams BBPARAMs (BiocParallel::BiocParallelParam object with 
@@ -135,10 +132,7 @@ writeStatus <- function(previous = NULL,
 #'  
 #' @export
 savetable <- function(xset,
-                      status = NULL,
-                      fill = xcms::FillChromPeaksParam(expandMz = 0.005,
-                                                 expandRt = 5, ppm = 3),
-                      nonfill = F,
+                      importResultsFrom = NULL,
                       filename = "tableoutxx",
                       bparams = SnowParam(workers = 1),
                       intensities = list(ppm = 5,
@@ -147,222 +141,90 @@ savetable <- function(xset,
                       rawdata = NULL,
                       saveR = T,
                       postProc = NULL){
-  
-  if(is.null(fill) & !nonfill){return(status)}
-  
+    
+
     grouptable <- NULL
     
     if(!is.null(postProc)){
-  if(is.null(intensities)){
-      #remove the __XIC in column names if no MseekIntensiy requested
-    postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
-  }
-  
-        if(length(postProc$fileGrouping)){      
-  grouptable <- data.frame(Column = unlist(postProc$fileGrouping),
-                           Group = unlist(lapply(seq_len(length(postProc$fileGrouping)),
-                                                 function(i){rep(names(postProc$fileGrouping)[i],
-                                                                 lengths(postProc$fileGrouping)[i])})),
-                           stringsAsFactors = FALSE)
+        if(is.null(intensities) || is.null(rawdata)){
+            #remove the __XIC in column names if no MseekIntensiy requested
+            postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
         }
-  
+        
+        if(length(postProc$fileGrouping)){      
+            grouptable <- data.frame(Column = unlist(postProc$fileGrouping),
+                                     Group = unlist(lapply(seq_len(length(postProc$fileGrouping)),
+                                                           function(i){rep(names(postProc$fileGrouping)[i],
+                                                                           lengths(postProc$fileGrouping)[i])})),
+                                     stringsAsFactors = FALSE)
+        }
+        
     }
-  
     
-  
-  if(!is.null(status)){
-   status <- writeStatus (previous = status,
-                           message = list(Status = paste0("Saving table ", filename),
-                                         Details = "Extracting peaktable"))
-  }
-  
- 
     
- tb_mskFT <- buildMseekFT(object = xset,
-                 anagrouptable = grouptable,
-                 tablename = paste0(filename,"_unprocessed"),
-                 editable = F,
-                 processHistory = NULL)
     
- #set NAs to 0 (mostly important if !fill)
- tb_mskFT <- removeNAs(tb_mskFT)
-
+    tb_mskFT <- buildMseekFT(object = xset,
+                             anagrouptable = grouptable,
+                             tablename = paste0(filename,"_unprocessed"),
+                             editable = F,
+                             processHistory = NULL)
+    
+    #set NAs to 0 (mostly important if !fill)
+    tb_mskFT <- removeNAs(tb_mskFT)
+    
     
     if(!is.null(intensities) & !is.null(rawdata)){
-         
-       if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                              message = list(Status = paste0("Saving table ", filename),
-                                             Details = "Getting Mseek intensities"))
-       }
-      
- #  rtx <-  rtexport(xset)    
- #  
- # rta <- rtadjust(rtx, tb_mskFT$df[,c("rt","rtmin","rtmax")])
- # 
- # ###Get Mseek Intensities
- # intens <- data.frame(pholder = numeric(nrow(tb_mskFT$df)))
- # 
- #      for(i in 1:length(rawdata)){
- #        if(intensities$rtrange){
- #        rtwin <- data.frame(rtmin = rta[[i]]$rtmin-intensities$rtw,
- #                            rtmax = rta[[i]]$rtmax+intensities$rtw)
- #        rtwin[rtwin < 0]<-0
- #        }else{
- #          rtwin <- data.frame(rtmin = rta[[i]]$rt-intensities$rtw,
- #                              rtmax = rta[[i]]$rt+intensities$rtw)
- #          rtwin[rtwin < 0]<-0
- #        }
- #        
- #        intens[[paste0(basename(names(rawdata)[i]),"__XIC")]] <- exIntensities(rawfile= rawdata[[i]],
- #                                                               mz = tb_mskFT$df$mz,
- #                                                               ppm=intensities$ppm,
- #                                                               rtw= rtwin
- #                                                               )
- #      }
- # intens <- intens[,which(colnames(intens) != "pholder")]
- 
-        tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata,
-                            adjustedRT = TRUE, ppm = intensities$ppm, 
-                            rtrange = intensities$rtrange, 
-                            rtw = intensities$rtw)
+        
+       
+       tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata, importFrom = importResultsFrom,
+                                        adjustedRT = hasAdjustedRtime(tb_mskFT),
+                                        ppm = intensities$ppm, 
+                                        rtrange = intensities$rtrange, 
+                                        rtw = intensities$rtw)
         
         if(hasError(previousStep(tb_mskFT))){
-            tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata,
+            tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata, importFrom = importResultsFrom,
                                             adjustedRT = FALSE, ppm = intensities$ppm, 
                                             rtrange = intensities$rtrange, 
                                             rtw = intensities$rtw)
             
-            }
- 
-    }
- 
- analysisIterations <- character()
- 
- if(nonfill){ analysisIterations <- c(analysisIterations, "unfilled")}
- if(!is.null(fill) & class(xset) == "XCMSnExp"){ analysisIterations <- c(analysisIterations, "filled")}
- 
- for(step in analysisIterations){
- 
-     #important that step "unfilled" runs first, if requested!
-  if(step == "filled"){
-      
-      if(!is.null(status)){
-          status <- writeStatus (previous = status,
-                                 message = list(Status = paste0("Saving table ", filename),
-                                                Details = "Filling peaks (xcms fillChromPeaks)"))
-      }
-      
-      xset <- xcms::fillChromPeaks(xset, fill,
-                                   BPPARAM = bparams)
-      
-      tb_mskFT <- buildMseekFT(object = xset,
-                               anagrouptable = grouptable,
-                               tablename = paste0(filename,"_unprocessed"),
-                               editable = F,
-                               processHistory = NULL)
-      
-      #set NAs to 0 (mostly important if !fill)
-      beforeHash <- digest::digest(tb_mskFT$df,
-                                   algo = "xxhash64")
-      tb_mskFT$df[is.na(tb_mskFT$df)]<-0
-      afterHash <- digest::digest(tb_mskFT$df,
-                                  algo = "xxhash64")
-      tb_mskFT <- addProcessHistory(tb_mskFT, FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
-                                                               sessionInfo = NULL,
-                                                               info = "Replaced NA values in df by 0!"))
-      
-      filename <- paste0(filename,"_filled")
-      
-  }
-      
-    if(!is.null(intens)){
-        beforeHash <- digest::digest(tb_mskFT$df,
-                                     algo = "xxhash64")
-        tb_mskFT$df <- cbind(tb_mskFT$df,intens) 
-        afterHash <- digest::digest(tb_mskFT$df,
-                                     algo = "xxhash64")
-        tb_mskFT <- addProcessHistory(tb_mskFT, FTProcessHistory(info = "Added Mseek intensities!",
-                                                                 inputDFhash = beforeHash,
-                                                                 outputDFhash = afterHash,
-                                                                    param = FunParam(fun = "Metaboseek::savetable",
-                                                                                       args = list(intensities = intensities),
-                                                                                       longArgs = list(rawdata = summary(rawdata)))))
-        
         }
-      
-
-      
-    
-    if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Saving table ", paste0(tb_mskFT$tablename,
-                                                                                    "_unprocessed.csv")),
-                                            Details = "Writing file"))
     }
     
-      saveMseekFT(tb_mskFT, file = tb_mskFT$tablename, 
-                  writeCSV = TRUE, writeRDS = TRUE)
+        saveMseekFT(tb_mskFT, file = tb_mskFT$tablename, 
+                    writeCSV = TRUE, writeRDS = TRUE)
         
-   # write.csv(tb, file = gsub("\\.csv$","_unprocessed.csv",filename))
-   
-    
-    if(saveR){saveRDS(xset,file = paste0(filename,"_xset.Rds"))}
-    
-    
-    if(!is.null(postProc)){
-      
-      
-      
-  if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Post-Processing ", filename),
-                                            Details = paste(c("selected analyses:", postProc$analysesSelected, postProc$analysesSelected2), collapse = " ")))
-  }
-      
-       tb_mskFT <- analyzeFT(object = tb_mskFT,
-                       MSData = rawdata,
-                       param = FTAnalysisParam(
-                          intensities = if(!is.null(intens)){
-                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
-                          groups = postProc$fileGrouping,
-                          analyze = c(postProc$analysesSelected,postProc$analysesSelected2), 
-                          normalize = postProc$normalize,
-                          useNormalized = postProc$useNormalized,
-                          logNormalized = postProc$logNormalized,
-                          ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
-                          controlGroup = postProc$controlGroups,
-                          numClusters = postProc$numClusters,
-                          workers = bparams$workers))
-      
 
+        if(saveR){saveRDS(xset,file = paste0(filename,"_xset.Rds"))}
+        
+        
+        if(!is.null(postProc)){
+            
+            tb_mskFT <- analyzeFT(object = tb_mskFT,
+                                  MSData = rawdata,
+                                  param = FTAnalysisParam(
+                                      intensities = unname(unlist(postProc$fileGrouping)),
+                                      groups = postProc$fileGrouping,
+                                      analyze = c(postProc$analysesSelected,postProc$analysesSelected2), 
+                                      normalize = postProc$normalize,
+                                      useNormalized = postProc$useNormalized,
+                                      logNormalized = postProc$logNormalized,
+                                      ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
+                                      controlGroup = postProc$controlGroups,
+                                      numClusters = postProc$numClusters,
+                                      workers = bparams$workers))
+
+            #reflect in filename that this is now processed...
+            tb_mskFT <- rename(tb_mskFT, filename)
+            
+            # write.csv(tb, file = filename)
+            saveMseekFT(tb_mskFT, file = paste0(filename), 
+                        writeCSV = TRUE, writeRDS = TRUE)
+        }
     
-    if(!is.null(status)){
-        status <- writeStatus (previous = status,
-                           message = list(Status = paste0("Post-Processing finished", filename),
-                                          Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
-                                          ))
-    }
-       
-       tb_mskFT <- rename(tb_mskFT, filename)
-       
-       if(!is.null(status)){
-         status <- writeStatus (previous = status,
-                                message = list(Status = paste0("Saving table ", tb_mskFT$tablename),
-                                               Details = "Writing file"))
-       }
-       
-      # write.csv(tb, file = filename)
-       saveMseekFT(tb_mskFT, file = paste0(filename), 
-                   writeCSV = TRUE, writeRDS = TRUE)
-  }
-  }
-      
-  return(status)
+    
+    return(tb_mskFT)
 }
-
 
 #' cameraWrapper
 #' 

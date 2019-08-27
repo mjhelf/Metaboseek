@@ -110,11 +110,7 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
-    FT$.processHistory <- c(processHistory,
-                            FTProcessHistory(info = paste0("Generated MseekFT object"),
-                                                  sessionInfo = sessionInfo(),
-                                                  outputDFhash = digest::digest(FT$df,
-                                                                                algo = "xxhash64")))
+    FT$.processHistory <- c(processHistory)
     
     class(FT) <- "MseekFT"
     

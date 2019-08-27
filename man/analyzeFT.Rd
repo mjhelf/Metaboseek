@@ -4,15 +4,11 @@
 \name{analyzeFT,data.frame,listOrNULL,FTAnalysisParam-method}
 \alias{analyzeFT,data.frame,listOrNULL,FTAnalysisParam-method}
 \alias{analyzeFT}
-\alias{analyzeFT,MseekFT,listOrNULL,FTAnalysisParam-method}
 \alias{removeNAs,MseekFT-method}
 \alias{removeNAs}
 \title{analyzeFT}
 \usage{
 \S4method{analyzeFT}{data.frame,listOrNULL,FTAnalysisParam}(object, MSData,
-  param)
-
-\S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData,
   param)
 
 \S4method{removeNAs}{MseekFT}(object, replacement = 0)

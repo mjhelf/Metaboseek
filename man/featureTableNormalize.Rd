@@ -5,8 +5,6 @@
 \name{featureTableNormalize}
 \alias{featureTableNormalize}
 \alias{FTNormalize,data.frame-method}
-\alias{FTNormalize}
-\alias{FTNormalize,MseekFT-method}
 \title{featureTableNormalize}
 \usage{
 featureTableNormalize(mx, raiseZeros = NULL, log = NULL,
@@ -14,8 +12,6 @@ featureTableNormalize(mx, raiseZeros = NULL, log = NULL,
 
 \S4method{FTNormalize}{data.frame}(object, selCols,
   logNormalized = FALSE)
-
-\S4method{FTNormalize}{MseekFT}(object, logNormalized = FALSE)
 }
 \arguments{
 \item{mx}{a matrix of numeric (intensity) values}

@@ -27,8 +27,15 @@ RtCorrViewModule <- function(input,output, session, values){
       values$MSData$RTcorr[["rtdiff"]][[i]] <- values$MSData$RTcorr$noncorr[[i]]-values$MSData$RTcorr$corr[[i]]
       
     }
-    
+    },
+  error = function(e){
+      
+      showNotification(paste("ERROR: Loading of RT correction information failed:", e), type = "error", duration = NULL)
+      
+      
+      })
   })
+ 
   
   output$rtcorr <- renderPlot({
     if(!is.null(values$MSData$RTcorr)){
@@ -39,13 +46,7 @@ RtCorrViewModule <- function(input,output, session, values){
     }
     
   })
-  },
-  error = function(e){
-      
-      showNotification(paste("ERROR: Loading of RT correction information failed:", e), type = "error", duration = NULL)
-      
-      
-      })
+  
   
 }
 

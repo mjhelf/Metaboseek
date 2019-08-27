@@ -143,11 +143,17 @@ Metaboseek is structured into two major sections, the `Data Explorer` section fo
 
 At the heart of Metaboseek is the interaction between data visualization in the "Data viewer" box, and a table of LC/MS data features in the `Feature table` box
 
-###Load MS Data into Metaboseek {#loadMSData}
+###Load Data into Metaboseek {#loadMSData}
 
 In most cases, the first thing you want to load is some LC/MS data to look at. You can load files from the `Start page`, or click on the "Load..." icon on the left side of the top navigation bar.
 
-### Supported file types {#supportedFiles}
+#### Load a Metaboseek project folder.{.unnumbered}
+When you run [xcms through Metaboseek](#runXcms), the program generates a project folder that contains the results from that xcms analysis run, and all settings that were used in it. If you select a project folder, all MS data files from an analysis will be loaded and grouped in the same way you set up for the xcms analysis. Metaboseek will then ask you which feature table you want to load from the project folder, and will load it in the `Feature table` box. 
+
+####Loading MS data files directly.{.unnumbered}
+All files with [supported file extensions](#supportedFiles) in the selected folders and all its subfolders will be imported, so it makes sense to pre-sort your files in a reasonable folder structure. Note that here, unlike for the [xcms analysis](#runXcms), you may want to include widely different samples (e.g. blanks, to visually confirm they do not contain a compound of interest).
+
+##### Supported file types {#supportedFiles}
 
 Metaboseek uses the `MSnbase` and `xcms` packages to load MS data files of the following formats:
 
@@ -157,14 +163,7 @@ Metaboseek uses the `MSnbase` and `xcms` packages to load MS data files of the f
 * .mzML
 * .mzXML
 
-####1. Select a folder with MS data files.{.unnumbered}
-All files with [supported file extensions](#supportedFiles) in the selected folders and all its subfolders will be imported, so it makes sense to pre-sort your files in a reasonable folder structure. Note that here, unlike for the [xcms analysis](#runXcms), you may want to include widely different samples (e.g. blanks, to visually confirm they do not contain a compound of interest).
-
-####2. Load a Metaboseek project folder.{.unnumbered}
-When you run [xcms through Metaboseek](#runXcms), the program generates a project folder that contains the results from that xcms analysis run, and all settings that were used in it. If you select a project folder, all MS data files from an analysis will be loaded and grouped in the same way you set up for the xcms analysis. Metaboseek will then ask you which feature table you want to load from the project folder, and will load it in the `Feature table` box.  
-
-
-###Load feature tables
+####Load feature tables
 
 ###Visualize EICs
 
@@ -213,6 +212,7 @@ The default is for highly similar LC/MS runs acquired at high resolution and hig
   + Output files: select which output files you want to get.  ![Output files settings](img/outputFiles.png)
 3. Start the analysis
 4. You can save settings as a .zip file (on windows computers, 7-zip or other software allowing for the zip command line prompt must be installed), or load a .zip file with settings from a previous run.
- + Note that this will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
+ + Note that loading settings will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
  
+Once the analysis is running, Metaboseek will generate a Project Folder for you, containing settings and results from your xcms run. You can load the Project Folder back into Metaboseek to keep all your analysis results in one place. See [Project Folders](#projectFolders) for more information.
 
