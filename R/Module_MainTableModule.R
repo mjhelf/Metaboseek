@@ -107,6 +107,9 @@ MainTableModule <- function(input, output, session,
                                                "Inclusion/Exclusion list" = "instrumentList"))
   )
   
+  callModule(FTHistoryWidget, "tablehistory", FT = reactive({FeatureTable(values)}))
+  
+  
   observeEvent(c(internalValues$page,
                  internalValues$decreasing,
                  internalValues$sortBy,
@@ -299,9 +302,11 @@ MainTableModule <- function(input, output, session,
       column(2,
              htmlOutput(ns('perPageI'))
       ),
-      column(2,
+      column(1,
              SaveTableModuleUI(ns("savetable"))
       ),
+      column(1,
+             FTHistoryWidgetUI(ns("tablehistory"))),
       column(3,
              SelectActiveTableModuleUI(ns("tablechange"))
       )

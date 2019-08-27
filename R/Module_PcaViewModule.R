@@ -28,7 +28,7 @@ PcaViewModule <- function(input,output, session, values){
   )
   
   PcaViewSamples <- callModule(PlotBrowserModule, "pcaviewsamples",
-                         reactives = reactive({reactiveValues(PCAtable = values$featureTables$tables[[values$featureTables$active]]$anagrouptable,
+                         reactives = reactive({reactiveValues(PCAtable = FeatureTable(values)$PCA_samples,
                                                               active = T)}),
                          static = list(patterns = list(axis = "PCA__",
                                                        color = "",

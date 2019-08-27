@@ -6,6 +6,7 @@
 \alias{buildMseekFT}
 \alias{buildMseekFT,XCMSnExp-method}
 \alias{buildMseekFT,data.frame-method}
+\alias{loadMseekFT,character-method}
 \alias{saveMseekFT,MseekFT-method}
 \alias{saveMseekFT}
 \title{buildMseekFT}
@@ -15,6 +16,8 @@
 \S4method{buildMseekFT}{XCMSnExp}(object, processHistory = list(), ...)
 
 \S4method{buildMseekFT}{data.frame}(object, processHistory = list(), ...)
+
+\S4method{loadMseekFT}{character}(object)
 
 \S4method{saveMseekFT}{MseekFT}(object, file, writeCSV = FALSE,
   writeRDS = TRUE)

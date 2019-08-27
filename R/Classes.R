@@ -8,6 +8,8 @@ setGeneric("FTAnova", function(object, ...) standardGeneric("FTAnova"))
 setGeneric("FTBasicAnalysis", function(object, ...) standardGeneric("FTBasicAnalysis"))
 setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
 
+#setGeneric("FTHash", function(object, ...) standardGeneric("FTHash"))
+
 
 setGeneric("FTMzMatch", function(object, ...) standardGeneric("FTMzMatch"))
 
@@ -303,15 +305,6 @@ setMethod("analyzeFT",
                                                controlGroup = param@controlGroup)
                      
                  }
-              
-              if("Basic analysis" %in% param@analyze){
-                  
-                  object <- FTBasicAnalysis(object,
-                                            intensityCols = param@intensities,
-                                            grouping = param@groups,
-                                            controlGroup = param@controlGroup)
-                  
-              }
               
               if("Peak shapes" %in% param@analyze){
                   
@@ -658,6 +651,30 @@ setMethod("buildMseekFT",
               
           })
 
+
+#' @rdname buildMseekFT
+#' @export
+setMethod("loadMseekFT", 
+          signature(object = "character"),
+          function(object){
+              
+              if(length(object)>1){
+                  lapply(object, loadMseekFT)
+                  }else{
+              
+              res <- readRDS(object)
+              
+              res <- addProcessHistory(res, FTProcessHistory(info = paste0("Loaded MseekFT object from file: ", object),
+                                                             sessionInfo = sessionInfo(),
+                                                             outputDFhash = digest::digest(res$df,
+                                                                                           algo = "xxhash64"),
+                                                             param = FunParam(fun = "Metaboseek::loadMseekFT",
+                                                                              args = list(file = object))))
+              
+              return(res)
+                  }
+          })
+
 #' @title saveMseekFT
 #' @aliases saveMseekFT
 #' 
@@ -706,8 +723,8 @@ setMethod("rename",
           "MseekFT",
           function(object, name){
               
-              object <- addProcessHistory(object, xcms:::XProcessHistory(info = "Renamed MseekFT object",
-                                                                         param = xcms::GenericParam(fun = "rename",
+              object <- addProcessHistory(object, FTProcessHistory(info = "Renamed MseekFT object",
+                                                                         param = FunParam(fun = "rename",
                                                                                                     args = list(name = name))))
            object$tablename <- name
               

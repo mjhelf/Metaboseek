@@ -360,7 +360,7 @@ setMethod("FTNormalize", "MseekFT",
                                                                error = err,
                                                                sessionInfo = NULL,
                                                                processingTime = p1,
-                                                               info = "Added Mseek intensities.",
+                                                               info = "Normalized intensity columns.",
                                                                param = FunParam(fun = "Metaboseek::FTNormalize",
                                                                                 args = list(intensityColumns = object$intensities,
                                                                                             logNormalized = logNormalized),
@@ -805,7 +805,7 @@ setMethod("FTCluster", c("MseekFT"),
                                                                error = err,
                                                                sessionInfo = NULL,
                                                                processingTime = p1,
-                                                               info = "Calculated t-test.",
+                                                               info = "Clustered features by intensity values.",
                                                                param = FunParam(fun = "Metaboseek::FTCluster",
                                                                                 args = list(numClusters = numClusters,
                                                                                             intensityCols = intensityCols),
@@ -867,7 +867,24 @@ setMethod("FTPCA", c("MseekFT"),
                   if(featureMode){
                       object <- updateFeatureTable(object, prin_comp)
                   }else{
-                      object$PCA_samples <- prin_comp
+                      
+                      metaDF <- data.frame(Column = row.names(prin_comp),
+                                           stringsAsFactors = FALSE,
+                                           row.names = row.names(prin_comp))
+                      #add grouing information for visualization purposes:
+                      print(groupingTable(object))
+                      if(length(groupingTable(object))){
+                          getgroups <- match(gsub("__norm$","",metaDF$Column),
+                                             groupingTable(object)$Column)
+                          print(getgroups)
+                          if(all(!is.na(getgroups))){
+                              metaDF$Group <- groupingTable(object)$Group[getgroups]
+                              }
+                          }
+                          
+                      object$PCA_samples <- cbind(metaDF,
+                                                  prin_comp
+                                                  )
                   }
                   
                   

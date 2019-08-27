@@ -143,6 +143,7 @@ Collate:
     'Module_updaterModule.R'
     'Server_components.R'
     'UI_components.R'
+    'Widget_FTHistoryWidget.R'
     'Widget_GetSiriusWidget.R'
     'Widget_ModalWidget.R'
     'Widget_PeptideSequencePlotWidget.R'
