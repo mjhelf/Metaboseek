@@ -50,6 +50,8 @@ SaveTableModule <- function(input,output, session,
              
              "csv" = {},
              "tsv" = {},
+             "mskFT" = {},
+             
              
              "instrumentList" = {
                tagList(
@@ -124,9 +126,16 @@ SaveTableModule <- function(input,output, session,
           fluidRow(
             column(6, div(title = "Download table through Browser",
                           downloadButton(ns("modalDownload"),"Download"))),
-            column(6, div( title = "Save directly to current projectFolder (only works if you are working in a project folder)",
+            column(6,
+                   fluidRow(
+                   div( title = "Save directly to current projectFolder (only works if you are working in a project folder)",
                            actionButton(ns("modalProjectFolder"),
-                                        "Save locally")))
+                                        "Save locally"))),
+                   fluidRow(
+                   div( title = "Also save as .mskFT file when saving to a Project Folder (in addition to inclusion list or .csv format.
+                                 .mskFT files retain process history and grouping information.",
+                        checkboxInput(ns("alwaysMskFT"),
+                                     "also save as mskFT", value = TRUE))))
           )),
         title = "Save table",
         easyClose = T,
@@ -139,11 +148,22 @@ SaveTableModule <- function(input,output, session,
   
   output$modalDownload <- downloadHandler(filename= function(){
     #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))
-    if(!is.null(input$selFormat) 
-       && input$selFormat == "instrumentList"){
-      paste0(input$tabname,".txt")}else{input$tabname}
+    if(!is.null(input$selFormat)){ 
+       suffix <- if(input$selFormat == "instrumentList"){".txt"}
+                    else{paste0(".",input$selFormat)}
+       paste0(gsub('\\.[Mm][Ss][Kk][Ff][Tt]$|\\.csv$|\\.txt$','',
+                   input$tabname),suffix)
+    }else{
+            input$tabname
+        }
   }, 
   content = function(file){
+      if(!is.null(input$selFormat) && input$selFormat == "mskFT"){
+          
+          saveMseekFT(FeatureTable(values),file,
+                      writeRDS = TRUE, writeCSV = FALSE)
+          
+          }else{
     written <- tableWriter(if(is.null(values$featureTables)){reactives()$df}
                            else{
                              values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$Maintable$order,]
@@ -155,15 +175,12 @@ SaveTableModule <- function(input,output, session,
                                            instrument = "QExactive",
                                            listType = input$incType,
                                            restrictRT = input$incUseRTw))
-    
+          }
     showNotification(paste("Downloading file: ", 
-                           if(!is.null(input$selFormat) 
-                              && input$selFormat == "instrumentList"){
-                             paste0(input$tabname,".txt")}
-                           else{input$tabname}),
+                           file),
                      #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
                      duration = 10)
-    
+      
     removeModal()
   },
   contentType = if(static$format =="tsv" 
@@ -187,7 +204,27 @@ SaveTableModule <- function(input,output, session,
       }
       if(is.null(values$featureTables)){
           updateFT(values)
-          }
+      }
+        
+        if((!is.null(input$selFormat) 
+           && input$selFormat == "mskFT")
+           ||(!is.null(input$alwaysMskFT) 
+              && input$alwaysMskFT) ){
+            finalname <- file.path(values$projectData$projectFolder, 
+                                   file.path(dirname(reactives()$filename),
+                                             paste0(gsub('\\.[Mm][Ss][Kk][Ff][Tt]$|\\.csv$|\\.txt$','',
+                                     input$tabname),".mskFT")))
+        
+        saveMseekFT(FeatureTable(values),finalname,
+                    writeRDS = TRUE, writeCSV = FALSE)
+        
+        showNotification(paste("Saving file: ", 
+                               finalname),
+                         #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
+                         duration = 10)
+        }
+        
+        if(!is.null(input$selFormat) && input$selFormat != "mskFT"){
       
       written <- tableWriter(if(is.null(values$featureTables)){reactives()$df}
                              else{
@@ -211,6 +248,7 @@ SaveTableModule <- function(input,output, session,
                                                            file.path(dirname(reactives()$filename),
                                                                      if(!is.null(input$selFormat) && input$selFormat == "instrumentList"){paste0(input$tabname,".txt")}
                                                                      else{input$tabname})), duration = 10))
+        }
       removeModal()
       
     }

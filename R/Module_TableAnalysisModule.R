@@ -156,7 +156,11 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                                   normalize = internalValues$normalize,
                                                                   useNormalized = internalValues$useNormalized,
                                                                   logNormalized = internalValues$logNormalized,
-                                                                  .files = values$MSData$layouts[[values$MSData$active]]$filelist,
+                                                                  .files = if(length(values$MSData$layouts[[values$MSData$active]]$filelist)){
+                                                                      values$MSData$layouts[[values$MSData$active]]$filelist
+                                                                      }else{
+                                                                          character()
+                                                                          },
                                                                   ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
                                                                   controlGroup = internalValues$controlGroups,
                                                                   numClusters = internalValues$numClusters,
@@ -170,7 +174,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
 
         if(any(errorIndices > stepsbefore)){
             
-            allerrs <- c(lapply(processHistory(FeatureTable(values))[errorIndices[errorIndices > stepsbefore]],
+            allerrs <- unlist(lapply(processHistory(FeatureTable(values))[errorIndices[errorIndices > stepsbefore]],
                               error))
           
           showModal(
@@ -178,7 +182,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
               p(strong("A problem has occured!")),
               hr(),
               p( paste0(names(allerrs), ": ",
-                        unlist(allerrs),
+                        allerrs,
                  collapse = "\n" )),
               
               

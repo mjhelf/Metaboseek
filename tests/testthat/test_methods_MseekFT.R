@@ -182,6 +182,47 @@ test_that("Mseek analyzeFT submethods work",{
     expect_false(hasError(previousStep(tab1ana)))
     expect_true(!is.null(tab1ana$PCA_samples))
     
+    fil <- list(Filter1 = list(active = FALSE,
+                                    colSelected = "mz",
+                                    numeric = TRUE,
+                                    minSelInit = 300,
+                                    maxSelInit = 305),
+                Filter2 = list(active = TRUE,
+                                                        colSelected = "mzMatches",
+                                                        numeric = FALSE,
+                                                        txtSelInit = "",
+                                                        modeSelInit = "is not"))
+    
+    tab1fil <- FTFilter(tab1ana, filters = fil, sortBy = character())
+    expect_equal(nrow(tab1fil$df),2)
+    
+    fil2 <- list(Filter1 = list(active = TRUE,
+                               colSelected = "mz",
+                               numeric = TRUE,
+                               minSelInit = 300,
+                               maxSelInit = 500),
+                Filter2 = list(active = FALSE,
+                               colSelected = "mzMatches",
+                               numeric = FALSE,
+                               txtSelInit = "",
+                               modeSelInit = "is not"))
+    
+    tab1fil <- FTFilter(tab1ana, filters = fil2, sortBy = character())
+    expect_equal(nrow(tab1fil$df),3)
+    
+    fil2 <- list(Filter1 = list(active = TRUE,
+                                colSelected = "mz",
+                                numeric = TRUE,
+                                minSelInit = 300,
+                                maxSelInit = 500),
+                 Filter2 = list(active = TRUE,
+                                colSelected = "mzMatches",
+                                numeric = FALSE,
+                                txtSelInit = "",
+                                modeSelInit = "is not"))
+    
+    tab1fil <- FTFilter(tab1ana, filters = fil2, sortBy = character())
+    expect_equal(nrow(tab1fil$df),0)
     
 })
 
@@ -195,26 +236,6 @@ test_that("analyzeFT S4 method works",{
                       file4__XIC = c(1000,0,500,100,1000)
     ))
     expect_s3_class({
-        # Metaboseek:::analyzeFT(object = df1,
-        #                        MSData = NULL,
-        #                        param = FTAnalysisParam(intensities = c("file1__XIC","file2__XIC",
-        #                                                                "file3__XIC", "file4__XIC"),
-        #                                                groups = list(G1 = c("file1__XIC","file2__XIC"),
-        #                                                              G2 = c("file3__XIC","file4__XIC")),
-        #                                                analyze = "Basic analysis",
-        #                                                controlGroup = "G1")
-        # )
-        
-        # tab1 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example_projectfolder", "mini_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
-        #                                mzcol= "mz", #
-        #                                rtcol= "rt", #column in df with mz values (columnname)
-        #                                commentcol = "comments",
-        #                                fragmentcol = "fragments",
-        #                                rtFormat = "sec", # "sec" or "min" 
-        #                                anagrouptable = read.csv(system.file("extdata","examples", "example_projectfolder", "analysis_groups.csv", package = "Metaboseek"), stringsAsFactors = F),
-        #                                tablename = "mini_example_features.csv",
-        #                                editable = F)
-        
         Metaboseek:::analyzeFT(object = tab1,
                                MSData = NULL,
                                param = FTAnalysisParam(analyze = "Basic analysis",

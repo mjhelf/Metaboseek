@@ -104,6 +104,7 @@ MainTableModule <- function(input, output, session,
                            label = "Save Table",
                            format = c("csv"),
                            allowformats = list("Comma separated (.csv)" = "csv",
+                                               "Metaboseek Feature Table (.mskFT)" = "mskFT",
                                                "Inclusion/Exclusion list" = "instrumentList"))
   )
   

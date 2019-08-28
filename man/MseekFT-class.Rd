@@ -30,7 +30,7 @@
 \alias{made}
 \alias{to}
 \alias{object.}
-\alias{getMseekIntensities,MseekFT,list,missing-method}
+\alias{getMseekIntensities,MseekFT,listOrNULL,missing-method}
 \alias{getMseekIntensities}
 \alias{searchFunParam,MseekFT-method}
 \alias{intensityCols,MseekFT-method}
@@ -47,6 +47,8 @@
 \alias{FTAnova,MseekFT-method}
 \alias{FTCluster,MseekFT-method}
 \alias{FTPCA,MseekFT-method}
+\alias{FTFilter,data.frame-method}
+\alias{FTFilter,MseekFT-method}
 \title{MseekFT-class}
 \usage{
 \S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData,
@@ -62,7 +64,7 @@
 
 \S4method{previousStep}{MseekFT}(object)
 
-\S4method{getMseekIntensities}{MseekFT,list,missing}(object, rawdata,
+\S4method{getMseekIntensities}{MseekFT,listOrNULL,missing}(object, rawdata,
   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5)
 
 \S4method{searchFunParam}{MseekFT}(object, fun = "", index = FALSE)
@@ -99,6 +101,12 @@
 
 \S4method{FTPCA}{MseekFT}(object, intensityCols = NULL,
   featureMode = FALSE)
+
+\S4method{FTFilter}{data.frame}(object, filters = list(),
+  sortBy = charachter(), decreasing = TRUE)
+
+\S4method{FTFilter}{MseekFT}(object, filters = list(),
+  sortBy = charachter(), decreasing = TRUE)
 }
 \arguments{
 \item{object}{an \code{MseekFT} object.}
@@ -112,7 +120,11 @@
 \item{featureMode}{if TRUE, will cluster molecular features by intensities 
 across samples. If FALSE, will cluster samples by intensities across features}
 
+\item{filters}{a list of filters}
+
 \item{...}{additional arguments passed to \code{exIntensities}}
+
+\item{filters}{a list of filters}
 }
 \value{
 The \code{addProcessHistory} method returns the input object with the
@@ -138,6 +150,10 @@ save a \code{MseekFT} object to a file, registering the save event in the proces
  values of all intensity columns will be equal.
 
 \code{FTPCA}: Calculate Principal Component Analysis to cluster either features or samples
+
+\code{FTFilter}: apply a list of filters to a MseekFT object
+
+\code{FTFilter}: apply a list of filters to a MseekFT object
 }
 \author{
 Johannes Rainer, Maximilian Helf

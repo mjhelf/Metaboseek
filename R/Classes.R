@@ -9,6 +9,7 @@ setGeneric("FTBasicAnalysis", function(object, ...) standardGeneric("FTBasicAnal
 setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
 
 #setGeneric("FTHash", function(object, ...) standardGeneric("FTHash"))
+setGeneric("FTFilter", function(object, ...) standardGeneric("FTFilter"))
 
 
 setGeneric("FTMzMatch", function(object, ...) standardGeneric("FTMzMatch"))
@@ -318,9 +319,9 @@ setMethod("analyzeFT",
               if("Fast peak shapes" %in% param@analyze){
                   
                   object <- FTPeakShapes(object,
-                                                        rawdata = MSData,
-                                                        ppm = param@ppm,
-                                                        workers = param@workers)
+                                         rawdata = MSData,
+                                         ppm = param@ppm,
+                                         workers = param@workers)
                   
               }
                 
@@ -697,13 +698,13 @@ setMethod("saveMseekFT",
                                                                                               writeRDS = writeRDS))))
               #make sure file extension is .mskFT
               if(writeCSV){
-                  tableWriter(object$df, fname = paste0(file,".csv"))
+                  tableWriter(object$df, fname = paste0(gsub('\\.csv$','',file),".csv"))
               }
               
               
               #make sure file extension is .mskFT
               if(writeRDS){
-                  saveRDS(object, file = paste0(file,".mskFT"))
+                  saveRDS(object, file = paste0(gsub('\\.mskFT$','',file),".mskFT"))
               }
               
               

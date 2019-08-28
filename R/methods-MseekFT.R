@@ -27,7 +27,7 @@ setMethod("removeNAs", "MseekFT",
                                                                    inputDFhash = beforeHash,
                                                                    outputDFhash = afterHash,
                                                                    sessionInfo = NULL,
-                                                                   info = "Replaced NA values in df by 0!",
+                                                                   info = "Replaced NA values in df by 0.",
                                                                    param = FunParam(fun = "Metaboseek::removeNAs",
                                                                                     args = list(replacement = replacement))
               ))
@@ -40,7 +40,7 @@ setMethod("removeNAs", "MseekFT",
 #' @param ... additional arguments passed to \code{exIntensities}
 #' 
 #' @export
-setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "list", importFrom = "missing"),
+setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "listOrNULL", importFrom = "missing"),
           function(object, rawdata, adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
@@ -49,6 +49,11 @@ setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "list",
               err <- list()
               
               tryCatch({
+                  if(is.null(rawdata)){
+                      stop("Peak shapes analysis was not performed because no MS data is loaded.")
+                      
+                  }
+                  
                   if(adjustedRT){
                   rta <- rtadjust(object$RTcorr, object$df[,c("rt","rtmin","rtmax")])
                   }else{
@@ -149,7 +154,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "list",
           })
 #'
 #' @export
-setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "list", importFrom = "MseekFTOrNULL"),
+setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "listOrNULL", importFrom = "MseekFTOrNULL"),
           function(object, rawdata, importFrom, adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
@@ -872,11 +877,9 @@ setMethod("FTPCA", c("MseekFT"),
                                            stringsAsFactors = FALSE,
                                            row.names = row.names(prin_comp))
                       #add grouing information for visualization purposes:
-                      print(groupingTable(object))
                       if(length(groupingTable(object))){
                           getgroups <- match(gsub("__norm$","",metaDF$Column),
                                              groupingTable(object)$Column)
-                          print(getgroups)
                           if(all(!is.na(getgroups))){
                               metaDF$Group <- groupingTable(object)$Group[getgroups]
                               }
@@ -921,4 +924,129 @@ setMethod("FTPCA", c("MseekFT"),
               return(object)
           })
 
+#' @rdname MseekFT-class
+#' @description \code{FTFilter}: apply a list of filters to a MseekFT object
+#' @param filters a list of filters
+#' @export
+setMethod("FTFilter", c("data.frame"),
+          function(object,
+                   filters = list(),
+                   sortBy = charachter(),
+                   decreasing = TRUE){
 
+                  
+                  if(!missing(filters) || !length(filters)){
+                     
+                  sel <- TRUE
+                  
+                  for(i in filters){
+                      
+                      names(i) <- gsub("Init$","",names(i))
+                      
+                      if(length(i$colSelected) == 0 || !i$colSelected %in% colnames(object)){
+                          i$active <- F
+                      }
+                      
+                      if(length(i$active) && i$active){
+                          if(i$numeric){
+                              sel <- sel & (object[,i$colSelected] >= as.numeric(i$minSel)
+                                            & object[,i$colSelected] <= as.numeric(i$maxSel))
+                          }else{
+                              
+                              
+                              if(!is.null(i$modeSel) && i$modeSel=="contains"){
+                                  sel <- sel &  grepl(i$txtSel,
+                                                      as.character(object[,i$colSelected]),
+                                                      fixed = T)
+                              }else if(!is.null(i$modeSel) && i$modeSel=="does not contain"){
+                                  sel <- sel & !grepl(i$txtSel,
+                                                      as.character(object[,i$colSelected]),
+                                                      fixed = T)
+                              }else if(!is.null(i$modeSel) && i$modeSel=="is not"){
+                                  sel <- sel &  ! (as.character(object[,i$colSelected]) == i$txtSel)
+                                  
+                              }
+                              #if(input$modeSel=="is"){
+                              else{
+                                  sel <- sel &  as.character(object[,i$colSelected]) == i$txtSel
+                              }
+                          }
+                          
+                      }
+                  }
+                  
+                  object <- object[sel,, drop = FALSE]
+                  }
+                  
+                  if(length(sortBy) && sortBy %in% colnames(object)){
+                      ord <- order(res[,sortBy],
+                                   decreasing = decreasing)
+                      object <- object[ord,]
+                      }
+                  
+                  return(object)
+                  
+              })
+
+#' @rdname MseekFT-class
+#' @description \code{FTFilter}: apply a list of filters to a MseekFT object
+#' @param filters a list of filters
+#' @export
+setMethod("FTFilter", c("MseekFT"),
+          function(object,
+                   filters = list(),
+                   sortBy = charachter(),
+                   decreasing = TRUE){
+              beforeHash <- digest::digest(object$df,
+                                           algo = "xxhash64")
+              
+              
+              p1 <- proc.time()
+              
+              err <- list()
+              tryCatch({
+                  
+                  if((missing(filters) 
+                     || !length(filters)) && !length(sortBy)){
+                      return(object)
+                  }
+                  
+                  
+                  object$df <- FTFilter(object$df,
+                                        filters = filters,
+                                        sortBy = sortBy,
+                                        decreasing = decreasing)
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$FTFilter <<- paste(e)
+              },
+              finally = {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- digest::digest(object$df,
+                                              algo = "xxhash64")
+                  
+                  
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputDFhash = beforeHash,
+                                                               outputDFhash = afterHash,
+                                                               fileNames = character(),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = "Filtered Feature Table.",
+                                                               param = FunParam(fun = "Metaboseek::FTFilter",
+                                                                                args = list(filters = filters,
+                                                                                            sortBy = sortBy,
+                                                                                            decreasing = decreasing),
+                                                                                longArgs = list())
+                                              ))
+              }
+              )
+              return(object)
+          })

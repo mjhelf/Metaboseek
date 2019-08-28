@@ -71,8 +71,8 @@ ModalWidget <- function(input,output, session,
         reactives()$fp
         ,
         title = static$title,
-        easyClose = F,
-        fade = F,
+        easyClose = TRUE,
+        fade = FALSE,
         size = "l",
         footer = modalButton("Cancel") 
       ))
