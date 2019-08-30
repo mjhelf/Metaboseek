@@ -10,8 +10,6 @@ dist: trusty
   
 r:
   - bioc-release
-  - bioc-devel
-  - devel
   - release
 
 warnings_are_errors: false
