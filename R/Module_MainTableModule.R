@@ -104,8 +104,12 @@ MainTableModule <- function(input, output, session,
                            label = "Save Table",
                            format = c("csv"),
                            allowformats = list("Comma separated (.csv)" = "csv",
+                                               "Metaboseek Feature Table (.mskFT)" = "mskFT",
                                                "Inclusion/Exclusion list" = "instrumentList"))
   )
+  
+  callModule(FTHistoryWidget, "tablehistory", FT = reactive({FeatureTable(values)}))
+  
   
   observeEvent(c(internalValues$page,
                  internalValues$decreasing,
@@ -299,9 +303,11 @@ MainTableModule <- function(input, output, session,
       column(2,
              htmlOutput(ns('perPageI'))
       ),
-      column(2,
+      column(1,
              SaveTableModuleUI(ns("savetable"))
       ),
+      column(1,
+             FTHistoryWidgetUI(ns("tablehistory"))),
       column(3,
              SelectActiveTableModuleUI(ns("tablechange"))
       )

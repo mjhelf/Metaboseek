@@ -51,16 +51,6 @@ test_that("loadRawMfunction works",{
 })
 
 
-#Tests for rawGrouping fxn#
-###help###
-
-
-
-#Tests for MultiEIC#
-#!what is pcame_mini??? cannot execute fxn without this. doesn't seem to be in other scripts
-###help###
-
-
 #Tests for rawEicM, y[[1]] is an xcmsRaw object
 #is this correct? should all intensities be 0?
 test_that("rawEICm function works",{
@@ -76,11 +66,3 @@ test_that("getgauss function works",{
   g <- getgauss(y = c(1:10,10:1),1) 
   expect_equivalent(g, 0.9959037, tolerance = 0.000001)
 })
-
-#Tests for bestgauss
-###help, object 'pcame_mini was not found
-
-#Tests for exIntensities
-##help, tb is required as an object(only appears once in the script)
-
-#remove default values for pcame_mini (in bestgauss), and tb (in exIntensities)

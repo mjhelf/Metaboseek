@@ -231,3 +231,34 @@ FTselection.reactivevalues <- function(x, liveView = F){
     }
     
 }
+
+
+#' getFilters
+#' 
+#' get the currently applied filters in a Metaboseek session
+#' 
+#' @param x a MseekValues (reactivevalues) object
+#' @param activeOnly if TRUE, gets only active Filters
+#' 
+#' @return a list of filters
+#' 
+getFilters <- function(x, activeOnly = TRUE){
+    
+    if(!length(x$featureTables)
+       ||!length(x$featureTables$Filters)){
+        return(list())
+        }
+    
+    res <- x$featureTables$Filters$filterSet
+    
+    
+    if(!length(res) 
+       || !is.list(res)){return(list())}
+    
+    if(!activeOnly){return(res)}
+
+    res[sapply(res, function(n){n$active})]
+    
+    }
+
+

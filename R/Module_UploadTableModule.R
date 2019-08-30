@@ -34,9 +34,18 @@ UploadTableModule <- function(input,output, session,
                      
                      withProgress(message = 'Please wait!', detail = "Importing Feature Table", value = 0.6, {
                      
-                     values$featureTables$tables[[values$featureTables$active]] <- updateFTgrouping(values$featureTables$tables[[values$featureTables$active]],
-                                                                                                    NULL)
+                         
+                     # values$featureTables$tables[[values$featureTables$active]] <- updateFTgrouping(values$featureTables$tables[[values$featureTables$active]],
+                     #                                                                                NULL)
                                           tabid <- paste0("table",length(values$featureTables$tables))
+                            
+                                          if(grepl('\\.[Mm][Ss][Kk][Ff][Tt]$',input$file1$datapath)[1]){
+                                              
+                                              values$featureTables$tables[[tabid]] <- loadMseekFT(input$file1$datapath)
+                                              
+                                              }else{
+                                          
+                                          
                                           
                                           feats <- as.data.frame(data.table::fread(input$file1$datapath,
                                                                      header = static$format$header,
@@ -67,7 +76,7 @@ UploadTableModule <- function(input,output, session,
                                           }
                                           incProgress(0.3, detail = "Formatting Feature Table")
                                           
-                     values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
+                     values$featureTables$tables[[tabid]] <- buildMseekFT(feats,
                                                                             mzcol= "mz", #column in df with mz values (columnname)
                                                                             rtcol= "rt", #column in df with mz values (columnname)
                                                                             commentcol = "comments",
@@ -76,6 +85,9 @@ UploadTableModule <- function(input,output, session,
                                                                             anagrouptable = anagroup,
                                                                             tablename = input$file1$name,
                                                                             editable = F)
+                     
+                                              }
+                     
                      values$featureTables$index <- updateFTIndex(values$featureTables$tables)
                      values$featureTables$active <- tabid
                      })

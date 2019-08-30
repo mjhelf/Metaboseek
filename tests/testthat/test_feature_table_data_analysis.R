@@ -84,3 +84,4 @@ test_that("mass defect is correctly calculated",{
   expect_equal(dfdeft[[1]][[1]], 1098.890122)
 }
 )
+

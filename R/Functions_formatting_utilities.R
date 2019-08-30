@@ -274,3 +274,42 @@ Mseek.colors<- function (n, alpha){
   
   
 }
+
+#' parsePatterns
+#'
+#' parse patterns from a data.frame into a list that can be used with 
+#' MassTools::findPatterns.
+#' 
+#' @param df a data.frame with at least the columns \code{name} and
+#'  \code{pattern}, there pattern has to be numeric values separated 
+#'  by whitespace.
+#'
+#'
+#' @export
+parsePatterns <- function(df){
+    
+    spl <- strsplit(df$pattern, "[[:space:]]", perl = F)
+    spl <- lapply(spl, function(x){
+        na.omit(as.numeric(x))
+        })
+    names(spl) <- df$name
+    
+    return(spl)
+    
+}
+
+#' matchedToCharacter
+#'
+#' summarize named logical vectors into a single character vector
+#' 
+#' @param matchedPatterns a list of named logical vectors
+#' @param sep character string to use as separator between matches
+#'
+#' @return a character vector
+#'
+#' @export
+matchedToCharacter <- function(matchedPatterns, sep = "|"){
+    
+    sapply(matchedPatterns, function(x){paste(names(x)[x], collapse = sep)})
+    
+}

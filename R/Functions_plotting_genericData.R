@@ -110,6 +110,7 @@ groupedplot <- function(...,
 #' @param colscale character vector of colors
 #' @param center force the middle of the color vector to correspond to this value
 #' @param manualRange enter a range to fit the color range to, if not range(datarange)
+#' @param NAcolor color to assign to NA values
 #' 
 #' @export
 assignColor <- function(datarange,

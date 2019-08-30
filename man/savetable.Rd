@@ -4,9 +4,7 @@
 \alias{savetable}
 \title{savetable}
 \usage{
-savetable(xset, status = NULL,
-  fill = xcms::FillChromPeaksParam(expandMz = 0.005, expandRt = 5, ppm =
-  3), nonfill = F, filename = "tableoutxx.csv",
+savetable(xset, importResultsFrom = NULL, filename = "tableoutxx",
   bparams = SnowParam(workers = 1), intensities = list(ppm = 5, rtw =
   5, rtrange = T), rawdata = NULL, saveR = T, postProc = NULL)
 }
@@ -14,13 +12,9 @@ savetable(xset, status = NULL,
 \item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 
 which to extract the peaklist}
 
-\item{status}{a \code{\link{writeStatus}} object to be modified and returned
-by the function, or NULL to start a new status.csv file}
-
-\item{fill}{xcms::FillChromPeaksParam object to specify how to fill peaks
-(only works if xset is an XCMSnExp object). No peak filling if NULL.}
-
-\item{nonfill}{also write the non-filled peaktable data? TRUE or FALSE}
+\item{importResultsFrom}{if an MseekFT object is supplied here, will import Mseek intensities
+and other post-processing results if appropriate (same feature definitions,
+ same files, same intensities)}
 
 \item{filename}{filename to use when writing the csv file (including file 
 extension). "_filled" will be added for filled data.}
@@ -38,7 +32,7 @@ intensities = NULL.}
 Mseek::loadRawM), required for Mseek EIC intensity extraction which 
 is not performed if NULL.}
 
-\item{saveR}{save the xset object as .Rdata file}
+\item{saveR}{save the xset object as .Rds file}
 
 \item{postProc}{list of SOME arguments passed to \code{\link{analyzeTable}()}
 for post processing, or NULL to skip processing. 

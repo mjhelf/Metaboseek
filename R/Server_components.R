@@ -153,7 +153,7 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
 MseekExamplePreload <- function(tables = T, data = T){
   if(tables){
     eval.parent(quote({
-      tab1 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example_projectfolder", "mini_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
+      tab1 <- buildMseekFT(object= read.csv(system.file("extdata","examples", "example_projectfolder", "mini_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
                                      rtcol= "rt", #column in df with mz values (columnname)
                                      commentcol = "comments",
@@ -163,7 +163,7 @@ MseekExamplePreload <- function(tables = T, data = T){
                                      tablename = "mini_example_features.csv",
                                      editable = F)
       
-      tab2 <- constructFeatureTable (df= read.csv(system.file("extdata","examples", "example_projectfolder", "large_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
+      tab2 <- buildMseekFT(object= read.csv(system.file("extdata","examples", "example_projectfolder", "large_example_features.csv", package = "Metaboseek"), stringsAsFactors = F),# data frame 
                                      mzcol= "mz", #
                                      rtcol= "rt", #column in df with mz values (columnname)
                                      commentcol = "comments",

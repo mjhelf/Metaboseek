@@ -47,7 +47,7 @@ LoadDataModule <- function(input,output, session,
                                                        sep = NULL,
                                                        quote = '"',
                                                        stringsAsFactors = F),
-                                         pattern = "\\.csv$")
+                                         pattern = "\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$")
   )
   
   Projectfolder <- callModule(SelectProjectFolderModule, "projectfolder",

@@ -21,6 +21,7 @@
 #' @param tablename Name of the table as displayed by Mseek
 #' @param editable allow editing of this table in the Mseek app? if FALSE, only
 #'  comments column can be edited. editable tables are also not paginated.
+#' @param processHistory a list of \code{\link[xcms]{processHistory}} objects
 #' 
 #' @return an \code{MseekFT} object containing a feature table and metadata
 #' 
@@ -33,7 +34,8 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
                           rtFormat = "sec", # "sec" or "min" 
                           anagrouptable = NULL,
                           tablename = "Custom Table",
-                          editable = T){ #T: free editing (add rows), but always see all columns in viewer, F: only comments can be edited directly, no adding of columns
+                          editable = T,
+                          processHistory = list()){ #T: free editing (add rows), but always see all columns in viewer, F: only comments can be edited directly, no adding of columns
     
     #make columns if they don't exist:
     if (class(try(df[,mzcol], silent = T))=="try-error"){ df[,mzcol] <- numeric(nrow(df)) }
@@ -108,14 +110,13 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
+    FT$.processHistory <- c(processHistory)
+    
     class(FT) <- "MseekFT"
     
     return(FT)
 
 }
-
-
-
 
 #' updateDF
 #' 

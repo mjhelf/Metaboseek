@@ -147,35 +147,45 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
         #if("mzMatch" %in% internalValues$analysesSelected){
           
       #  }
+          stepsbefore <- length(processHistory(FeatureTable(values)))
         
-        res <- analyzeTable(df = values$featureTables$tables[[values$featureTables$active]]$df,
-                            intensities = values$featureTables$tables[[values$featureTables$active]]$intensities,
-                            groups = values$featureTables$tables[[values$featureTables$active]]$anagroupnames,
-                            analyze = c(internalValues$analysesSelected, internalValues$analysesSelected2), 
-                            normalize = internalValues$normalize,
-                            useNormalized = internalValues$useNormalized,
-                            logNormalized = internalValues$logNormalized,
-                            MSData = values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
-                            ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
-                            controlGroup = internalValues$controlGroups,
-                            numClusters = internalValues$numClusters,
-                            mzMatchParam = list(db = internalValues$dbselected,
-                                                ppm = 5,
-                                                mzdiff = 0.001),
-                            workers = values$GlobalOpts$enabledCores)
+       
+        FeatureTable(values) <- analyzeFT(object = FeatureTable(values),
+                                          MSData = values$MSData$data,
+                                          param = FTAnalysisParam(analyze = c(internalValues$analysesSelected, internalValues$analysesSelected2), 
+                                                                  normalize = internalValues$normalize,
+                                                                  useNormalized = internalValues$useNormalized,
+                                                                  logNormalized = internalValues$logNormalized,
+                                                                  .files = if(length(values$MSData$layouts[[values$MSData$active]]$filelist)){
+                                                                      values$MSData$layouts[[values$MSData$active]]$filelist
+                                                                      }else{
+                                                                          character()
+                                                                          },
+                                                                  ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
+                                                                  controlGroup = internalValues$controlGroups,
+                                                                  numClusters = internalValues$numClusters,
+                                                                  mzMatchParam = list(db = internalValues$dbselected,
+                                                                                      ppm = 5,
+                                                                                      mzdiff = 0.001),
+                                                                  workers = values$GlobalOpts$enabledCores
+                                                                  ))
         
-        values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],res$df)
-        values$featureTables$tables[[values$featureTables$active]]$anagrouptable <- updateDF(res$PCA_samples,
-                                                                                             values$featureTables$tables[[values$featureTables$active]]$anagrouptable)
-        
+        errorIndices <- which(sapply(processHistory(FeatureTable(values)), hasError))
 
-        if(length(res$errmsg) >0){
+        if(any(errorIndices > stepsbefore)){
+            
+            allerrs <- unlist(lapply(processHistory(FeatureTable(values))[errorIndices[errorIndices > stepsbefore]],
+                              error))
           
           showModal(
             modalDialog(
-              p(strong("A problem has oocured!")),
+              p(strong("A problem has occured!")),
               hr(),
-              p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "\n" )),
+              p( paste0(names(allerrs), ": ",
+                        allerrs,
+                 collapse = "\n" )),
+              
+              
               hr(),
               p("Other analyses completed without error."),
               title = "Warning",
@@ -219,7 +229,9 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
       column(2,
              GetIntensitiesModuleUI(ns("gi"))),
       column(2,
-             FindMS2ScansModuleUI(ns("findms2")))
+             FindMS2ScansModuleUI(ns("findms2"))),
+      column(2,
+             FindPatternsModuleUI(ns("findpatterns")))
       ),
     fluidRow(
       hr(),
@@ -250,7 +262,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   observeEvent(input$selDB,{
     
     internalValues$dbselected <- input$selDB
-    
+    print(internalValues$dbselected)
   })
   
 
@@ -273,6 +285,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   
   callModule(MZcalcModule, "mzcalc", values)
   
+  callModule(FindPatternsModule, "findpatterns", values)
   
   
   return(internalValues)

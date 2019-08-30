@@ -7,7 +7,7 @@
 constructFeatureTable(df = data.frame(mz = numeric(3), rt = numeric(3)),
   mzcol = "mz", rtcol = "rt", commentcol = "comments",
   fragmentcol = "fragments", rtFormat = "sec", anagrouptable = NULL,
-  tablename = "Custom Table", editable = T)
+  tablename = "Custom Table", editable = T, processHistory = list())
 }
 \arguments{
 \item{df}{feature table as data.frame, with retention time (rt), mz and 
@@ -32,6 +32,8 @@ defaults to "fragments"}
 
 \item{editable}{allow editing of this table in the Mseek app? if FALSE, only
 comments column can be edited. editable tables are also not paginated.}
+
+\item{processHistory}{a list of \code{\link[xcms]{processHistory}} objects}
 }
 \value{
 an \code{MseekFT} object containing a feature table and metadata

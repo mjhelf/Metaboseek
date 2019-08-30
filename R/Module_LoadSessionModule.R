@@ -4,9 +4,10 @@
 #' 
 #' @inherit MseekModules
 #' 
-#' @return nothing, but modifies values
+#' @param useActionLink if TRUE, will use an \code{actionLink} instead 
+#' of an \code{actionButton} to open the modal Dialog
 #' 
-#' @param static see \code{Details}
+#' @return nothing, but modifies values
 #' 
 #' @details Loads a Metaboseek session from a MseekSession object saved in
 #'  an RDS file with the file extension ".Msks".
@@ -15,8 +16,7 @@
 #' 
 #' @export 
 LoadSessionModule <- function(input,output, session, values,
-                            useActionLink = F
-){
+                            useActionLink = F){
     ns <- NS(session$ns(NULL))
     
     internalValues  <- reactiveValues(df = NULL,

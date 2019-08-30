@@ -98,7 +98,6 @@ writeStatus <- function(previous = NULL,
   return(res)
 }
 
-
 #' savetable
 #' 
 #' Save a peakTable from an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate
@@ -111,11 +110,9 @@ writeStatus <- function(previous = NULL,
 #' 
 #' @param xset an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 
 #' which to extract the peaklist
-#' @param status a \code{\link{writeStatus}} object to be modified and returned
-#'  by the function, or NULL to start a new status.csv file
-#' @param fill xcms::FillChromPeaksParam object to specify how to fill peaks
-#'  (only works if xset is an XCMSnExp object). No peak filling if NULL.
-#' @param nonfill also write the non-filled peaktable data? TRUE or FALSE
+#' @param importResultsFrom if an MseekFT object is supplied here, will import Mseek intensities
+#' and other post-processing results if appropriate (same feature definitions,
+#'  same files, same intensities)
 #' @param filename filename to use when writing the csv file (including file 
 #' extension). "_filled" will be added for filled data.
 #' @param bparams BBPARAMs (BiocParallel::BiocParallelParam object with 
@@ -128,18 +125,15 @@ writeStatus <- function(previous = NULL,
 #' @param rawdata named list of xcmsRaw objects (as returned by
 #'  Mseek::loadRawM), required for Mseek EIC intensity extraction which 
 #'  is not performed if NULL.
-#' @param saveR save the xset object as .Rdata file
+#' @param saveR save the xset object as .Rds file
 #' @param postProc list of SOME arguments passed to \code{\link{analyzeTable}()}
 #'  for post processing, or NULL to skip processing. 
 #'  TODO: transisiton to do.call solution for postProc and document
 #'  
 #' @export
 savetable <- function(xset,
-                      status = NULL,
-                      fill = xcms::FillChromPeaksParam(expandMz = 0.005,
-                                                 expandRt = 5, ppm = 3),
-                      nonfill = F,
-                      filename = "tableoutxx.csv",
+                      importResultsFrom = NULL,
+                      filename = "tableoutxx",
                       bparams = SnowParam(workers = 1),
                       intensities = list(ppm = 5,
                                          rtw = 5,
@@ -147,209 +141,161 @@ savetable <- function(xset,
                       rawdata = NULL,
                       saveR = T,
                       postProc = NULL){
-  
-  if(is.null(fill) & !nonfill){return(status)}
-  
-  if(is.null(intensities)){
-    postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
-  }
-  
-  
-  
-  if(!is.null(status)){
-   status <- writeStatus (previous = status,
-                           message = list(Status = paste0("Saving table ", filename),
-                                         Details = "Extracting peaktable"))
-  }
-  
-  if(class(xset) == "xsAnnotate"){
-    tb <- CAMERA::getPeaklist(xset)}
-  else{
-    tb <- xcms::peakTable(as(xset,"xcmsSet"))
-  }
-      #set NAs to 0 (mostly important if !fill)
-    tb[is.na(tb)]<-0
     
 
+    grouptable <- NULL
     
-    if(!is.null(intensities) & !is.null(rawdata)){
-         
-       if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                              message = list(Status = paste0("Saving table ", filename),
-                                             Details = "Getting Mseek intensities"))
-       }
-      
-  rtx <-  rtexport(xset)    
-  
- rta <- rtadjust(rtx, # XCMSnExp, xcmsSet or xsAnnotate object
-                      tb[,c("rt","rtmin","rtmax")])
- 
- intens <- data.frame(pholder = numeric(nrow(tb)))
- 
-      for(i in 1:length(rawdata)){
-        if(intensities$rtrange){
-        rtwin <- data.frame(rtmin = rta[[i]]$rtmin-intensities$rtw,
-                            rtmax = rta[[i]]$rtmax+intensities$rtw)
-        rtwin[rtwin < 0]<-0
-        }else{
-          rtwin <- data.frame(rtmin = rta[[i]]$rt-intensities$rtw,
-                              rtmax = rta[[i]]$rt+intensities$rtw)
-          rtwin[rtwin < 0]<-0
+    if(!is.null(postProc)){
+        if(is.null(intensities) || is.null(rawdata)){
+            #remove the __XIC in column names if no MseekIntensiy requested
+            postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
         }
         
-        intens[[paste0(basename(names(rawdata)[i]),"__XIC")]] <- exIntensities(rawfile= rawdata[[i]],
-                                                               mz = tb$mz,
-                                                               ppm=intensities$ppm,
-                                                               rtw= rtwin
-                                                               )
-      }
- intens <- intens[,which(colnames(intens) != "pholder")]
- 
- 
-    }
-  if(nonfill){
-    
-    if(!is.null(intens)){
-    tb <- cbind(tb,intens) }
-    
-    if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Saving table ", gsub("\\.csv$","_unprocessed.csv",filename)),
-                                            Details = "Writing file"))
+        if(length(postProc$fileGrouping)){      
+            grouptable <- data.frame(Column = unlist(postProc$fileGrouping),
+                                     Group = unlist(lapply(seq_len(length(postProc$fileGrouping)),
+                                                           function(i){rep(names(postProc$fileGrouping)[i],
+                                                                           lengths(postProc$fileGrouping)[i])})),
+                                     stringsAsFactors = FALSE)
+        }
+        
     }
     
-    write.csv(tb, file = gsub("\\.csv$","_unprocessed.csv",filename))
-    if(saveR){saveRDS(xset,file = paste0(filename,".Rdata"))}
     
     
-    if(!is.null(postProc)){
-      
-      
-      
-  if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Post-Processing ", filename),
-                                            Details = paste(c("selected analyses:", postProc$analysesSelected, postProc$analysesSelected2), collapse = " ")))
-  }
-      
-      res <- analyzeTable(df = tb,
-                          intensities = if(!is.null(intens)){
-                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
-                          groups = postProc$fileGrouping,
-                          analyze = c(postProc$analysesSelected,postProc$analysesSelected2), 
-                          normalize = postProc$normalize,
-                          useNormalized = postProc$useNormalized,
-                          logNormalized = postProc$logNormalized,
-                          MSData = rawdata,
-                          ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
-                          controlGroup = postProc$controlGroups,
-                          numClusters = postProc$numClusters,
-                          workers = bparams$workers)
-      
-       tb <- res$df
-    
-    
-    if(!is.null(status)){
-        status <- writeStatus (previous = status,
-                           message = list(Status = paste0("Post-Processing finished", filename),
-                                          Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
-                                          ))
-    }
-       
-       if(!is.null(status)){
-         status <- writeStatus (previous = status,
-                                message = list(Status = paste0("Saving table ", filename),
-                                               Details = "Writing file"))
-       }
-       
-       write.csv(tb, file = filename)
-  }
-    
-      
-    
-  }
-  
-    if(!is.null(fill) & class(xset) == "XCMSnExp"){
-      
-      if(!is.null(status)){
-        status <- writeStatus (previous = status,
-                                message = list(Status = paste0("Saving table ", filename),
-                                               Details = "Filling peaks (xcms fillChromPeaks)"))
-      }
-      
-      fparam = fill
-      xset <- xcms::fillChromPeaks(xset, fparam,
-                             BPPARAM = bparams)
-      
-      tbf <- xcms::peakTable(as(xset,"xcmsSet"))
+    tb_mskFT <- buildMseekFT(object = xset,
+                             anagrouptable = grouptable,
+                             tablename = paste0(filename,"_unprocessed"),
+                             editable = F,
+                             processHistory = NULL)
     
     #set NAs to 0 (mostly important if !fill)
-      tbf[is.na(tbf)]<-0
-      
-      if(!is.null(intens)){
-        tbf <- cbind(tbf,intens) } 
-      
+    tb_mskFT <- removeNAs(tb_mskFT)
     
- 
-    fn <- unlist(strsplit(filename, split="\\."))
-    if(length(fn)==1){fn <- paste0(fn,"_filled")}
-    else{
-    fn <-  paste(paste0(paste(fn[1:(length(fn)-1)], collapse = "."),"_filled"),fn[length(fn)], sep = ".", collapse = NULL)
+    
+    if(!is.null(intensities) & !is.null(rawdata)){
+        
+       
+       tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata, importFrom = importResultsFrom,
+                                        adjustedRT = hasAdjustedRtime(tb_mskFT),
+                                        ppm = intensities$ppm, 
+                                        rtrange = intensities$rtrange, 
+                                        rtw = intensities$rtw)
+        
+        if(hasError(previousStep(tb_mskFT))){
+            tb_mskFT <- getMseekIntensities(tb_mskFT, rawdata, importFrom = importResultsFrom,
+                                            adjustedRT = FALSE, ppm = intensities$ppm, 
+                                            rtrange = intensities$rtrange, 
+                                            rtw = intensities$rtw)
+            
+        }
     }
+    
+        saveMseekFT(tb_mskFT, file = tb_mskFT$tablename, 
+                    writeCSV = TRUE, writeRDS = TRUE)
+        
 
-    if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                             message = list(Status = paste0("Saving table ", gsub("\\.csv$","_unprocessed.csv",fn)),
-                                            Details = "Writing file"))
-    }
-    
-    write.csv(tbf, file = gsub("\\.csv$","_unprocessed.csv",fn))
-    if(saveR){saveRDS(xset,file = paste0(fn,".Rdata"))}
-    
-    
-    if(!is.null(postProc)){
-      if(!is.null(status)){
-        status <- writeStatus (previous = status,
-                               message = list(Status = paste0("Post-Processing ", filename),
-                                              Details = paste(c("selected analyses:", postProc$analysesSelected, postProc$analysesSelected2), collapse = " ")))
-      }
-      
-      res <- analyzeTable(df = tb,
-                          intensities = if(!is.null(intens)){
-                            colnames(intens) }else{unname(unlist(postProc$fileGrouping))},
-                          groups = postProc$fileGrouping,
-                          analyze =c(postProc$analysesSelected,postProc$analysesSelected2), 
-                          normalize = postProc$normalize,
-                          useNormalized = postProc$useNormalized,
-                          logNormalized = postProc$logNormalized,
-                          MSData = rawdata,
-                          ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
-                          controlGroup = postProc$controlGroups,
-                          numClusters = postProc$numClusters)
-      
-      tb <- res$df
-      
-      
-      if(!is.null(status)){
-        status <- writeStatus (previous = status,
-                               message = list(Status = paste0("Post-Processing finished", filename),
-                                              Details = paste(if(length(res$errMsg)==0){"No errors"}else{p( paste0(names(res$errmsg), ": ", unlist(res$errmsg), collapse = "/ " ))})
-                               ))
-      }
-      
-          if(!is.null(status)){
-      status <- writeStatus (previous = status,
-                              message = list(Status = paste0("Saving table ", fn),
-                                             Details = "Writing file"))
-    }
-    
-    write.csv(tbf, file = fn)
-      
-      
-    }
-    
+        if(saveR){saveRDS(xset,file = paste0(filename,"_xset.Rds"))}
+        
+        
+        if(!is.null(postProc)){
+            
+            tb_mskFT <- analyzeFT(object = tb_mskFT,
+                                  MSData = rawdata,
+                                  param = FTAnalysisParam(
+                                      intensities = unname(unlist(postProc$fileGrouping)),
+                                      groups = postProc$fileGrouping,
+                                      analyze = c(postProc$analysesSelected,postProc$analysesSelected2), 
+                                      normalize = postProc$normalize,
+                                      useNormalized = postProc$useNormalized,
+                                      logNormalized = postProc$logNormalized,
+                                      ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
+                                      controlGroup = postProc$controlGroups,
+                                      numClusters = postProc$numClusters,
+                                      workers = bparams$workers))
 
-  }
-  return(status)
+            #reflect in filename that this is now processed...
+            tb_mskFT <- rename(tb_mskFT, filename)
+            
+            # write.csv(tb, file = filename)
+            saveMseekFT(tb_mskFT, file = paste0(filename), 
+                        writeCSV = TRUE, writeRDS = TRUE)
+        }
+    
+    
+    return(tb_mskFT)
+}
+
+#' cameraWrapper
+#' 
+#' converts a \code{XCMSnExp} object to \code{xcmsSet}, then consecutively calls
+#' \code{xsAnnotate}, \code{groupFWHM}, \code{groupCorr}, \code{findIsotopes} and 
+#' \code{findAdducts} from the \code{CAMERA} package, and finally adds an entry to
+#' its \code{.processHistory} slot.
+#' 
+#' @param xset a \code{XCMSnExp} object 
+#' @param workers number of workers, passed on to \code{\link[CAMERA]{xsAnnotate}()}
+#' (as \code{nSlaves})
+#' @param polarity passed on to \code{\link[CAMERA]{xsAnnotate}()} and 
+#' \code{\link[CAMERA]{findAdducts}()}
+#' @param sigma passed on to \code{\link[CAMERA]{groupFWHM}()}
+#' @param perfwhm passed on to \code{\link[CAMERA]{groupFWHM}()}
+#' @param cor_eic_th passed on to \code{\link[CAMERA]{groupCorr}()}
+#' @param pval passed on to \code{\link[CAMERA]{groupCorr}()}
+#' @param maxcharge passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' @param maxiso passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' @param ppm passed on to \code{\link[CAMERA]{findIsotopes}()} and 
+#' \code{\link[CAMERA]{findAdducts}()}
+#' @param mzabs passed on to \code{\link[CAMERA]{findIsotopes}()} and 
+#' \code{\link[CAMERA]{findAdducts}()}
+#' @param minfrac passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' @param filter passed on to \code{\link[CAMERA]{findIsotopes}()}
+#' 
+#' @return an \code{xsAnnotate} object
+#' 
+#' @export
+cameraWrapper <- function(xset,
+                          polarity = NULL,
+                          sigma = 6, perfwhm = 0.6,
+                          cor_eic_th = 0.75, pval = 0.05,
+                          maxcharge = 3, maxiso = 4,
+                          ppm = 5, mzabs = 0.01,
+                          minfrac = 0.5, filter = TRUE,
+                          workers = 1){
+    
+    allargs <- as.list(environment())
+    params <- xcms::GenericParam(fun = "cameraWrapper",
+                                 args = allargs[names(allargs) != "xset"])
+
+an   <- CAMERA::xsAnnotate(as(xset, "xcmsSet"),
+                   nSlaves = workers,
+                   polarity = polarity)###CHANGE POLARITY
+
+an <- CAMERA::groupFWHM(an,
+                sigma = sigma,
+                perfwhm = perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
+#verify grouping
+an <- CAMERA::groupCorr(an,
+                cor_eic_th = cor_eic_th,
+                pval = pval)
+
+an <- CAMERA::findIsotopes(an,
+                   maxcharge = maxcharge,
+                   maxiso = maxiso,
+                   ppm = ppm,
+                   mzabs = mzabs,
+                   minfrac = max(0.001,minfrac), #minFrac of 0 throws error otherwise
+                   filter = filter)
+an <- CAMERA::findAdducts(an,
+                  ppm = ppm,
+                  mzabs = mzabs,
+                  polarity= polarity)
+
+CAMERA::cleanParallel(an)
+
+an <- addProcessHistory(an, xcms:::XProcessHistory(info = "Converted to CAMERA::xsAnnotate, analyzed with Metaboseek::cameraWrapper",
+                                            param = params))
+
+return(an)
+
 }

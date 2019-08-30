@@ -269,7 +269,7 @@ find_peaks2 <- function(EIC, ...){
 #' 
 #' merge peaks in a peaklist within a file or across multiple files
 #' 
-#' @param pl a peaklist, such as list items returned by \code{\link{findPeaks2}()}
+#' @param pl a peaklist, such as list items returned by \code{\link{find_peaks2}()}
 #' @param rttol retention time tolerance in seconds to merge peaks
 #' @param minint minimum intensity for a peak to be retained (before merging)
 #' @param minrelint minimum intensity of a peak to be retained (before merging),

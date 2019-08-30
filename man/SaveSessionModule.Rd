@@ -26,6 +26,9 @@ gives read and write access to external objects}
 \item{reactives}{a list, wrapped in a \code{\link[shiny]{reactive}()} 
 expression with settings for this module. See \code{details}.}
 
+\item{useActionLink}{if TRUE, will use an \code{actionLink} instead 
+of an \code{actionButton} to open the modal Dialog}
+
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}

@@ -1,3 +1,5 @@
+#' @include methods_MseekFT.R
+
 #' analyzeTable
 #'
 #' Run a series of analyses on a feature table data.frame
@@ -42,35 +44,31 @@ analyzeTable <- function(df, intensities,
                          ppm = 5,
                          controlGroup = NULL,
                          numClusters = 2,
-                         mzMatchParam = list(system.file("db",
-                                                         "smid-db_pos.csv",
-                                                         package = "Metaboseek"),
+                         mzMatchParam = list("smid-db_pos.csv",
                                                ppm = 5,
                                                mzdiff = 0.001),
                          workers = 1){
-  out <- list(errmsg = list())
+  out <- list(errmsg = list(),
+              history = list())
   
   if(normalize 
      || (useNormalized && !identical(grep("__norm",colnames(df), value = T), paste0(intensities,"__norm")))
   ){
     
     tryCatch({
+    temp <- .withHistory(fun = "FTNormalize",
+                 args = list(logNormalized = logNormalized),
+                 longArgs = list(object = df),
+                 addHistory = FALSE,
+                 continueWithErrors = TRUE,
+                 returnIfError = df)
     
-    #normalize data and save it in matrix
-    mx <- as.matrix(df[,intensities])
-    mx <- featureTableNormalize(mx,
-                                raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-    # 
-    mx <- featureTableNormalize(mx, normalize = "colMeans")
-    if(!is.null(logNormalized) && logNormalized){
-      mx <- featureTableNormalize(mx, log =  "log10")
+    df <- temp$df
+    out$history <- c(out$history, temp$history)
+    if(length(temp$history@error)){
+    out$errMsg[["normalize"]] <- temp$history@error[[1]]
     }
-    
-    #make copy of normalized intensities in active table df
-    mx <- as.data.frame(mx)
-    colnames(mx) <- paste0(colnames(mx),"__norm")
-    df <- updateDF (mx,df)
-    
+
     },
     error = function(e){out$errMsg[["normalize"]] <- paste(e)})
     
@@ -92,6 +90,9 @@ analyzeTable <- function(df, intensities,
     }else if (!"mz" %in% colnames(df) || !"rt" %in% colnames(df)){
       out$errmsg[["Peak shapes"]] <- "Peak shapes analysis was not performed because table does not contain 'rt' and 'mz' columns."
     }else{
+        
+        
+        
       inp <- bestgauss(
         rawdata= MSData,
         mz = data.frame(mzmin = df$mz-ppm*1e-6*df$mz, mzmax=df$mz+ppm*1e-6*df$mz),
@@ -130,6 +131,8 @@ error = function(e){out$errMsg[["Peak shapes"]] <- paste(e)})
     },
     error = function(e){out$errMsg[["Fast peak shapes"]] <- paste(e)})
     
+      
+      
   }
   
   if("Basic analysis" %in% analyze){
@@ -261,9 +264,11 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
   
 }
 
-#' featureTableNormalize
+
+
+#' @title featureTableNormalize
 #' 
-#' Function to normalize data in a matrix.
+#' @description Function to normalize data in a matrix.
 #' 
 #' 
 #' @param mx a matrix of numeric (intensity) values
@@ -282,6 +287,8 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 #' 
 #' @return \code{mx}, normalized so that all columns have the same mean value 
 #' which is also the mean of all values in \code{mx} 
+#' 
+#' @rdname featureTableNormalize
 #' 
 #' @export
 featureTableNormalize <- function (mx,
@@ -320,6 +327,30 @@ featureTableNormalize <- function (mx,
     }
 }
 
+#' @param intensityCols selected columns (with intensity values)
+#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
+#' @rdname featureTableNormalize
+#' @export
+setMethod("FTNormalize", "data.frame",
+          function(object, intensityCols, logNormalized = FALSE){
+              
+              #normalize data and save it in matrix
+              mx <- as.matrix(object[,intensityCols])
+              mx <- featureTableNormalize(mx,
+                                          raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
+              # 
+              mx <- featureTableNormalize(mx, normalize = "colMeans")
+              if(!is.null(logNormalized) && logNormalized){
+                  mx <- featureTableNormalize(mx, log =  "log10")
+              }
+              
+              #make copy of normalized intensities in active table df
+              mx <- as.data.frame(mx)
+              colnames(mx) <- paste0(colnames(mx),"__norm")
+              object <- updateDF (mx,object)
+              return(object)
+          })
+
 
 #' featureCalcs
 #' 
@@ -332,7 +363,6 @@ featureTableNormalize <- function (mx,
 #' 
 #' @return \code{df} with an additional column, \code{massdefppm}
 #' 
-#' @export
 featureCalcs <- function(df,
                          massdef = T# calculate mass defect for each feature
 ){
@@ -399,7 +429,6 @@ featureCalcs <- function(df,
 #' \item \code{best_minFoldCtrl} Highest minFoldOverCtrl value found across all groups
 #' }
 #'    
-#' @export
 foldChange <- function(mx,
                        groups, #
                        ctrl = NULL, #control group
@@ -612,7 +641,6 @@ MosCluster <- function(method = "clara",
 
 #' MseekAnova
 #' 
-#' 
 #' Calculate per-row one-way ANOVA between grouped columns of a data.frame. 
 #' NOTE: Equal variance is not assumed (uses stats::oneway.test)
 #' Returns NaN in cases where one group has all equal values (no variance), 
@@ -625,7 +653,6 @@ MosCluster <- function(method = "clara",
 #' 
 #' @importFrom stats oneway.test
 #'  
-#' @export
 MseekAnova <- function(df, groups){
   
   ints <- df[,unlist(groups)]  
@@ -680,6 +707,15 @@ MseekAnova <- function(df, groups){
 #'  \code{mzMatches} and \code{mzMatchError})
 #'
 #' @importFrom data.table rbindlist
+#' 
+#' @examples 
+#' testdb <- read.csv(system.file("extdata", "examples", "example_projectfolder",
+#'  "mini_example_features.csv", package = "Metaboseek"))
+#' testdb
+#' 
+#' matches <- mzMatch(df = testdb, db = c(system.file("db", "smid-db_pos.csv", package = "Metaboseek")))
+#' 
+#' updateDF(matches,testdb)
 #'
 #' @export
 mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){

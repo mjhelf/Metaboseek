@@ -602,7 +602,7 @@ bestgauss <- function(...){
 #' \code{mz} and \code{rt} in \code{rawfile}
 #' 
 #' @importFrom Biobase rowMax rowMin
-#' 
+#' @describeIn exIntensities extract intensities base function
 #' @export
 exIntensities <- function (rawfile,
                            mz,
@@ -649,14 +649,24 @@ exIntensities <- function (rawfile,
         
         if(!areaMode){return(mean(intens))}
         
-        ret <- rawfile@scantime[x$scan]
-        dret <- c(diff(ret), 0)
-        dintens <- c(diff(intens), 0)
-        return(sum(dintens * dret) + sum(dintens * dret)/2)
+        return(.peakArea(rawfile@scantime[x$scan],intens))
         
     }
     
     return(sapply(summe, fx))}
+
+#' .peakArea
+#' 
+#' Calculate area under the curve
+#' 
+#' @param x,y two numeric vectors of equal length
+#' @return the area under the curve, a numeric(1)
+#' @noRd
+.peakArea <- function(x,y){
+    dx <- c(diff(x), 0)
+    dy <- c(diff(y), 0)
+    return(sum(y * dx) + sum(dy * dx)/2)
+    }
 
 #' subsetEICs
 #'

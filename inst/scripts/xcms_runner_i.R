@@ -5,6 +5,7 @@ tryCatch({
 library(xcms)
 library(Metaboseek)
 library(CAMERA)
+library(BiocParallel)
 
 
 fols <- commandArgs(trailingOnly=TRUE)
@@ -42,7 +43,18 @@ cparam <- CentWaveParam(ppm = as.numeric(centWave["ppm",1]),
                         fitgauss = as.logical(centWave["fitgauss",1]), 
                         verboseColumns = FALSE ) 
 
-bparam <- SnowParam(workers = as.integer(centWave["workers",1]))
+BiocParallel::register(
+    BiocParallel::bpstart(
+        if(Sys.info()['sysname'] == "Windows"){
+            BiocParallel::SnowParam(as.integer(centWave["workers",1]))
+        }else{
+            BiocParallel::MulticoreParam(as.integer(centWave["workers",1]))
+        }
+    )
+)
+
+
+#bparam <- SnowParam(workers = as.integer(centWave["workers",1]))
 ##########################
 groupparam = read.csv("group.csv",
                  row.names = 1,
@@ -124,9 +136,11 @@ for (i in seq(ncol(outputs) - 1)){
 
 #############################
 
+ppOptions <- NULL
+try({
 ppOptions <- jsonlite::unserializeJSON(readChar("postProcessingSettings.json",
                                                 file.info("postProcessingSettings.json")$size))
-
+})
 ##########
 
 history <- writeStatus (previous = history,
@@ -134,7 +148,8 @@ history <- writeStatus (previous = history,
                                        Details = "loading files"))
 
 #xcmsRaw object list for Mseek intensity method
-if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) ||  "Peak shapes" %in%  ppOptions$analysesSelected){
+if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) 
+   || (length(ppOptions) && "Peak shapes" %in%  ppOptions$analysesSelected)){
 rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
 }
 
@@ -151,13 +166,19 @@ history <- writeStatus (previous = history,
                                        Details = "XcmsSet peak detection"))
 
 xset <- findChromPeaks(fileaccess, cparam,
-                               BPPARAM = bparam, return.type = "XCMSnExp")
+                               BPPARAM = bpparam(), return.type = "XCMSnExp")
 
   history <- writeStatus (previous = history,
                           message = list(Status = "Exporting data",
                                          Details = "peaktable_all.csv"))
   
-   write.csv(chromPeaks(xset),file = "peaktable_all_unfilled.csv")
+  # write.csv(chromPeaks(xset),file = "peaktable_all_unfilled.csv")
+   data.table::fwrite(chromPeaks(xset),
+                      "peaktable_all_unfilled.csv",
+          sep = ",",
+          quote = T,
+          row.names = F
+   )
 
 #only run this if anything other than the peaktable_all is requested
 if(any(outputs[-1,1])){
@@ -171,63 +192,72 @@ if(any(outputs[-1,1])){
 xset <- groupChromPeaks(xset,
                         gparam)
 
+if(outputs["peaktable_grouped", "Value"]){
+
 ##DATA EXPORT
-  history  <- savetable(xset,
-                        status = history,
-                        fill = if(outputs["peaktable_grouped","xcms_peakfilling"]){
-                                  fparam}
-                               else{NULL},
-                        nonfill = outputs["peaktable_grouped", "Value"],
-                        filename = "peaktable_grouped.csv",
-                        bparams = bparam,
+    history <- writeStatus (previous = history,
+                            message = list(Status = "Saving table",
+                                           Details = "Saving peaktable_grouped and running post-processing"))
+    
+    
+  peaktable_grouped  <- savetable(xset,
+                        #status = history,
+                        # fill = if(outputs["peaktable_grouped","xcms_peakfilling"]){
+                        #           fparam}
+                        #        else{NULL},
+                        # nonfill = outputs["peaktable_grouped", "Value"],
+                        filename = "peaktable_grouped",
+                        bparams = bpparam(),
                         intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                         rawdata = rfiles,
-                        postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
+                        postProc = if(length(ppOptions) && ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
+  
+  if(outputs["peaktable_grouped","xcms_peakfilling"]){
+      
+     
+      history <- writeStatus (previous = history,
+                                 message = list(Status = paste0("Saving table ", filename),
+                                                Details = "Filling peaks (xcms fillChromPeaks)"))
+     
+      
+      xset <- xcms::fillChromPeaks(xset, fparam,
+                                   BPPARAM = bpparam())
+      
+      history <- writeStatus (previous = history,
+                              message = list(Status = "Saving table",
+                                             Details = "Performing xcms peak fillingSaving peaktable_grouped_filled and running post-processing"))
+  
+  peaktable_grouped  <- savetable(xset,
+                                   importResultsFrom = peaktable_grouped, #will import post-processing and Mseek intensities from previous step if appropriate, otherwise will generate them de novo
+                                  filename = "peaktable_grouped_filled",
+                                  bparams = bpparam(),
+                                  intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
+                                  rawdata = rfiles,
+                                  postProc = if(length(ppOptions) && ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})
+  
+  }
 
   if(outputs["peaktable_grouped", "CAMERA_analysis"]){
     
     history <- writeStatus (previous = history,
                             message = list(Status = "CAMERA annotation",
-                                           Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
+                                           Details = "Adduct and isotope annotation with the CAMERA package (before RT correction)"))
     
-    library(CAMERA)
-    an   <- xsAnnotate(as(xset, "xcmsSet"),
-                       nSlaves = as.integer(centWave["workers",1]),
-                       polarity = cam_param$polarity)###CHANGE POLARITY
-    
-    an <- groupFWHM(an,
-                    sigma = cam_param$sigma,
-                    perfwhm = cam_param$perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
-    #verify grouping
-    an <- groupCorr(an,
-                    cor_eic_th = cam_param$cor_eic_th,
-                    pval = cam_param$pval)
-    
-    an <- findIsotopes(an,
-                       maxcharge = cam_param$maxcharge,
-                       maxiso = cam_param$maxiso,
-                       ppm = cam_param$ppm,
-                       mzabs = cam_param$mzabs,
-                       minfrac = max(0.001,cam_param$minfrac), #minFrac of 0 throws error otherwise
-                       filter = cam_param$filter)
-    an <- findAdducts(an,
-                      ppm = cam_param$ppm,
-                      mzabs = cam_param$mzabs,
-                      polarity= cam_param$polarity)
-    peaklist <- getPeaklist(an)
-    
-    history  <- savetable(an,
-                          status = history,
-                          fill = NULL,
-                          nonfill = T,
-                          filename = "peaktable_noRTcorr_CAMERA.csv",
-                          bparams = bparam,
+    an <- do.call(cameraWrapper, c(list(xset = xset, workers = as.integer(centWave["workers",1])),cam_param))
+   
+                          savetable(an,
+                          importResultsFrom = peaktable_grouped, #will import post-processing and Mseek intensities from previous step if appropriate, otherwise will generate them de novo
+                          filename = if(outputs["peaktable_grouped","xcms_peakfilling"]){"peaktable_filled_noRTcorr_CAMERA"}else{"peaktable_noRTcorr_CAMERA"},
+                          bparams = bpparam(),
                           intensities = if(outputs["peaktable_grouped", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                           rawdata = rfiles,
-                          postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
-    cleanParallel(an)
+                          postProc = if(length(ppOptions) && ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL}) 
+    
+    rm(an)
     
   }
+  rm(peaktable_grouped)
+}
 
 if(outputs["peaktable_grouped_Rtcorr","Value"]){
 ###RETCOR STEP
@@ -259,8 +289,8 @@ history <- writeStatus (previous = history,
                                        Details = "Retention time correction information"))
 
 rtx <-  rtexport(xset)    
-save(rtx, file = "RTcorr_data.Rdata")
-
+#save(rtx, file = "RTcorr_data.Rdata")
+saveRDS(rtx, file = "RTcorr_data.Rds")
 
 
  history <- writeStatus (previous = history,
@@ -269,62 +299,66 @@ save(rtx, file = "RTcorr_data.Rdata")
 xset <- groupChromPeaks(xset,
                         gparam)
 
-##DATA EXPORT
-history  <- savetable(xset,
-                      status = history,
-                      fill = if(outputs["peaktable_grouped_Rtcorr", "xcms_peakfilling"]){
-                        fparam}
-                      else{NULL},
-                      nonfill = outputs["peaktable_grouped_Rtcorr", "Value"],
-                      filename = "peaktable_grouped_Rtcorr.csv",
-                      bparams = bparam,
-                      intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
-                      rawdata = rfiles,
-                      postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
 
+history <- writeStatus (previous = history,
+                        message = list(Status = "Saving table",
+                                       Details = "Saving peaktable_grouped_RTcorr and running post-processing"))
+
+
+peaktable_grouped  <- savetable(xset,
+                                #status = history,
+                                # fill = if(outputs["peaktable_grouped","xcms_peakfilling"]){
+                                #           fparam}
+                                #        else{NULL},
+                                # nonfill = outputs["peaktable_grouped", "Value"],
+                                filename = "peaktable_grouped_RTcorr",
+                                bparams = bpparam(),
+                                intensities = if((outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"])){mos_fparam}else{NULL},
+                                rawdata = rfiles,
+                                postProc = if(length(ppOptions) && ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
+
+if(outputs["peaktable_grouped_Rtcorr","xcms_peakfilling"]){
+    
+    
+    history <- writeStatus (previous = history,
+                            message = list(Status = paste0("Saving table ", filename),
+                                           Details = "Filling peaks (xcms fillChromPeaks)"))
+    
+    
+    xset <- xcms::fillChromPeaks(xset, fparam,
+                                 BPPARAM = bpparam())
+    
+    history <- writeStatus (previous = history,
+                            message = list(Status = "Saving table",
+                                           Details = "Performing xcms peak fillingSaving peaktable_grouped_filled and running post-processing"))
+    
+    peaktable_grouped  <- savetable(xset,
+                                    importResultsFrom = peaktable_grouped, #will import post-processing and Mseek intensities from previous step if appropriate, otherwise will generate them de novo
+                                    filename = "peaktable_grouped_RTcorr_filled",
+                                    bparams = bpparam(),
+                                    intensities = if((outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"])){mos_fparam}else{NULL},
+                                    rawdata = rfiles,
+                                    postProc = if(length(ppOptions) && ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})
+    
+}
 
 if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
-  
-  history <- writeStatus (previous = history,
-                          message = list(Status = "CAMERA annotation",
-                                         Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
-  
-  an   <- xsAnnotate(as(xset, "xcmsSet"),
-                     nSlaves = as.integer(centWave["workers",1]),
-                     polarity = cam_param$polarity)###CHANGE POLARITY
-  
-  an <- groupFWHM(an,
-                  sigma = cam_param$sigma,
-                  perfwhm = cam_param$perfwhm ) # peakwidth at FWHM is about 2.335*sigma, sigma factor should correspond to what max rt difference can be for features to be grouped.
-  #verify grouping
-  an <- groupCorr(an,
-                  cor_eic_th = cam_param$cor_eic_th,
-                  pval = cam_param$pval)
-  
-  an <- findIsotopes(an,
-                     maxcharge = cam_param$maxcharge,
-                     maxiso = cam_param$maxiso,
-                     ppm = cam_param$ppm,
-                     mzabs = cam_param$mzabs,
-                     minfrac = max(0.001,cam_param$minfrac), #minFrac of 0 throws error otherwise
-                     filter = cam_param$filter)
-  an <- findAdducts(an,
-                    ppm = cam_param$ppm,
-                    mzabs = cam_param$mzabs,
-                    polarity= cam_param$polarity)
-  peaklist <- getPeaklist(an)
-  
-  history  <- savetable(an,
-                        status = history,
-                        fill = NULL,
-                        nonfill = T,
-                        filename = "peaktable_RTcorr_CAMERA.csv",
-                        bparams = bparam,
-                        intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
-                        rawdata = rfiles,
-                        postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
-  cleanParallel(an)
-  
+    
+    history <- writeStatus (previous = history,
+                            message = list(Status = "CAMERA annotation",
+                                           Details = "Adduct and isotope annotation with the CAMERA package (after RT correction)"))
+    
+    an <- do.call(cameraWrapper, c(list(xset = xset, workers = as.integer(centWave["workers",1])),cam_param))
+    
+    savetable(an,
+                          importResultsFrom = peaktable_grouped, #will import post-processing and Mseek intensities from previous step if appropriate, otherwise will generate them de novo
+                          filename = if(outputs["peaktable_grouped_Rtcorr","xcms_peakfilling"]){"peaktable_grouped_RTcorr_filled_CAMERA"}else{"peaktable_grouped_RTcorr_CAMERA"},
+                          bparams = bpparam(),
+                          intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
+                          rawdata = rfiles,
+                          postProc = if(length(ppOptions) && ppOptions$rtCorrAnaCheck){ppOptions}else{NULL}) 
+    
+    rm(an)
 }
 }
 }

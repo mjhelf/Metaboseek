@@ -94,6 +94,7 @@ SiriusModule <- function(input,output, session,
 
       },
       error =  function(e){
+          warning(paste0("Failed to retreive SIRIUS results: ", e))
 
         internalValues$activeSirius <- NULL
 
