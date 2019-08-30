@@ -98,7 +98,7 @@ SelectProjectFolderModule <- function(input,output, session,
         }
         
         
-        temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$",
+        temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$",
                             recursive =  T, full.names = T)
         
         temp <- temp[!basename(temp) %in% c("camera.csv",
@@ -142,12 +142,12 @@ SelectProjectFolderModule <- function(input,output, session,
               checkboxInput(ns("checkMseekIntensities"), 
                         "Load Metaboseek intensities if available (WARNING: if the selected table has already been analyzed (e.g. calculation of foldChanges during 'Basic Analysis'), make sure this selection is in line with the previous analysis, or reanalyze the table!)",
                         value = values$GlobalOpts$preferMseekIntensities)),
-          div(title = "Load the .mskFT file instead of the .csv file, if available.
-                       Using .mskFT will provide all previous grouping information and processing history and 
-                       is the preferred option.",
-              checkboxInput(ns("checkMseekFT"), 
-                            "Load .mskFT files if available",
-                            value = TRUE)),
+          # div(title = "Load the .mskFT file instead of the .csv file, if available.
+          #              Using .mskFT will provide all previous grouping information and processing history and 
+          #              is the preferred option.",
+          #     checkboxInput(ns("checkMseekFT"), 
+          #                   "Load .mskFT files if available",
+          #                   value = TRUE)),
           actionButton(ns("projectLoadOk"), "OK"),
           
           title = "Import xcms results",
@@ -172,9 +172,9 @@ SelectProjectFolderModule <- function(input,output, session,
           
           tabid <- paste0("table",length(values$featureTables$tables))
           
-          if(input$checkMseekFT && file.exists(gsub("\\.csv$","\\.mskFT", input$modalSelect))){
+          if(grepl('\\.[Mm][Ss][Kk][Ff][Tt]$',input$modalSelect)[1]){
               
-              values$featureTables$tables[[tabid]] <- loadMseekFT(gsub("\\.csv$","\\.mskFT", input$modalSelect)[1])
+              values$featureTables$tables[[tabid]] <- loadMseekFT(input$modalSelect)
               values$featureTables$index <- updateFTIndex(values$featureTables$tables)
               values$featureTables$active <- tabid
               

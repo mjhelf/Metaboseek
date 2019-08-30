@@ -372,7 +372,6 @@ featureTableNormalize <- function (mx,
 #' 
 #' @return \code{df} with an additional column, \code{massdefppm}
 #' 
-#' @export
 featureCalcs <- function(df,
                          massdef = T# calculate mass defect for each feature
 ){
@@ -439,7 +438,6 @@ featureCalcs <- function(df,
 #' \item \code{best_minFoldCtrl} Highest minFoldOverCtrl value found across all groups
 #' }
 #'    
-#' @export
 foldChange <- function(mx,
                        groups, #
                        ctrl = NULL, #control group
@@ -652,7 +650,6 @@ MosCluster <- function(method = "clara",
 
 #' MseekAnova
 #' 
-#' 
 #' Calculate per-row one-way ANOVA between grouped columns of a data.frame. 
 #' NOTE: Equal variance is not assumed (uses stats::oneway.test)
 #' Returns NaN in cases where one group has all equal values (no variance), 
@@ -665,7 +662,6 @@ MosCluster <- function(method = "clara",
 #' 
 #' @importFrom stats oneway.test
 #'  
-#' @export
 MseekAnova <- function(df, groups){
   
   ints <- df[,unlist(groups)]  

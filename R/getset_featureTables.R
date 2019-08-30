@@ -240,10 +240,19 @@ FTselection.reactivevalues <- function(x, liveView = F){
 #' @export
 getFilters <- function(x, activeOnly = TRUE){
     
-    res <- values$featureTables$Filters$filterSet
+    if(!length(x$featureTables)
+       ||!length(x$featureTables$Filters)){
+        return(list())
+        }
     
-    if(!length(res) || !activeOnly || !is.list(res)){return(list())}
+    res <- x$featureTables$Filters$filterSet
     
+    
+    if(!length(res) 
+       || !is.list(res)){return(list())}
+    
+    if(!activeOnly){return(res)}
+
     res[sapply(res, function(n){n$active})]
     
     }

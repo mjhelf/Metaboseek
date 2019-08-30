@@ -1,7 +1,7 @@
 context("methods MseekFT")
 
 
-MseekExamplePreload() #loads objects tab1 and tab2 into session!
+MseekExamplePreload() #loads objects tab1, tab2 and MSData into session!
 
 wtfiles <-  list.files(system.file("extdata", "examples", "ms1", "wt", package = "Metaboseek"), full.names = T, pattern = ".mzXML")
 
@@ -46,12 +46,19 @@ test_that("removeNAs works", {
     
     afterRemoval <- removeNAs(tabX1wNAs)
     
+    expect_true(hasError(previousStep(afterRemoval)))
+    
+    afterRemoval <- removeNAs(tabX1wNAs, intensityCols = c('AA10.mzXML', 'AA12.mzXML'))
+    
+    
     expect_equal(tabX1$df,
                  afterRemoval$df)
     
     expect_equal(length(processHistory(tabX1))+1,
                  length(processHistory(afterRemoval)))
     
+    tx <- FTNormalize(tabX1)
+    previousStep(tx)
   }
 )
 

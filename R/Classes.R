@@ -56,6 +56,13 @@ setClassUnion("sessionInfoOrNULL", c("sessionInfo", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))
 setClassUnion("MseekFTOrNULL", c("MseekFT", "NULL"))
 
+#' @noRd
+#' @author Johannes Rainer
+setClass("Param",
+         representation = representation("VIRTUAL"),
+         contains = c("Versioned"))
+setClassUnion("ParamOrNULL", c("Param", "NULL"))
+
 #' FTAnalysisParam
 #' @aliases FTAnalysisParam-class
 #' 
@@ -87,8 +94,8 @@ setClassUnion("MseekFTOrNULL", c("MseekFT", "NULL"))
 #' 
 #' @rdname FTAnalysisParam-class
 setClass("FTAnalysisParam",
-         slots = c(intensities = "character",
-                   groups = "list",
+         slots = c(intensities = "characterOrNULL",
+                   groups = "listOrNULL",
                    .files = "character",
                    analyze = "character", 
                    normalize = "logical",
@@ -131,15 +138,9 @@ setClass("FTAnalysisParam",
          }
 )
 
-#' @noRd
-#' @author Johannes Rainer
-setClass("Param",
-         representation = representation("VIRTUAL"),
-         contains = c("Versioned"))
-setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
 #' FunParam
-#' @aliases FTAnalysisParam-class
+#' @aliases FunParam
 #' 
 #' @title Parameter class for Feature Table analysis
 #' 
@@ -247,139 +248,6 @@ setMethod("initialize", "FTAnalysisParam", function(.Object, ...) {
     Biobase::classVersion(.Object)["FTAnalysisParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
-
-#' @title analyzeFT
-#' @aliases analyzeFT
-#' 
-#' @description analyze Tables using \code{\link{analyzeTable}()},
-#'  recording processing history if \code{object} is of class \code{MseekFT}.
-#'  Will use intensity columns and grouping information from the MseekFT object
-#'  if available
-#'
-#' @param object an MseekFT or data.frame object.
-#' @param MSData list of xcmsRaw objects
-#' @param param a \code{\link{FTAnalysisParam}} object
-#' 
-#' @return an object of the same class as \code{object}, with analyses performed as
-#' defined by \code{param} 
-#'   
-#' @rdname analyzeFT
-setMethod("analyzeFT", 
-          signature(object = "data.frame", MSData = "listOrNULL", param = "FTAnalysisParam"),
-          function(object, MSData, param){
-              params <- xcms:::.param2list(param)
-              do.call(Metaboseek:::analyzeTable,
-                      c(list(df = object, MSData = MSData),
-                        params))
-              })
-          
-
-#' @aliases analyzeFT
-#'
-#' @rdname MseekFT-class
-setMethod("analyzeFT", 
-          signature(object = "MseekFT",
-                    MSData = "listOrNULL",
-                    param = "FTAnalysisParam"),
-          function(object, MSData, param){
-              
-              param@intensities <- object$intensities
-              param@groups <- object$anagroupnames
-              inputHash <- digest::digest(object$df, algo = "xxhash64")
-
-              if(param@normalize || (param@useNormalized && !identical(grep("__norm",colnames(object$df), value = T), paste0(object$intensities,"__norm")))){ 
-                 
-                  object <- FTNormalize(object,
-                                        logNormalized = param@logNormalized)
-              }
-              
-              if(param@useNormalized){
-                  param@intensities <- paste0(object$intensities,"__norm")
-                  param@groups <- lapply(object$anagroupnames, paste0, "__norm")
-              }
-                 
-                 if("Basic analysis" %in% param@analyze){
-                     
-                     object <- FTBasicAnalysis(object,
-                                               intensityCols = param@intensities,
-                                               grouping = param@groups,
-                                               controlGroup = param@controlGroup)
-                     
-                 }
-              
-              if("Peak shapes" %in% param@analyze){
-                  
-                  object <- FTOldPeakShapes(object,
-                                            rawdata = MSData,
-                                            ppm = param@ppm,
-                                            workers = param@workers)
-                  
-              }
-              
-              if("Fast peak shapes" %in% param@analyze){
-                  
-                  object <- FTPeakShapes(object,
-                                         rawdata = MSData,
-                                         ppm = param@ppm,
-                                         workers = param@workers)
-                  
-              }
-                
-              if("mzMatch" %in% param@analyze){
-                  
-                  object <- FTMzMatch(object,
-                                      db = param@mzMatchParam$db,
-                                      ppm = param@mzMatchParam$ppm,
-                                      mzdiff = param@mzMatchParam$mzdiff
-                                      )
-                  
-              }  
-              
-              if("t-test" %in% param@analyze){
-                  
-                  object <- FTT.test(object,
-                                     intensityCols = param@intensities,
-                                     grouping = param@groups,
-                                     adjmethod = "bonferroni"
-                  )
-                  
-              }  
-              
-              if("anova" %in% param@analyze){
-                  
-                  object <- FTAnova(object,
-                                    intensityCols = param@intensities,
-                                    grouping = param@groups)
-                  
-              }  
-              
-              if("clara_cluster" %in% param@analyze){
-                  
-                  object <- FTCluster(object,
-                                    intensityCols = param@intensities,
-                                    numClusters = param@numClusters)
-                  
-              }  
-              
-              if("PCA features" %in% param@analyze){
-                  
-                  object <- FTPCA(object,
-                                    intensityCols = param@intensities,
-                                  featureMode = TRUE)
-                  
-              }  
-              
-              if("PCA samples" %in% param@analyze){
-                  
-                  object <- FTPCA(object,
-                                    intensityCols = param@intensities,
-                                    featureMode = FALSE)
-                  
-              }  
-              
-              
-              return(object)
-          })
 
 setMethod("initialize", "FTProcessHistory", function(.Object, ...) {
     Biobase::classVersion(.Object)["FTProcessHistory"] <- "0.0.1"
@@ -540,18 +408,7 @@ setMethod("hasError", "ProcessHistory",
               length(object@error) > 0
           })
 
-#' @aliases hasAdjustedRtime
-#' @description \code{hasAdjustedRtime}: check if the object contains retention time
-#' correction information.
-#' @return For \code{hasAdjustedRtime}: A logical, indicating if the object 
-#' contains retention time correction information.
-#' 
-#' @rdname MseekFT-class
-#' @export
-setMethod("hasAdjustedRtime", "MseekFT",
-          function(object){
-              return(!is.null(object$RTcorrected) && object$RTcorrected)
-          })
+
 
 #' @rdname FTProcessHistory-class
 setMethod("error", "ProcessHistory",
@@ -562,7 +419,8 @@ setMethod("error", "ProcessHistory",
 #' @title buildMseekFT
 #' @aliases buildMseekFT
 #' 
-#' @description build an \code{MseekFT} object from an xsAnnotate, xcmsSet or data.frame object
+#' @description Methods to build an \code{MseekFT} object from an xsAnnotate,
+#'  xcmsSet or data.frame object, and to load or save \code{MseekFT} objects
 #'
 #' @param object an xsAnnotate, xcmsSet or data.frame object.
 #' @param processHistory a list of \code{\link[xcms]{processHistory}} objects,
@@ -692,7 +550,7 @@ setMethod("saveMseekFT",
           function(object, file, writeCSV = FALSE, writeRDS = TRUE){
               
               object <- addProcessHistory(object, xcms:::XProcessHistory(info = "Saved MseekFT object to a file.",
-                                                       param = xcms::GenericParam(fun = "Metaboseek::saveMseekFT",
+                                                       param = FunParam(fun = "Metaboseek::saveMseekFT",
                                                                                   args = list(file = file,
                                                                                               writeCSV = writeCSV,
                                                                                               writeRDS = writeRDS))))
@@ -711,26 +569,7 @@ setMethod("saveMseekFT",
               invisible(object)
           })
 
-#' @title MseekFT-class
-#' 
-#' @description save a \code{MseekFT} object to a file, registering the save event in the processHistory 
-#'
-#' @param object an \code{MseekFT} object.
-#' @param name file path to write to
-#' 
-#'   
-#' @rdname MseekFT-class
-setMethod("rename", 
-          "MseekFT",
-          function(object, name){
-              
-              object <- addProcessHistory(object, FTProcessHistory(info = "Renamed MseekFT object",
-                                                                         param = FunParam(fun = "rename",
-                                                                                                    args = list(name = name))))
-           object$tablename <- name
-              
-             return(object)
-          })
+
 
 #' @title .withHistory
 #' @aliases .withHistory

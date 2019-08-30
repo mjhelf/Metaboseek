@@ -136,9 +136,11 @@ for (i in seq(ncol(outputs) - 1)){
 
 #############################
 
+ppOptions <- NULL
+try({
 ppOptions <- jsonlite::unserializeJSON(readChar("postProcessingSettings.json",
                                                 file.info("postProcessingSettings.json")$size))
-
+})
 ##########
 
 history <- writeStatus (previous = history,
@@ -146,7 +148,8 @@ history <- writeStatus (previous = history,
                                        Details = "loading files"))
 
 #xcmsRaw object list for Mseek intensity method
-if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) ||  "Peak shapes" %in%  ppOptions$analysesSelected){
+if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) 
+   || (length(ppOptions) && "Peak shapes" %in%  ppOptions$analysesSelected)){
 rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
 }
 
@@ -207,7 +210,7 @@ if(outputs["peaktable_grouped", "Value"]){
                         bparams = bpparam(),
                         intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                         rawdata = rfiles,
-                        postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
+                        postProc = if(length(ppOptions) && ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})  
   
   if(outputs["peaktable_grouped","xcms_peakfilling"]){
       
@@ -230,7 +233,7 @@ if(outputs["peaktable_grouped", "Value"]){
                                   bparams = bpparam(),
                                   intensities = if((outputs["peaktable_grouped", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                                   rawdata = rfiles,
-                                  postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})
+                                  postProc = if(length(ppOptions) && ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL})
   
   }
 
@@ -248,7 +251,7 @@ if(outputs["peaktable_grouped", "Value"]){
                           bparams = bpparam(),
                           intensities = if(outputs["peaktable_grouped", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                           rawdata = rfiles,
-                          postProc = if(ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL}) 
+                          postProc = if(length(ppOptions) && ppOptions$noRtCorrAnaCheck){ppOptions}else{NULL}) 
     
     rm(an)
     
@@ -312,7 +315,7 @@ peaktable_grouped  <- savetable(xset,
                                 bparams = bpparam(),
                                 intensities = if((outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                                 rawdata = rfiles,
-                                postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
+                                postProc = if(length(ppOptions) && ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})  
 
 if(outputs["peaktable_grouped_Rtcorr","xcms_peakfilling"]){
     
@@ -335,7 +338,7 @@ if(outputs["peaktable_grouped_Rtcorr","xcms_peakfilling"]){
                                     bparams = bpparam(),
                                     intensities = if((outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"])){mos_fparam}else{NULL},
                                     rawdata = rfiles,
-                                    postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})
+                                    postProc = if(length(ppOptions) && ppOptions$rtCorrAnaCheck){ppOptions}else{NULL})
     
 }
 
@@ -353,7 +356,7 @@ if(outputs["peaktable_grouped_Rtcorr", "CAMERA_analysis"]){
                           bparams = bpparam(),
                           intensities = if(outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"]){mos_fparam}else{NULL},
                           rawdata = rfiles,
-                          postProc = if(ppOptions$rtCorrAnaCheck){ppOptions}else{NULL}) 
+                          postProc = if(length(ppOptions) && ppOptions$rtCorrAnaCheck){ppOptions}else{NULL}) 
     
     rm(an)
 }

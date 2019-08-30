@@ -280,9 +280,15 @@ background-color: #C41230;
 }
 
 .selectize-input {
-
+    word-wrap: break-word;
+    word-break: break-all;
     min-height: 30px;
     padding: 3px 6px;
+}
+
+.selectize-dropdown-content{
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .selectize-control.single .selectize-input, .selectize-control.single .selectize-input input {

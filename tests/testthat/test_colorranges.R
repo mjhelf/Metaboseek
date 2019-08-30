@@ -30,14 +30,22 @@ test_that("peptide annotation and plotting works",{
     
     
     MseekExamplePreload(data=F)
-    testdf <- Metaboseek:::analyzeTable(tab2$df, tab2$intensities,
-                                       tab2$anagroupnames,
-                                       analyze = c("Basic analysis"), 
-                                       normalize = T,
-                                       useNormalized = T,
-                                       logNormalized = F,
-                                       MSData = NULL,
-                                       ppm = 5)
+    FTA_param <- FTAnalysisParam(intensities = character(),
+                                 groups = list(),
+                                 .files = character(),
+                                 analyze = c("Basic analysis"), 
+                                 normalize = T,
+                                 useNormalized = T,
+                                 logNormalized = F,
+                                 ppm = 5,
+                                 controlGroup = NULL,
+                                 numClusters = 2,
+                                 mzMatchParam = list(db ="smid-db_pos.csv",
+                                                     ppm = 5,
+                                                     mzdiff = 0.001),
+                                 workers = 1)
+    
+    testdf <- Metaboseek:::analyzeFT(tab2, list(), FTA_param)
     
     crange <- colorRampPalette(c("blue", "gray", "red"))
     colr <- crange(200)

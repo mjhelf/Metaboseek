@@ -41,7 +41,8 @@ an object of class \code{MseekFT}, with processHistory extended from
 the \code{MseekFT} object, with saving event added to processHistory
 }
 \description{
-build an \code{MseekFT} object from an xsAnnotate, xcmsSet or data.frame object
+Methods to build an \code{MseekFT} object from an xsAnnotate,
+ xcmsSet or data.frame object, and to load or save \code{MseekFT} objects
 
 save a \code{MseekFT} object to a file, registering the save event in the processHistory
 }
