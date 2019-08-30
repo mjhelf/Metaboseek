@@ -1,5 +1,5 @@
 ## Methods to analyze MseekFT objects
-#' @include methods_MseekFT.R
+#' @include Functions_FeatureTable_analysis.R
 
 
 #' @title analyzeFT
@@ -194,8 +194,11 @@ setMethod("removeNAs", "MseekFT",
 
 #' @aliases FTNormalize
 #' 
-#' @description \code{FTNormalize}: Normalize a feature table such that the mean
-#'  values of all intensity columns will be equal. See also \code{\link{featureTableNormalize}()}
+#' @description \code{FTNormalize}: Replaces zeroes by the globally smallest 
+#' non-zero intensity value, then normalizes a feature table such that the mean
+#'  values of all intensity columns will be equal. See also 
+#'  \code{\link{featureTableNormalize}()}
+#' @param logNormalized if TRUE, applies log10 to intensity values after normalization
 #' @rdname analyzeFT
 #' @export
 setMethod("FTNormalize", "MseekFT",
@@ -269,6 +272,8 @@ setMethod("FTNormalize", "MseekFT",
 #' 
 #' @description \code{FTBasicAnalysis}: calculate fold changes between groups of samples. See also 
 #' \code{\link{foldChange}()} and \code{\link{featureCalcs}()}for a description of the resulting columns
+#' @param controlGroup character() defining which sample group serves as control
+#' (will calculate foldChanges over control if not NULL)
 #' 
 #' @rdname analyzeFT
 #' @export
@@ -333,7 +338,6 @@ setMethod("FTBasicAnalysis", "MseekFT",
 #' @aliases getMseekIntensities
 #' 
 #' @param adjustedRT use adjusted RTs for all samples for which it is available
-#' @param importFrom a \code{MseekFT} object to use as source for Mseek intensities.
 #' @param rtrange if TRUE, will use \code{rtw} starting out from the \code{rtmin} 
 #' and \code{rtmax} values instead of \code{rt}
 #' @param rtw retention time window to get the intensity from, +/- in seconds
@@ -343,7 +347,9 @@ setMethod("FTBasicAnalysis", "MseekFT",
 #'  all settings, features and MS data files are equivalent. See also \code{\link{exIntensities}}
 #' @rdname analyzeFT
 #' @export
-setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "listOrNULL", importFrom = "missing"),
+setMethod("getMseekIntensities", signature(object = "MseekFT",
+                                           rawdata = "listOrNULL",
+                                           importFrom = "missing"),
           function(object, rawdata, adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
@@ -455,10 +461,14 @@ setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "listOr
               return(object)
               
           })
-#'
+#' @rdname analyzeFT
+#' @param importFrom a \code{MseekFT} object to use as source for Mseek intensities.
 #' @export
-setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "listOrNULL", importFrom = "MseekFTOrNULL"),
-          function(object, rawdata, importFrom, adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
+setMethod("getMseekIntensities", signature(object = "MseekFT",
+                                           rawdata = "listOrNULL",
+                                           importFrom = "MseekFTOrNULL"),
+          function(object, rawdata, importFrom,
+                   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
               
@@ -548,7 +558,8 @@ setMethod("getMseekIntensities", signature(object = "MseekFT", rawdata = "listOr
 #' @description \code{FTOldPeakShapes}: calculate score for peak shapes. This method is kept
 #'  for backwards reproducibility and not recommended, because \code{FTPeakShapes()}
 #' is much faster. See also \code{\link{bestgauss}()}
-#'  
+#' @param workers number of worker processes
+#' 
 #' @rdname analyzeFT
 #' @export
 setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),

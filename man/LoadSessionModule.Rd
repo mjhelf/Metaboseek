@@ -28,8 +28,6 @@ of an \code{actionButton} to open the modal Dialog}
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}
-
-\item{static}{see \code{Details}}
 }
 \value{
 nothing, but modifies values

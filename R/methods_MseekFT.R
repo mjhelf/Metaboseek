@@ -1,4 +1,42 @@
-#' @include Classes.R
+#' @include methods_buildMseekFT.R
+
+#' @aliases addProcessHistory
+#' @name MseekFT-class
+#' 
+#' @description 
+#' 
+#' \code{addProcessHistory}: adds (appends) a single \code{\link{ProcessHistory}}
+#'  object to the \code{.processHistory} slot. Copied description and Method 
+#'  template for \code{addProcessHistory} from \code{xcms}.
+#' 
+#' @param ph a \code{ProcessHistory} object
+#' @param fun character(1), function name to look for
+#' @param value for \code{groupingTable<-}: a data.frame with columns 
+#' \code{Column} and \code{Group}. For \code{intensityCols<-}: a character vector of column names
+#' 
+#' @return
+#' The \code{addProcessHistory} method returns the input object with the
+#' provided \code{\link{ProcessHistory}} appended to the process history.
+#'
+#' @rdname MseekFT-class
+#' @export
+setMethod("addProcessHistory", c("MseekFT", "ProcessHistory"), function(object, ph) {
+    if (!inherits(ph, "ProcessHistory"))
+        stop("Argument 'ph' has to be of type 'ProcessHistory' or a class ",
+             "extending it!")
+    object$.processHistory[[(length(object$.processHistory) + 1)]] <- ph
+    if (validObject(object))
+        return(object)
+})
+
+#' @rdname MseekFT-class
+#' @aliases processHistory
+#' @description \code{processHistory}: extract a list of \code{ProcessHistory} objects from an object,
+#'  representing changes made to the object.
+#' 
+#' @export
+setMethod("processHistory", "MseekFT", function(object) {
+    object$.processHistory})
 
 #' @title MseekFT-class
 #' @aliases previousStep
@@ -112,29 +150,7 @@ setMethod("hasAdjustedRtime", "MseekFT",
               return(!is.null(object$RTcorrected) && object$RTcorrected)
           })
 
-#' @param selCols selected columns (with intensity values)
-#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
-#' @rdname featureTableNormalize
-#' @export
-setMethod("FTNormalize", "data.frame",
-          function(object, intensityCols, logNormalized = FALSE){
-              
-              #normalize data and save it in matrix
-              mx <- as.matrix(object[,intensityCols])
-              mx <- featureTableNormalize(mx,
-                                          raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-              # 
-              mx <- featureTableNormalize(mx, normalize = "colMeans")
-              if(!is.null(logNormalized) && logNormalized){
-                  mx <- featureTableNormalize(mx, log =  "log10")
-              }
-              
-              #make copy of normalized intensities in active table df
-              mx <- as.data.frame(mx)
-              colnames(mx) <- paste0(colnames(mx),"__norm")
-              object <- updateDF (mx,object)
-              return(object)
-          })
+
 
 
 

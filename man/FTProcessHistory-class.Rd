@@ -14,6 +14,9 @@
 
 \S4method{error}{ProcessHistory}(object)
 }
+\arguments{
+\item{object}{an object of class "ProcessHistory", or one of its descendants}
+}
 \description{
 Objects of this class hold parameters for feature table analysis,
 to be used with \code{\link{analyzeFT}()}

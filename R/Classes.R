@@ -351,37 +351,7 @@ setMethod("show", "FunParam", function(object) {
     }
 })
 
-#' @aliases addProcessHistory
-#' @description 
-#' Copied description and Method template from \code{xcms}.
-#' \code{addProcessHistory}: adds (appends) a single
-#' \code{\link{ProcessHistory}} object to the \code{.processHistory} slot.
-#'
-#' @return
-#' The \code{addProcessHistory} method returns the input object with the
-#' provided \code{\link{ProcessHistory}} appended to the process history.
-#'
-#' @author Johannes Rainer, Maximilian Helf
-#' 
-#' @rdname MseekFT-class
-#' @export
-setMethod("addProcessHistory", c("MseekFT", "ProcessHistory"), function(object, ph) {
-    if (!inherits(ph, "ProcessHistory"))
-        stop("Argument 'ph' has to be of type 'ProcessHistory' or a class ",
-             "extending it!")
-    object$.processHistory[[(length(object$.processHistory) + 1)]] <- ph
-    if (validObject(object))
-        return(object)
-})
 
-#' @rdname MseekFT-class
-#' @aliases processHistory
-#' @description \code{processHistory}: extract a list of \code{ProcessHistory} objects from an object,
-#'  representing changes made to the object.
-#' 
-#' @export
-setMethod("processHistory", "MseekFT", function(object) {
-    object$.processHistory})
 
 #' @importClassesFrom CAMERA xsAnnotate
 #' @noRd
@@ -402,6 +372,7 @@ setMethod("addProcessHistory", "xsAnnotate", function(object, ph) {
 
 
 #' @rdname FTProcessHistory-class
+#' @param object an object of class "ProcessHistory", or one of its descendants
 #' @export
 setMethod("hasError", "ProcessHistory",
           function(object){
@@ -416,158 +387,8 @@ setMethod("error", "ProcessHistory",
               object@error
           })
 
-#' @title buildMseekFT
-#' @aliases buildMseekFT
-#' 
-#' @description Methods to build an \code{MseekFT} object from an xsAnnotate,
-#'  xcmsSet or data.frame object, and to load or save \code{MseekFT} objects
-#'
-#' @param object an xsAnnotate, xcmsSet or data.frame object.
-#' @param processHistory a list of \code{\link[xcms]{processHistory}} objects,
-#' will override the processHistory list that may be supplied by \code{object}
-#' @param ... additional arguments passed to \code{\link{constructFeatureTable}}
-#' 
-#' @return an object of class \code{MseekFT}, with processHistory extended from
-#'  \code{object} if applicable. 
-#'  
-#' @importClassesFrom CAMERA xsAnnotate
-#' @importClassesFrom xcms XCMSnExp xcmsSet
-#' @importFrom xcms processHistory
-#' @rdname buildMseekFT
-#' @export
-setMethod("buildMseekFT",  "xsAnnotate",
-          function(object, processHistory = list(), ...){
-              
-              oldHistory <- if(length(processHistory)){processHistory}else{processHistory(object)}
-              
-              res <- constructFeatureTable(df = CAMERA::getPeaklist(object),
-                                    processHistory = c(oldHistory),
-                                    ...)
-              
-              
-              
-              res$sampleNames <- object@xcmsSet@phenoData$sampleNames
-              res$RTcorr <- rtexport(object)
-              res$RTcorrected <- !identical(res$RTcorr$corr, res$RTcorr$noncorr)
-              
-              res <- addProcessHistory(res, FTProcessHistory(info = "Extracted Feature Table from CAMERA::xsAnnotate using CAMERA::getPeaklist and built MseekFT object",
-                                                             sessionInfo = sessionInfo(),
-                                                             outputDFhash = digest::digest(res$df,
-                                                                                           algo = "xxhash64"),
-                                                             param = FunParam(fun = "Metaboseek::buildMseekFT",
-                                                                                        args = list(...))))
-              
-              return(res)
-              
-          })
-
-#' @rdname buildMseekFT
-#' @export
-setMethod("buildMseekFT", 
-          "XCMSnExp",
-          function(object, processHistory = list(), ...){
-              
-              oldHistory <- if(length(processHistory)){processHistory}else{processHistory(object)}
-              
-              
-              res <- constructFeatureTable(df = xcms::peakTable(as(object,"xcmsSet")),
-                                    processHistory = c(oldHistory),
-                                    ...)
-              
-              
-              
-              res$sampleNames <- as.character(object@phenoData@data$sampleNames)
-              res$RTcorr <- rtexport(object)
-              res$RTcorrected <- !identical(res$RTcorr$corr, res$RTcorr$noncorr)
-              
-              res <- addProcessHistory(res, FTProcessHistory(info = "Extracted Feature Table from xcms::XCMSnExp using xcms::peakTable(as(xset,'xcmsSet')) and built MseekFT object",
-                                                             sessionInfo = sessionInfo(),
-                                                             outputDFhash = digest::digest(res$df,
-                                                                                           algo = "xxhash64"),
-                                                             param = FunParam(fun = "Metaboseek::buildMseekFT",
-                                                                                        args = list(...))))
-              return(res)
-          })
-
-#' @rdname buildMseekFT
-#' @export
-setMethod("buildMseekFT", 
-          signature(object = "data.frame"),
-          function(object, processHistory = list(), ...){
-              
-              res <- constructFeatureTable(df = object,
-                                    processHistory = processHistory,
-                                    ...)
-              
-              res <- addProcessHistory(res, FTProcessHistory(info = "Built MseekFT object from a data.frame.",
-                                                             sessionInfo = sessionInfo(),
-                                                             outputDFhash = digest::digest(res$df,
-                                                                                           algo = "xxhash64"),
-                                                         param = FunParam(fun = "Metaboseek::buildMseekFT",
-                                                                                    args = list(...))))
-              
-              return(res)
-              
-          })
 
 
-#' @rdname buildMseekFT
-#' @export
-setMethod("loadMseekFT", 
-          signature(object = "character"),
-          function(object){
-              
-              if(length(object)>1){
-                  lapply(object, loadMseekFT)
-                  }else{
-              
-              res <- readRDS(object)
-              
-              res <- addProcessHistory(res, FTProcessHistory(info = paste0("Loaded MseekFT object from file: ", object),
-                                                             sessionInfo = sessionInfo(),
-                                                             outputDFhash = digest::digest(res$df,
-                                                                                           algo = "xxhash64"),
-                                                             param = FunParam(fun = "Metaboseek::loadMseekFT",
-                                                                              args = list(file = object))))
-              
-              return(res)
-                  }
-          })
-
-#' @title saveMseekFT
-#' @aliases saveMseekFT
-#' 
-#' @description save a \code{MseekFT} object to a file, registering the save event in the processHistory 
-#'
-#' @param object an \code{MseekFT} object.
-#' @param file file path to write to
-#' 
-#' @return the \code{MseekFT} object, with saving event added to processHistory
-#'   
-#' @rdname buildMseekFT
-setMethod("saveMseekFT", 
-          "MseekFT",
-          function(object, file, writeCSV = FALSE, writeRDS = TRUE){
-              
-              object <- addProcessHistory(object, xcms:::XProcessHistory(info = "Saved MseekFT object to a file.",
-                                                       param = FunParam(fun = "Metaboseek::saveMseekFT",
-                                                                                  args = list(file = file,
-                                                                                              writeCSV = writeCSV,
-                                                                                              writeRDS = writeRDS))))
-              #make sure file extension is .mskFT
-              if(writeCSV){
-                  tableWriter(object$df, fname = paste0(gsub('\\.csv$','',file),".csv"))
-              }
-              
-              
-              #make sure file extension is .mskFT
-              if(writeRDS){
-                  saveRDS(object, file = paste0(gsub('\\.mskFT$','',file),".mskFT"))
-              }
-              
-              
-              invisible(object)
-          })
 
 
 
@@ -589,8 +410,6 @@ setMethod("saveMseekFT",
 #' is returned.
 #' @param returnIfError object to return if error occurs. Will be treated like the 
 #' object returned by fun (ProcessHistory will be added to the object if possible to keep track of failed analyses). 
-#' 
-#' @param param a \code{\link{FTAnalysisParam}} object
 #' 
 #' @return if \code{addHistory = TRUE}: the object returned by fun, with analyses performed as
 #' defined by args and longArgs and ProcessHistory added to the object.

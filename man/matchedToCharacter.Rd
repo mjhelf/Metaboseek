@@ -8,6 +8,8 @@ matchedToCharacter(matchedPatterns, sep = "|")
 }
 \arguments{
 \item{matchedPatterns}{a list of named logical vectors}
+
+\item{sep}{character string to use as separator between matches}
 }
 \value{
 a character vector

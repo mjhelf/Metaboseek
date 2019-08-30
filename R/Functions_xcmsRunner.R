@@ -233,6 +233,7 @@ savetable <- function(xset,
 #' \code{findAdducts} from the \code{CAMERA} package, and finally adds an entry to
 #' its \code{.processHistory} slot.
 #' 
+#' @param xset a \code{XCMSnExp} object 
 #' @param workers number of workers, passed on to \code{\link[CAMERA]{xsAnnotate}()}
 #' (as \code{nSlaves})
 #' @param polarity passed on to \code{\link[CAMERA]{xsAnnotate}()} and 

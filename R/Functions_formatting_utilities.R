@@ -303,6 +303,7 @@ parsePatterns <- function(df){
 #' summarize named logical vectors into a single character vector
 #' 
 #' @param matchedPatterns a list of named logical vectors
+#' @param sep character string to use as separator between matches
 #'
 #' @return a character vector
 #'

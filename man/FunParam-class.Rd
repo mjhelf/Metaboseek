@@ -3,7 +3,7 @@
 \docType{class}
 \name{FunParam-class}
 \alias{FunParam-class}
-\alias{FTAnalysisParam-class}
+\alias{FunParam}
 \title{Parameter class for Feature Table analysis}
 \description{
 Objects of this class hold parameters for any function call.

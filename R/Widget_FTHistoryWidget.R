@@ -3,6 +3,7 @@
 #' One-button module to display and export the process history of MseekFT objects.
 #' 
 #' @inherit MseekWidgets
+#' @param FT an \code{\link{MseekFT}} object inside a \code{reactive()}
 #' 
 #' @describeIn FTHistoryWidget server logic
 #' 

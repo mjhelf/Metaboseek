@@ -1,37 +1,4 @@
-#' @include Classes.R
-
-
-
-.FTAnalysis <- function(object, intensities,
-                        groups,
-                        analyze = c("Basic analysis", "clara_cluster",
-                                    "t-test", "Peak shapes",
-                                    "Fast peak shapes", "PCA features",
-                                    "PCA samples", "mzMatch"), 
-                        normalize = T,
-                        useNormalized = T,
-                        logNormalized = F,
-                        MSData = NULL,
-                        ppm = 5,
-                        controlGroup = NULL,
-                        numClusters = 2,
-                        mzMatchParam = list("smid-db_pos.csv",
-                                            ppm = 5,
-                                            mzdiff = 0.001),
-                        workers = 1){
-    
-    object <- .withHistory(fun = "FTNormalize",
-                         args = list(logNormalized = logNormalized),
-                         longArgs = list(),
-                         addHistory = TRUE,
-                         continueWithErrors = TRUE,
-                         returnIfError = object)
-    
-    
-    
-    
-}
-
+#' @include methods_MseekFT.R
 
 #' analyzeTable
 #'
@@ -359,6 +326,30 @@ featureTableNormalize <- function (mx,
     
     }
 }
+
+#' @param intensityCols selected columns (with intensity values)
+#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
+#' @rdname featureTableNormalize
+#' @export
+setMethod("FTNormalize", "data.frame",
+          function(object, intensityCols, logNormalized = FALSE){
+              
+              #normalize data and save it in matrix
+              mx <- as.matrix(object[,intensityCols])
+              mx <- featureTableNormalize(mx,
+                                          raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
+              # 
+              mx <- featureTableNormalize(mx, normalize = "colMeans")
+              if(!is.null(logNormalized) && logNormalized){
+                  mx <- featureTableNormalize(mx, log =  "log10")
+              }
+              
+              #make copy of normalized intensities in active table df
+              mx <- as.data.frame(mx)
+              colnames(mx) <- paste0(colnames(mx),"__norm")
+              object <- updateDF (mx,object)
+              return(object)
+          })
 
 
 #' featureCalcs

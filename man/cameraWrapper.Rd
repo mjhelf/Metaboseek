@@ -10,6 +10,8 @@ cameraWrapper(xset, polarity = NULL, sigma = 6, perfwhm = 0.6,
   workers = 1)
 }
 \arguments{
+\item{xset}{a \code{XCMSnExp} object}
+
 \item{polarity}{passed on to \code{\link[CAMERA]{xsAnnotate}()} and 
 \code{\link[CAMERA]{findAdducts}()}}
 

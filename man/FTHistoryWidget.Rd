@@ -15,6 +15,8 @@ FTHistoryWidget(input, output, session, FT = reactive({     NULL }))
 
 \item{session}{arguments necessary for use with 
 \code{\link[shiny]{callModule}()}}
+
+\item{FT}{an \code{\link{MseekFT}} object inside a \code{reactive()}}
 }
 \description{
 One-button module to display and export the process history of MseekFT objects.

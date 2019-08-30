@@ -237,7 +237,11 @@ FTselection.reactivevalues <- function(x, liveView = F){
 #' 
 #' get the currently applied filters in a Metaboseek session
 #' 
-#' @export
+#' @param x a MseekValues (reactivevalues) object
+#' @param activeOnly if TRUE, gets only active Filters
+#' 
+#' @return a list of filters
+#' 
 getFilters <- function(x, activeOnly = TRUE){
     
     if(!length(x$featureTables)

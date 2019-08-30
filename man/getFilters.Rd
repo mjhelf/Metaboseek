@@ -6,6 +6,14 @@
 \usage{
 getFilters(x, activeOnly = TRUE)
 }
+\arguments{
+\item{x}{a MseekValues (reactivevalues) object}
+
+\item{activeOnly}{if TRUE, gets only active Filters}
+}
+\value{
+a list of filters
+}
 \description{
 get the currently applied filters in a Metaboseek session
 }

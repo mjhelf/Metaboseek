@@ -11,6 +11,7 @@
 \alias{FTBasicAnalysis}
 \alias{getMseekIntensities,MseekFT,listOrNULL,missing-method}
 \alias{getMseekIntensities}
+\alias{getMseekIntensities,MseekFT,listOrNULL,MseekFTOrNULL-method}
 \alias{FTOldPeakShapes,MseekFT,listOrNULL-method}
 \alias{FTOldPeakShapes}
 \alias{FTPeakShapes,MseekFT,listOrNULL-method}
@@ -41,6 +42,10 @@
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,missing}(object, rawdata,
   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5)
+
+\S4method{getMseekIntensities}{MseekFT,listOrNULL,MseekFTOrNULL}(object,
+  rawdata, importFrom, adjustedRT = TRUE, ppm = 5, rtrange = TRUE,
+  rtw = 5)
 
 \S4method{FTOldPeakShapes}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
   workers = 1)
@@ -75,8 +80,13 @@ in the object as \code{$intensities}.}
 
 \item{replacement}{value to put in place of NA values}
 
+\item{logNormalized}{if TRUE, applies log10 to intensity values after normalization}
+
 \item{grouping}{named list of character vectors, defining column 
 names for different sample groups.}
+
+\item{controlGroup}{character() defining which sample group serves as control
+(will calculate foldChanges over control if not NULL)}
 
 \item{adjustedRT}{use adjusted RTs for all samples for which it is available}
 
@@ -86,6 +96,10 @@ names for different sample groups.}
 and \code{rtmax} values instead of \code{rt}}
 
 \item{rtw}{retention time window to get the intensity from, +/- in seconds}
+
+\item{importFrom}{a \code{MseekFT} object to use as source for Mseek intensities.}
+
+\item{workers}{number of worker processes}
 
 \item{db}{data base to search, either a vector of file paths .csv files
 or a data.frame, see \code{\link{mzMatch}()}}
@@ -100,8 +114,6 @@ automatically be set to be at most number of features - 1.}
 
 \item{featureMode}{if TRUE, will cluster molecular features by intensities 
 across samples. If FALSE, will cluster samples by intensities across features}
-
-\item{importFrom}{a \code{MseekFT} object to use as source for Mseek intensities.}
 }
 \value{
 an object of the same class as \code{object}, with analyses performed 
@@ -115,8 +127,10 @@ Analyze MseekFT objects, recording a processing history .
 
 \code{removeNAs}: remove NA values from a range of columns and replace them with another value
 
-\code{FTNormalize}: Normalize a feature table such that the mean
- values of all intensity columns will be equal. See also \code{\link{featureTableNormalize}()}
+\code{FTNormalize}: Replaces zeroes by the globally smallest 
+non-zero intensity value, then normalizes a feature table such that the mean
+ values of all intensity columns will be equal. See also 
+ \code{\link{featureTableNormalize}()}
 
 \code{FTBasicAnalysis}: calculate fold changes between groups of samples. See also 
 \code{\link{foldChange}()} and \code{\link{featureCalcs}()}for a description of the resulting columns

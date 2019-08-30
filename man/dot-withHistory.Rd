@@ -26,8 +26,6 @@ is returned.}
 
 \item{returnIfError}{object to return if error occurs. Will be treated like the 
 object returned by fun (ProcessHistory will be added to the object if possible to keep track of failed analyses).}
-
-\item{param}{a \code{\link{FTAnalysisParam}} object}
 }
 \value{
 if \code{addHistory = TRUE}: the object returned by fun, with analyses performed as
