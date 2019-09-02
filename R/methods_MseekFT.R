@@ -36,7 +36,12 @@ setMethod("addProcessHistory", c("MseekFT", "ProcessHistory"), function(object, 
 #' 
 #' @export
 setMethod("processHistory", "MseekFT", function(object) {
-    object$.processHistory})
+    if(!length(object$.processHistory)){
+        return(list())
+        }else{
+    return(object$.processHistory)
+            }
+        })
 
 #' @title MseekFT-class
 #' @aliases previousStep

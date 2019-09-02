@@ -5,8 +5,9 @@
 \title{savetable}
 \usage{
 savetable(xset, importResultsFrom = NULL, filename = "tableoutxx",
-  bparams = SnowParam(workers = 1), intensities = list(ppm = 5, rtw =
-  5, rtrange = T), rawdata = NULL, saveR = T, postProc = NULL)
+  bparams = SerialParam(), intensities = list(ppm = 5, rtw = 5, rtrange
+  = TRUE, areaMode = FALSE), rawdata = NULL, saveR = T,
+  postProc = NULL)
 }
 \arguments{
 \item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 
@@ -25,8 +26,8 @@ parameters for parallel computing used in fill peaks)}
 \item{intensities}{list of parameters for Mseek EIC intensity extraction 
 (for each feature in the peaklist). ppm: mz window, rtw: rt window 
 (+/- seconds), rtrange: if TRUE, rtw extends from rtmin and rtmax, 
-if FALSE rtw centers around value in column rt. Not performed if 
-intensities = NULL.}
+if FALSE rtw centers around value in column rt, areaMode: if TRUE, get peak areas instead of mean intensities
+ Not performed if intensities = NULL.}
 
 \item{rawdata}{named list of xcmsRaw objects (as returned by
 Mseek::loadRawM), required for Mseek EIC intensity extraction which 

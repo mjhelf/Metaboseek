@@ -1,7 +1,7 @@
 ---
 title: "Getting started with Metaboseek"
 author: "Maximilian Helf"
-date: "May 2019"
+date: "September 2019"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with Metaboseek}
@@ -14,6 +14,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(Metaboseek)
 ```
 
 Metaboseek is an interactive, browser-based tool to analyze and browse your mass spectrometry data. Here is a quick introduction to the basic functions.
@@ -35,9 +36,40 @@ All files are loaded into memory, so that browsing will be very quick: It is eas
 ### Java {#javainfo}
 Metaboseek, as pre-packaged in the installer or .zip file for Windows, version 0.9.3 and up **requires** Java. If you install Metaboseek manually, Java is still needed for full functionality. Make sure to install 64-bit Java if you are running 64-bit R (which is most likely), or 32-bit Java if you are running 32-bit R. If you go to java.com and follow the download buttons there, it will send you to download the version that corresponds to your browser (32- or 64-bit) by default, which may or may not be the version you need. Get the appropriate Java version from this page: [https://www.java.com/en/download/manual.jsp](https://www.java.com/en/download/manual.jsp). 
 
+## Install on Windows
 
-## Use the web version
-If you have trouble installing Metaboseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
+You will need to get the [appropriate java version](#javainfo), which in the case of the .zip file and the installer, is **64-bit**.
+
+###Using the installer
+
+1. Download the installer of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
+2. Follow the installation steps.
+3. Metaboseek 0.9 should now be installed and can be launched like any other Windows program. When Metaboseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the Metaboseek command line window.
+
+###Using a .zip file
+
+1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
+2. Unzip the file on your computer (this may take a while!)
+3. Run Metaboseek by executing runMetaboseek.exe In the unzipped folder.
+
+###Updating Metaboseek for Windows
+
+Windows users can update Metaboseek to the newest version from inside the Metaboseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to Metaboseek.
+   
+## Install on Mac / Linux
+Consider getting the [Metaboseek Docker image](#Docker), or follow these steps to install Metaboseek:
+
+1.	[Download](https://cloud.r-project.org/) and install R.
+2.	Mac users: Get [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
+3.	Run R, enter this line:
+```{r, eval = FALSE}
+source("http://metaboseek.com/files/install_Metaboseek.R") 
+```
+5. To run Metaboseek, enter this line into your R console:
+```{r, eval = FALSE}
+Metaboseek::runMseek()
+```
+
 
 ## Get the Docker image {#Docker}
 
@@ -75,39 +107,6 @@ docker ps
 5. Go to your web browser and go to the website `localhost:3840`, where the port number after the colon may differ based on your `-p` setting (see above). By default, you will have to log in, with the username `metaboseek` and the password you specified (`YOURPASSWORD` in our example). This will open a website, hosted inside the metaboseek container. Select the app you want to run and analyze your data!
 
 
-## Install on Windows
-
-You will need to get the [appropriate java version](#javainfo), which in the case of the .zip file and the installer, is **64-bit**.
-
-###Using the installer
-
-1. Download the installer of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
-2. Follow the installation steps.
-3. Metaboseek 0.9 should now be installed and can be launched like any other Windows program. When Metaboseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the Metaboseek command line window.
-
-###Using a .zip file
-
-1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
-2. Unzip the file on your computer (this may take a while!)
-3. Run Metaboseek by executing runMetaboseek.exe In the unzipped folder.
-
-###Updating Metaboseek for Windows
-
-Windows users can update Metaboseek to the newest version from inside the Metaboseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to Metaboseek.
-   
-## Install on Mac / Linux
-Consider getting the [Metaboseek Docker image](#Docker), or follow these steps to install Metaboseek:
-
-1.	[Download](https://cloud.r-project.org/) and install R.
-2.	Mac users: Get [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
-3.	Run R, enter this line:
-```{r, eval = FALSE}
-source("http://metaboseek.com/files/install_Metaboseek.R") 
-```
-5. To run Metaboseek, enter this line into your R console:
-```{r, eval = FALSE}
-Metaboseek::runMseek()
-```
 
 ##	Experienced R users (Windows, Mac or Linux):
 If you have installed R (and the devtools package) already, you can install Metaboseek like this:
@@ -121,7 +120,20 @@ If you want to make sure you get all the required packages, run the install scri
 ```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_Metaboseek.R") 
 ```	
+
+
+
+## Use the web version
+If you have trouble installing Metaboseek and want to just try it out with an example dataset, use the [web version.](https://metaboseek.com/)
+
 #Quickstart
+
+The easiest way to try out some basic funcionality is to load in the example data. In the online version, the data is already preloaded, and you can skip the first step that describes how to load the data.
+
+##Load Example Data
+On the start page, select "example_projectfolder" from the "Recent projects" selection box and click on "Load recent".
+Metaboseek will ask you which table you would like to load into the session along with the MS data that is associated with the exammple project folder.
+
 
 #Data analysis with Metaboseek
 
@@ -138,6 +150,72 @@ Then, you can use Metaboseek to browse the data, find molecular features of inte
 ## Overview
 Metaboseek is structured into two major sections, the `Data Explorer` section for visualization and statistical analysis tasks, and the `XCMS analysis` to identify LC/MS features in MS data files. You can switch between these sections with the navigation menu on the left of the screen. 
 
+##XCMS analysis {#runXcms}
+
+This section will help you to set up an xcms analysis in Metaboseek in order to identify LC/MS features that are differential between sets of data files. This can, for instance, be useful to assess the impact of a mutation on the metabolome of an organism or to identify compounds associated with the activity of an enzyme.
+
+![Running an xcms analysis - a description of the highlighted steps is below.](img/XcmsRun1.png)
+
+1. Select a folder with MS data files. All files with 
+[supported file extensions](#supportedFiles) in the selected folders and all its
+subfolders will be listed, so it makes sense to pre-sort your files in a reasonable
+folder structure:
+  + All files should be acquired under comparable conditions, especially with 
+  the same polarity. Differences in LC gradient or general composition (e.g. 
+  through widely different extraction methods, or comparing samples and blanks) 
+  can also make it difficult to apply retention time correction and find 
+  differential features.
+2. There are 7 tables with xcms settings you can change here. Navigate through 
+them with the drop down menu highlighted as (2.). A short description for each 
+parameter is given when you hover over the table entries. You can use the 
+default settings and proceed to step 3 without changing any of them. 
+The default is for highly similar LC/MS runs acquired at high resolution and 
+high accuracy (< 5 ppm), and will find relatively small peaks (even if they only
+occur in a single replicate). While these settings allow for detection of small
+peaks, the processing time is relatively long and many false-positives 
+(non-peaks) will also end up in the feature table.
+
+  <details>
+    <summary>Click here for details about the xcms settings</summary>
+
+  + **Peak Detection:** set parameters for the [`xcms::findChromPeaks()` function](https://rdrr.io/bioc/xcms/man/findChromPeaks-centWave.html#heading-2)
+  + **Peak Filling:** These settings specify how to look for intensities for 
+  molecular features in all files, even in files where no peak was detected for
+  that feature in the initial Peak Detection step. The xcms peak filling 
+  parameters will be used if you select the "Fill peaks with xcms..." output
+  option below. Technically, you are setting parameters for the  
+  [`xcms::fillChromPeaks()` function](https://rdrr.io/bioc/xcms/man/fillChromPeaks.html).
+  You can also set parameters for the Metaboseek peak intensity functions here,
+  which will extract intensities for all molecular features in all files.
+  + **Feature Grouping:** set the parameters for how xcms will group peaks from different
+  files together (also known as correspondence analysis) so that intensities can
+  be compared across files. These parameters are used for a call to 
+  [`xcms::groupChromPeaks` with `xcms::PeakDensityParam`](https://rdrr.io/bioc/xcms/man/groupChromPeaks-density.html).
+  + **Output files:** select which output files you want to get. The values in this 
+  table can more conveniently be set in the user interface below the tables
+  ("Output selection" section).
+  + **CAMERA settings:** Settings for isotope peak and adduct annotation with the
+  `CAMERA` package. `Metaboseek` sequentially runs the `CAMERA` package functions
+  `xsAnnotate`, `groupFWHM`, `groupCorr`, `findIsotopes` and `findAdducts`
+  which are described in the [`CAMERA` documentation](https://bioconductor.org/packages/release/bioc/html/CAMERA.html).
+  + **RT correction:** Settings for retention time correction, using 
+  [`xcms::adjustRtime`](https://rdrr.io/bioc/xcms/man/adjustRtime.html) either 
+  using the [`Obiwarp`](https://rdrr.io/bioc/xcms/man/adjustRtime-obiwarp.html)
+  or the [`peakGroups`](https://rdrr.io/bioc/xcms/man/adjustRtime-peakGroups.html)
+  method. If `Obiwarp` is selected and fails, the xcms runner script will attempt to run 
+  `peakGroups` with the given paramters.
+  </details>
+  
+3. Start the analysis with a click on the "Start analysis!" button.
+  + Once the analysis is running, Metaboseek will generate a Project Folder for
+  you, containing settings and results from your xcms run. You can load the
+  Project Folder back into Metaboseek to keep all your analysis results in one 
+  place. See [Project Folders](#projectFolders) for more information.
+4. You can save settings as a .zip file (on windows computers, 7-zip or other software allowing for the zip command line prompt must be installed), or load a .zip file with settings from a previous run.
+ + Note that loading settings will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
+ 
+
+
 
 ## Data Explorer
 
@@ -145,13 +223,54 @@ At the heart of Metaboseek is the interaction between data visualization in the 
 
 ###Load Data into Metaboseek {#loadMSData}
 
-In most cases, the first thing you want to load is some LC/MS data to look at. You can load files from the `Start page`, or click on the "Load..." icon on the left side of the top navigation bar.
+You can load files from the `Start page`, or click on the "Load..." icon on the
+left side of the top navigation bar. This will give you the options listed below.
+You need to [run xcms](#runXcms) to be able to load the resulting project folder;
+all other ways of loading data are not contingent on a Metaboseek xcms run:
 
-#### Load a Metaboseek project folder.{.unnumbered}
-When you run [xcms through Metaboseek](#runXcms), the program generates a project folder that contains the results from that xcms analysis run, and all settings that were used in it. If you select a project folder, all MS data files from an analysis will be loaded and grouped in the same way you set up for the xcms analysis. Metaboseek will then ask you which feature table you want to load from the project folder, and will load it in the `Feature table` box. 
+#### Load a Metaboseek session
+You can load a Metaboseek session that you saved previously in an `.msks` file. 
+This will restore all feature tables and MS data files you had loaded into that session along with
+many of the layout settings.
+**Note:** This will currently only work if the MS data file locations have not 
+changed from the paths used in the old session. Some aspects of the session will
+not be restored (notably, MS2 networks are not saved in the session file).
+
+#### Load a Metaboseek project folder.{#projectFolders}
+When you run [xcms through Metaboseek](#runXcms), the program generates a 
+project folder that contains the results from that xcms analysis run, and all 
+settings that were used in it. In addition, all output feature tables you 
+requested will be saved in the project folder during the xcms run.
+They are saved in two different formats: `.csv` for export and viewing in other tools,
+ and as an .mskFT file to load them back into Metaboseek. The advantage of 
+ `.mskFT` files is that they contain the complete processing history (including
+ settings used for the xcms run, CAMERA analysis and post-processing). When you
+ load an .mskFT file into Metaboseek, you can view the processing history, and
+ continue to track analysis steps as you interact with the data. `.mskFT` files 
+ are technically `.RDS` files containing an `MseekFT` object and can be loaded 
+ into any R session with the `readRDS()` function.
+If you select a project folder, all MS data files from the xcms run will be 
+loaded and grouped in the same way you set up for the xcms analysis.
+Metaboseek will then ask you which feature table you want to load a feature Table
+from the project folder, and will load it in the `Feature table` box. If you 
+select an .mskFT file (recommended) instead of the corresponding .csv file,
+you will benefit from the additional information embedded in these files. 
 
 ####Loading MS data files directly.{.unnumbered}
-All files with [supported file extensions](#supportedFiles) in the selected folders and all its subfolders will be imported, so it makes sense to pre-sort your files in a reasonable folder structure. Note that here, unlike for the [xcms analysis](#runXcms), you may want to include widely different samples (e.g. blanks, to visually confirm they do not contain a compound of interest).
+All files with [supported file extensions](#supportedFiles) in the selected 
+folders and all its subfolders can be imported, either by selecting files
+individually (selecting multiple files at a time is possible), or by importing 
+an entire folder that contanis MS data (will import all compatible files from 
+all subfolders, too). To save time, it makes sense to pre-sort 
+your files in a reasonable folder structure (e.g. separate positive mode data
+from negatinve mode so you don't get both kinds when selecting a folder to load
+into Metaboseek). Loading MS data files after you have already loaded a project 
+folder allows you to visually inspect files that you had excluded from the 
+[xcms analysis](#runXcms), such as blanks.
+
+####Load feature tables
+[You can load any .csv or .mskFT file into Metaboseek](#supportedFiles). You can
+then go to the "Regroup Table" tab to specify or change the columns that contain intensity values.
 
 ##### Supported file types {#supportedFiles}
 
@@ -163,7 +282,12 @@ Metaboseek uses the `MSnbase` and `xcms` packages to load MS data files of the f
 * .mzML
 * .mzXML
 
-####Load feature tables
+Feature Tables can be loaded in these formats:
+
+* .csv : comma-separated values. Metaboseek will expect a column `mz` with m/z values and a column `rt` 
+with retention time values in seconds.
+* .mskFT: Metaboseek's format to keep feature tables with metadata, including processing history
+
 
 ###Visualize EICs
 
@@ -199,20 +323,4 @@ All MS/MS scans matching a selection (from a network or from the `Feature Table`
 
 MS/MS spectra are shown on the right side. You can choose to `keep` a spectrum view - it will then not be overridden when you select a new `Feature table` entry or network node. You can show up to 5 spectrum views at the same time. By default, all peaks that occur in more than one of the shown spectra are highlighted in blue. You can disable this comparison with the `Compare` checkbox. You can also download the shown spectrum views in .pdf format by clicking `Download spectra`.
 
-##XCMS analysis {#runXcms}
-
-This section will help you to set up an xcms analysis in Metaboseek in order to identify LC/MS features that are differential between sets of data files. This can, for instance, be useful to assess the impact of a mutation on the metabolome of an organism or to identify compounds associated with the activity of an enzyme.
-
-![Running an xcms analysis - a description of the highlighted steps is below.](img/XcmsRun1.png)
-
-1. Select a folder with MS data files. All files with [supported file extensions](#supportedFiles) in the selected folders and all its subfolders will be listed, so it makes sense to pre-sort your files in a reasonable folder structure:
-  + All files should be acquired under comparable conditions, especially with the same polarity. Differences in LC gradient or general composition (e.g. through widely different extraction methods, or comparing samples and blanks) can also make it difficult to find differential features.
-2. There are 7 tables with xcms settings you can change here. Navigate through them with the drop down menu highlighted as (2.). A short description for each parameter is given when you hover over the table entries. You can use the default settings and proceed to step 3 without changing any of them. 
-The default is for highly similar LC/MS runs acquired at high resolution and high accuracy (< 5 ppm), and will find relatively small peaks (even if they only occur in a single replicate) with a relatively long runtime.
-  + Output files: select which output files you want to get.  ![Output files settings](img/outputFiles.png)
-3. Start the analysis
-4. You can save settings as a .zip file (on windows computers, 7-zip or other software allowing for the zip command line prompt must be installed), or load a .zip file with settings from a previous run.
- + Note that loading settings will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
- 
-Once the analysis is running, Metaboseek will generate a Project Folder for you, containing settings and results from your xcms run. You can load the Project Folder back into Metaboseek to keep all your analysis results in one place. See [Project Folders](#projectFolders) for more information.
 

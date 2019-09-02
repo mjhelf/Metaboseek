@@ -41,11 +41,12 @@
   grouping = NULL, controlGroup = NULL)
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,missing}(object, rawdata,
-  adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5)
+  adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5,
+  areaMode = FALSE)
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,MseekFTOrNULL}(object,
   rawdata, importFrom, adjustedRT = TRUE, ppm = 5, rtrange = TRUE,
-  rtw = 5)
+  rtw = 5, areaMode = FALSE)
 
 \S4method{FTOldPeakShapes}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
   workers = 1)
@@ -96,6 +97,8 @@ names for different sample groups.}
 and \code{rtmax} values instead of \code{rt}}
 
 \item{rtw}{retention time window to get the intensity from, +/- in seconds}
+
+\item{areaMode}{if TRUE, will calculate peak areas rather than mean intensities}
 
 \item{importFrom}{a \code{MseekFT} object to use as source for Mseek intensities.}
 

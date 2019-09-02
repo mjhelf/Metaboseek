@@ -80,7 +80,9 @@ fparam <- FillChromPeaksParam(expandMz = as.numeric(peakfilling["expandMz",1]),
 
 mos_fparam <- list(ppm = as.numeric(peakfilling["ppm_m",1]),
                    rtw = as.numeric(peakfilling["rtw",1]),
-                   rtrange = as.logical(peakfilling["rtrange",1]))
+                   rtrange = as.logical(peakfilling["rtrange",1]),
+                   areaMode = if("areaMode" %in% row.names(peakfilling)){as.logical(peakfilling["areaMode",1])}else{FALSE}
+                   )
 
 ##########################
 retcorParam = read.csv("retcor.csv",
@@ -306,11 +308,6 @@ history <- writeStatus (previous = history,
 
 
 peaktable_grouped  <- savetable(xset,
-                                #status = history,
-                                # fill = if(outputs["peaktable_grouped","xcms_peakfilling"]){
-                                #           fparam}
-                                #        else{NULL},
-                                # nonfill = outputs["peaktable_grouped", "Value"],
                                 filename = "peaktable_grouped_RTcorr",
                                 bparams = bpparam(),
                                 intensities = if((outputs["peaktable_grouped_Rtcorr", "MOSAIC_intensities"])){mos_fparam}else{NULL},

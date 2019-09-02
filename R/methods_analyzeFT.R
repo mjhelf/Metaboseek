@@ -341,6 +341,7 @@ setMethod("FTBasicAnalysis", "MseekFT",
 #' @param rtrange if TRUE, will use \code{rtw} starting out from the \code{rtmin} 
 #' and \code{rtmax} values instead of \code{rt}
 #' @param rtw retention time window to get the intensity from, +/- in seconds
+#' @param areaMode if TRUE, will calculate peak areas rather than mean intensities
 #' @description \code{getMseekIntensities}: get EIC-based intensities for each
 #'  molecular feature in the MseekFT object for each file in \code{rawdata}.
 #'  if another MseekFT object is supplied as \code{importFrom}, will try to transfer MseekIntensities from there if 
@@ -350,7 +351,9 @@ setMethod("FTBasicAnalysis", "MseekFT",
 setMethod("getMseekIntensities", signature(object = "MseekFT",
                                            rawdata = "listOrNULL",
                                            importFrom = "missing"),
-          function(object, rawdata, adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
+          function(object, rawdata, adjustedRT = TRUE, ppm = 5,
+                   rtrange = TRUE, rtw = 5,
+                   areaMode = FALSE){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
               p1 <- proc.time()
@@ -413,7 +416,8 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                       exIntensities(rawfile= rawdata[[i]],
                                     mz = object$df$mz,
                                     ppm= ppm,
-                                    rtw= rtwin)
+                                    rtw= rtwin,
+                                    areaMode = areaMode)
                   })
                   
                   names(intens) <- paste0(basename(names(rawdata)),"__XIC")
@@ -450,7 +454,8 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                                                 args = list(adjustedRT = adjustedRT,
                                                                                             ppm = ppm,
                                                                                             rtrange = rtrange,
-                                                                                            rtw = rtw),
+                                                                                            rtw = rtw,
+                                                                                            areaMode = areaMode),
                                                                                 longArgs = list(rawdata = summary(rawdata)))
                                               ))
               }
@@ -468,7 +473,8 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                            rawdata = "listOrNULL",
                                            importFrom = "MseekFTOrNULL"),
           function(object, rawdata, importFrom,
-                   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
+                   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5,
+                   areaMode = FALSE){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
               
@@ -484,7 +490,8 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                             args = list(adjustedRT = adjustedRT,
                                                         ppm = ppm,
                                                         rtrange = rtrange,
-                                                        rtw = rtw),
+                                                        rtw = rtw,
+                                                        areaMode = areaMode),
                                             longArgs = list(rawdata = summary(rawdata)))
                   
                   oldParams <- searchFunParam(importFrom, "Metaboseek::getMseekIntensities")
@@ -535,7 +542,8 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                                                 args = list(adjustedRT = adjustedRT,
                                                                                             ppm = ppm,
                                                                                             rtrange = rtrange,
-                                                                                            rtw = rtw),
+                                                                                            rtw = rtw,
+                                                                                            areaMode = areaMode),
                                                                                 longArgs = list(rawdata = summary(rawdata)))
                                               ))
                   
@@ -544,7 +552,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                   message(paste("skipped import:",e,"\ntrying to calculate MseekIntensities from scratch now..."))
                   object <<-  getMseekIntensities(object = object, rawdata = rawdata,
                                                   adjustedRT = adjustedRT, ppm = ppm,
-                                                  rtrange = rtrange, rtw = rtw)
+                                                  rtrange = rtrange, rtw = rtw, areaMode = areaMode)
                   
               },
               warning = function(w){print(w)})

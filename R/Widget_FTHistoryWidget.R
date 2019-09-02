@@ -15,11 +15,25 @@ FTHistoryWidget <- function(input,output, session,
   internalValues <- reactiveValues(done = FALSE)
   
 
-  output$historyPrint <- renderPrint({if(!is.null(FT())){
-      print(processHistory(FT()))
-      
-  }else{
-      print("No Feature Table loaded")
+  output$historyPrint <- renderPrint({
+      if(!is.null(FT())){
+          
+          if(is.null(input$selectOutput)
+             || input$selectOutput == "All entries"){
+              print(processHistory(FT()))
+          }
+          else if(input$selectOutput == "No errors"){
+              print(processHistory(FT())[!sapply(processHistory(FT()),
+                                                 hasError)])
+          }
+          
+          else if(input$selectOutput == "only Errors"){
+              print(processHistory(FT())[sapply(processHistory(FT()),
+                                                hasError)])
+          }
+          
+      }else{
+          print("No Feature Table loaded")
       }
       
       })
@@ -27,11 +41,15 @@ FTHistoryWidget <- function(input,output, session,
   dialog <- callModule(ModalWidget, "getbutton",
                        reactives = reactive({  
                          list(fp = fluidPage(
-                         
+                         fluidRow(selectizeInput(ns("selectOutput"), "Show", choices = c("All entries",
+                                                                                         "No errors",
+                                                                                         "only Errors")),
+                                  downloadButton(ns("downloadHistory"), "Save history")),
+                             
                            fluidRow(
                              verbatimTextOutput(ns("historyPrint"))                           
                              )#,
-                           
+
                            # fluidRow(actionButton(ns("getIntensities"), "Go")
                            #   )
                            )
@@ -42,7 +60,27 @@ FTHistoryWidget <- function(input,output, session,
                                      label = "History",
                                      icon = icon("history", lib = "font-awesome")))
   
-  
+                       output$downloadHistory <- downloadHandler(filename= function(){
+                           paste0(FT()$tablename,"_processHistory.txt")
+                       }, 
+                       content = function(file){
+                           tryCatch({
+                             
+                               showNotification(paste("Downloading file: ", 
+                                                      paste0(FT()$tablename,"_processHistory.txt")),
+                                                #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
+                                                duration = 10)
+                               
+                               removeModal()
+                               
+                           },
+                           error = function(e){
+                               writeLines(paste("ERROR: Process History was NOT saved: ",e),file)
+                               showNotification(paste("ERROR:  Process History was NOT saved. The downloaded file is EMPTY and only serves to prevent the session from closing in Firefox. Error message: ",e), type = "error", duration = NULL)
+                               
+                           })
+                       },
+                       contentType = "text/plain")
   
   
   # observeEvent(input$getIntensities,{
