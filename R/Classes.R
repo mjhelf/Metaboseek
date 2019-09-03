@@ -10,7 +10,7 @@ setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
 
 #setGeneric("FTHash", function(object, ...) standardGeneric("FTHash"))
 setGeneric("FTFilter", function(object, ...) standardGeneric("FTFilter"))
-
+setGeneric("FTMS2scans", function(object, rawdata, ...) standardGeneric("FTMS2scans"))
 
 setGeneric("FTMzMatch", function(object, ...) standardGeneric("FTMzMatch"))
 

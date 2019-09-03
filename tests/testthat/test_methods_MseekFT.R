@@ -65,11 +65,33 @@ test_that("removeNAs works", {
 test_that("we can get Mseek intensities",{
     
     expect_true(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2]))))
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2], adjustedRT = FALSE))))
+    
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                           adjustedRT = FALSE,
+                                                           BPPARAM = bpparam()))))
+    
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                           adjustedRT = FALSE,
+                                                           BPPARAM = SerialParam()))))
+    
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                           adjustedRT = FALSE,
+                                                           BPPARAM = SnowParam()))))
+    
+    if(Sys.info()['sysname'] != "Windows"){
+     
+        expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                               adjustedRT = FALSE,
+                                                               BPPARAM = MulticoreParam()))))
+           
+    }
+    
     expect_true(all(paste0(basename(names(MSD$data[1:2])), "__XIC") %in% colnames(getMseekIntensities(tabX1, MSD$data[1:2], adjustedRT = FALSE)$df)))
-})
 
-with_ints <- getMseekIntensities(tabX1, MSD$data, adjustedRT = FALSE)
+    })
 
+with_ints <- getMseekIntensities(tabX1, MSD$data, adjustedRT = FALSE, BPPARAM = SnowParam(2))
 
 
 test_that("transferring Mseek intensities works",{
@@ -105,6 +127,20 @@ test_that("transferring Mseek intensities works",{
     
     
     })
+
+test_that("Mseek analyzeFT FTMS2scans method works",{
+
+    gotMS2 <- FTMS2scans(tab1, MSD$data)
+    
+    expect_false(hasError(previousStep(gotMS2)))
+    
+    expect_equivalent(
+        sum(gotMS2$df$MS2scans != ""),
+        6
+        )
+    
+
+})
 
 test_that("Mseek analyzeFT submethods work",{
     suppressWarnings({

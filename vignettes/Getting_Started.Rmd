@@ -91,7 +91,7 @@ Lets take a look at some key settings here:
 ```
 docker run -d -v /home/user123:/home/shiny/data -p 3840:80 -e PASSWORD=YOURPASSWORD mjhelf/metaboseek
 ```
-**NOTE: The apps hosted inside the container will be accessible from the internet (for anyone connecting to your computer's IP address and the correct port number). By default, they will be protected by HTTP basic authentication, but that is not 100% secure. Once authenticated, the apps allow seeing the data structure of the specified HOSTFOLDER, and it is possible to download arbitrary .csv files and MS data from that folder. We are not liable for any data exposure to unauthorized parties or other [damages](https://github.com/mjhelf/METABOseek/blob/master/LICENSE).**
+**NOTE:** The apps hosted inside the container will be accessible from the internet (for anyone connecting to your computer's IP address and the correct port number). By default, they will be protected by HTTP basic authentication, but that is not 100% secure. Once authenticated, the apps allow seeing the data structure of the specified HOSTFOLDER, and it is possible to download arbitrary .csv files and MS data from that folder. We are not liable for any data exposure to unauthorized parties or other [damages](https://github.com/mjhelf/METABOseek/blob/master/LICENSE).
 
 All contents of the `/home/user123` folder will be acessible in Metaboseek.
 * `-p 3838:3838` means that port 3838 from the container will be accessible as port 3840 on the host computer.

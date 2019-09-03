@@ -342,10 +342,16 @@ setMethod("FTBasicAnalysis", "MseekFT",
 #' and \code{rtmax} values instead of \code{rt}
 #' @param rtw retention time window to get the intensity from, +/- in seconds
 #' @param areaMode if TRUE, will calculate peak areas rather than mean intensities
+#' @param BPPARAM Parallel processing settings, see 
+#' \code{\link[BiocParallel]{BiocParallelParam-class}}and 
+#' \code{\link[BiocParallel]{bpparam}}
+#' @inheritParams exIntensities
+#' 
 #' @description \code{getMseekIntensities}: get EIC-based intensities for each
 #'  molecular feature in the MseekFT object for each file in \code{rawdata}.
 #'  if another MseekFT object is supplied as \code{importFrom}, will try to transfer MseekIntensities from there if 
 #'  all settings, features and MS data files are equivalent. See also \code{\link{exIntensities}}
+#' @importFrom BiocParallel SerialParam bpparam bplapply
 #' @rdname analyzeFT
 #' @export
 setMethod("getMseekIntensities", signature(object = "MseekFT",
@@ -353,7 +359,12 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                            importFrom = "missing"),
           function(object, rawdata, adjustedRT = TRUE, ppm = 5,
                    rtrange = TRUE, rtw = 5,
-                   areaMode = FALSE){
+                   areaMode = FALSE,
+                   BPPARAM = SerialParam(),
+                   baselineSubtract = TRUE,
+                   SN = NULL,
+                   columnSuffix = "__XIC"
+                   ){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
               p1 <- proc.time()
@@ -373,7 +384,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                   }
                   #print(names(rta))
                   ###Get Mseek Intensities
-                  intens <- lapply(seq_len(length(rawdata)), function(i){
+                  intens <- bplapply(seq_len(length(rawdata)), function(i){
                       
                       if(!is.null(rta)){
                           indx <- which(names(rta) == basename(names(rawdata))[i])
@@ -417,15 +428,18 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                     mz = object$df$mz,
                                     ppm= ppm,
                                     rtw= rtwin,
-                                    areaMode = areaMode)
-                  })
+                                    areaMode = areaMode,
+                                    baselineSubtract = baselineSubtract,
+                                    SN = SN)
+                  },
+                  BPPARAM = BPPARAM
+                  )
                   
-                  names(intens) <- paste0(basename(names(rawdata)),"__XIC")
+                  names(intens) <- paste0(basename(names(rawdata)), columnSuffix)
                   
                   
-                  object$df <- updateDF(as.data.frame(intens,
-                                                      stringsAsFactors = FALSE),
-                                        object$df) 
+                  object <- updateFeatureTable(object, as.data.frame(intens,
+                                                      stringsAsFactors = FALSE))
                   
                   object$MseekIntensities <- unique(c(object$MseekIntensities,
                                                       names(intens)))
@@ -455,8 +469,11 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                                                             ppm = ppm,
                                                                                             rtrange = rtrange,
                                                                                             rtw = rtw,
-                                                                                            areaMode = areaMode),
-                                                                                longArgs = list(rawdata = summary(rawdata)))
+                                                                                            areaMode = areaMode,
+                                                                                            baselineSubtract = baselineSubtract,
+                                                                                            SN = SN),
+                                                                                longArgs = list(rawdata = summary(rawdata),
+                                                                                                BPPARAM = capture.output(BPPARAM)))
                                               ))
               }
               )
@@ -474,7 +491,11 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                            importFrom = "MseekFTOrNULL"),
           function(object, rawdata, importFrom,
                    adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5,
-                   areaMode = FALSE){
+                   areaMode = FALSE,
+                   BPPARAM = SerialParam(),
+                   baselineSubtract = TRUE,
+                   SN = NULL,
+                   columnSuffix = "__XIC"){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
               
@@ -491,8 +512,14 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                         ppm = ppm,
                                                         rtrange = rtrange,
                                                         rtw = rtw,
-                                                        areaMode = areaMode),
-                                            longArgs = list(rawdata = summary(rawdata)))
+                                                        areaMode = areaMode,
+                                                        baselineSubtract = baselineSubtract,
+                                                        SN = SN,
+                                                        columnSuffix = columnSuffix
+                                            ),
+                                            longArgs = list(rawdata = summary(rawdata),
+                                                            BPPARAM = capture.output(BPPARAM)))
+                  
                   
                   oldParams <- searchFunParam(importFrom, "Metaboseek::getMseekIntensities")
                   
@@ -520,8 +547,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                       
                   }
                   
-                  object$df <- updateDF(importFrom$df[,importFrom$MseekIntensities],
-                                        object$df) 
+                  object <- updateFeatureTable(object, importFrom$df[,importFrom$MseekIntensities]) 
                   
                   object$MseekIntensities <- unique(c(object$MseekIntensities,
                                                       importFrom$MseekIntensities))
@@ -538,13 +564,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                                sessionInfo = NULL,
                                                                processingTime = p1,
                                                                info = paste0("Added Mseek intensities, safely transferred from ", importFrom$tablename),
-                                                               param = FunParam(fun = "Metaboseek::getMseekIntensities",
-                                                                                args = list(adjustedRT = adjustedRT,
-                                                                                            ppm = ppm,
-                                                                                            rtrange = rtrange,
-                                                                                            rtw = rtw,
-                                                                                            areaMode = areaMode),
-                                                                                longArgs = list(rawdata = summary(rawdata)))
+                                                               param = this.FunParam
                                               ))
                   
               },
@@ -552,7 +572,12 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                   message(paste("skipped import:",e,"\ntrying to calculate MseekIntensities from scratch now..."))
                   object <<-  getMseekIntensities(object = object, rawdata = rawdata,
                                                   adjustedRT = adjustedRT, ppm = ppm,
-                                                  rtrange = rtrange, rtw = rtw, areaMode = areaMode)
+                                                  rtrange = rtrange, rtw = rtw,
+                                                  areaMode = areaMode,
+                                                  baselineSubtract = baselineSubtract,
+                                                  SN = SN,
+                                                  columnSuffix = columnSuffix,
+                                                  BPPARAM = BPPARAM)
                   
               },
               warning = function(w){print(w)})
@@ -1087,6 +1112,78 @@ setMethod("FTPCA", c("MseekFT"),
                                                                                 args = list(featureMode = featureMode,
                                                                                             intensityCols = intensityCols),
                                                                                 longArgs = list())
+                                              ))
+              }
+              )
+              return(object)
+          })
+
+#' @aliases FTMS2scans
+#' 
+#' @description \code{FTMS2scans}: find MS2 scans across files and save their file and scan numbers in
+#'  the MseekFT object as a text column.
+#' @param uniqueMatch if TRUE, assign MS2 scans only to the matching feature with the closest rt
+#'  
+#' @rdname analyzeFT
+#' @export
+setMethod("FTMS2scans", c("MseekFT", "listOrNULL"),
+          function(object, rawdata, ppm = 5, rtw = 10, uniqueMatch = FALSE){
+              beforeHash <- digest::digest(object$df,
+                                           algo = "xxhash64")
+              p1 <- proc.time()
+              
+              err <- list()
+              tryCatch({
+                  
+                  if(is.null(rawdata)){
+                      stop("Analysis was not performed because no MS data is loaded.")
+                      
+                  }
+                  
+                  inp <- data.frame(MS2scans = listMS2scans(mz = object$df$mz,
+                                                            rt = object$df$rt,
+                                                            ppm = ppm,
+                                                            rtw = rtw,
+                                                            MSData = rawdata,
+                                                            rtMatch = uniqueMatch),
+                                    stringsAsFactors = F)
+                  
+                  object <- updateFeatureTable(object, inp)
+                  
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$FTPeakShapes <<- paste(e)
+              },
+              finally = {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- digest::digest(object$df,
+                                              algo = "xxhash64")
+                  
+                  if(!length(err)){
+                      msg <- paste("Found MS2 scans for", sum(object$df$MS2scans != ""), "Features")
+                  }else{
+                      msg <- "Failed to find MS2 scans"
+                      }
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputDFhash = beforeHash,
+                                                               outputDFhash = afterHash,
+                                                               fileNames = character(),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = msg,
+                                                               param = FunParam(fun = "Metaboseek::FTMS2scans",
+                                                                                args = list(ppm = ppm,
+                                                                                            rtw = rtw,
+                                                                                            uniqueMatch = uniqueMatch),
+                                                                                longArgs = list(rawdata = summary(rawdata)))
                                               ))
               }
               )

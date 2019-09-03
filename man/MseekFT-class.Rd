@@ -59,7 +59,7 @@
 \S4method{hasAdjustedRtime}{MseekFT}(object)
 
 \S4method{FTFilter}{MseekFT}(object, filters = list(),
-  sortBy = charachter(), decreasing = TRUE)
+  sortBy = character(), decreasing = TRUE)
 }
 \arguments{
 \item{object}{an \code{MseekFT} object.}

@@ -26,6 +26,8 @@
 \alias{FTCluster}
 \alias{FTPCA,MseekFT-method}
 \alias{FTPCA}
+\alias{FTMS2scans,MseekFT,listOrNULL-method}
+\alias{FTMS2scans}
 \title{analyzeFT}
 \usage{
 \S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData,
@@ -42,11 +44,13 @@
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,missing}(object, rawdata,
   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5,
-  areaMode = FALSE)
+  areaMode = FALSE, BPPARAM = SerialParam(), baselineSubtract = TRUE,
+  SN = NULL, columnSuffix = "__XIC")
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,MseekFTOrNULL}(object,
   rawdata, importFrom, adjustedRT = TRUE, ppm = 5, rtrange = TRUE,
-  rtw = 5, areaMode = FALSE)
+  rtw = 5, areaMode = FALSE, BPPARAM = SerialParam(),
+  baselineSubtract = TRUE, SN = NULL, columnSuffix = "__XIC")
 
 \S4method{FTOldPeakShapes}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
   workers = 1)
@@ -67,6 +71,9 @@
 
 \S4method{FTPCA}{MseekFT}(object, intensityCols = NULL,
   featureMode = FALSE)
+
+\S4method{FTMS2scans}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
+  rtw = 10, uniqueMatch = FALSE)
 }
 \arguments{
 \item{object}{an MseekFT or data.frame object.}
@@ -100,6 +107,14 @@ and \code{rtmax} values instead of \code{rt}}
 
 \item{areaMode}{if TRUE, will calculate peak areas rather than mean intensities}
 
+\item{BPPARAM}{Parallel processing settings, see 
+\code{\link[BiocParallel]{BiocParallelParam-class}}and 
+\code{\link[BiocParallel]{bpparam}}}
+
+\item{baselineSubtract}{subtract baseline when calculating intensities}
+
+\item{SN}{signal to noise ratio. If not NULL, all peaks with max/min peak intensity below this will be reported as intensity 0. Requires Baselinesubstraction to be off.}
+
 \item{importFrom}{a \code{MseekFT} object to use as source for Mseek intensities.}
 
 \item{workers}{number of worker processes}
@@ -117,6 +132,8 @@ automatically be set to be at most number of features - 1.}
 
 \item{featureMode}{if TRUE, will cluster molecular features by intensities 
 across samples. If FALSE, will cluster samples by intensities across features}
+
+\item{uniqueMatch}{if TRUE, assign MS2 scans only to the matching feature with the closest rt}
 }
 \value{
 an object of the same class as \code{object}, with analyses performed 
@@ -164,4 +181,7 @@ two groups in \code{grouping} with multiple members. See also \code{\link{multit
  See also \code{\link{MosCluster}()}
 
 \code{FTPCA}: Calculate Principal Component Analysis to cluster either features or samples
+
+\code{FTMS2scans}: find MS2 scans across files and save their file and scan numbers in
+ the MseekFT object as a text column.
 }

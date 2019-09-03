@@ -1,0 +1,8 @@
+"","Value","Description"
+"TITLE","group.density parameters","Set parameters for peak grouping using the xcms group.density method"
+"minfrac","0.2","minimum fraction of samples necessary in at least one of the sample groups for it to be a valid group"
+"bw","2","bandwidth (standard deviation or half width at half maximum) of gaussian smoothing kernel to apply to the peak density chromatogram"
+"mzwid","0.002","width of overlapping m/z slices to use for reating peak density chromatograms and grouping peaks across samples"
+"max","500","maximum number of groups to identify in a single m/z slice"
+"minsamp","1","minimum number of samples necessary in at least one of the sample groups for it to be a valid group"
+"usegroups","FALSE","IMPORTANT! Do you want to use the sample grouping information provided in the File Grouping Table and conssider members of the same group as replicates? Otherwise, all files will be assigned a separate group (higher sensitivity, more noise, longer runtime)"

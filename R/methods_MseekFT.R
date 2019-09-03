@@ -166,7 +166,7 @@ setMethod("hasAdjustedRtime", "MseekFT",
 setMethod("FTFilter", c("data.frame"),
           function(object,
                    filters = list(),
-                   sortBy = charachter(),
+                   sortBy = character(),
                    decreasing = TRUE){
 
                   
@@ -233,7 +233,7 @@ setMethod("FTFilter", c("data.frame"),
 setMethod("FTFilter", c("MseekFT"),
           function(object,
                    filters = list(),
-                   sortBy = charachter(),
+                   sortBy = character(),
                    decreasing = TRUE){
               beforeHash <- digest::digest(object$df,
                                            algo = "xxhash64")
@@ -249,6 +249,7 @@ setMethod("FTFilter", c("MseekFT"),
                       return(object)
                   }
                   
+                  beforeRows <- nrow(object$df)
                   
                   object$df <- FTFilter(object$df,
                                         filters = filters,
@@ -267,7 +268,12 @@ setMethod("FTFilter", c("MseekFT"),
                   afterHash <- digest::digest(object$df,
                                               algo = "xxhash64")
                   
-                  
+                  if(!length(err)){
+                      msg <- paste("Filtered Feature Table; before:", beforeRows,
+                                   "Features, after:", nrow(object$df), "Features" )
+                  }else{
+                      msg <- "Failed to filter MseekFT object"
+                  }
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
@@ -277,7 +283,7 @@ setMethod("FTFilter", c("MseekFT"),
                                                                error = err,
                                                                sessionInfo = NULL,
                                                                processingTime = p1,
-                                                               info = "Filtered Feature Table.",
+                                                               info = msg,
                                                                param = FunParam(fun = "Metaboseek::FTFilter",
                                                                                 args = list(filters = filters,
                                                                                             sortBy = sortBy,

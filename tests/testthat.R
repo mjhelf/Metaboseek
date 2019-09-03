@@ -2,6 +2,7 @@ library(testthat)
 library(Metaboseek)
 library(shinytest)
 library(xcms)
+library(BiocParallel)
 # 
   if (!dependenciesInstalled()) {installDependencies()}
   message("Using phantom.js from ", shinytest:::find_phantom(), "\n")
