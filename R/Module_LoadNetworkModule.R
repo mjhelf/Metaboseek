@@ -40,13 +40,26 @@ LoadNetworkModule <- function(input,output, session, values,
                               edges = NULL),
                 graph = read_graph(input$networkFileLoad$datapath, "graphml"))
     
+    if(is.null(V(res$graph)$fixed__id)){
+     V(res$graph)$fixed__id <- seq(vcount(res$graph))
+    }
+    
+    #make a fixed layout and add it to the graph in a way the NetworkModule will understand
+    if(is.null(V(res$graph)$x__coord) || is.null(V(res$graph)$y__coord)){
+        layo <- layout_components_qgraph(res$graph, qgraph::qgraph.layout.fruchtermanreingold)
+        
+        V(res$graph)$x__coord <- layo$layout[,1]
+        V(res$graph)$y__coord <- layo$layout[,2]
+        
+    }
+    
     res$tables$nodes <- type.convert(as_data_frame(res$graph, "vertices"), as.is = T)
     
     res$tables$edges <- type.convert(as_data_frame(res$graph, "edges"), as.is = T)
     # 
     # g1 <- graph_from_data_frame(d=res$tables$edges, vertices=res$tables$nodes, directed=F) 
     # V(g1)$label <- V(g1)$parent.mass
-    # V(g1)$fixed__id <- seq(vcount(g1))
+    
     # 
     # # Removing loops from the graph:
     # g1 <- simplify(g1, remove.multiple = F, remove.loops = T) 
@@ -88,6 +101,15 @@ LoadNetworkModule <- function(input,output, session, values,
       #important for overview mode!
       V(g1)$subcl <-  clusters(g1)$membership
       
+      #make a fixed layout and add it to the graph in a way the NetworkModule will understand
+      if(is.null(V(g1)$x__coord) || is.null(V(g1)$y__coord)){
+          layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+          
+          V(g1)$x__coord <- layo$layout[,1]
+          V(g1)$y__coord <- layo$layout[,2]
+          
+      }
+
       res$graph <- g1
       
       internalValues[[gsub("\\.[^.]*$","",input$NetName)]] <- res
@@ -325,7 +347,9 @@ observeEvent(input$makeNetwork2,{
     
     
     
-    g1 <- graph_from_data_frame(d=internalValues[[gsub("\\.[^.]*$","",input$NetName2)]]$tables$edges, vertices=internalValues[[gsub("\\.[^.]*$","",input$NetName2)]]$tables$nodes, directed=F) 
+    g1 <- graph_from_data_frame(d=internalValues[[gsub("\\.[^.]*$","",input$NetName2)]]$tables$edges,
+                                vertices=internalValues[[gsub("\\.[^.]*$","",input$NetName2)]]$tables$nodes,
+                                directed=F) 
     
     
     #V(g1)$label <- V(g1)$parent.mass
@@ -338,6 +362,15 @@ observeEvent(input$makeNetwork2,{
     
     #important for overview mode!
     V(g1)$subcl <-  clusters(g1)$membership
+    
+    #make a fixed layout and add it to the graph in a way the NetworkModule will understand
+    if(is.null(V(g1)$x__coord) || is.null(V(g1)$y__coord)){
+    res <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+    
+    V(g1)$x__coord <- res$layout[,1]
+    V(g1)$y__coord <- res$layout[,2]
+    }
+    
     internalValues[[gsub("\\.[^.]*$","",input$NetName2)]]$graph <- g1
     
     internalValues$numNetworks <- internalValues$numNetworks + 1
