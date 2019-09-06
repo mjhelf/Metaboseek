@@ -347,7 +347,7 @@ tableGrouping <- function(df=NULL, anagrouptable){
 tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
                        moreArgs = list()){
   
-  if(length(format)==0 || is.na(format)){
+  if(!length(format) || is.na(format[1])){
     warning("File format selected was empty. Could not export data to file")
    return(invisible(NULL)) 
   }

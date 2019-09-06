@@ -148,7 +148,9 @@ setMethod("saveMseekFT",
                                                                                                       writeRDS = writeRDS))))
               #make sure file extension is .mskFT
               if(writeCSV){
-                  tableWriter(object$df, fname = paste0(gsub('\\.csv$','',file),".csv"))
+                  tableWriter(object$df,
+                              fname = paste0(gsub('\\.csv$','',file),".csv"),
+                              format = "csv")
               }
               
               
