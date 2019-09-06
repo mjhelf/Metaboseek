@@ -98,7 +98,7 @@ test_that("transferring Mseek intensities works",{
     
     #using getMseekIntensities with signature that includes a template for Mseek intensities
     expect_silent({
-    transferred <- getMseekIntensities(tabX1, MSD$data, with_ints, adjustedRT = FALSE)
+    transferred <- getMseekIntensities(tabX1, MSD$data, with_ints, adjustedRT = FALSE, BPPARAM = SnowParam(2))
     })
     expect_true(!hasError(previousStep(transferred)))
 
@@ -269,7 +269,7 @@ test_that("Mseek analyzeFT submethods work",{
     
 })
 
-test_that("analyzeFT S4 method works",{
+test_that("analyzeFT method works",{
     
     df1 <- buildMseekFT(data.frame(mz = c(101:105),
                       rt = c(201:205),
@@ -317,46 +317,38 @@ test_that("analyzeFT S4 method works",{
    
 })
 
-# context("xcms integration and object histories")
-# 
-# test_that("xcmsRunner functions work",{
-#     
-#     
-#     analyzeFT(ttt)
-#     
-#     if(file.exists("./AA_Local")){
-#         setwd("./AA_Local/")
-#     }
-#     
-#     progress <- savetable(xset2,
-#                           status = NULL,
-#                           fill = xcms::FillChromPeaksParam(expandMz = 0.005,
-#                                                            expandRt = 5, ppm = 3),
-#                           nonfill = T,
-#                           filename = "tableout_xset",
-#                           bparams = BiocParallel::bpparam(),
-#                           intensities = list(ppm = 5,
-#                                              rtw = 5,
-#                                              rtrange = T),
-#                           rawdata = NULL,
-#                           saveR = T,
-#                           postProc = NULL)
-#     
-#     progressAN <- savetable(an,
-#                             status = NULL,
-#                             fill = xcms::FillChromPeaksParam(expandMz = 0.005,
-#                                                              expandRt = 5, ppm = 3),
-#                             nonfill = T,
-#                             filename = "tableoutxxAN",
-#                             bparams = BiocParallel::bpparam(),
-#                             intensities = list(ppm = 5,
-#                                                rtw = 5,
-#                                                rtrange = T),
-#                             rawdata = NULL,
-#                             saveR = T,
-#                             postProc = NULL)
-#     
-#     getwd()
-#     
-#     processHistory(an)
-# })
+test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
+    tab1_ed <- getSpecList(tab1, MSD$data)
+    expect_true(hasError(previousStep(tab1_ed)))
+    
+    tab1_ed <- FTedges(tab1, MSD$data)
+    expect_true(hasError(previousStep(tab1_ed)))
+    
+    tab1_ed <- FTMS2scans(tab1, MSD$data)
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_eddf <- getSpecList(tab1_ed$df, MSD$data)
+    
+    
+    tab1_ed <- getSpecList(tab1_ed, MSD$data)
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_ed <- FTedges(tab1_ed, useParentMZs = TRUE, minpeaks = 6, mzdiff = 0.0005)
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_gr <- buildMseekGraph(tab1_ed)
+    expect_false(hasError(previousStep(tab1_gr)))
+    expect_true(igraph::is_igraph(tab1_gr$graph))
+    
+    ##map it on itself
+    
+    
+    
+    tab1_ed2 <- matchReference(tab1_ed, tab1_ed)
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    tab1_gr <- matchReference(tab1_gr, tab1_ed)
+    expect_false(hasError(previousStep(tab1_gr)))
+    
+    
+})

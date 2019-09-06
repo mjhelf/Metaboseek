@@ -2,11 +2,14 @@
 setGeneric("analyzeFT", function(object, MSData, param) standardGeneric("analyzeFT"))
 setGeneric("addProcessHistory", function(object, ph, ...) standardGeneric("addProcessHistory"))
 setGeneric("buildMseekFT", function(object, ...) standardGeneric("buildMseekFT"))
+setGeneric("buildMseekGraph", function(object, ...) standardGeneric("buildMseekGraph"))
+
 setGeneric("error", function(object) standardGeneric("error"))
 setGeneric("FTAnova", function(object, ...) standardGeneric("FTAnova"))
 
 setGeneric("FTBasicAnalysis", function(object, ...) standardGeneric("FTBasicAnalysis"))
 setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
+setGeneric("FTedges", function(object, ...) standardGeneric("FTedges"))
 
 #setGeneric("FTHash", function(object, ...) standardGeneric("FTHash"))
 setGeneric("FTFilter", function(object, ...) standardGeneric("FTFilter"))
@@ -22,6 +25,8 @@ setGeneric("FTPeakShapes", function(object, rawdata, ...) standardGeneric("FTPea
 setGeneric("FTT.test", function(object, ...) standardGeneric("FTT.test"))
 
 setGeneric("getMseekIntensities", function(object, rawdata, importFrom, ...) standardGeneric("getMseekIntensities"))
+setGeneric("getSpecList", function(object, rawdata, ...) standardGeneric("getSpecList"))
+
 setGeneric("groupingTable", function(object) standardGeneric("groupingTable"))
 setGeneric("groupingTable<-", function(object, value) standardGeneric("groupingTable<-"))
 setGeneric("hasAdjustedRtime", function(object) standardGeneric("hasAdjustedRtime"))
@@ -31,6 +36,9 @@ setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
+setGeneric("matchReference", function(object, query, ...) standardGeneric("matchReference"))
+setGeneric("MseekHash", function(object) standardGeneric("MseekHash"))
+
 setGeneric("previousStep", function(object, ...) standardGeneric("previousStep"))
 setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
 setGeneric("rename", function(object, ...) standardGeneric("rename"))
@@ -49,12 +57,14 @@ setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistor
 ## Registered S3 classes
 setOldClass("MseekFT")
 setOldClass("sessionInfo")
+setOldClass("MseekGraph")
 
 ## Class unions
 setClassUnion("listOrNULL", c("list", "NULL"))
 setClassUnion("sessionInfoOrNULL", c("sessionInfo", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))
 setClassUnion("MseekFTOrNULL", c("MseekFT", "NULL"))
+setClassUnion("MseekFamily", c("MseekFT", "MseekGraph"))
 
 #' @noRd
 #' @author Johannes Rainer
@@ -350,6 +360,7 @@ setMethod("show", "FunParam", function(object) {
         }
     }
 })
+
 
 
 

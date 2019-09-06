@@ -1,4 +1,4 @@
-#' @include methods_MseekFT.R
+#' @include methods_MseekFamily.R
 
 #' analyzeTable
 #'

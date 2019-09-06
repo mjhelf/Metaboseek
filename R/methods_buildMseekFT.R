@@ -97,6 +97,8 @@ setMethod("buildMseekFT",
           })
 
 
+
+
 #' @aliases loadMseekFT
 #' 
 #' @description \code{loadMseekFT}: load a \code{MseekFT} object from an .mskFT file
@@ -157,4 +159,97 @@ setMethod("saveMseekFT",
               
               
               invisible(object)
+          })
+
+
+#' @rdname MseekGraphs
+#' @name MseekGraphs
+#' @aliases buildMseekGraph
+#' @export
+setMethod("buildMseekGraph", c("MseekFT"),
+          function(object, cosineThreshold = 0.6){
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              res <- object[names(object) != "df"]
+              #only difference is how the dataframe is saved: now in the $graph slot as igraph...
+              
+              #list(graph = NULL,
+              #           .processHistory = processHistory(object)
+              #)
+              class(res) <- "MseekGraph"
+              
+              tryCatch({
+                  
+                  
+                  if(is.null(object$edges)){
+                      stop("No edgelist found. Run FTedges() first")
+                  }
+                  
+                  tempnodes <- object$df[ object$df$MS2scans != "", colnames(object$df)!= "id" ]
+                  
+                  tempnodes <- data.frame(id = seq(nrow(tempnodes)), tempnodes)
+                  
+                  tempedges <- object$edges[object$edges$cosine >= cosineThreshold,]
+                  
+                  tempedges$from <- sapply(tempedges$from, match, tempnodes$fixed__id)
+                  tempedges$to <- sapply(tempedges$to, match, tempnodes$fixed__id)
+                  
+                  
+                  tempedges <- na.omit(tempedges)
+                  
+                  
+                  
+                  g1 <- graph_from_data_frame(d=tempedges,
+                                              vertices=tempnodes,
+                                              directed=F) 
+                  
+                  V(g1)$id <- tempnodes$id
+                  
+                  # Removing loops from the graph:
+                  g1 <- simplify(g1, remove.multiple = F, remove.loops = T) 
+                  
+                  #important for overview mode!
+                  V(g1)$subcl <-  clusters(g1)$membership
+                  
+                  #make a fixed layout and add it to the graph in a way the NetworkModule will understand
+                  if(is.null(V(g1)$x__coord) || is.null(V(g1)$y__coord)){
+                      layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+                      
+                      V(g1)$x__coord <- layo$layout[,1]
+                      V(g1)$y__coord <- layo$layout[,2]
+                  }
+                  
+                  res$graph <- g1
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$buildMseekGraph <<- paste(e)
+                  
+              },
+              finally = {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(res)
+                  
+                  res <- addProcessHistory(res,
+                                           FTProcessHistory(changes = afterHash != beforeHash,
+                                                            inputDFhash = beforeHash,
+                                                            outputDFhash = afterHash,
+                                                            error = err,
+                                                            sessionInfo = NULL,
+                                                            processingTime = p1,
+                                                            info = paste0("Generated MseekGraph from MseekFT object."),
+                                                            param = FunParam(fun = "Metaboseek::buildMseekGraph",
+                                                                             args = list(cosineThreshold = cosineThreshold),
+                                                                             longArgs = list())
+                                           ))
+              })
+              
+              return(res)
+              
           })

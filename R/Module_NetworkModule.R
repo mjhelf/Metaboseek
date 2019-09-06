@@ -706,9 +706,25 @@ NetworkModule <- function(input,output, session,
             
         }})
     
-    
-    #Edge or Node table
-    table1 <- callModule(TableModule,'nettab', tag = ns('nettab'), set = reactive({list(df =  internalValues$tables[[internalValues$activeTab]],
+    showtable <- reactive({
+        if(length(internalValues$activelayout)
+           && length(internalValues$activelayout$graph)){
+            
+            if(internalValues$activeTab == "nodes"){
+            type.convert(as_data_frame(internalValues$activelayout$graph, "vertices"), as.is = T)
+            
+        }else if(internalValues$activeTab == "edges"){
+            type.convert(as_data_frame(internalValues$activelayout$graph, "edges"), as.is = T)
+
+            }else{
+                NULL}
+        }else{
+            NULL
+            }
+        
+        })
+    #Edge or Node table, now calculated on demand and for the currently shown subgraph
+    table1 <- callModule(TableModule,'nettab', tag = ns('nettab'), set = reactive({list(df =  showtable(),
                                                                                         update = NULL,
                                                                                         layout = list(
                                                                                             perpage = 100,

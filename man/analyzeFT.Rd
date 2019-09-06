@@ -28,6 +28,10 @@
 \alias{FTPCA}
 \alias{FTMS2scans,MseekFT,listOrNULL-method}
 \alias{FTMS2scans}
+\alias{getSpecList,MseekFT,listOrNULL-method}
+\alias{FTedges,MseekFT-method}
+\alias{matchReference,MseekFT,MseekFT-method}
+\alias{matchReference,MseekGraph,MseekFT-method}
 \title{analyzeFT}
 \usage{
 \S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData,
@@ -74,6 +78,22 @@
 
 \S4method{FTMS2scans}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
   rtw = 10, uniqueMatch = FALSE)
+
+\S4method{getSpecList}{MseekFT,listOrNULL}(object, rawdata, merge = TRUE,
+  noiselevel = 0, ppm = 5, mzdiff = 0.0005, mzThreshold = NULL)
+
+\S4method{FTedges}{MseekFT}(object, useParentMZs = TRUE, minpeaks = 6,
+  mzdiff = 0.0005)
+
+\S4method{matchReference}{MseekFT,MseekFT}(object, query,
+  parent_mztol = 0.001, parent_ppm = 5, rttol = 5,
+  getCosine = TRUE, cosineThreshold = NULL, singleHits = TRUE,
+  queryPrefix = "query__", returnMapping = FALSE, ...)
+
+\S4method{matchReference}{MseekGraph,MseekFT}(object, query,
+  parent_mztol = 0.001, parent_ppm = 5, rttol = 5,
+  getCosine = TRUE, cosineThreshold = NULL, singleHits = TRUE,
+  queryPrefix = "query__", returnMapping = FALSE, ...)
 }
 \arguments{
 \item{object}{an MseekFT or data.frame object.}
@@ -134,6 +154,14 @@ automatically be set to be at most number of features - 1.}
 across samples. If FALSE, will cluster samples by intensities across features}
 
 \item{uniqueMatch}{if TRUE, assign MS2 scans only to the matching feature with the closest rt}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
 }
 \value{
 an object of the same class as \code{object}, with analyses performed 
