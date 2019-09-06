@@ -54,6 +54,17 @@ NetworkModule <- function(input,output, session,
                                      logscale = T
     )
     
+    callModule(MseekHistoryWidget, "nethistory", FT = reactive({
+        if(length(values$Networks)
+           && length(internalValues$active)
+           && internalValues$active %in% names(values$Networks)){
+        values$Networks[[internalValues$active]]
+        }else{NULL}
+        
+        }),
+        buttonLabel = ""
+        )
+    
     
     output$activenetwork <- renderUI({
         if(!static$noSelection){
@@ -69,6 +80,7 @@ NetworkModule <- function(input,output, session,
             internalValues$active <- input$activeNetwork
         }
     })
+    
     
     
     observeEvent(c(internalValues$active),{
@@ -202,7 +214,10 @@ NetworkModule <- function(input,output, session,
                            div(style="display:inline-block", title = "Activate interactive highlighting on the network plot when hovering or selecting items in the feature table. Poor performance for large networks.",
                                checkboxInput(ns('hoveractive'), "Highlights", value = internalValues$hoverActive)),
                            div(style="display:inline-block",title = "Use log10 scale for Node Color scales.",
-                               checkboxInput(ns('logscale'), "log", value = internalValues$logscale))),
+                               checkboxInput(ns('logscale'), "log", value = internalValues$logscale)),
+                           div(style="display:inline-block",title = "Show processing history of this network",
+                           MseekHistoryWidgetUI(ns("nethistory")))
+                           ),
                        
                        fluidRow(sliderInput(ns("seledges"), "Filter edges",
                                             min = 0, max = 1,

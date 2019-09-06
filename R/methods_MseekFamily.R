@@ -46,7 +46,6 @@ setMethod("processHistory", "MseekFamily", function(object) {
     }
 })
 
-#' @title MseekFT-class
 #' @aliases previousStep
 #'
 #' @description \code{previousStep}: extract the most recent \code{ProcessHistory} object from an object,
@@ -59,6 +58,26 @@ setMethod("previousStep", "MseekFamily",
               object$.processHistory[[length(object$.processHistory)]]
           })
 
+#' @param x object to test for class
+#' @rdname MseekFamily
+#' @export
+is.MseekFT <- function(x){
+    (length(x) && "MseekFT" %in% class(x))
+}
+
+#' @rdname MseekFamily
+#' @export
+is.MseekGraph <- function(x){
+    (length(x) && "MseekGraph" %in% class(x))
+}
+
+#' @rdname MseekFamily
+#' @export
+is.MseekFamily <- function(x){
+    (length(x)
+     && ("MseekFT" %in% class(x)
+     ||"MseekGraph" %in% class(x)))
+}
 
 
 #' Get a history entries for a function
@@ -154,13 +173,13 @@ setMethod("MseekHash", c("MseekFamily"),
 
 #' @aliases rename
 #' 
-#' @description save a \code{MseekFT} object to a file, registering the save event in the processHistory 
+#' @description \code{rename}: rename a \code{MseekFamily} object
 #'
 #' @param object an \code{MseekFT} object.
 #' @param name file path to write to
 #' 
 #'   
-#' @rdname MseekFT-class
+#' @rdname MseekFamily
 setMethod("rename", 
           "MseekFamily",
           function(object, name){

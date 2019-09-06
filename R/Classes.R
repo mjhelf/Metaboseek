@@ -558,9 +558,27 @@ FunParam <- function(fun = character(), args = list(), longArgs = list()){
 #' @description Construct a \code{FTAnalysisParam} object with parameters for 
 #' use with \code{\link{analyzeFT}()}
 #' 
-#' @inheritParams analyzeTable
+#' @param intensities the intensity column names, before normalization 
+#' (without __norm suffix), will be automatically renamed if useNormalized.
+#' @param groups named list of non-normalized intensity columns listed by group 
+#' (as supplied by $anagroupnames of MseekFT objects), will be automatically 
+#' renamed if useNormalized.
+#' @param analyze character vector to select the analyses to be run: 
+#' "Basic analysis", "clara_cluster", "t-test", "Peak shapes"
+#' @param normalize normalze intensity columns
+#' @param useNormalized use normalized values for analyses; will trigger 
+#' normalize if there is no normalized data available for all selected 
+#' intensity columns
+#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
 #' @param .files character() with file paths to the MS data files to be used
 #'  in an analysis
+#' @param ppm ppm range for peak shape analysis
+#' @param controlGroup control group for foldChange (part of Basic analysis) 
+#' analysis (optional) 
+#' @param numClusters number of clusters for clara_clusters analysis
+#' @param mzMatchParam list of parameters passed to mass
+#' @param workers number of workers to use for multithreaded analyses
+#' 
 #' @return a \code{\link{FTAnalysisParam-class}} object
 #'
 #' @rdname FTAnalysisParam

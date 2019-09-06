@@ -1,22 +1,24 @@
-#' FTHistoryWidget
+#' MseekHistoryWidget
 #' 
 #' One-button module to display and export the process history of MseekFT objects.
 #' 
 #' @inherit MseekWidgets
 #' @param FT an \code{\link{MseekFT}} object inside a \code{reactive()}
+#' @param buttonLabel text on the button that opens the history modal dialog
 #' 
-#' @describeIn FTHistoryWidget server logic
+#' @describeIn MseekHistoryWidget server logic
 #' 
 #' @export 
-FTHistoryWidget <- function(input,output, session,
-                           FT = reactive({NULL})){
+MseekHistoryWidget <- function(input,output, session,
+                           FT = reactive({NULL}),
+                           buttonLabel = "History"){
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(done = FALSE)
   
 
   output$historyPrint <- renderPrint({
-      if(!is.null(FT())){
+      if(is.MseekFamily(FT())){
           
           if(is.null(input$selectOutput)
              || input$selectOutput == "All entries"){
@@ -57,7 +59,7 @@ FTHistoryWidget <- function(input,output, session,
                          )}),
                        static = list(tooltip = "Show process History for this Feature Table",
                                      title = "Process History", 
-                                     label = "History",
+                                     label = buttonLabel,
                                      icon = icon("history", lib = "font-awesome")))
   
                        output$downloadHistory <- downloadHandler(filename= function(){
@@ -102,7 +104,7 @@ FTHistoryWidget <- function(input,output, session,
 
 #' @describeIn GetIntensitiesModule server logic
 #' @export
-FTHistoryWidgetUI <- function(id)
+MseekHistoryWidgetUI <- function(id)
 {
   ns <- NS(id)
   

@@ -8,6 +8,9 @@
 \alias{processHistory}
 \alias{previousStep,MseekFamily-method}
 \alias{previousStep}
+\alias{is.MseekFT}
+\alias{is.MseekGraph}
+\alias{is.MseekFamily}
 \alias{searchFunParam,MseekFamily-method}
 \alias{groupingTable,MseekFamily-method}
 \alias{groupingTable<-,MseekFamily,data.frame-method}
@@ -16,6 +19,8 @@
 \alias{hasAdjustedRtime,MseekFamily-method}
 \alias{hasAdjustedRtime}
 \alias{MseekHash,MseekFamily-method}
+\alias{rename,MseekFamily-method}
+\alias{rename}
 \alias{FTFilter,MseekFT-method}
 \alias{FTFilter}
 \title{MseekFamily}
@@ -25,6 +30,12 @@
 \S4method{processHistory}{MseekFamily}(object)
 
 \S4method{previousStep}{MseekFamily}(object)
+
+is.MseekFT(x)
+
+is.MseekGraph(x)
+
+is.MseekFamily(x)
 
 \S4method{searchFunParam}{MseekFamily}(object, fun = "", index = FALSE)
 
@@ -40,11 +51,17 @@
 
 \S4method{MseekHash}{MseekFamily}(object)
 
+\S4method{rename}{MseekFamily}(object, name)
+
 \S4method{FTFilter}{MseekFT}(object, filters = list(),
   sortBy = character(), decreasing = TRUE)
 }
 \arguments{
+\item{object}{an \code{MseekFT} object.}
+
 \item{ph}{a \code{ProcessHistory} object}
+
+\item{x}{object to test for class}
 
 \item{fun}{character(1), function name to look for}
 
@@ -52,6 +69,8 @@
 
 \item{value}{for \code{groupingTable<-}: a data.frame with columns 
 \code{Column} and \code{Group}. For \code{intensityCols<-}: a character vector of column names}
+
+\item{name}{file path to write to}
 
 \item{filters}{a list of filters}
 
@@ -90,6 +109,8 @@ object@param@fun slots from all \code{ProcessHistory} objects).
 
 \code{hasAdjustedRtime}: check if the object contains retention time
 correction information.
+
+\code{rename}: rename a \code{MseekFamily} object
 
 \code{FTFilter}: apply a list of filters to a MseekFT object
 }

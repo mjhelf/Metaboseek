@@ -162,9 +162,18 @@ setMethod("saveMseekFT",
           })
 
 
+#' @title MseekGraphs
+#'
 #' @rdname MseekGraphs
 #' @name MseekGraphs
 #' @aliases buildMseekGraph
+#' 
+#' @description \code{MseekGraph} objects are \code{\link[igraph]{igraph}} objects
+#' which have layout information and slots that are the same as MseekFT objects,
+#' except that the bulk of data is kept in an \code{igraph} object instead of 
+#' a \code{data.frame}. These objects are read and displayed by the 
+#' \code{\link{NetworkModule}}.
+#' 
 #' @export
 setMethod("buildMseekGraph", c("MseekFT"),
           function(object, cosineThreshold = 0.6){
