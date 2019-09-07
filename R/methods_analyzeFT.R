@@ -1334,6 +1334,12 @@ setMethod("matchReference", c("data.frame","data.frame"),
                    returnMapping = FALSE,
                    ...) {
               
+              if((!length(query$specList) 
+                 || !length(object$specList))
+                 && getCosine){
+                  stop("Need specList to getCosine. Add specLists to both objects or run with getCosine = FALSE")
+              }
+              
               #prepare to take up information about which ref matches each query item
               hitlist <- lapply(!logical(length(query$specList)), rep, length(object$specList))
               
@@ -1386,7 +1392,7 @@ setMethod("matchReference", c("data.frame","data.frame"),
               if(length(query$specList) 
                  && length(object$specList)
                  && getCosine && length(cosineThreshold)){
-                  mapping <- mapping[mapping[,'cosine'] > cosineThreshold,,drop = FALSE]
+                  mapping <- mapping[which(mapping[,'cosine'] > cosineThreshold),,drop = FALSE] #which gets rid of NAs
               }
               
               if(singleHits){
@@ -1428,13 +1434,10 @@ setMethod("matchReference", c("data.frame","data.frame"),
               
               
               colnames(query) <- paste0(queryPrefix, colnames(query))
-              if(length(query$specList) 
-                 && length(object$specList)
-                 && getCosine){
+              
                   matched <- cbind(object[mapping[,2],], query[mapping[,1],])
-                  matched[[paste0(queryPrefix,matchscore)]] <- mapping[,3]
-              }else{
-                  matched <- cbind(object[mapping[,2],], query[mapping[,1],])
+                  if(ncol(mapping) >2){
+                  matched[[paste0(queryPrefix,"matchscore")]] <- mapping[,3]
               }
               
               return(matched)

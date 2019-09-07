@@ -327,7 +327,8 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     tab1_ed <- FTMS2scans(tab1, MSD$data)
     expect_false(hasError(previousStep(tab1_ed)))
     
-    tab1_eddf <- getSpecList(tab1_ed$df, MSD$data)
+    expect_type(getSpecList(tab1_ed$df, MSD$data),
+                "list")
     
     
     tab1_ed <- getSpecList(tab1_ed, MSD$data)
@@ -351,6 +352,41 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     expect_equal(igraph::vertex_attr_names(tab1_gr$graph)[!igraph::vertex_attr_names(tab1_gr$graph) %in% c("id", "subcl", "x__coord", "y__coord", "name")],
                  colnames(tab1_ed2$df)[!colnames(tab1_ed2$df) %in% c("id", "subcl", "x__coord", "y__coord", "name")])
     
+    
+    ##map with a table that has missing MS2 values
+    tab1_minus<- FTMS2scans(tab1, MSD$data[-9])
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_minus2 <- getSpecList(tab1_minus, MSD$data)
+    expect_equal(MseekHash(tab1_minus2),
+                 MseekHash(getSpecList(tab1_minus, MSD$data[-9])))
+    expect_false(hasError(previousStep(tab1_minus2)))
+    
+    ##map it on without MSdata
+    tab1_ed2 <- matchReference(tab1_ed, tab1_minus)
+    expect_true(hasError(previousStep(tab1_ed2)))
+    
+    tab1_ed2 <- matchReference(tab1_ed, tab1_minus2)
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    #map on graph
+    tab1_gr <- matchReference(tab1_gr, tab1_minus)
+    expect_true(hasError(previousStep(tab1_gr)))
+    
+    tab1_gr <- matchReference(tab1_gr, tab1_minus2)
+    expect_false(hasError(previousStep(tab1_gr)))
+    
+    ##map it on itself
+    expect_silent({
+    tab1_ed2 <- matchReference(tab1_ed, tab1_minus2, cosineThreshold = 0.8)})
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    #map on graph
+    expect_silent({
+    tab1_gr2 <- matchReference(tab1_gr, tab1_minus2, cosineThreshold = 0.8)})
+    expect_false(hasError(previousStep(tab1_gr)))
+    
+    
     ##saving and loading:
     saveMseekFT(tab1_ed, "testwrite_MseekFT", writeCSV = TRUE, writeRDS = TRUE)
     expect_true(file.exists(paste0("testwrite_MseekFT.mskFT")))
@@ -361,8 +397,12 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     saveMseekGraph(tab1_gr, "testwrite_MseekGraph", writeGraphML = TRUE, writeRDS = TRUE)
     expect_true(file.exists(paste0("testwrite_MseekGraph.mskg")))
     expect_true(file.exists(paste0("testwrite_MseekGraph.graphML")))
-    expect_equal(MseekHash(tab1_gr),
-                 MseekHash(loadMseekGraph("testwrite_MseekGraph.mskg")))
     
+    # expect_equal(MseekHash(tab1_gr),
+    #              MseekHash(loadMseekGraph("testwrite_MseekGraph.mskg")))
+    expect_equal(
+    type.convert(as_data_frame(tab1_gr$graph, "vertices"), as.is = T),
+    type.convert(as_data_frame(loadMseekGraph("testwrite_MseekGraph.mskg")$graph, "vertices"), as.is = T)
+    )
     
 })

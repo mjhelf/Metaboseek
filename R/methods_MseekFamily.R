@@ -117,6 +117,8 @@ setMethod("groupingTable", "MseekFamily",
 #' @export         
 setReplaceMethod("groupingTable", c("MseekFamily", "data.frame"),
                  function(object, value){
+                     beforeHash <- MseekHash(object)
+                     
                      object <- updateFTgrouping(object,value)
                      
                      object <- addProcessHistory(object, FTProcessHistory(info = "Changed intensity column grouping",
