@@ -341,14 +341,28 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     expect_true(igraph::is_igraph(tab1_gr$graph))
     
     ##map it on itself
-    
-    
-    
     tab1_ed2 <- matchReference(tab1_ed, tab1_ed)
     expect_false(hasError(previousStep(tab1_ed2)))
     
+    #map on graph
     tab1_gr <- matchReference(tab1_gr, tab1_ed)
     expect_false(hasError(previousStep(tab1_gr)))
+    
+    expect_equal(igraph::vertex_attr_names(tab1_gr$graph)[!igraph::vertex_attr_names(tab1_gr$graph) %in% c("id", "subcl", "x__coord", "y__coord", "name")],
+                 colnames(tab1_ed2$df)[!colnames(tab1_ed2$df) %in% c("id", "subcl", "x__coord", "y__coord", "name")])
+    
+    ##saving and loading:
+    saveMseekFT(tab1_ed, "testwrite_MseekFT", writeCSV = TRUE, writeRDS = TRUE)
+    expect_true(file.exists(paste0("testwrite_MseekFT.mskFT")))
+    expect_true(file.exists(paste0("testwrite_MseekFT.csv")))
+    expect_equal(MseekHash(tab1_ed),
+                 MseekHash(loadMseekFT("testwrite_MseekFT.mskFT")))
+    
+    saveMseekGraph(tab1_gr, "testwrite_MseekGraph", writeGraphML = TRUE, writeRDS = TRUE)
+    expect_true(file.exists(paste0("testwrite_MseekGraph.mskg")))
+    expect_true(file.exists(paste0("testwrite_MseekGraph.graphML")))
+    expect_equal(MseekHash(tab1_gr),
+                 MseekHash(loadMseekGraph("testwrite_MseekGraph.mskg")))
     
     
 })

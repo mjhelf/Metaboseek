@@ -9,6 +9,8 @@
 \alias{loadMseekFT}
 \alias{saveMseekFT,MseekFT-method}
 \alias{saveMseekFT}
+\alias{loadMseekGraph,character-method}
+\alias{loadMseekGraph}
 \title{buildMseekFT}
 \usage{
 \S4method{buildMseekFT}{xsAnnotate}(object, processHistory = list(), ...)
@@ -21,6 +23,8 @@
 
 \S4method{saveMseekFT}{MseekFT}(object, file, writeCSV = FALSE,
   writeRDS = TRUE)
+
+\S4method{loadMseekGraph}{character}(object)
 }
 \arguments{
 \item{object}{an xsAnnotate, xcmsSet or data.frame object. For \code{saveMseekFT},
@@ -50,4 +54,7 @@ Methods to build an \code{MseekFT} object from an xsAnnotate,
 \code{loadMseekFT}: load a \code{MseekFT} object from an .mskFT file
 
 \code{saveMseekFT}: save a \code{MseekFT} object to a file, registering the save event in the processHistory
+
+\code{loadMseekGraph}: load a \code{MseekGraph} object from an 
+.mskg or .graphml file (file extensions inform how file is loaded in)
 }

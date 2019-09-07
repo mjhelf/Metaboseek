@@ -118,6 +118,13 @@ setMethod("groupingTable", "MseekFamily",
 setReplaceMethod("groupingTable", c("MseekFamily", "data.frame"),
                  function(object, value){
                      object <- updateFTgrouping(object,value)
+                     
+                     object <- addProcessHistory(object, FTProcessHistory(info = "Changed intensity column grouping",
+                                                                          inputDFhash = beforeHash,
+                                                                          outputDFhash = MseekHash(object),
+                                                                          param = FunParam(fun = "Metaboseek::intensityCols",
+                                                                                           args = list(groupingTable = value))))
+                     
                      object
                  })
 
@@ -135,16 +142,20 @@ setMethod("intensityCols", "MseekFamily",
 setReplaceMethod("intensityCols", "MseekFamily",
                  function(object, value){
                      
+                     #note: history is handled by groupingTable<-
                      if(is.data.frame(groupingTable(object)) 
                         && nrow(groupingTable) == length(value)){
                          
-                         groupingTable(object)$Column <- value
+                         gt <- groupingTable(object)
+                         gt$Column <- value
+                         groupingTable(object) <- gt
                          
                      }else{
                          groupingTable(object) <- data.frame(Column = value,
                                                              Group = "G1",
                                                              stringsAsFactors = FALSE)
                      }
+                     
                      object
                  })
 
@@ -163,11 +174,15 @@ setMethod("hasAdjustedRtime", "MseekFamily",
               return(!is.null(object$RTcorrected) && object$RTcorrected)
           })
 
+#' @aliases MseekHash
+#' @description \code{MseekHash}: digests the object (excluding the process
+#'  history) into a character string
+#' @importFrom digest digest
 #' @rdname MseekFamily
 #' @export
 setMethod("MseekHash", c("MseekFamily"),
           function(object) {
-              digest::digest(object[names(object) != ".processHistory"],
+              digest(object[names(object) != ".processHistory"],
                              algo = "xxhash64")
           })
 
@@ -183,11 +198,15 @@ setMethod("MseekHash", c("MseekFamily"),
 setMethod("rename", 
           "MseekFamily",
           function(object, name){
+              beforeHash <- MseekHash(object)
               
-              object <- addProcessHistory(object, FTProcessHistory(info = "Renamed MseekFT object",
-                                                                   param = FunParam(fun = "rename",
-                                                                                    args = list(name = name))))
               object$tablename <- name
+
+              object <- addProcessHistory(object, FTProcessHistory(info = "Renamed MseekFT object",
+                                                                   inputDFhash = beforeHash,
+                                                                   outputDFhash = MseekHash(object),
+                                                                   param = FunParam(fun = "Metaboseek:::rename",
+                                                                                    args = list(name = name))))
               
               return(object)
           })
@@ -204,7 +223,7 @@ setMethod("FTFilter", c("data.frame"),
                    decreasing = TRUE){
               
               
-              if(!missing(filters) || !length(filters)){
+              if(!missing(filters) && length(filters)){
                   
                   sel <- TRUE
                   
@@ -269,8 +288,7 @@ setMethod("FTFilter", c("MseekFT"),
                    filters = list(),
                    sortBy = character(),
                    decreasing = TRUE){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -299,10 +317,9 @@ setMethod("FTFilter", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
-                  if(!length(err)){
+                  if(length(err)){
                       msg <- paste("Filtered Feature Table; before:", beforeRows,
                                    "Features, after:", nrow(object$df), "Features" )
                   }else{

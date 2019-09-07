@@ -36,6 +36,8 @@ setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
+setGeneric("loadMseekGraph", function(object) standardGeneric("loadMseekGraph"))
+
 setGeneric("matchReference", function(object, query, ...) standardGeneric("matchReference"))
 setGeneric("MseekHash", function(object) standardGeneric("MseekHash"))
 
@@ -43,8 +45,10 @@ setGeneric("previousStep", function(object, ...) standardGeneric("previousStep")
 setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
 setGeneric("rename", function(object, ...) standardGeneric("rename"))
 setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseekFT"))
+setGeneric("saveMseekGraph", function(object, file, ...) standardGeneric("saveMseekGraph"))
 
 setGeneric("searchFunParam", function(object, fun, ...) standardGeneric("searchFunParam"))
+setGeneric("shortPrint", function(object) standardGeneric("shortPrint"))
 
 
 setGeneric("importMseekIntensities", function(object, rawdata, importFrom, ...) standardGeneric("importMseekIntensities")) #transfer Mseek intensities and history entry about making them
@@ -206,8 +210,8 @@ setClass("FunParam",
 #' occured in this analysis step 
 #' @slot changes did changes occur on the associated object. If FALSE, this step
 #'  did not result in relevant changes and could be dropped for reporting
-#' @slot inputDFhash character digest of the data.frame object before this analysis step
-#' @slot outputDFhash character digest of the data.frame object after this analysis step
+#' @slot inputDFhash character \code{\link{MseekHash}} of the object before this analysis step
+#' @slot outputDFhash character \code{\link{MseekHash}} of the object after this analysis step
 #' @slot sessionInfo a \code{\link[utils]{sessionInfo}} object, should be genereated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
@@ -229,10 +233,8 @@ setClass("FTProcessHistory",
              error = list(),
              fileNames = character(),
              changes = FALSE,
-             inputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
-                                  algo = "xxhash64"),
-             outputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
-                                           algo = "xxhash64"),
+             inputDFhash = NULL,
+             outputDFhash = NULL,
              sessionInfo = NULL,
              processingTime = NA_real_
          ),
@@ -321,6 +323,44 @@ setMethod("show", "XProcessHistory", function(object) {
         cat(" MS level(s)", paste(object@msLevel, sep = " "), "\n")
     
 })
+
+setMethod("shortPrint", "ANY", function(object){
+    
+    if(class(object) == "FTProcessHistory"){
+        cat(object@info, "\n")
+        cat(paste0("...",.characterTail(object@inputDFhash), " -> ",
+                   "...",.characterTail(object@outputDFhash),
+                   "\n"))
+        if(length(object@error)){
+            print(object@error)
+        }
+        }
+    else{
+    print(object)
+    }
+    
+    })
+
+
+setMethod("shortPrint", "FTProcessHistory", function(object){
+    
+    cat(object@info, "\n")
+    cat(paste0("...",.characterTail(object@inputDFhash), " -> ",
+               "...",.characterTail(object@outputDFhash),
+               "\n"))
+    if(length(object@error)){
+    print(object@error)
+    }
+
+    })
+
+.characterTail <- function(x, n = 8){
+    sapply(x, function(x){
+        if(!length(nchar(x)) 
+           || is.na(x)){return("")} 
+    substr(x, nchar(x)-n+1, nchar(x))
+    })
+}
 
 #' @noRd
 setMethod("show", "FunParam", function(object) {
@@ -483,8 +523,8 @@ setMethod("error", "ProcessHistory",
 #' occured in this analysis step 
 #' @param changes did changes occur on the associated object. If FALSE, this step
 #'  did not result in relevant changes and could be dropped for reporting
-#' @param inputDFhash character digest of the data.frame object before this analysis step
-#' @param outputDFhash character digest of the data.frame object after this analysis step
+#' @param inputDFhash character \code{\link{MseekHash}} of the object before this analysis step
+#' @param outputDFhash character \code{\link{MseekHash}} of the object after this analysis step
 #' @param sessionInfo a \code{\link[utils]{sessionInfo}} object, should be generated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
@@ -498,10 +538,8 @@ setMethod("error", "ProcessHistory",
 #' @examples
 #' FTProcessHistory(error = list(),
 #' changes = TRUE,
-#' inputDFhash = digest::digest(data.frame(1,stringsAsFactors = FALSE),
-#'                              algo = "xxhash64"),
-#' outputDFhash = digest::digest(data.frame(2,stringsAsFactors = FALSE),
-#'                               algo = "xxhash64"),
+#' inputDFhash = NULL,
+#' outputDFhash = NULL,
 #' sessionInfo = utils::sessionInfo(),
 #' info = "Example")
 #' 

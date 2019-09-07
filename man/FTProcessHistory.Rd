@@ -15,9 +15,9 @@ occured in this analysis step}
 \item{changes}{did changes occur on the associated object. If FALSE, this step
 did not result in relevant changes and could be dropped for reporting}
 
-\item{inputDFhash}{character digest of the data.frame object before this analysis step}
+\item{inputDFhash}{character \code{\link{MseekHash}} of the object before this analysis step}
 
-\item{outputDFhash}{character digest of the data.frame object after this analysis step}
+\item{outputDFhash}{character \code{\link{MseekHash}} of the object after this analysis step}
 
 \item{sessionInfo}{a \code{\link[utils]{sessionInfo}} object, should be generated
 at time of the recorded event and at least once in every session (by default,
@@ -43,10 +43,8 @@ FTProcessHistory
 \examples{
 FTProcessHistory(error = list(),
 changes = TRUE,
-inputDFhash = digest::digest(data.frame(1,stringsAsFactors = FALSE),
-                             algo = "xxhash64"),
-outputDFhash = digest::digest(data.frame(2,stringsAsFactors = FALSE),
-                              algo = "xxhash64"),
+inputDFhash = NULL,
+outputDFhash = NULL,
 sessionInfo = utils::sessionInfo(),
 info = "Example")
 

@@ -18,21 +18,30 @@ MseekHistoryWidget <- function(input,output, session,
   
 
   output$historyPrint <- renderPrint({
+      
+      
+      
       if(is.MseekFamily(FT())){
           
           if(is.null(input$selectOutput)
              || input$selectOutput == "All entries"){
-              print(processHistory(FT()))
+              printme <- (processHistory(FT()))
           }
           else if(input$selectOutput == "No errors"){
-              print(processHistory(FT())[!sapply(processHistory(FT()),
+              printme <- (processHistory(FT())[!sapply(processHistory(FT()),
                                                  hasError)])
           }
           
           else if(input$selectOutput == "only Errors"){
-              print(processHistory(FT())[sapply(processHistory(FT()),
+              printme <- (processHistory(FT())[sapply(processHistory(FT()),
                                                 hasError)])
           }
+          
+          if(!input$shortPrint){
+              print(printme)
+          }else{
+              lapply(printme, shortPrint)    
+              }
           
       }else{
           print("No Feature Table loaded")
@@ -46,7 +55,10 @@ MseekHistoryWidget <- function(input,output, session,
                          fluidRow(selectizeInput(ns("selectOutput"), "Show", choices = c("All entries",
                                                                                          "No errors",
                                                                                          "only Errors")),
-                                  downloadButton(ns("downloadHistory"), "Save history")),
+                                  downloadButton(ns("downloadHistory"), "Save history"),
+                                  checkboxInput(ns("shortPrint"), "concise view", value = TRUE)
+                                  
+                                  ),
                              
                            fluidRow(
                              verbatimTextOutput(ns("historyPrint"))                           

@@ -10,14 +10,18 @@
 #' 
 #' @export 
 SaveNetworkModule <- function(input,output, session,
-                            values = reactiveValues(Networks = NULL),
+                            values = reactiveValues(Networks = NULL,
+                                                    projectData = NULL),
                             reactives = reactive({list(graphname = NULL,
                                                        filename = "table.graphml")}),
                             static = list(tooltip = "Save Network as a graphml file",
                                           label = "Save Network",
-                                          format = c("graphml"))
+                                          allowformats = list("Metaboseek Graph (.mskg)" = ".mskg",
+                                              "graphML" = ".graphML"))
 ){
   ns <- NS(session$ns(NULL))
+  
+  internalValues <- reactiveValues(selectedFormat = if(length(static$allowedformats)){static$allowedformats[[1]]}else{".graphML"})
   
   output$saveNetworkButton <- renderUI({
     div(title = static$tooltip,
@@ -36,9 +40,19 @@ SaveNetworkModule <- function(input,output, session,
             p(strong("You can save this network in your project folder, or download it through your browser"))
           ),
           hr(),
+          tagList(if(length(static$allowformats) > 0){
+              tagList(
+                  fluidRow(
+                      div(title = "Select a file format for export",
+                          selectizeInput(ns("selFormat"), "Format:",
+                                         choices = static$allowformats))
+                  )
+              )
+          }),
           fluidRow(
             column(6, div(title = "Download table through Browser",     downloadButton(ns("modalDownload"),"Download"))),
-            column(6, div( title = "Save directly to current projectFolder (only works if you are working in a project folder)", actionButton(ns("modalProjectFolder"), "Save locally")))
+            column(6, div( title = "Save directly to current projectFolder (only works if you are working in a project folder). WIll save in both graphML and .mskg formats",
+                           actionButton(ns("modalProjectFolder"), "Save locally")))
           )),
         title = "Save table",
         easyClose = T,
@@ -56,19 +70,27 @@ SaveNetworkModule <- function(input,output, session,
   }
     
   })
+  observeEvent(input$selFormat,{
+      if(length(input$selFormat)){
+      internalValues$selectedFormat <- input$selFormat
+      }
+  })
   
-  output$modalDownload <- downloadHandler(filename= function(){basename(reactives()$filename)}, 
+  output$modalDownload <- downloadHandler(filename= function(){paste0(basename(reactives()$filename),internalValues$selectedFormat)}, 
                                           content = function(file){
                                             try({
-                                            write_graph(values$Networks[[reactives()$graphname]]$graph,
-                                                        file,
-                                                        format = "graphml")
+                                                saveMseekGraph(values$Networks[[reactives()$graphname]],
+                                                               file,
+                                                               writeGraphML = internalValues$selectedFormat == ".graphML",
+                                                               writeRDS = internalValues$selectedFormat == ".mskg"
+                                                )
                                             
                                             showNotification(paste("Downloading file: ", basename(reactives()$filename)), duration = 10)
                                             })
                                             removeModal()
-                                          },
-                                          contentType = "text/xml")
+                                          }#,
+                                          #contentType = "text/xml"
+                                          )
   
   
   # observeEvent(output$modalDownload,{
@@ -84,11 +106,12 @@ SaveNetworkModule <- function(input,output, session,
         dir.create(dirname(file.path(values$projectData$projectFolder, reactives()$filename)), recursive = T)
       }
       
-      write_graph(values$Networks[[reactives()$graphname]]$graph,
-                  file.path(values$projectData$projectFolder, reactives()$filename),
-                  format = "graphml")
+        saveMseekGraph(values$Networks[[reactives()$graphname]],
+                       file.path(values$projectData$projectFolder, reactives()$filename),
+                       writeGraphML = TRUE, writeRDS = TRUE
+                       )
 
-      showNotification(paste("Network saved as: ", file.path(values$projectData$projectFolder, reactives()$filename)), duration = 10)
+      showNotification(paste("Network saved in project folder as: ", file.path(values$projectData$projectFolder, reactives()$filename)), duration = 10)
       removeModal()
       
     }

@@ -99,8 +99,8 @@ FindMS2ScansModule <- function(input,output, session, values,
       
     },
     error = function(e){
-      print(e)
-      showNotification(paste("A problem occured and MS2 search failed"), type = "error", duration = 0)
+      #print(e)
+      showNotification(paste("A problem occured and MS2 search failed:", e), type = "error", duration = 0)
     }
   )
   })

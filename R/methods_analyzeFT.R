@@ -34,8 +34,7 @@ setMethod("analyzeFT",
               
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
-              inputHash <- digest::digest(object$df, algo = "xxhash64")
-              
+
               if(param@normalize || (param@useNormalized && !identical(grep("__norm",colnames(object$df), value = T), paste0(object$intensities,"__norm")))){ 
                   
                   object <- FTNormalize(object,
@@ -139,8 +138,7 @@ setMethod("analyzeFT",
 #' @export
 setMethod("removeNAs", "MseekFT",
           function(object, intensityCols = NULL, replacement = 0){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               err <- list()
               tryCatch({
@@ -172,8 +170,7 @@ setMethod("removeNAs", "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
                                                                        inputDFhash = beforeHash,
                                                                        outputDFhash = afterHash,
@@ -203,8 +200,7 @@ setMethod("removeNAs", "MseekFT",
 #' @export
 setMethod("FTNormalize", "MseekFT",
           function(object, intensityCols = NULL, logNormalized = FALSE){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -247,8 +243,7 @@ setMethod("FTNormalize", "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
                                                                inputDFhash = beforeHash,
@@ -279,8 +274,7 @@ setMethod("FTNormalize", "MseekFT",
 #' @export
 setMethod("FTBasicAnalysis", "MseekFT",
           function(object, intensityCols = NULL, grouping = NULL, controlGroup = NULL){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -309,8 +303,7 @@ setMethod("FTBasicAnalysis", "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -365,8 +358,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                    SN = NULL,
                    columnSuffix = "__XIC"
                    ){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -453,8 +445,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
                                                                inputDFhash = beforeHash,
@@ -497,8 +488,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                    baselineSubtract = TRUE,
                    SN = NULL,
                    columnSuffix = "__XIC"){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               p1 <- proc.time()
               
@@ -563,8 +553,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                       importFrom$MseekIntensities))
                   
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
                                                                inputDFhash = beforeHash,
@@ -607,8 +596,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
 #' @export
 setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),
           function(object, rawdata, ppm = 5, workers = 1){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -645,8 +633,7 @@ setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -679,8 +666,7 @@ setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),
 #' @export
 setMethod("FTPeakShapes", c("MseekFT", "listOrNULL"),
           function(object, rawdata, ppm = 5, workers = 1){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -715,8 +701,7 @@ setMethod("FTPeakShapes", c("MseekFT", "listOrNULL"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -754,8 +739,7 @@ setMethod("FTPeakShapes", c("MseekFT", "listOrNULL"),
 #' @export
 setMethod("FTMzMatch", c("MseekFT"),
           function(object, db, ppm = 5, mzdiff = 0.001){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -786,8 +770,7 @@ setMethod("FTMzMatch", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -822,8 +805,7 @@ setMethod("FTT.test", c("MseekFT"),
           function(object, intensityCols = NULL,
                    grouping = NULL,
                    adjmethod = "bonferroni"){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -855,8 +837,7 @@ setMethod("FTT.test", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -891,8 +872,7 @@ setMethod("FTT.test", c("MseekFT"),
 setMethod("FTAnova", c("MseekFT"),
           function(object, intensityCols = NULL,
                    grouping = NULL){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -923,8 +903,7 @@ setMethod("FTAnova", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -960,8 +939,7 @@ setMethod("FTAnova", c("MseekFT"),
 setMethod("FTCluster", c("MseekFT"),
           function(object, intensityCols = NULL,
                    numClusters = 100L){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -1000,8 +978,7 @@ setMethod("FTCluster", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -1035,8 +1012,7 @@ setMethod("FTPCA", c("MseekFT"),
           function(object,
                    intensityCols = NULL,
                    featureMode = FALSE){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -1104,8 +1080,7 @@ setMethod("FTPCA", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
@@ -1138,8 +1113,7 @@ setMethod("FTPCA", c("MseekFT"),
 #' @export
 setMethod("FTMS2scans", c("MseekFT", "listOrNULL"),
           function(object, rawdata, ppm = 5, rtw = 10, uniqueMatch = FALSE){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -1171,8 +1145,7 @@ setMethod("FTMS2scans", c("MseekFT", "listOrNULL"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   if(!length(err)){
                       msg <- paste("Found MS2 scans for", sum(object$df$MS2scans != ""), "Features")
@@ -1375,7 +1348,8 @@ setMethod("matchReference", c("data.frame","data.frame"),
               
               if(length(query$mz) 
                  && length(object$mz)
-                 && length(parent_mztol)){
+                 && length(parent_mztol)
+                 && length(parent_ppm)){
                   
                   
                   hitlist <- lapply(seq_len(length(hitlist)),function(n){(hitlist[[n]] 
@@ -1588,7 +1562,14 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
                                         returnMapping = returnMapping,
                                         ...)
                   
-                  vertex_attr(object$graph) <- as.list(inp[,grepl(paste0("^",queryPrefix), colnames(inp)), drop = FALSE])
+                  for (add in colnames(inp)[grepl(paste0("^",queryPrefix), colnames(inp))]){
+                      
+                      vertex_attr(object$graph, add) <- inp[[add]]
+                      
+                      
+                  }
+                  
+                  #vertex_attr(object$graph) <- as.list(inp[,grepl(paste0("^",queryPrefix), colnames(inp)), drop = FALSE])
                   
                   
                   

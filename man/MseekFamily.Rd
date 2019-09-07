@@ -19,6 +19,7 @@
 \alias{hasAdjustedRtime,MseekFamily-method}
 \alias{hasAdjustedRtime}
 \alias{MseekHash,MseekFamily-method}
+\alias{MseekHash}
 \alias{rename,MseekFamily-method}
 \alias{rename}
 \alias{FTFilter,MseekFT-method}
@@ -109,6 +110,9 @@ object@param@fun slots from all \code{ProcessHistory} objects).
 
 \code{hasAdjustedRtime}: check if the object contains retention time
 correction information.
+
+\code{MseekHash}: digests the object (excluding the process
+ history) into a character string
 
 \code{rename}: rename a \code{MseekFamily} object
 
