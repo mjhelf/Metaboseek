@@ -210,8 +210,8 @@ setClass("FunParam",
 #' occured in this analysis step 
 #' @slot changes did changes occur on the associated object. If FALSE, this step
 #'  did not result in relevant changes and could be dropped for reporting
-#' @slot inputDFhash character \code{\link{MseekHash}} of the object before this analysis step
-#' @slot outputDFhash character \code{\link{MseekHash}} of the object after this analysis step
+#' @slot inputHash character \code{\link{MseekHash}} of the object before this analysis step
+#' @slot outputHash character \code{\link{MseekHash}} of the object after this analysis step
 #' @slot sessionInfo a \code{\link[utils]{sessionInfo}} object, should be genereated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
@@ -224,8 +224,8 @@ setClass("FTProcessHistory",
          slots = c(error = "listOrNULL",
                    changes = "logical",
                    fileNames = "characterOrNULL",
-                   inputDFhash = "characterOrNULL",
-                   outputDFhash = "characterOrNULL",
+                   inputHash = "characterOrNULL",
+                   outputHash = "characterOrNULL",
                    sessionInfo = "sessionInfoOrNULL",
                    processingTime = "numeric"),
          contains = "XProcessHistory",
@@ -233,8 +233,8 @@ setClass("FTProcessHistory",
              error = list(),
              fileNames = character(),
              changes = FALSE,
-             inputDFhash = NULL,
-             outputDFhash = NULL,
+             inputHash = NULL,
+             outputHash = NULL,
              sessionInfo = NULL,
              processingTime = NA_real_
          ),
@@ -275,13 +275,14 @@ setMethod("initialize", "FunParam", function(.Object, ...) {
 setMethod("show", "FTProcessHistory", function(object) {
     callNextMethod()
     
-    chLabel <- if(object@changes){"yes"}else{"no"}
-    cat(" changes:", chLabel, "\n")
+    # chLabel <- if(object@changes){"yes"}else{"no"}
+    # cat(" changes:", chLabel, "\n")
     
-    cat(" input data.frame hash:", object@inputDFhash, "\n")
-    cat(" output data.frame hash:", object@outputDFhash, "\n")
-    cat(" contains sessionInfo:", !is.null(object@sessionInfo), "\n")
-    
+    cat(object@inputHash, "->", object@outputHash, "\n")
+    if(!is.null(object@sessionInfo)){
+    cat("contains sessionInfo:", "\n")
+}
+
     if(length(object@fileNames)){
     cat(" fileNames:", object@fileNames, "\n")
     }
@@ -328,8 +329,8 @@ setMethod("shortPrint", "ANY", function(object){
     
     if(class(object) == "FTProcessHistory"){
         cat(object@info, "\n")
-        cat(paste0("...",.characterTail(object@inputDFhash), " -> ",
-                   "...",.characterTail(object@outputDFhash),
+        cat(paste0("...",.characterTail(object@inputHash), " -> ",
+                   "...",.characterTail(object@outputHash),
                    "\n"))
         if(length(object@error)){
             print(object@error)
@@ -345,8 +346,8 @@ setMethod("shortPrint", "ANY", function(object){
 setMethod("shortPrint", "FTProcessHistory", function(object){
     
     cat(object@info, "\n")
-    cat(paste0("...",.characterTail(object@inputDFhash), " -> ",
-               "...",.characterTail(object@outputDFhash),
+    cat(paste0("...",.characterTail(object@inputHash), " -> ",
+               "...",.characterTail(object@outputHash),
                "\n"))
     if(length(object@error)){
     print(object@error)
@@ -523,8 +524,8 @@ setMethod("error", "ProcessHistory",
 #' occured in this analysis step 
 #' @param changes did changes occur on the associated object. If FALSE, this step
 #'  did not result in relevant changes and could be dropped for reporting
-#' @param inputDFhash character \code{\link{MseekHash}} of the object before this analysis step
-#' @param outputDFhash character \code{\link{MseekHash}} of the object after this analysis step
+#' @param inputHash character \code{\link{MseekHash}} of the object before this analysis step
+#' @param outputHash character \code{\link{MseekHash}} of the object after this analysis step
 #' @param sessionInfo a \code{\link[utils]{sessionInfo}} object, should be generated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
@@ -538,8 +539,8 @@ setMethod("error", "ProcessHistory",
 #' @examples
 #' FTProcessHistory(error = list(),
 #' changes = TRUE,
-#' inputDFhash = NULL,
-#' outputDFhash = NULL,
+#' inputHash = NULL,
+#' outputHash = NULL,
 #' sessionInfo = utils::sessionInfo(),
 #' info = "Example")
 #' 
@@ -547,8 +548,8 @@ setMethod("error", "ProcessHistory",
 #' @export
 FTProcessHistory <- function(error = list(),
                              changes = TRUE,
-                             inputDFhash = NULL,
-                             outputDFhash = NULL,
+                             inputHash = NULL,
+                             outputHash = NULL,
                              sessionInfo = NULL,
                              fileNames = character(),
                              processingTime = NA_real_,
@@ -558,8 +559,8 @@ FTProcessHistory <- function(error = list(),
     obj <- as(obj, "FTProcessHistory")
     obj@error <- error
     obj@changes <- as.logical(changes)
-    obj@inputDFhash <- inputDFhash
-    obj@outputDFhash <- outputDFhash
+    obj@inputHash <- inputHash
+    obj@outputHash <- outputHash
     obj@sessionInfo <- sessionInfo
     obj@fileNames <- fileNames
     obj@processingTime <- processingTime

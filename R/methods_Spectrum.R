@@ -1,9 +1,14 @@
+setGeneric("plotSpectrum", function(x, ...) standardGeneric("plotSpectrum"))
 
-plotSpectrum <- function(x, ...){
-    
-    specplot2(x, ...)
-    
-}
+
+setClassUnion("matrixOrDF", c("matrix", "data.frame"))
+
+
+setMethod("plotSpectrum", 
+          signature = c("matrixOrDF"),
+          function(x, ...){
+            specplot2(x, ...)
+          })
 
 setMethod("plotSpectrum", 
           signature = c("Spectrum"),
@@ -11,14 +16,3 @@ setMethod("plotSpectrum",
               plotSpectrum(matrix(c(x@mz,x@intensity), ncol = 2), ...)
           })
 
-setMethod("plotSpectrum", 
-          signature = c("matrix"),
-          function(x, ...){
-              plotSpectrum(x, ...)
-          })
-
-setMethod("plotSpectrum", 
-          signature = c("data.frame"),
-          function(x, ...){
-              plotSpectrum(x, ...)
-          })

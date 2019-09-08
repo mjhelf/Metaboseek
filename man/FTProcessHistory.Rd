@@ -4,8 +4,8 @@
 \alias{FTProcessHistory}
 \title{Constructor for FTProcessHistory class}
 \usage{
-FTProcessHistory(error = list(), changes = TRUE, inputDFhash = NULL,
-  outputDFhash = NULL, sessionInfo = NULL, fileNames = character(),
+FTProcessHistory(error = list(), changes = TRUE, inputHash = NULL,
+  outputHash = NULL, sessionInfo = NULL, fileNames = character(),
   processingTime = NA_real_, msLevel = NA_integer_, ...)
 }
 \arguments{
@@ -15,9 +15,9 @@ occured in this analysis step}
 \item{changes}{did changes occur on the associated object. If FALSE, this step
 did not result in relevant changes and could be dropped for reporting}
 
-\item{inputDFhash}{character \code{\link{MseekHash}} of the object before this analysis step}
+\item{inputHash}{character \code{\link{MseekHash}} of the object before this analysis step}
 
-\item{outputDFhash}{character \code{\link{MseekHash}} of the object after this analysis step}
+\item{outputHash}{character \code{\link{MseekHash}} of the object after this analysis step}
 
 \item{sessionInfo}{a \code{\link[utils]{sessionInfo}} object, should be generated
 at time of the recorded event and at least once in every session (by default,
@@ -43,8 +43,8 @@ FTProcessHistory
 \examples{
 FTProcessHistory(error = list(),
 changes = TRUE,
-inputDFhash = NULL,
-outputDFhash = NULL,
+inputHash = NULL,
+outputHash = NULL,
 sessionInfo = utils::sessionInfo(),
 info = "Example")
 

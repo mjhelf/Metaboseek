@@ -40,7 +40,11 @@ MseekHistoryWidget <- function(input,output, session,
           if(!input$shortPrint){
               print(printme)
           }else{
-              invisible(lapply(printme, shortPrint))    
+              invisible(lapply(seq_len(length(printme)), function(n){
+                cat("[[", n, "]]   ", sep = "")
+                shortPrint(printme[[n]])
+                cat("\n")
+                }))    
               }
           
       }else{

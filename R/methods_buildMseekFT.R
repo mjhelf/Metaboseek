@@ -38,7 +38,7 @@ setMethod("buildMseekFT",  "xsAnnotate",
               
               res <- addProcessHistory(res, FTProcessHistory(info = "Extracted Feature Table from CAMERA::xsAnnotate using CAMERA::getPeaklist and built MseekFT object",
                                                              sessionInfo = sessionInfo(),
-                                                             outputDFhash = MseekHash(res),
+                                                             outputHash = MseekHash(res),
                                                              param = FunParam(fun = "Metaboseek::buildMseekFT",
                                                                               args = list(...))))
               
@@ -67,7 +67,7 @@ setMethod("buildMseekFT",
               
               res <- addProcessHistory(res, FTProcessHistory(info = "Extracted Feature Table from xcms::XCMSnExp using xcms::peakTable(as(xset,'xcmsSet')) and built MseekFT object",
                                                              sessionInfo = sessionInfo(),
-                                                             outputDFhash = MseekHash(res),
+                                                             outputHash = MseekHash(res),
                                                              param = FunParam(fun = "Metaboseek::buildMseekFT",
                                                                               args = list(...))))
               return(res)
@@ -85,7 +85,7 @@ setMethod("buildMseekFT",
               
               res <- addProcessHistory(res, FTProcessHistory(info = "Built MseekFT object from a data.frame.",
                                                              sessionInfo = sessionInfo(),
-                                                             outputDFhash = MseekHash(res),
+                                                             outputHash = MseekHash(res),
                                                              param = FunParam(fun = "Metaboseek::buildMseekFT",
                                                                               args = list(...))))
               
@@ -113,7 +113,7 @@ setMethod("loadMseekFT",
                   
                   res <- addProcessHistory(res, FTProcessHistory(info = paste0("Loaded MseekFT object from file: ", object),
                                                                  sessionInfo = sessionInfo(),
-                                                                 outputDFhash = MseekHash(res),
+                                                                 outputHash = MseekHash(res),
                                                                  param = FunParam(fun = "Metaboseek::loadMseekFT",
                                                                                   args = list(file = object))))
                   
@@ -246,8 +246,8 @@ setMethod("buildMseekGraph", c("MseekFT"),
                   
                   res <- addProcessHistory(res,
                                            FTProcessHistory(changes = afterHash != beforeHash,
-                                                            inputDFhash = beforeHash,
-                                                            outputDFhash = afterHash,
+                                                            inputHash = beforeHash,
+                                                            outputHash = afterHash,
                                                             error = err,
                                                             sessionInfo = NULL,
                                                             processingTime = p1,
@@ -358,7 +358,7 @@ setMethod("loadMseekGraph",
                   
                   res <- addProcessHistory(res, FTProcessHistory(info = paste0("Loaded MseekGraph object from file: ", object),
                                                                  sessionInfo = sessionInfo(),
-                                                                 outputDFhash = MseekHash(res),
+                                                                 outputHash = MseekHash(res),
                                                                  param = FunParam(fun = "Metaboseek::loadMseekGraph",
                                                                                   args = list(file = object))))
                   

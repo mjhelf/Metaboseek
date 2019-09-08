@@ -122,8 +122,8 @@ setReplaceMethod("groupingTable", c("MseekFamily", "data.frame"),
                      object <- updateFTgrouping(object,value)
                      
                      object <- addProcessHistory(object, FTProcessHistory(info = "Changed intensity column grouping",
-                                                                          inputDFhash = beforeHash,
-                                                                          outputDFhash = MseekHash(object),
+                                                                          inputHash = beforeHash,
+                                                                          outputHash = MseekHash(object),
                                                                           param = FunParam(fun = "Metaboseek::intensityCols",
                                                                                            args = list(groupingTable = value))))
                      
@@ -205,8 +205,8 @@ setMethod("rename",
               object$tablename <- name
 
               object <- addProcessHistory(object, FTProcessHistory(info = "Renamed MseekFT object",
-                                                                   inputDFhash = beforeHash,
-                                                                   outputDFhash = MseekHash(object),
+                                                                   inputHash = beforeHash,
+                                                                   outputHash = MseekHash(object),
                                                                    param = FunParam(fun = "Metaboseek:::rename",
                                                                                     args = list(name = name))))
               
@@ -330,8 +330,8 @@ setMethod("FTFilter", c("MseekFT"),
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
