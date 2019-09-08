@@ -1341,7 +1341,7 @@ setMethod("matchReference", c("data.frame","data.frame"),
               }
               
               #prepare to take up information about which ref matches each query item
-              hitlist <- lapply(!logical(length(query$specList)), rep, length(object$specList))
+              hitlist <- lapply(!logical(nrow(query)), rep, nrow(object))
               
               if(length(query$rt) 
                  && length(object$rt)
@@ -1364,9 +1364,7 @@ setMethod("matchReference", c("data.frame","data.frame"),
                   
               }
               
-              if(length(query$specList) 
-                 && length(object$specList)
-                 && getCosine){
+              if(getCosine){
                   #make edges... from, to, cosine...
                   mapping <- do.call(rbind,lapply(seq_len(length(hitlist)),function(n){
                       if(!any(hitlist[[n]])){return(numeric())}
@@ -1389,16 +1387,12 @@ setMethod("matchReference", c("data.frame","data.frame"),
               
               
               
-              if(length(query$specList) 
-                 && length(object$specList)
-                 && getCosine && length(cosineThreshold)){
+              if(getCosine && length(cosineThreshold)){
                   mapping <- mapping[which(mapping[,'cosine'] > cosineThreshold),,drop = FALSE] #which gets rid of NAs
               }
               
               if(singleHits){
-                  if(length(query$specList) 
-                     && length(object$specList)
-                     && getCosine){
+                  if(getCosine){
                       mapping <- mapping[order(mapping[,'cosine'], decreasing = TRUE),,drop = FALSE]
                   }
                   
@@ -1409,9 +1403,7 @@ setMethod("matchReference", c("data.frame","data.frame"),
               addref <- seq_len(nrow(object))[!seq_len(nrow(object)) %in% mapping[,2]]
               
               #fill mapping for object entries that don't have a match
-              if(length(query$specList) 
-                 && length(object$specList)
-                 && getCosine){
+              if(getCosine){
                   filler <- matrix(c(rep(NA_real_, length(addref)),
                                      addref,
                                      rep(NA_real_, length(addref))),

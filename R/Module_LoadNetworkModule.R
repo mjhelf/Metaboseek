@@ -15,23 +15,23 @@ LoadNetworkModule <- function(input,output, session, values,
   internalValues <- reactiveValues(numNetworks = 0)
   
   
-  loadNodeTab <- callModule(UploadTableModule,'loadNodeTab',
-                            static = list(title =  "Load node table",
-                                          filetypes = NULL,
-                                          format = list(header = T,
-                                                        sep = NULL,#"\t",
-                                                        quote = '"',
-                                                        stringsAsFactors = T))
-  )
-  
-  loadEdgeTab <- callModule(UploadTableModule,'loadEdgeTab', 
-                            static = list(title =  "Load edge table",
-                                          filetypes = NULL,
-                                          format = list(header = T,
-                                                        sep = NULL,#"\t",
-                                                        quote = '"',
-                                                        stringsAsFactors = T))
-  )
+  # loadNodeTab <- callModule(UploadTableModule,'loadNodeTab',
+  #                           static = list(title =  "Load node table",
+  #                                         filetypes = NULL,
+  #                                         format = list(header = T,
+  #                                                       sep = NULL,#"\t",
+  #                                                       quote = '"',
+  #                                                       stringsAsFactors = T))
+  # )
+  # 
+  # loadEdgeTab <- callModule(UploadTableModule,'loadEdgeTab', 
+  #                           static = list(title =  "Load edge table",
+  #                                         filetypes = NULL,
+  #                                         format = list(header = T,
+  #                                                       sep = NULL,#"\t",
+  #                                                       quote = '"',
+  #                                                       stringsAsFactors = T))
+  # )
   
   #load and reformat a  network from a file
   observeEvent(input$networkFileLoad$datapath,{
@@ -39,6 +39,7 @@ LoadNetworkModule <- function(input,output, session, values,
     res <- loadMseekGraph(input$networkFileLoad$datapath)
     
     internalValues[[gsub("\\.[^.]*$","",input$networkFileLoad$name)]] <- res
+    internalValues$numNetworks <- internalValues$numNetworks + 1
     removeModal()
       },
     error = function(e){
@@ -356,9 +357,9 @@ observeEvent(input$loadNetworkModal,{
 
 
 
-observe({
-  shinyjs::toggleState(id = "loadNetwork",condition = (!is.null(loadNodeTab$df) && !is.null(loadEdgeTab$df)))
-})
+# observe({
+#   shinyjs::toggleState(id = "loadNetwork",condition = (!is.null(loadNodeTab$df) && !is.null(loadEdgeTab$df)))
+# })
 
 return(internalValues)
 }

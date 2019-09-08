@@ -354,7 +354,7 @@ setMethod("shortPrint", "FTProcessHistory", function(object){
 
     })
 
-.characterTail <- function(x, n = 8){
+.characterTail <- function(x, n = 6){
     sapply(x, function(x){
         if(!length(nchar(x)) 
            || is.na(x)){return("")} 

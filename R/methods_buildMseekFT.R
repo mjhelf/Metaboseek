@@ -327,7 +327,7 @@ setMethod("loadMseekGraph",
                   if(grepl("\\.graphml$", object, ignore.case = TRUE)){
                       
                       res <- constructFeatureTable(tablename = basename(gsub("\\.graphml$","", ignore.case = TRUE, object)))
-                      res <- res[names(ref) != "df"]
+                      res <- res[names(res) != "df"]
                       res$graph <- read_graph(object, "graphml")
                       
                       if(is.null(V(res$graph)$fixed__id)){

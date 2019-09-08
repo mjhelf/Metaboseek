@@ -65,6 +65,8 @@ NetworkModule <- function(input,output, session,
         buttonLabel = ""
         )
     
+    callModule(MatchReferenceModule, "matchref", values = values)
+    
     
     output$activenetwork <- renderUI({
         if(!static$noSelection){
@@ -81,7 +83,10 @@ NetworkModule <- function(input,output, session,
         }
     })
     
-    
+    regChange <- reactive({if(length(values$Networks)
+                              && length(internalValues$active)){
+        MseekHash(values$Networks[[internalValues$active]])
+        }else{"nothing"}})
     
     observeEvent(c(internalValues$active),{
         if(!is.null(values$Networks) 
@@ -216,7 +221,9 @@ NetworkModule <- function(input,output, session,
                            div(style="display:inline-block",title = "Use log10 scale for Node Color scales.",
                                checkboxInput(ns('logscale'), "log", value = internalValues$logscale)),
                            div(style="display:inline-block",title = "Show processing history of this network",
-                           MseekHistoryWidgetUI(ns("nethistory")))
+                           MseekHistoryWidgetUI(ns("nethistory"))),
+                           div(style="display:inline-block",
+                               MatchReferenceModuleUI(ns("matchref")))
                            ),
                        
                        fluidRow(sliderInput(ns("seledges"), "Filter edges",
@@ -258,9 +265,11 @@ NetworkModule <- function(input,output, session,
     observeEvent(input$elabelsel,{internalValues$elabels <- input$elabelsel})
     
     output$nettables <- renderUI({
-        if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$tables)){
+        if(!is.null(reactives()$active) 
+           && reactives()$active 
+           && !is.null(internalValues$activelayout)){
             
-            selectizeInput(ns('tabs'), "Show network table", choices = c("",names(internalValues$tables)), selected = internalValues$activeTab)
+            selectizeInput(ns('tabs'), "Show network table", choices = c("","nodes", "edges"), selected = internalValues$activeTab)
             
         }
     })

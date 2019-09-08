@@ -40,7 +40,7 @@ MseekHistoryWidget <- function(input,output, session,
           if(!input$shortPrint){
               print(printme)
           }else{
-              lapply(printme, shortPrint)    
+              invisible(lapply(printme, shortPrint))    
               }
           
       }else{

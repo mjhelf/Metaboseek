@@ -381,6 +381,10 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     tab1_ed2 <- matchReference(tab1_ed, tab1_minus2, cosineThreshold = 0.8)})
     expect_false(hasError(previousStep(tab1_ed2)))
     
+    expect_silent({
+        tab1_ed2 <- matchReference(tab1_ed, tab1_minus2, rttol = NULL, cosineThreshold = 0.8)})
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
     #map on graph
     expect_silent({
     tab1_gr2 <- matchReference(tab1_gr, tab1_minus2, cosineThreshold = 0.8)})
