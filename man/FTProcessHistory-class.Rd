@@ -33,9 +33,9 @@ occured in this analysis step}
 \item{\code{changes}}{did changes occur on the associated object. If FALSE, this step
 did not result in relevant changes and could be dropped for reporting}
 
-\item{\code{inputDFhash}}{character digest of the data.frame object before this analysis step}
+\item{\code{inputHash}}{character \code{\link{MseekHash}} of the object before this analysis step}
 
-\item{\code{outputDFhash}}{character digest of the data.frame object after this analysis step}
+\item{\code{outputHash}}{character \code{\link{MseekHash}} of the object after this analysis step}
 
 \item{\code{sessionInfo}}{a \code{\link[utils]{sessionInfo}} object, should be genereated
 at time of the recorded event and at least once in every session (by default,

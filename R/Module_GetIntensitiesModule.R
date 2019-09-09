@@ -75,37 +75,31 @@ If this is selected, the rt window setting for peak intensity calculation starts
           updateFT(values)
           
 
-        newdf <- as.data.frame(lapply(bplapply(values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist], 
-                                              exIntensities, 
-                                              mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,
-                                              ppm = input$intensppm,
-                                              rtw = if(input$intensRangeCheck){data.frame(rtmin = values$featureTables$tables[[values$featureTables$active]]$df$rtmin-input$intensRTsec,
-                                                                                            rtmax = values$featureTables$tables[[values$featureTables$active]]$df$rtmax+input$intensRTsec)}
-                                              else{data.frame(rtmin = values$featureTables$tables[[values$featureTables$active]]$df$rt-input$intensRTsec,
-                                                              rtmax = values$featureTables$tables[[values$featureTables$active]]$df$rt+input$intensRTsec)}, 
-                                              baselineSubtract = input$baselineCheck, 
-                                              areaMode = input$areaCheck,
-                                              
-                                              SN = NULL,
-                                              BPPARAM = SnowParam(workers = if(length(values$featureTables$tables[[values$featureTables$active]]$df$mz) > 10000){values$GlobalOpts$enabledCores}else{1}
-                                              )),
-                                     unlist))
-        
-        colnames(newdf) <- paste0(basename(values$MSData$layouts[[values$MSData$active]]$filelist),"__", input$intensSuffix)
-        
-     
-        
-     values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],newdf)
-
-        
-      })
+          FeatureTable(values) <- getMseekIntensities(FeatureTable(values),
+                                                      rawdata = values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
+                                                      adjustedRT = FALSE,
+                                                      ppm = input$intensppm,
+                                                      rtrange = input$intensRangeCheck,
+                                                      rtw = input$intensRTsec,
+                                                      areaMode = input$areaCheck,
+                                                      #using SnowParam causes issues here which may be related to running in a shiny session,
+                                                      #TODO: fix this 
+                                                      BPPARAM = BiocParallel::SerialParam(),  #if(length(FeatureTable(values)$df$mz) > 10000){bpparam()}else{BiocParallel::SerialParam()},
+                                                      baselineSubtract = input$baselineCheck,
+                                                      SN = NULL,
+                                                      columnSuffix = paste0("__", input$intensSuffix))
+          })
        
       
-          
-          
+          if(hasError(previousStep(FeatureTable(values)))){
+              showNotification(paste("An error occured: ",
+                                     unlist(error(previousStep(FeatureTable(values))))),
+                               duration = 0, type = "error")
+              
+          }else{
           removeModal()
           showNotification(paste("Completed peak intensity calculation."), duration = 0, type = "message")
-          
+          }
         }
       ,
       error = function(e){

@@ -2,15 +2,18 @@
 setGeneric("analyzeFT", function(object, MSData, param) standardGeneric("analyzeFT"))
 setGeneric("addProcessHistory", function(object, ph, ...) standardGeneric("addProcessHistory"))
 setGeneric("buildMseekFT", function(object, ...) standardGeneric("buildMseekFT"))
+setGeneric("buildMseekGraph", function(object, ...) standardGeneric("buildMseekGraph"))
+
 setGeneric("error", function(object) standardGeneric("error"))
 setGeneric("FTAnova", function(object, ...) standardGeneric("FTAnova"))
 
 setGeneric("FTBasicAnalysis", function(object, ...) standardGeneric("FTBasicAnalysis"))
 setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
+setGeneric("FTedges", function(object, ...) standardGeneric("FTedges"))
 
 #setGeneric("FTHash", function(object, ...) standardGeneric("FTHash"))
 setGeneric("FTFilter", function(object, ...) standardGeneric("FTFilter"))
-
+setGeneric("FTMS2scans", function(object, rawdata, ...) standardGeneric("FTMS2scans"))
 
 setGeneric("FTMzMatch", function(object, ...) standardGeneric("FTMzMatch"))
 
@@ -22,6 +25,8 @@ setGeneric("FTPeakShapes", function(object, rawdata, ...) standardGeneric("FTPea
 setGeneric("FTT.test", function(object, ...) standardGeneric("FTT.test"))
 
 setGeneric("getMseekIntensities", function(object, rawdata, importFrom, ...) standardGeneric("getMseekIntensities"))
+setGeneric("getSpecList", function(object, rawdata, ...) standardGeneric("getSpecList"))
+
 setGeneric("groupingTable", function(object) standardGeneric("groupingTable"))
 setGeneric("groupingTable<-", function(object, value) standardGeneric("groupingTable<-"))
 setGeneric("hasAdjustedRtime", function(object) standardGeneric("hasAdjustedRtime"))
@@ -31,12 +36,20 @@ setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
+setGeneric("loadMseekGraph", function(object) standardGeneric("loadMseekGraph"))
+
+setGeneric("matchReference", function(object, query, ...) standardGeneric("matchReference"))
+setGeneric("MseekHash", function(object) standardGeneric("MseekHash"))
+
 setGeneric("previousStep", function(object, ...) standardGeneric("previousStep"))
 setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
 setGeneric("rename", function(object, ...) standardGeneric("rename"))
 setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseekFT"))
+setGeneric("saveMseekGraph", function(object, file, ...) standardGeneric("saveMseekGraph"))
 
 setGeneric("searchFunParam", function(object, fun, ...) standardGeneric("searchFunParam"))
+setGeneric("shortPrint", function(object) standardGeneric("shortPrint"))
+setGeneric("simplify", function(object, ...) standardGeneric("simplify"))
 
 
 setGeneric("importMseekIntensities", function(object, rawdata, importFrom, ...) standardGeneric("importMseekIntensities")) #transfer Mseek intensities and history entry about making them
@@ -49,12 +62,14 @@ setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistor
 ## Registered S3 classes
 setOldClass("MseekFT")
 setOldClass("sessionInfo")
+setOldClass("MseekGraph")
 
 ## Class unions
 setClassUnion("listOrNULL", c("list", "NULL"))
 setClassUnion("sessionInfoOrNULL", c("sessionInfo", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))
 setClassUnion("MseekFTOrNULL", c("MseekFT", "NULL"))
+setClassUnion("MseekFamily", c("MseekFT", "MseekGraph"))
 
 #' @noRd
 #' @author Johannes Rainer
@@ -196,8 +211,8 @@ setClass("FunParam",
 #' occured in this analysis step 
 #' @slot changes did changes occur on the associated object. If FALSE, this step
 #'  did not result in relevant changes and could be dropped for reporting
-#' @slot inputDFhash character digest of the data.frame object before this analysis step
-#' @slot outputDFhash character digest of the data.frame object after this analysis step
+#' @slot inputHash character \code{\link{MseekHash}} of the object before this analysis step
+#' @slot outputHash character \code{\link{MseekHash}} of the object after this analysis step
 #' @slot sessionInfo a \code{\link[utils]{sessionInfo}} object, should be genereated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
@@ -210,8 +225,8 @@ setClass("FTProcessHistory",
          slots = c(error = "listOrNULL",
                    changes = "logical",
                    fileNames = "characterOrNULL",
-                   inputDFhash = "characterOrNULL",
-                   outputDFhash = "characterOrNULL",
+                   inputHash = "characterOrNULL",
+                   outputHash = "characterOrNULL",
                    sessionInfo = "sessionInfoOrNULL",
                    processingTime = "numeric"),
          contains = "XProcessHistory",
@@ -219,10 +234,8 @@ setClass("FTProcessHistory",
              error = list(),
              fileNames = character(),
              changes = FALSE,
-             inputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
-                                  algo = "xxhash64"),
-             outputDFhash = digest::digest(data.frame(stringsAsFactors = FALSE),
-                                           algo = "xxhash64"),
+             inputHash = NULL,
+             outputHash = NULL,
              sessionInfo = NULL,
              processingTime = NA_real_
          ),
@@ -263,13 +276,14 @@ setMethod("initialize", "FunParam", function(.Object, ...) {
 setMethod("show", "FTProcessHistory", function(object) {
     callNextMethod()
     
-    chLabel <- if(object@changes){"yes"}else{"no"}
-    cat(" changes:", chLabel, "\n")
+    # chLabel <- if(object@changes){"yes"}else{"no"}
+    # cat(" changes:", chLabel, "\n")
     
-    cat(" input data.frame hash:", object@inputDFhash, "\n")
-    cat(" output data.frame hash:", object@outputDFhash, "\n")
-    cat(" contains sessionInfo:", !is.null(object@sessionInfo), "\n")
-    
+    cat(object@inputHash, "->", object@outputHash, "\n")
+    if(!is.null(object@sessionInfo)){
+    cat("contains sessionInfo:", "\n")
+}
+
     if(length(object@fileNames)){
     cat(" fileNames:", object@fileNames, "\n")
     }
@@ -312,6 +326,44 @@ setMethod("show", "XProcessHistory", function(object) {
     
 })
 
+setMethod("shortPrint", "ANY", function(object){
+    
+    if(class(object) == "FTProcessHistory"){
+        cat(object@info, "\n")
+        cat(paste0("...",.characterTail(object@inputHash), " -> ",
+                   "...",.characterTail(object@outputHash),
+                   "\n"))
+        if(length(object@error)){
+            print(object@error)
+        }
+        }
+    else{
+    print(object)
+    }
+    
+    })
+
+
+setMethod("shortPrint", "FTProcessHistory", function(object){
+    
+    cat(object@info, "\n")
+    cat(paste0("...",.characterTail(object@inputHash), " -> ",
+               "...",.characterTail(object@outputHash),
+               "\n"))
+    if(length(object@error)){
+    print(object@error)
+    }
+
+    })
+
+.characterTail <- function(x, n = 6){
+    sapply(x, function(x){
+        if(!length(nchar(x)) 
+           || is.na(x)){return("")} 
+    substr(x, nchar(x)-n+1, nchar(x))
+    })
+}
+
 #' @noRd
 setMethod("show", "FunParam", function(object) {
     cat(" Object of class:", class(object), "\n")
@@ -350,6 +402,7 @@ setMethod("show", "FunParam", function(object) {
         }
     }
 })
+
 
 
 
@@ -472,8 +525,8 @@ setMethod("error", "ProcessHistory",
 #' occured in this analysis step 
 #' @param changes did changes occur on the associated object. If FALSE, this step
 #'  did not result in relevant changes and could be dropped for reporting
-#' @param inputDFhash character digest of the data.frame object before this analysis step
-#' @param outputDFhash character digest of the data.frame object after this analysis step
+#' @param inputHash character \code{\link{MseekHash}} of the object before this analysis step
+#' @param outputHash character \code{\link{MseekHash}} of the object after this analysis step
 #' @param sessionInfo a \code{\link[utils]{sessionInfo}} object, should be generated
 #'  at time of the recorded event and at least once in every session (by default,
 #'  will be populated by load and constructor methods for MseekFT class).
@@ -487,10 +540,8 @@ setMethod("error", "ProcessHistory",
 #' @examples
 #' FTProcessHistory(error = list(),
 #' changes = TRUE,
-#' inputDFhash = digest::digest(data.frame(1,stringsAsFactors = FALSE),
-#'                              algo = "xxhash64"),
-#' outputDFhash = digest::digest(data.frame(2,stringsAsFactors = FALSE),
-#'                               algo = "xxhash64"),
+#' inputHash = NULL,
+#' outputHash = NULL,
 #' sessionInfo = utils::sessionInfo(),
 #' info = "Example")
 #' 
@@ -498,8 +549,8 @@ setMethod("error", "ProcessHistory",
 #' @export
 FTProcessHistory <- function(error = list(),
                              changes = TRUE,
-                             inputDFhash = NULL,
-                             outputDFhash = NULL,
+                             inputHash = NULL,
+                             outputHash = NULL,
                              sessionInfo = NULL,
                              fileNames = character(),
                              processingTime = NA_real_,
@@ -509,8 +560,8 @@ FTProcessHistory <- function(error = list(),
     obj <- as(obj, "FTProcessHistory")
     obj@error <- error
     obj@changes <- as.logical(changes)
-    obj@inputDFhash <- inputDFhash
-    obj@outputDFhash <- outputDFhash
+    obj@inputHash <- inputHash
+    obj@outputHash <- outputHash
     obj@sessionInfo <- sessionInfo
     obj@fileNames <- fileNames
     obj@processingTime <- processingTime
@@ -547,9 +598,27 @@ FunParam <- function(fun = character(), args = list(), longArgs = list()){
 #' @description Construct a \code{FTAnalysisParam} object with parameters for 
 #' use with \code{\link{analyzeFT}()}
 #' 
-#' @inheritParams analyzeTable
+#' @param intensities the intensity column names, before normalization 
+#' (without __norm suffix), will be automatically renamed if useNormalized.
+#' @param groups named list of non-normalized intensity columns listed by group 
+#' (as supplied by $anagroupnames of MseekFT objects), will be automatically 
+#' renamed if useNormalized.
+#' @param analyze character vector to select the analyses to be run: 
+#' "Basic analysis", "clara_cluster", "t-test", "Peak shapes"
+#' @param normalize normalze intensity columns
+#' @param useNormalized use normalized values for analyses; will trigger 
+#' normalize if there is no normalized data available for all selected 
+#' intensity columns
+#' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
 #' @param .files character() with file paths to the MS data files to be used
 #'  in an analysis
+#' @param ppm ppm range for peak shape analysis
+#' @param controlGroup control group for foldChange (part of Basic analysis) 
+#' analysis (optional) 
+#' @param numClusters number of clusters for clara_clusters analysis
+#' @param mzMatchParam list of parameters passed to mass
+#' @param workers number of workers to use for multithreaded analyses
+#' 
 #' @return a \code{\link{FTAnalysisParam-class}} object
 #'
 #' @rdname FTAnalysisParam

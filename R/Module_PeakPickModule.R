@@ -121,7 +121,10 @@ If this is selected, the rt window setting for peak intensity calculation starts
                                               localNoiseFactor = 0.5,
                                               globalNoiseFactor = 0.5,
                                               extend = T),
-                             mergeProps = list(rttol = input$rttol, minint = 0, minrelint = 0, topN = 100))
+                             mergeProps = list(rttol = input$rttol,
+                                               minint = 0,
+                                               minrelint = 0,
+                                               topN = 100))
         
         if(is.null(newdf) || nrow(newdf) == 0){
           

@@ -26,6 +26,13 @@
 \alias{FTCluster}
 \alias{FTPCA,MseekFT-method}
 \alias{FTPCA}
+\alias{FTMS2scans,MseekFT,listOrNULL-method}
+\alias{FTMS2scans}
+\alias{getSpecList,MseekFT,listOrNULL-method}
+\alias{FTedges,MseekFT-method}
+\alias{matchReference,MseekFT,MseekFT-method}
+\alias{matchReference,MseekGraph,MseekFT-method}
+\alias{simplify,MseekGraph-method}
 \title{analyzeFT}
 \usage{
 \S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData,
@@ -41,11 +48,14 @@
   grouping = NULL, controlGroup = NULL)
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,missing}(object, rawdata,
-  adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5)
+  adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5,
+  areaMode = FALSE, BPPARAM = SerialParam(), baselineSubtract = TRUE,
+  SN = NULL, columnSuffix = "__XIC")
 
 \S4method{getMseekIntensities}{MseekFT,listOrNULL,MseekFTOrNULL}(object,
   rawdata, importFrom, adjustedRT = TRUE, ppm = 5, rtrange = TRUE,
-  rtw = 5)
+  rtw = 5, areaMode = FALSE, BPPARAM = SerialParam(),
+  baselineSubtract = TRUE, SN = NULL, columnSuffix = "__XIC")
 
 \S4method{FTOldPeakShapes}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
   workers = 1)
@@ -66,6 +76,28 @@
 
 \S4method{FTPCA}{MseekFT}(object, intensityCols = NULL,
   featureMode = FALSE)
+
+\S4method{FTMS2scans}{MseekFT,listOrNULL}(object, rawdata, ppm = 5,
+  rtw = 10, uniqueMatch = FALSE)
+
+\S4method{getSpecList}{MseekFT,listOrNULL}(object, rawdata, merge = TRUE,
+  noiselevel = 0, ppm = 5, mzdiff = 0.0005, mzThreshold = NULL)
+
+\S4method{FTedges}{MseekFT}(object, useParentMZs = TRUE, minpeaks = 6,
+  mzdiff = 0.0005)
+
+\S4method{matchReference}{MseekFT,MseekFT}(object, query,
+  parent_mztol = 0.001, parent_ppm = 5, rttol = 5,
+  getCosine = TRUE, cosineThreshold = NULL, singleHits = TRUE,
+  queryPrefix = "query__", returnMapping = FALSE, ...)
+
+\S4method{matchReference}{MseekGraph,MseekFT}(object, query,
+  parent_mztol = 0.001, parent_ppm = 5, rttol = 5,
+  getCosine = TRUE, cosineThreshold = NULL, singleHits = TRUE,
+  queryPrefix = "query__", returnMapping = FALSE, ...)
+
+\S4method{simplify}{MseekGraph}(object, rankBy = NULL, maxK = 10,
+  cosineThreshold = NULL)
 }
 \arguments{
 \item{object}{an MseekFT or data.frame object.}
@@ -97,6 +129,16 @@ and \code{rtmax} values instead of \code{rt}}
 
 \item{rtw}{retention time window to get the intensity from, +/- in seconds}
 
+\item{areaMode}{if TRUE, will calculate peak areas rather than mean intensities}
+
+\item{BPPARAM}{Parallel processing settings, see 
+\code{\link[BiocParallel]{BiocParallelParam-class}}and 
+\code{\link[BiocParallel]{bpparam}}}
+
+\item{baselineSubtract}{subtract baseline when calculating intensities}
+
+\item{SN}{signal to noise ratio. If not NULL, all peaks with max/min peak intensity below this will be reported as intensity 0. Requires Baselinesubstraction to be off.}
+
 \item{importFrom}{a \code{MseekFT} object to use as source for Mseek intensities.}
 
 \item{workers}{number of worker processes}
@@ -114,6 +156,55 @@ automatically be set to be at most number of features - 1.}
 
 \item{featureMode}{if TRUE, will cluster molecular features by intensities 
 across samples. If FALSE, will cluster samples by intensities across features}
+
+\item{uniqueMatch}{if TRUE, assign MS2 scans only to the matching feature with the closest rt}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
+
+\item{mzThreshold}{if not NULL, will remove all peaks with an mz below this value from the spectra.}
+
+\item{useParentMZs}{if TRUE, will also match neutral losses between spectra}
+
+\item{minpeaks}{minimum number of peaks that have to match between two spectr
+to allow calculation of a score}
+
+\item{query}{an object that contains molecular features that will be matched to
+\code{object}, by a customizable combination of retention time, m/z and MS2 similarity matching}
+
+\item{parent_mztol}{parent m/z matching tolerance (absolute); matches have to differ 
+by less than either \code{parent_mztol} or \code{parent_ppm}. If NULL, will ignore m/z for matching.}
+
+\item{parent_ppm}{parent m/z matching tolerance in ppm; matches have to differ 
+by less than either \code{parent_mztol} or \code{parent_ppm}.}
+
+\item{rttol}{retention time tolerance in seconds. If NULL, will ignore rt for matching}
+
+\item{getCosine}{if TRUE, will calculate MS2 scan similarity for features that
+match by rt and m/z (or between all features if rttol and parent_mztol are not set)}
+
+\item{cosineThreshold}{minimum cosine value between features for them to be considered matches.
+will not filter for MS2 similarity score if NULL.}
+
+\item{singleHits}{allow only one query hit for each reference molecular feature 
+(will pick the one with best MS2 similarity)}
+
+\item{queryPrefix}{prefix for columns transferred from the matched query object}
+
+\item{returnMapping}{if true, returns a matrix defining the indices of matched features between object and query}
+
+\item{...}{additional arguments passed to \code{\link[MassTools]{network1}()}}
+
+\item{rankBy}{if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges}
+
+\item{maxK}{if length > 0, will only alllow at most this many edges from each node}
+
+\item{mzdiff}{mz tolerance in fragment ion matching}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
+
+\item{merge}{if TRUE, will merge spectra for each molecular feature}
+
+\item{cosineThreshold}{if length > 0, will remove all edges with a cosine value below this}
 }
 \value{
 an object of the same class as \code{object}, with analyses performed 
@@ -161,4 +252,22 @@ two groups in \code{grouping} with multiple members. See also \code{\link{multit
  See also \code{\link{MosCluster}()}
 
 \code{FTPCA}: Calculate Principal Component Analysis to cluster either features or samples
+
+\code{FTMS2scans}: find MS2 scans across files and save their file and scan numbers in
+ the MseekFT object as a text column.
+
+\code{getSpecList}: generate a list of MS2 spectra inside the object
+from MS2 spectra that were identified with the \code{FTMS2scans()} method.
+
+\code{FTedges}: wrapper for the 
+\code{MassTools::\link[MassTools]{makeEdges}()} function, matching a list of 
+MS2 spectra available inside the object and generating similarity scores.
+
+\code{matchReference}: Match molecular features between a 
+\code{MseekGraph} or \code{MseekFT} object and another \code{MseekFT} object
+ by a customizable combination of retention time, m/z and MS2 similarity
+  matching
+
+\code{simplify}: simplify an MseekGraph object, reducting the number of edges 
+using additional filters.
 }

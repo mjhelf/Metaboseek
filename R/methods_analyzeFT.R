@@ -34,8 +34,7 @@ setMethod("analyzeFT",
               
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
-              inputHash <- digest::digest(object$df, algo = "xxhash64")
-              
+
               if(param@normalize || (param@useNormalized && !identical(grep("__norm",colnames(object$df), value = T), paste0(object$intensities,"__norm")))){ 
                   
                   object <- FTNormalize(object,
@@ -139,8 +138,7 @@ setMethod("analyzeFT",
 #' @export
 setMethod("removeNAs", "MseekFT",
           function(object, intensityCols = NULL, replacement = 0){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               err <- list()
               tryCatch({
@@ -172,11 +170,10 @@ setMethod("removeNAs", "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
-                                                                       inputDFhash = beforeHash,
-                                                                       outputDFhash = afterHash,
+                                                                       inputHash = beforeHash,
+                                                                       outputHash = afterHash,
                                                                        error = err,
                                                                        processingTime = p1,
                                                                        sessionInfo = NULL,
@@ -203,8 +200,7 @@ setMethod("removeNAs", "MseekFT",
 #' @export
 setMethod("FTNormalize", "MseekFT",
           function(object, intensityCols = NULL, logNormalized = FALSE){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -247,12 +243,11 @@ setMethod("FTNormalize", "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -279,8 +274,7 @@ setMethod("FTNormalize", "MseekFT",
 #' @export
 setMethod("FTBasicAnalysis", "MseekFT",
           function(object, intensityCols = NULL, grouping = NULL, controlGroup = NULL){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -309,15 +303,14 @@ setMethod("FTBasicAnalysis", "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -341,18 +334,31 @@ setMethod("FTBasicAnalysis", "MseekFT",
 #' @param rtrange if TRUE, will use \code{rtw} starting out from the \code{rtmin} 
 #' and \code{rtmax} values instead of \code{rt}
 #' @param rtw retention time window to get the intensity from, +/- in seconds
+#' @param areaMode if TRUE, will calculate peak areas rather than mean intensities
+#' @param BPPARAM Parallel processing settings, see 
+#' \code{\link[BiocParallel]{BiocParallelParam-class}}and 
+#' \code{\link[BiocParallel]{bpparam}}
+#' @inheritParams exIntensities
+#' 
 #' @description \code{getMseekIntensities}: get EIC-based intensities for each
 #'  molecular feature in the MseekFT object for each file in \code{rawdata}.
 #'  if another MseekFT object is supplied as \code{importFrom}, will try to transfer MseekIntensities from there if 
 #'  all settings, features and MS data files are equivalent. See also \code{\link{exIntensities}}
+#' @importFrom BiocParallel SerialParam bpparam bplapply
 #' @rdname analyzeFT
 #' @export
 setMethod("getMseekIntensities", signature(object = "MseekFT",
                                            rawdata = "listOrNULL",
                                            importFrom = "missing"),
-          function(object, rawdata, adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+          function(object, rawdata, adjustedRT = TRUE, ppm = 5,
+                   rtrange = TRUE, rtw = 5,
+                   areaMode = FALSE,
+                   BPPARAM = SerialParam(),
+                   baselineSubtract = TRUE,
+                   SN = NULL,
+                   columnSuffix = "__XIC"
+                   ){
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -370,7 +376,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                   }
                   #print(names(rta))
                   ###Get Mseek Intensities
-                  intens <- lapply(seq_len(length(rawdata)), function(i){
+                  intens <- bplapply(seq_len(length(rawdata)), function(i){
                       
                       if(!is.null(rta)){
                           indx <- which(names(rta) == basename(names(rawdata))[i])
@@ -409,19 +415,23 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                           
                           
                       }
-                      
-                      exIntensities(rawfile= rawdata[[i]],
+                      #need ::: for bpparam, at least if SnowParam
+                      Metaboseek:::exIntensities(rawfile= rawdata[[i]],
                                     mz = object$df$mz,
                                     ppm= ppm,
-                                    rtw= rtwin)
-                  })
+                                    rtw= rtwin,
+                                    areaMode = areaMode,
+                                    baselineSubtract = baselineSubtract,
+                                    SN = SN)
+                  },
+                  BPPARAM = BPPARAM
+                  )
                   
-                  names(intens) <- paste0(basename(names(rawdata)),"__XIC")
+                  names(intens) <- paste0(basename(names(rawdata)), columnSuffix)
                   
                   
-                  object$df <- updateDF(as.data.frame(intens,
-                                                      stringsAsFactors = FALSE),
-                                        object$df) 
+                  object <- updateFeatureTable(object, as.data.frame(intens,
+                                                      stringsAsFactors = FALSE))
                   
                   object$MseekIntensities <- unique(c(object$MseekIntensities,
                                                       names(intens)))
@@ -435,12 +445,11 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = names(rawdata),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -450,8 +459,13 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                                                                 args = list(adjustedRT = adjustedRT,
                                                                                             ppm = ppm,
                                                                                             rtrange = rtrange,
-                                                                                            rtw = rtw),
-                                                                                longArgs = list(rawdata = summary(rawdata)))
+                                                                                            rtw = rtw,
+                                                                                            areaMode = areaMode,
+                                                                                            baselineSubtract = baselineSubtract,
+                                                                                            SN = SN,
+                                                                                            columnSuffix = columnSuffix),
+                                                                                longArgs = list(rawdata = summary(rawdata),
+                                                                                                BPPARAM = capture.output(BPPARAM)))
                                               ))
               }
               )
@@ -468,9 +482,13 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                            rawdata = "listOrNULL",
                                            importFrom = "MseekFTOrNULL"),
           function(object, rawdata, importFrom,
-                   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+                   adjustedRT = TRUE, ppm = 5, rtrange = TRUE, rtw = 5,
+                   areaMode = FALSE,
+                   BPPARAM = SerialParam(),
+                   baselineSubtract = TRUE,
+                   SN = NULL,
+                   columnSuffix = "__XIC"){
+              beforeHash <- MseekHash(object)
               
               p1 <- proc.time()
               
@@ -484,13 +502,29 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                                             args = list(adjustedRT = adjustedRT,
                                                         ppm = ppm,
                                                         rtrange = rtrange,
-                                                        rtw = rtw),
-                                            longArgs = list(rawdata = summary(rawdata)))
+                                                        rtw = rtw,
+                                                        areaMode = areaMode,
+                                                        baselineSubtract = baselineSubtract,
+                                                        SN = SN,
+                                                        columnSuffix = columnSuffix
+                                            ),
+                                            longArgs = list(rawdata = summary(rawdata),
+                                                            BPPARAM = capture.output(BPPARAM)))
+                  
                   
                   oldParams <- searchFunParam(importFrom, "Metaboseek::getMseekIntensities")
                   
+                  if(!length(oldParams)){
+                      stop("no previous results")
+                      
+                  }
+                  
                   oldParams <- oldParams[!sapply(oldParams, hasError)]
                   
+                  if(!length(oldParams)){
+                      stop("no previous results")
+                      
+                  }                  
                   oldParams <- oldParams[[length(oldParams)]]
                   
                   if(!identical(oldParams@param,this.FunParam)){
@@ -513,30 +547,23 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                       
                   }
                   
-                  object$df <- updateDF(importFrom$df[,importFrom$MseekIntensities],
-                                        object$df) 
+                  object <- updateFeatureTable(object, importFrom$df[,importFrom$MseekIntensities]) 
                   
                   object$MseekIntensities <- unique(c(object$MseekIntensities,
                                                       importFrom$MseekIntensities))
                   
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = names(rawdata),
                                                                error = list(),
                                                                sessionInfo = NULL,
                                                                processingTime = p1,
                                                                info = paste0("Added Mseek intensities, safely transferred from ", importFrom$tablename),
-                                                               param = FunParam(fun = "Metaboseek::getMseekIntensities",
-                                                                                args = list(adjustedRT = adjustedRT,
-                                                                                            ppm = ppm,
-                                                                                            rtrange = rtrange,
-                                                                                            rtw = rtw),
-                                                                                longArgs = list(rawdata = summary(rawdata)))
+                                                               param = this.FunParam
                                               ))
                   
               },
@@ -544,7 +571,12 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
                   message(paste("skipped import:",e,"\ntrying to calculate MseekIntensities from scratch now..."))
                   object <<-  getMseekIntensities(object = object, rawdata = rawdata,
                                                   adjustedRT = adjustedRT, ppm = ppm,
-                                                  rtrange = rtrange, rtw = rtw)
+                                                  rtrange = rtrange, rtw = rtw,
+                                                  areaMode = areaMode,
+                                                  baselineSubtract = baselineSubtract,
+                                                  SN = SN,
+                                                  columnSuffix = columnSuffix,
+                                                  BPPARAM = BPPARAM)
                   
               },
               warning = function(w){print(w)})
@@ -564,8 +596,7 @@ setMethod("getMseekIntensities", signature(object = "MseekFT",
 #' @export
 setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),
           function(object, rawdata, ppm = 5, workers = 1){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -602,15 +633,14 @@ setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -636,8 +666,7 @@ setMethod("FTOldPeakShapes", c("MseekFT", "listOrNULL"),
 #' @export
 setMethod("FTPeakShapes", c("MseekFT", "listOrNULL"),
           function(object, rawdata, ppm = 5, workers = 1){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -672,15 +701,14 @@ setMethod("FTPeakShapes", c("MseekFT", "listOrNULL"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -711,8 +739,7 @@ setMethod("FTPeakShapes", c("MseekFT", "listOrNULL"),
 #' @export
 setMethod("FTMzMatch", c("MseekFT"),
           function(object, db, ppm = 5, mzdiff = 0.001){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
               err <- list()
@@ -743,15 +770,14 @@ setMethod("FTMzMatch", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -779,8 +805,7 @@ setMethod("FTT.test", c("MseekFT"),
           function(object, intensityCols = NULL,
                    grouping = NULL,
                    adjmethod = "bonferroni"){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -812,15 +837,14 @@ setMethod("FTT.test", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -848,8 +872,7 @@ setMethod("FTT.test", c("MseekFT"),
 setMethod("FTAnova", c("MseekFT"),
           function(object, intensityCols = NULL,
                    grouping = NULL){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -880,15 +903,14 @@ setMethod("FTAnova", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -917,8 +939,7 @@ setMethod("FTAnova", c("MseekFT"),
 setMethod("FTCluster", c("MseekFT"),
           function(object, intensityCols = NULL,
                    numClusters = 100L){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -957,15 +978,14 @@ setMethod("FTCluster", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -992,8 +1012,7 @@ setMethod("FTPCA", c("MseekFT"),
           function(object,
                    intensityCols = NULL,
                    featureMode = FALSE){
-              beforeHash <- digest::digest(object$df,
-                                           algo = "xxhash64")
+              beforeHash <- MseekHash(object)
               
               
               p1 <- proc.time()
@@ -1061,15 +1080,14 @@ setMethod("FTPCA", c("MseekFT"),
               },
               finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
-                  afterHash <- digest::digest(object$df,
-                                              algo = "xxhash64")
+                  afterHash <- MseekHash(object)
                   
                   
                   
                   object <- addProcessHistory(object,
                                               FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputDFhash = beforeHash,
-                                                               outputDFhash = afterHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
                                                                fileNames = character(),
                                                                error = err,
                                                                sessionInfo = NULL,
@@ -1083,4 +1101,693 @@ setMethod("FTPCA", c("MseekFT"),
               }
               )
               return(object)
+          })
+
+#' @aliases FTMS2scans
+#' 
+#' @description \code{FTMS2scans}: find MS2 scans across files and save their file and scan numbers in
+#'  the MseekFT object as a text column.
+#' @param uniqueMatch if TRUE, assign MS2 scans only to the matching feature with the closest rt
+#'  
+#' @rdname analyzeFT
+#' @export
+setMethod("FTMS2scans", c("MseekFT", "listOrNULL"),
+          function(object, rawdata, ppm = 5, rtw = 10, uniqueMatch = FALSE){
+              beforeHash <- MseekHash(object)
+              p1 <- proc.time()
+              
+              err <- list()
+              tryCatch({
+                  
+                  if(is.null(rawdata)){
+                      stop("Analysis was not performed because no MS data is loaded.")
+                      
+                  }
+                  
+                  inp <- data.frame(MS2scans = listMS2scans(mz = object$df$mz,
+                                                            rt = object$df$rt,
+                                                            ppm = ppm,
+                                                            rtw = rtw,
+                                                            MSData = rawdata,
+                                                            rtMatch = uniqueMatch),
+                                    stringsAsFactors = F)
+                  
+                  object <- updateFeatureTable(object, inp)
+                  
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$FTPeakShapes <<- paste(e)
+              },
+              finally = {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  if(!length(err)){
+                      msg <- paste("Found MS2 scans for", sum(object$df$MS2scans != ""), "Features")
+                  }else{
+                      msg <- "Failed to find MS2 scans"
+                      }
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               fileNames = character(),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = msg,
+                                                               param = FunParam(fun = "Metaboseek::FTMS2scans",
+                                                                                args = list(ppm = ppm,
+                                                                                            rtw = rtw,
+                                                                                            uniqueMatch = uniqueMatch),
+                                                                                longArgs = list(rawdata = summary(rawdata)))
+                                              ))
+              }
+              )
+              return(object)
+          })
+
+#' @noRd
+#' @importFrom MassTools mergeMS
+setMethod("getSpecList", c("data.frame","list"),
+          function(object, rawdata, merge = TRUE,
+                   noiselevel = 0, ppm = 5, mzdiff = 0.0005) {
+              
+              res <- lapply(makeScanlist2(object$MS2scans), getAllScans, rawdata, removeNoise = noiselevel)
+              
+              if(merge){
+                  res <- lapply(res, mergeMS, ppm = ppm, mzdiff = mzdiff, noiselevel = noiselevel)
+              }
+              
+              return(res)
+              
+          })
+
+#' @rdname analyzeFT
+#' @description \code{getSpecList}: generate a list of MS2 spectra inside the object
+#' from MS2 spectra that were identified with the \code{FTMS2scans()} method.
+#' @param mzThreshold if not NULL, will remove all peaks with an mz below this value from the spectra.
+#' @param merge if TRUE, will merge spectra for each molecular feature
+#' @export
+setMethod("getSpecList", c("MseekFT","listOrNULL"),
+          function(object, rawdata, merge = TRUE, noiselevel = 0, ppm = 5, mzdiff = 0.0005, mzThreshold = NULL){
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              
+              tryCatch({
+                  
+                  if(missing(rawdata) || is.null(rawdata)){
+                      stop("No MS data available")   
+                  }
+                  
+                  if(is.null(object$df$MS2scans)){
+                      stop("No MS2scans defined yet. Run FTMS2scans() first")
+                  }
+                  
+                  inp <- data.frame(specList = I(getSpecList(object$df, rawdata,
+                                                           merge = merge,
+                                                           noiselevel = noiselevel,
+                                                           ppm = ppm,
+                                                           mzdiff = mzdiff)),
+                                    stringsAsFactors = FALSE)
+                  
+                  if(!is.null(mzThreshold)){
+                      
+                      inp$specList <- lapply(inp$specList,
+                                             function(x){if(is.matrix(x)|is.data.frame(x)){
+                                                 return(x[x[,1]>mzThreshold,,drop = FALSE]) }else{
+                                                     return(x)
+                                                 }})
+                      
+                      }
+                  
+                  object <- updateFeatureTable(object, inp)
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$getSpecList <<- paste(e)
+                  
+              },
+              finally = 
+              {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               fileNames = names(rawdata),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = paste0("Extracted MS2 spectra into specList column"),
+                                                               param = FunParam(fun = "Metaboseek::getSpecList",
+                                                                                args = list(merge = merge,
+                                                                                            noiselevel = noiselevel,
+                                                                                            ppm = ppm,
+                                                                                            mzdiff = mzdiff),
+                                                                                longArgs = list(rawdata = summary(rawdata)))
+                                              ))
+              })
+              
+              return(object)
+              
+          })
+
+#' @rdname analyzeFT
+#' @description \code{FTedges}: wrapper for the 
+#' \code{MassTools::\link[MassTools]{makeEdges}()} function, matching a list of 
+#' MS2 spectra available inside the object and generating similarity scores.
+#' 
+#' @param useParentMZs if TRUE, will also match neutral losses between spectra
+#' @param minpeaks minimum number of peaks that have to match between two spectr
+#' to allow calculation of a score
+#' @param mzdiff mz tolerance in fragment ion matching
+#' 
+#' @export
+setMethod("FTedges", c("MseekFT"),
+          function(object, useParentMZs = TRUE, minpeaks = 6, mzdiff = 0.0005){
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              
+              tryCatch({
+                  
+                  
+                  if(is.null(object$df$specList)){
+                      stop("No MS2scans defined yet. Run getSpecList() first")
+                  }
+                  
+                  #this will be in sync with the edge indices and is used by the NetworkingModule for node ID
+                  object <- updateFeatureTable(object,data.frame(fixed__id = seq(nrow(object$df))))
+                  
+                  
+                  object$edges <- MassTools::makeEdges(speclist = object$df$specList,
+                                                       parentmasses = if(useParentMZs){object$df$mz}else{NULL},
+                                                       minpeaks = minpeaks,
+                                                       mztol = mzdiff)
+                  
+                  object$edges <- object$edges[object$edges$cosine > 0.001,, drop = FALSE]
+                  
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$getSpecList <<- paste(e)
+                  
+              },
+              finally = {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = paste0("Generated networking edges"),
+                                                               param = FunParam(fun = "Metaboseek::FTedges",
+                                                                                args = list(useParentMZs = useParentMZs,
+                                                                                            minpeaks = minpeaks,
+                                                                                            mzdiff = mzdiff),
+                                                                                longArgs = list())
+                                              ))
+              })
+              
+              return(object)
+              
+          })
+
+
+
+#' @noRd
+setMethod("matchReference", c("data.frame","data.frame"),
+          function(object, query , parent_mztol = 0.001, parent_ppm = 5,
+                   rttol = 5, getCosine = TRUE, cosineThreshold = NULL,
+                   singleHits = TRUE, queryPrefix = "query__",
+                   returnMapping = FALSE,
+                   ...) {
+              
+              if((!length(query$specList) 
+                 || !length(object$specList))
+                 && getCosine){
+                  stop("Need specList to getCosine. Add specLists to both objects or run with getCosine = FALSE")
+              }
+              
+              #prepare to take up information about which ref matches each query item
+              hitlist <- lapply(!logical(nrow(query)), rep, nrow(object))
+              
+              if(length(query$rt) 
+                 && length(object$rt)
+                 && length(rttol)){
+                  
+                  hitlist <- lapply(seq_len(length(hitlist)),function(n){(hitlist[[n]] 
+                                                                          & abs(query$rt[n] - object$rt) < rttol)})
+                  
+              }
+              
+              if(length(query$mz) 
+                 && length(object$mz)
+                 && length(parent_mztol)
+                 && length(parent_ppm)){
+                  
+                  
+                  hitlist <- lapply(seq_len(length(hitlist)),function(n){(hitlist[[n]] 
+                                                                          & (abs(query$mz[n] - object$mz) < parent_mztol
+                                                                             | abs(query$mz[n] - object$mz)/query$mz[n] < parent_ppm*1e-6))})
+                  
+              }
+              
+              if(getCosine){
+                  #make edges... from, to, cosine...
+                  mapping <- do.call(rbind,lapply(seq_len(length(hitlist)),function(n){
+                      if(!any(hitlist[[n]])){return(numeric())}
+                      from <- rep(n, sum(hitlist[[n]]))
+                      to <- which(hitlist[[n]])
+                      cosine <- sapply(object$specList[hitlist[[n]]],MassTools::network1, query$specList[[n]], ...)
+                      
+                      matrix(c(from,to,cosine), ncol = 3, dimnames = list(rownames = NULL,
+                                                                          colnames = c('query', 'ref', 'cosine')), byrow = FALSE)}))
+              }else{
+                  mapping <-  do.call(rbind,lapply(seq_len(length(hitlist)),function(n){
+                      if(!any(hitlist[[n]])){return(numeric())}
+                      from <- rep(n, sum(hitlist[[n]]))
+                      to <- which(hitlist[[n]])
+                      
+                      matrix(c(from,to), ncol = 2, dimnames = list(rownames = NULL,
+                                                                   colnames = c('query', 'ref')), byrow = FALSE)}))
+                  
+              }
+              
+              
+              
+              if(getCosine && length(cosineThreshold)){
+                  mapping <- mapping[which(mapping[,'cosine'] > cosineThreshold),,drop = FALSE] #which gets rid of NAs
+              }
+              
+              if(singleHits){
+                  if(getCosine){
+                      mapping <- mapping[order(mapping[,'cosine'], decreasing = TRUE),,drop = FALSE]
+                  }
+                  
+                  mapping <- mapping[!duplicated(mapping[,'ref']),,drop = FALSE]
+                  
+              }
+              
+              addref <- seq_len(nrow(object))[!seq_len(nrow(object)) %in% mapping[,2]]
+              
+              #fill mapping for object entries that don't have a match
+              if(getCosine){
+                  filler <- matrix(c(rep(NA_real_, length(addref)),
+                                     addref,
+                                     rep(NA_real_, length(addref))),
+                                   ncol = 3, dimnames = list(rownames = NULL,
+                                                             colnames = c('query', 'ref', 'cosine')), byrow = FALSE)
+              }else{
+                  filler <- matrix(c(rep(NA_real_, length(addref)),
+                                     addref),
+                                   ncol = 2, dimnames = list(rownames = NULL,
+                                                             colnames = c('query', 'ref')), byrow = FALSE)
+                  
+              }
+              
+              mapping <- rbind(mapping, filler)
+              mapping <- mapping[order(mapping[,2],decreasing = FALSE),,drop = FALSE]
+              
+              
+              if(returnMapping){return(mapping)}
+              
+              
+              
+              colnames(query) <- paste0(queryPrefix, colnames(query))
+              
+                  matched <- cbind(object[mapping[,2],], query[mapping[,1],])
+                  if(ncol(mapping) >2){
+                  matched[[paste0(queryPrefix,"matchscore")]] <- mapping[,3]
+              }
+              
+              return(matched)
+              
+          })
+
+
+#' @rdname analyzeFT
+#' @param merge if TRUE, will merge spectra for each molecular feature
+#' @param query an object that contains molecular features that will be matched to
+#' \code{object}, by a customizable combination of retention time, m/z and MS2 similarity matching
+#' @param parent_mztol parent m/z matching tolerance (absolute); matches have to differ 
+#' by less than either \code{parent_mztol} or \code{parent_ppm}. If NULL, will ignore m/z for matching.
+#' @param parent_ppm parent m/z matching tolerance in ppm; matches have to differ 
+#' by less than either \code{parent_mztol} or \code{parent_ppm}.
+#' @param rttol retention time tolerance in seconds. If NULL, will ignore rt for matching
+#' @param getCosine if TRUE, will calculate MS2 scan similarity for features that
+#' match by rt and m/z (or between all features if rttol and parent_mztol are not set)
+#' @param cosineThreshold minimum cosine value between features for them to be considered matches.
+#' will not filter for MS2 similarity score if NULL.
+#' @param singleHits allow only one query hit for each reference molecular feature 
+#' (will pick the one with best MS2 similarity)
+#' @param queryPrefix prefix for columns transferred from the matched query object
+#' @param returnMapping if true, returns a matrix defining the indices of matched features between object and query
+#' @param ... additional arguments passed to \code{\link[MassTools]{network1}()}
+#' 
+#' @description \code{matchReference}: Match molecular features between a 
+#' \code{MseekGraph} or \code{MseekFT} object and another \code{MseekFT} object
+#'  by a customizable combination of retention time, m/z and MS2 similarity
+#'   matching
+#' 
+#' @export
+setMethod("matchReference", c("MseekFT","MseekFT"),
+          function(object, query , parent_mztol = 0.001, parent_ppm = 5,
+                   rttol = 5, getCosine = TRUE, cosineThreshold = NULL,
+                   singleHits = TRUE, queryPrefix = "query__",
+                   returnMapping = FALSE,
+                   ...) {
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              
+              tryCatch({
+                  
+                  
+                  if(!is.null(cosineThreshold) 
+                     && (!is.list(object$df$specList)
+                         || !is.list(query$df$specList))){
+                      stop("No specList found in query and/or object. Run getSpecList() first or set cosineThreshold to NULL to match only based on rt and mz values.")
+                  }
+                  
+                  inp <- matchReference(object$df,
+                                        query$df,
+                                        parent_mztol = parent_mztol,
+                                        parent_ppm = parent_ppm,
+                                        rttol = rttol,
+                                        getCosine = getCosine,
+                                        cosineThreshold = cosineThreshold,
+                                        singleHits = singleHits,
+                                        queryPrefix = queryPrefix,
+                                        returnMapping = returnMapping,
+                                        ...)
+                  
+                  object <- updateFeatureTable(object, inp)
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$matchReference <<- paste(e)
+                  
+              },
+              finally = 
+              {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               # fileNames = names(rawdata),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = paste0("Matched query MseekFT object ", MseekHash(query), " to this reference object"),
+                                                               param = FunParam(fun = "Metaboseek::matchReference",
+                                                                                args = c(list(...),
+                                                                                         list(parent_mztol = parent_mztol,
+                                                                                              parent_ppm = parent_ppm,
+                                                                                              rttol = rttol,
+                                                                                              getCosine = getCosine,
+                                                                                              cosineThreshold = cosineThreshold,
+                                                                                              singleHits = singleHits,
+                                                                                              queryPrefix = queryPrefix,
+                                                                                              returnMapping = returnMapping)),
+                                                                                longArgs = list(queryHistory = processHistory(query)))
+                                              ))
+              })
+              
+              return(object)
+              
+          })
+
+#' @rdname analyzeFT
+#' @param merge if TRUE, will merge spectra for each molecular feature
+#' @export
+setMethod("matchReference", c("MseekGraph","MseekFT"),
+          function(object, query , parent_mztol = 0.001, parent_ppm = 5,
+                   rttol = 5, getCosine = TRUE, cosineThreshold = NULL,
+                   singleHits = TRUE, queryPrefix = "query__",
+                   returnMapping = FALSE,
+                   ...) {
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              
+              tryCatch({
+                  
+                  
+                  if(!is.null(cosineThreshold) 
+                     && (!is.list(V(object$graph)$specList)
+                         || !is.list(query$df$specList))){
+                      stop("No specList found in query and/or object. Run getSpecList() first or set cosineThreshold to NULL to match only based on rt and mz values.")
+                  }
+                  
+                  for (rem in vertex_attr_names(object$graph)[grepl(paste0("^",queryPrefix), vertex_attr_names(object$graph))]){
+                      
+                      object$graph <- delete_vertex_attr(object$graph, rem)
+                      
+                      
+                  }
+                  
+                  
+                  inp <- matchReference(type.convert(as_data_frame(object$graph, "vertices"), as.is = T),
+                                        query$df,
+                                        parent_mztol = parent_mztol,
+                                        parent_ppm = parent_ppm,
+                                        rttol = rttol,
+                                        getCosine = getCosine,
+                                        cosineThreshold = cosineThreshold,
+                                        singleHits = singleHits,
+                                        queryPrefix = queryPrefix,
+                                        returnMapping = returnMapping,
+                                        ...)
+                  
+                  for (add in colnames(inp)[grepl(paste0("^",queryPrefix), colnames(inp))]){
+                      
+                      vertex_attr(object$graph, add) <- inp[[add]]
+                      
+                      
+                  }
+                  
+                  #vertex_attr(object$graph) <- as.list(inp[,grepl(paste0("^",queryPrefix), colnames(inp)), drop = FALSE])
+                  
+                  
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$matchReference <<- paste(e)
+                  
+              },
+              finally = 
+              {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               # fileNames = names(rawdata),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = paste0("Matched query MseekFT object ", MseekHash(query), " to this reference MseekGraph object"),
+                                                               param = FunParam(fun = "Metaboseek::matchReference",
+                                                                                args = c(list(...),
+                                                                                         list(parent_mztol = parent_mztol,
+                                                                                              parent_ppm = parent_ppm,
+                                                                                              rttol = rttol,
+                                                                                              getCosine = getCosine,
+                                                                                              cosineThreshold = cosineThreshold,
+                                                                                              singleHits = singleHits,
+                                                                                              queryPrefix = queryPrefix,
+                                                                                              returnMapping = returnMapping)),
+                                                                                longArgs = list(queryHistory = processHistory(query)))
+                                              ))
+              })
+              
+              return(object)
+              
+          })
+
+#' @rdname analyzeFT
+#' @description \code{simplify}: simplify an MseekGraph object, reducting the number of edges 
+#' using additional filters.
+#' 
+#' @param maxK if length > 0, will only alllow at most this many edges from each node
+#' @param rankBy if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges
+#' @param cosineThreshold if length > 0, will remove all edges with a cosine value below this
+#' @export
+setMethod("simplify", c("MseekGraph"),
+          function(object, rankBy = NULL,
+                   maxK = 10, cosineThreshold = NULL) {
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              
+              tryCatch({
+                  
+                  
+                  tables <- list(nodes = type.convert(as_data_frame(object$graph, "vertices"), as.is = T),
+                                edges =  type.convert(as_data_frame(object$graph, "edges"), as.is = T))
+                  
+                  nedgesBefore <- nrow(tables$edges)
+                  
+
+                  if(length(cosineThreshold)){
+                      tables$edges <- tables$edges[tables$edges$cosine >= cosineThreshold,]
+                      }
+                  
+                  if(! "fixed__id" %in% colnames(tables$nodes)){
+                      tables$nodes$fixed__id <- tables$nodes[,1]
+                  }
+                  
+                  ####TEMPORARILY DISABLED
+                  # if(FALSE
+                  #    #input$mergeCheck
+                  # ){
+                  #     if(input$mergeCheck2){
+                  #         res <- list(tables = simplifyGraph(res$tables$nodes,
+                  #                                            res$tables$edges,
+                  #                                            which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
+                  #                                                  & res$tables$edges[[internalValues$colSelected1]] <= input$col1max
+                  #                                                  & res$tables$edges[[internalValues$colSelected2]] >= input$col2min
+                  #                                                  & res$tables$edges[[internalValues$colSelected2]] <= input$col2max
+                  #                                            )),
+                  #                     graph = NULL)
+                  #     }else{
+                  #         res <- list(tables = simplifyGraph(res$tables$nodes,
+                  #                                            res$tables$edges,
+                  #                                            which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
+                  #                                                  & res$tables$edges[[internalValues$colSelected1]] <= input$col1max)),
+                  #                     graph = NULL)
+                  #         
+                  #     }
+                  #     
+                  # }
+                  
+                  
+                  
+                  if(length(maxK)){
+                      #select edges to remove
+                      #  print("beforeremoval")
+                      if(!length(rankBy)){
+                          rankBy <- 1
+                      }
+                      
+                      removeindices <- integer(0)
+                      for(i in unique(c(tables$edges[,1], tables$edges[,2]))){
+                          
+                          selall <- which(tables$edges[,1] == i | tables$edges[,2] ==i)
+                          if(length(selall) > maxK){
+                              
+                              removeindices <- c(removeindices, selall[order(tables$edges[selall,rankBy])][1:max(c(1,(length(selall)-maxK)))])
+                              
+                          }
+                          
+                      }
+                      if(length(removeindices) > 0){
+                          tables$edges <- tables$edges[-unique(removeindices),]
+                      }
+                      
+                  }
+                  # print(res$tables$edges)
+                  #  print(res$tables$nodes)
+                  
+                  if(!length(object$edges)){
+                      object$edges <- tables$edges
+                  }
+                  
+                  
+                  g1 <- graph_from_data_frame(d=tables$edges, vertices=tables$nodes, directed=F) 
+                  
+                  
+                  #V(g1)$label <- V(g1)$parent.mass
+                  V(g1)$id <- seq(vcount(g1))
+                  
+                  # Removing loops from the graph:
+                  g1 <- igraph::simplify(g1, remove.multiple = F, remove.loops = T) 
+                  
+                  #important for overview mode!
+                  V(g1)$subcl <-  clusters(g1)$membership
+                  
+                  if(nedgesBefore != nrow(tables$edges)){
+                              layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+
+                              V(g1)$x__coord <- layo$layout[,1]
+                              V(g1)$y__coord <- layo$layout[,2]
+
+                          }
+                  
+                  object$graph <- g1
+                  
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$simplify <<- paste(e)
+                  
+              },
+              finally = 
+              {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               # fileNames = names(rawdata),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = paste0("Simplified network"),
+                                                               param = FunParam(fun = "Metaboseek::simplify",
+                                                                                args = list(rankBy = rankBy,
+                                                                                         maxK = maxK,
+                                                                                         cosineThreshold = cosineThreshold),
+                                                                                longArgs = list())
+                                              ))
+              })
+              
+              return(object)
+              
           })

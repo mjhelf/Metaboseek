@@ -65,18 +65,40 @@ test_that("removeNAs works", {
 test_that("we can get Mseek intensities",{
     
     expect_true(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2]))))
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2], adjustedRT = FALSE))))
+    
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                           adjustedRT = FALSE,
+                                                           BPPARAM = bpparam()))))
+    
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                           adjustedRT = FALSE,
+                                                           BPPARAM = SerialParam()))))
+    
+    expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                           adjustedRT = FALSE,
+                                                           BPPARAM = SnowParam()))))
+    
+    if(Sys.info()['sysname'] != "Windows"){
+     
+        expect_false(hasError(previousStep(getMseekIntensities(tabX1, MSD$data[1:2],
+                                                               adjustedRT = FALSE,
+                                                               BPPARAM = MulticoreParam()))))
+           
+    }
+    
     expect_true(all(paste0(basename(names(MSD$data[1:2])), "__XIC") %in% colnames(getMseekIntensities(tabX1, MSD$data[1:2], adjustedRT = FALSE)$df)))
-})
 
-with_ints <- getMseekIntensities(tabX1, MSD$data, adjustedRT = FALSE)
+    })
 
+with_ints <- getMseekIntensities(tabX1, MSD$data, adjustedRT = FALSE, BPPARAM = SnowParam(2))
 
 
 test_that("transferring Mseek intensities works",{
     
     #using getMseekIntensities with signature that includes a template for Mseek intensities
     expect_silent({
-    transferred <- getMseekIntensities(tabX1, MSD$data, with_ints, adjustedRT = FALSE)
+    transferred <- getMseekIntensities(tabX1, MSD$data, with_ints, adjustedRT = FALSE, BPPARAM = SnowParam(2))
     })
     expect_true(!hasError(previousStep(transferred)))
 
@@ -105,6 +127,20 @@ test_that("transferring Mseek intensities works",{
     
     
     })
+
+test_that("Mseek analyzeFT FTMS2scans method works",{
+
+    gotMS2 <- FTMS2scans(tab1, MSD$data)
+    
+    expect_false(hasError(previousStep(gotMS2)))
+    
+    expect_equivalent(
+        sum(gotMS2$df$MS2scans != ""),
+        6
+        )
+    
+
+})
 
 test_that("Mseek analyzeFT submethods work",{
     suppressWarnings({
@@ -233,7 +269,7 @@ test_that("Mseek analyzeFT submethods work",{
     
 })
 
-test_that("analyzeFT S4 method works",{
+test_that("analyzeFT method works",{
     
     df1 <- buildMseekFT(data.frame(mz = c(101:105),
                       rt = c(201:205),
@@ -281,46 +317,100 @@ test_that("analyzeFT S4 method works",{
    
 })
 
-# context("xcms integration and object histories")
-# 
-# test_that("xcmsRunner functions work",{
-#     
-#     
-#     analyzeFT(ttt)
-#     
-#     if(file.exists("./AA_Local")){
-#         setwd("./AA_Local/")
-#     }
-#     
-#     progress <- savetable(xset2,
-#                           status = NULL,
-#                           fill = xcms::FillChromPeaksParam(expandMz = 0.005,
-#                                                            expandRt = 5, ppm = 3),
-#                           nonfill = T,
-#                           filename = "tableout_xset",
-#                           bparams = BiocParallel::bpparam(),
-#                           intensities = list(ppm = 5,
-#                                              rtw = 5,
-#                                              rtrange = T),
-#                           rawdata = NULL,
-#                           saveR = T,
-#                           postProc = NULL)
-#     
-#     progressAN <- savetable(an,
-#                             status = NULL,
-#                             fill = xcms::FillChromPeaksParam(expandMz = 0.005,
-#                                                              expandRt = 5, ppm = 3),
-#                             nonfill = T,
-#                             filename = "tableoutxxAN",
-#                             bparams = BiocParallel::bpparam(),
-#                             intensities = list(ppm = 5,
-#                                                rtw = 5,
-#                                                rtrange = T),
-#                             rawdata = NULL,
-#                             saveR = T,
-#                             postProc = NULL)
-#     
-#     getwd()
-#     
-#     processHistory(an)
-# })
+test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
+    tab1_ed <- getSpecList(tab1, MSD$data)
+    expect_true(hasError(previousStep(tab1_ed)))
+    
+    tab1_ed <- FTedges(tab1, MSD$data)
+    expect_true(hasError(previousStep(tab1_ed)))
+    
+    tab1_ed <- FTMS2scans(tab1, MSD$data)
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    expect_type(getSpecList(tab1_ed$df, MSD$data),
+                "list")
+    
+    
+    tab1_ed <- getSpecList(tab1_ed, MSD$data)
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_ed <- FTedges(tab1_ed, useParentMZs = TRUE, minpeaks = 6, mzdiff = 0.0005)
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_gr <- buildMseekGraph(tab1_ed)
+    expect_false(hasError(previousStep(tab1_gr)))
+    expect_true(igraph::is_igraph(tab1_gr$graph))
+    
+    ##map it on itself
+    tab1_ed2 <- matchReference(tab1_ed, tab1_ed)
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    #map on graph
+    tab1_gr <- matchReference(tab1_gr, tab1_ed)
+    expect_false(hasError(previousStep(tab1_gr)))
+    
+    expect_equal(igraph::vertex_attr_names(tab1_gr$graph)[!igraph::vertex_attr_names(tab1_gr$graph) %in% c("id", "subcl", "x__coord", "y__coord", "name")],
+                 colnames(tab1_ed2$df)[!colnames(tab1_ed2$df) %in% c("id", "subcl", "x__coord", "y__coord", "name")])
+    
+    
+    ##map with a table that has missing MS2 values
+    tab1_minus<- FTMS2scans(tab1, MSD$data[-9])
+    expect_false(hasError(previousStep(tab1_ed)))
+    
+    tab1_minus2 <- getSpecList(tab1_minus, MSD$data)
+    expect_equal(MseekHash(tab1_minus2),
+                 MseekHash(getSpecList(tab1_minus, MSD$data[-9])))
+    expect_false(hasError(previousStep(tab1_minus2)))
+    
+    ##map it on without MSdata
+    tab1_ed2 <- matchReference(tab1_ed, tab1_minus)
+    expect_true(hasError(previousStep(tab1_ed2)))
+    
+    tab1_ed2 <- matchReference(tab1_ed, tab1_minus2)
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    #map on graph
+    tab1_gr <- matchReference(tab1_gr, tab1_minus)
+    expect_true(hasError(previousStep(tab1_gr)))
+    
+    tab1_gr <- matchReference(tab1_gr, tab1_minus2)
+    expect_false(hasError(previousStep(tab1_gr)))
+    
+    ##map it on itself
+    expect_silent({
+    tab1_ed2 <- matchReference(tab1_ed, tab1_minus2, cosineThreshold = 0.8)})
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    expect_silent({
+        tab1_ed2 <- matchReference(tab1_ed, tab1_minus2, rttol = NULL, cosineThreshold = 0.8)})
+    expect_false(hasError(previousStep(tab1_ed2)))
+    
+    #map on graph
+    expect_silent({
+    tab1_gr2 <- matchReference(tab1_gr, tab1_minus2, cosineThreshold = 0.8)})
+    expect_false(hasError(previousStep(tab1_gr)))
+    
+    #simplification
+        tab1_grS <- Metaboseek::simplify(tab1_gr, rankBy = "cosine",
+                             maxK = 10,  cosineThreshold = 0.8)
+        expect_false(hasError(previousStep(tab1_grS)))
+    
+    ##saving and loading:
+    saveMseekFT(tab1_ed, "testwrite_MseekFT", writeCSV = TRUE, writeRDS = TRUE)
+    expect_true(file.exists(paste0("testwrite_MseekFT.mskFT")))
+    expect_true(file.exists(paste0("testwrite_MseekFT.csv")))
+    expect_equal(MseekHash(tab1_ed),
+                 MseekHash(loadMseekFT("testwrite_MseekFT.mskFT")))
+    
+    saveMseekGraph(tab1_gr, "testwrite_MseekGraph", writeGraphML = TRUE, writeRDS = TRUE)
+    expect_true(file.exists(paste0("testwrite_MseekGraph.mskg")))
+    expect_true(file.exists(paste0("testwrite_MseekGraph.graphML")))
+    
+    # expect_equal(MseekHash(tab1_gr),
+    #              MseekHash(loadMseekGraph("testwrite_MseekGraph.mskg")))
+    expect_equal(
+    type.convert(igraph::as_data_frame(tab1_gr$graph, "vertices"), as.is = T),
+    type.convert(igraph::as_data_frame(loadMseekGraph("testwrite_MseekGraph.mskg")$graph, "vertices"), as.is = T)
+    )
+    
+})

@@ -134,7 +134,7 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
 updateDF <- function(a, b){
 
         for (i in colnames(a)){
-             b[,i] <- a[,i]}
+             b[,i] <- a[,i, drop = FALSE]} #drop = FALSE added to avoid issues with list columns
         
         return(b)
     }
@@ -347,7 +347,7 @@ tableGrouping <- function(df=NULL, anagrouptable){
 tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
                        moreArgs = list()){
   
-  if(length(format)==0 || is.na(format)){
+  if(!length(format) || is.na(format[1])){
     warning("File format selected was empty. Could not export data to file")
    return(invisible(NULL)) 
   }
@@ -361,8 +361,8 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
          csv = {sep <- ","},
            tsv = {sep <- "\t"})
   
-  
-  fwrite(df,
+  #don't save complex columns
+  fwrite(df[,sapply(df,is.atomic)],
          fname,
          sep = sep,
          quote = T,
