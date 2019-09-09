@@ -1190,6 +1190,9 @@ setMethod("getSpecList", c("data.frame","list"),
           })
 
 #' @rdname analyzeFT
+#' @description \code{getSpecList}: generate a list of MS2 spectra inside the object
+#' from MS2 spectra that were identified with the \code{FTMS2scans()} method.
+#' @param mzThreshold if not NULL, will remove all peaks with an mz below this value from the spectra.
 #' @param merge if TRUE, will merge spectra for each molecular feature
 #' @export
 setMethod("getSpecList", c("MseekFT","listOrNULL"),
@@ -1265,7 +1268,15 @@ setMethod("getSpecList", c("MseekFT","listOrNULL"),
           })
 
 #' @rdname analyzeFT
-#' @param merge if TRUE, will merge spectra for each molecular feature
+#' @description \code{FTedges}: wrapper for the 
+#' \code{MassTools::\link[MassTools]{makeEdges}()} function, matching a list of 
+#' MS2 spectra available inside the object and generating similarity scores.
+#' 
+#' @param useParentMZs if TRUE, will also match neutral losses between spectra
+#' @param minpeaks minimum number of peaks that have to match between two spectr
+#' to allow calculation of a score
+#' @param mzdiff mz tolerance in fragment ion matching
+#' 
 #' @export
 setMethod("FTedges", c("MseekFT"),
           function(object, useParentMZs = TRUE, minpeaks = 6, mzdiff = 0.0005){
@@ -1325,6 +1336,8 @@ setMethod("FTedges", c("MseekFT"),
               return(object)
               
           })
+
+
 
 #' @noRd
 setMethod("matchReference", c("data.frame","data.frame"),
@@ -1439,6 +1452,28 @@ setMethod("matchReference", c("data.frame","data.frame"),
 
 #' @rdname analyzeFT
 #' @param merge if TRUE, will merge spectra for each molecular feature
+#' @param query an object that contains molecular features that will be matched to
+#' \code{object}, by a customizable combination of retention time, m/z and MS2 similarity matching
+#' @param parent_mztol parent m/z matching tolerance (absolute); matches have to differ 
+#' by less than either \code{parent_mztol} or \code{parent_ppm}. If NULL, will ignore m/z for matching.
+#' @param parent_ppm parent m/z matching tolerance in ppm; matches have to differ 
+#' by less than either \code{parent_mztol} or \code{parent_ppm}.
+#' @param rttol retention time tolerance in seconds. If NULL, will ignore rt for matching
+#' @param getCosine if TRUE, will calculate MS2 scan similarity for features that
+#' match by rt and m/z (or between all features if rttol and parent_mztol are not set)
+#' @param cosineThreshold minimum cosine value between features for them to be considered matches.
+#' will not filter for MS2 similarity score if NULL.
+#' @param singleHits allow only one query hit for each reference molecular feature 
+#' (will pick the one with best MS2 similarity)
+#' @param queryPrefix prefix for columns transferred from the matched query object
+#' @param returnMapping if true, returns a matrix defining the indices of matched features between object and query
+#' @param ... additional arguments passed to \code{\link[MassTools]{network1}()}
+#' 
+#' @description \code{matchReference}: Match molecular features between a 
+#' \code{MseekGraph} or \code{MseekFT} object and another \code{MseekFT} object
+#'  by a customizable combination of retention time, m/z and MS2 similarity
+#'   matching
+#' 
 #' @export
 setMethod("matchReference", c("MseekFT","MseekFT"),
           function(object, query , parent_mztol = 0.001, parent_ppm = 5,
@@ -1602,6 +1637,154 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
                                                                                               queryPrefix = queryPrefix,
                                                                                               returnMapping = returnMapping)),
                                                                                 longArgs = list(queryHistory = processHistory(query)))
+                                              ))
+              })
+              
+              return(object)
+              
+          })
+
+#' @rdname analyzeFT
+#' @description \code{simplify}: simplify an MseekGraph object, reducting the number of edges 
+#' using additional filters.
+#' 
+#' @param maxK if length > 0, will only alllow at most this many edges from each node
+#' @param rankBy if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges
+#' @param cosineThreshold if length > 0, will remove all edges with a cosine value below this
+#' @export
+setMethod("simplify", c("MseekGraph"),
+          function(object, rankBy = NULL,
+                   maxK = 10, cosineThreshold = NULL) {
+              beforeHash <- MseekHash(object)
+              
+              p1 <- proc.time()
+              err <- list()
+              
+              tryCatch({
+                  
+                  
+                  tables <- list(nodes = type.convert(as_data_frame(object$graph, "vertices"), as.is = T),
+                                edges =  type.convert(as_data_frame(object$graph, "edges"), as.is = T))
+                  
+                  nedgesBefore <- nrow(tables$edges)
+                  
+
+                  if(length(cosineThreshold)){
+                      tables$edges <- tables$edges[tables$edges$cosine >= cosineThreshold,]
+                      }
+                  
+                  if(! "fixed__id" %in% colnames(tables$nodes)){
+                      tables$nodes$fixed__id <- tables$nodes[,1]
+                  }
+                  
+                  ####TEMPORARILY DISABLED
+                  # if(FALSE
+                  #    #input$mergeCheck
+                  # ){
+                  #     if(input$mergeCheck2){
+                  #         res <- list(tables = simplifyGraph(res$tables$nodes,
+                  #                                            res$tables$edges,
+                  #                                            which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
+                  #                                                  & res$tables$edges[[internalValues$colSelected1]] <= input$col1max
+                  #                                                  & res$tables$edges[[internalValues$colSelected2]] >= input$col2min
+                  #                                                  & res$tables$edges[[internalValues$colSelected2]] <= input$col2max
+                  #                                            )),
+                  #                     graph = NULL)
+                  #     }else{
+                  #         res <- list(tables = simplifyGraph(res$tables$nodes,
+                  #                                            res$tables$edges,
+                  #                                            which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
+                  #                                                  & res$tables$edges[[internalValues$colSelected1]] <= input$col1max)),
+                  #                     graph = NULL)
+                  #         
+                  #     }
+                  #     
+                  # }
+                  
+                  
+                  
+                  if(length(maxK)){
+                      #select edges to remove
+                      #  print("beforeremoval")
+                      if(!length(rankBy)){
+                          rankBy <- 1
+                      }
+                      
+                      removeindices <- integer(0)
+                      for(i in unique(c(tables$edges[,1], tables$edges[,2]))){
+                          
+                          selall <- which(tables$edges[,1] == i | tables$edges[,2] ==i)
+                          if(length(selall) > maxK){
+                              
+                              removeindices <- c(removeindices, selall[order(tables$edges[selall,rankBy])][1:max(c(1,(length(selall)-maxK)))])
+                              
+                          }
+                          
+                      }
+                      if(length(removeindices) > 0){
+                          tables$edges <- tables$edges[-unique(removeindices),]
+                      }
+                      
+                  }
+                  # print(res$tables$edges)
+                  #  print(res$tables$nodes)
+                  
+                  if(!length(object$edges)){
+                      object$edges <- tables$edges
+                  }
+                  
+                  
+                  g1 <- graph_from_data_frame(d=tables$edges, vertices=tables$nodes, directed=F) 
+                  
+                  
+                  #V(g1)$label <- V(g1)$parent.mass
+                  V(g1)$id <- seq(vcount(g1))
+                  
+                  # Removing loops from the graph:
+                  g1 <- igraph::simplify(g1, remove.multiple = F, remove.loops = T) 
+                  
+                  #important for overview mode!
+                  V(g1)$subcl <-  clusters(g1)$membership
+                  
+                  if(nedgesBefore != nrow(tables$edges)){
+                              layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+
+                              V(g1)$x__coord <- layo$layout[,1]
+                              V(g1)$y__coord <- layo$layout[,2]
+
+                          }
+                  
+                  object$graph <- g1
+                  
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$simplify <<- paste(e)
+                  
+              },
+              finally = 
+              {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  
+                  object <- addProcessHistory(object,
+                                              FTProcessHistory(changes = afterHash != beforeHash,
+                                                               inputHash = beforeHash,
+                                                               outputHash = afterHash,
+                                                               # fileNames = names(rawdata),
+                                                               error = err,
+                                                               sessionInfo = NULL,
+                                                               processingTime = p1,
+                                                               info = paste0("Simplified network"),
+                                                               param = FunParam(fun = "Metaboseek::simplify",
+                                                                                args = list(rankBy = rankBy,
+                                                                                         maxK = maxK,
+                                                                                         cosineThreshold = cosineThreshold),
+                                                                                longArgs = list())
                                               ))
               })
               

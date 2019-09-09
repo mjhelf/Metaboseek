@@ -56,14 +56,32 @@ MseekHistoryWidget <- function(input,output, session,
   dialog <- callModule(ModalWidget, "getbutton",
                        reactives = reactive({  
                          list(fp = fluidPage(
-                         fluidRow(selectizeInput(ns("selectOutput"), "Show", choices = c("All entries",
+                         fluidRow(
+                             column(4,
+                             selectizeInput(ns("selectOutput"), "Show", choices = c("All entries",
                                                                                          "No errors",
-                                                                                         "only Errors")),
-                                  downloadButton(ns("downloadHistory"), "Save history"),
-                                  checkboxInput(ns("shortPrint"), "concise view", value = TRUE)
+                                                                                         "only Errors"))),
+                             column(4,
+                                  downloadButton(ns("downloadHistory"), "Save history")),
+                             column(4,
+                                  checkboxInput(ns("shortPrint"), "concise view", value = TRUE))
                                   
                                   ),
-                             
+                             fluidRow(
+                                 p("desciptions of parameters can be found in the",
+                                     a(paste0("Metaboseek documentation,"), 
+                                      href=paste0("file:///", system.file("html","00index.html",package = "Metaboseek")),
+                                      target="_blank"),
+                                   "particularly in the",
+                                   a(paste0("analyzeFT section."), 
+                                     href=paste0("file:///", system.file("html","analyzeFT.html",package = "Metaboseek")),
+                                     target="_blank"),
+                                   "For xcms paramters, take a look at the",
+                                   a(paste0("online documentation."), 
+                                     href=paste0("https://metaboseek.com/doc"),
+                                     target="_blank"))
+                                 
+                                 ),
                            fluidRow(
                              verbatimTextOutput(ns("historyPrint"))                           
                              )#,

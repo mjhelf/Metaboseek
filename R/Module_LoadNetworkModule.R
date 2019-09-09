@@ -229,7 +229,7 @@ LoadNetworkModule <- function(input,output, session, values,
             
         }else{
             
-            showNotification(paste("Finished MS2 search"), duration = 10)
+            showNotification(paste("Finished MS2 simiarity calculation"), duration = 10)
         }
         
       })

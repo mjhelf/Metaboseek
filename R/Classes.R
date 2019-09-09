@@ -49,6 +49,7 @@ setGeneric("saveMseekGraph", function(object, file, ...) standardGeneric("saveMs
 
 setGeneric("searchFunParam", function(object, fun, ...) standardGeneric("searchFunParam"))
 setGeneric("shortPrint", function(object) standardGeneric("shortPrint"))
+setGeneric("simplify", function(object, ...) standardGeneric("simplify"))
 
 
 setGeneric("importMseekIntensities", function(object, rawdata, importFrom, ...) standardGeneric("importMseekIntensities")) #transfer Mseek intensities and history entry about making them

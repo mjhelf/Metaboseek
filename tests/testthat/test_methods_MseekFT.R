@@ -390,6 +390,10 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     tab1_gr2 <- matchReference(tab1_gr, tab1_minus2, cosineThreshold = 0.8)})
     expect_false(hasError(previousStep(tab1_gr)))
     
+    #simplification
+        tab1_grS <- Metaboseek::simplify(tab1_gr, rankBy = "cosine",
+                             maxK = 10,  cosineThreshold = 0.8)
+        expect_false(hasError(previousStep(tab1_grS)))
     
     ##saving and loading:
     saveMseekFT(tab1_ed, "testwrite_MseekFT", writeCSV = TRUE, writeRDS = TRUE)
