@@ -73,7 +73,7 @@ LoadNetworkModule <- function(input,output, session, values,
   #     V(g1)$id <- seq(vcount(g1))
   #     
   #     # Removing loops from the graph:
-  #     g1 <- simplify(g1, remove.multiple = F, remove.loops = T) 
+  #     g1 <- igraph::simplify(g1, remove.multiple = F, remove.loops = T) 
   #     
   #     #important for overview mode!
   #     V(g1)$subcl <-  clusters(g1)$membership

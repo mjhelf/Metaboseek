@@ -161,8 +161,8 @@
       <data key="v_fixed__id">2</data>
       <data key="v_id">2</data>
       <data key="v_subcl">2</data>
-      <data key="v_x__coord">-2.85029194246416</data>
-      <data key="v_y__coord">4.484472565614</data>
+      <data key="v_x__coord">2.47719886547671</data>
+      <data key="v_y__coord">0.391473587895317</data>
       <data key="v_query__mz">340.2482979</data>
       <data key="v_query__mzmin">340.2482307</data>
       <data key="v_query__mzmax">340.248322</data>
@@ -224,8 +224,8 @@
       <data key="v_fixed__id">3</data>
       <data key="v_id">3</data>
       <data key="v_subcl">3</data>
-      <data key="v_x__coord">-1.49644486419482</data>
-      <data key="v_y__coord">3.87785870383085</data>
+      <data key="v_x__coord">-1.5545317021734</data>
+      <data key="v_y__coord">2.66968480440271</data>
       <data key="v_query__mz">393.1655847</data>
       <data key="v_query__mzmin">393.1655024</data>
       <data key="v_query__mzmax">393.165783</data>
@@ -286,8 +286,8 @@
       <data key="v_fixed__id">4</data>
       <data key="v_id">4</data>
       <data key="v_subcl">4</data>
-      <data key="v_x__coord">-2.03714915969188</data>
-      <data key="v_y__coord">-0.311595424605283</data>
+      <data key="v_x__coord">3.37595006122292</data>
+      <data key="v_y__coord">-1.49141170717582</data>
       <data key="v_query__mz">434.2668688</data>
       <data key="v_query__mzmin">434.2668372</data>
       <data key="v_query__mzmax">434.2671147</data>
@@ -349,8 +349,8 @@
       <data key="v_fixed__id">5</data>
       <data key="v_id">5</data>
       <data key="v_subcl">5</data>
-      <data key="v_x__coord">0.992594912760776</data>
-      <data key="v_y__coord">-1.80808259238556</data>
+      <data key="v_x__coord">-1.95905532155377</data>
+      <data key="v_y__coord">0.644458924425294</data>
       <data key="v_query__mz">534.2319397</data>
       <data key="v_query__mzmin">534.2316972</data>
       <data key="v_query__mzmax">534.2321648</data>
@@ -411,8 +411,8 @@
       <data key="v_fixed__id">6</data>
       <data key="v_id">6</data>
       <data key="v_subcl">6</data>
-      <data key="v_x__coord">-0.702476578560783</data>
-      <data key="v_y__coord">1.94568417343311</data>
+      <data key="v_x__coord">1.34251806348506</data>
+      <data key="v_y__coord">-1.61148382515977</data>
       <data key="v_query__mz">681.2638928</data>
       <data key="v_query__mzmin">681.2637389</data>
       <data key="v_query__mzmax">681.2639643</data>

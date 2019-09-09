@@ -409,8 +409,8 @@ test_that("Mseek analyzeFT FTedges  and getSpecList method works",{
     # expect_equal(MseekHash(tab1_gr),
     #              MseekHash(loadMseekGraph("testwrite_MseekGraph.mskg")))
     expect_equal(
-    type.convert(as_data_frame(tab1_gr$graph, "vertices"), as.is = T),
-    type.convert(as_data_frame(loadMseekGraph("testwrite_MseekGraph.mskg")$graph, "vertices"), as.is = T)
+    type.convert(igraph::as_data_frame(tab1_gr$graph, "vertices"), as.is = T),
+    type.convert(igraph::as_data_frame(loadMseekGraph("testwrite_MseekGraph.mskg")$graph, "vertices"), as.is = T)
     )
     
 })
