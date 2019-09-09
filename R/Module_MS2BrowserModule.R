@@ -161,7 +161,8 @@ MS2BrowserModule <- function(input,output, session,
                          reactives = reactive({list(active = NetMod$active)}))
   
   NetMod <- callModule(NetworkModule, "shownetworks", values = reactiveValues(Networks = Networks,
-                                                                              featureTables = values$featureTables),
+                                                                              featureTables = values$featureTables,
+                                                                              MSData = values$MSData),
                        reactives = reactive({list(active = T)}),
                        static = list(noSelection = T),
                        keys = reactive({keys()}))

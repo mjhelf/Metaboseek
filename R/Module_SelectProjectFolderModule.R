@@ -128,7 +128,7 @@ SelectProjectFolderModule <- function(input,output, session,
         
         
         showModal(modalDialog(
-          p("You have selected a folder that contaions one specific Mseek xcms job. Would you like to load its settings?"),
+          p("You have selected a folder that contains one specific Metaboseek xcms job. Would you like to load its results?"),
           p("If you do not select a .csv file, only the MS data files will be loaded."),
           checkboxInput(ns("checkModal"), "Load a Feature Table", value = T),
           selectizeInput(ns("modalSelect"), "select feature table to load",

@@ -13,7 +13,8 @@
 #' 
 #' @export 
 NetworkModule <- function(input,output, session, 
-                          values = reactiveValues(Networks = NULL),
+                          values = reactiveValues(Networks = NULL,
+                                                  MSData = NULL),
                           reactives = reactive({list(active = T,
                                                      highlights = integer(0) # fixed__id values of nodes to be highlighted
                           )

@@ -9,7 +9,8 @@
 #' @export 
 MatchReferenceModule <- function(input,output, session,
                            values = reactiveValues(featureTables = NULL,
-                                                   Networks = NULL)){
+                                                   Networks = NULL,
+                                                   MSData = NULL)){
   ns <- NS(session$ns(NULL))
   
 
@@ -88,8 +89,29 @@ MatchReferenceModule <- function(input,output, session,
     tryCatch({
       withProgress(message = 'Please wait!', detail = "Calculating peak intensities", value = 0.5, {
           updateFT(values)
+        
+        if(is.null(FeatureTable(values, tableID = input$selectquery)$df$MS2scans)){
           
-          values$Networks[[paste0("matched_",input$selectreference)]] <- matchReference(values$Networks[[input$selectreference]],
+          FeatureTable(values, tableID = input$selectquery) <- FTMS2scans(FeatureTable(values, tableID = input$selectquery),
+                                                                          values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
+                                                                          ppm = input$ppm,
+                                                                          rtw = input$rttol,
+                                                                          uniqueMatch = TRUE)
+          
+        }
+        
+        if(is.null(FeatureTable(values, tableID = input$selectquery)$df$scanList)){
+          
+          FeatureTable(values, tableID = input$selectquery) <- getSpecList(FeatureTable(values, tableID = input$selectquery), values$MSData$data,
+                                                                           merge = TRUE,
+                                                                           noiselevel = 0.01,
+                                                                           ppm = input$ppm, mzdiff = input$ppm*1e-6*200,
+                                                                           mzThreshold = NULL)
+          
+        }
+        
+          
+          tempgraph <- matchReference(values$Networks[[input$selectreference]],
                                                                      FeatureTable(values, tableID = input$selectquery), 
                                                                      parent_mztol = if(input$mzcheck){input$mzdiff}else{NULL},
                                                                      parent_ppm = input$ppm, 
@@ -104,12 +126,14 @@ MatchReferenceModule <- function(input,output, session,
           })
        
       
-          if(hasError(previousStep(values$Networks[[input$selectreference]]))){
+          if(hasError(previousStep(tempgraph))){
               showNotification(paste("An error occured: ",
-                                     unlist(error(previousStep(values$Networks[[input$selectreference]])))),
+                                     unlist(error(previousStep(tempgraph)))),
                                duration = 0, type = "error")
               
           }else{
+            values$Networks[[paste0("matched_",input$selectreference)]] <- tempgraph
+            
           removeModal()
           showNotification(paste("Matched query to reference."), duration = 0, type = "message")
           }
