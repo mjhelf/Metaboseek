@@ -375,7 +375,8 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
     
       moreArgs <- moreArgs[names(moreArgs) %in% c("rtwin", "polarity","instrument", "listType", "restrictRT")]
     
-    df <- do.call(asInclusionlist, c(list(parenttable = df), moreArgs))
+    df <- do.call(asInclusionlist, c(list(parenttable = df[,sapply(df,is.atomic)]),
+                                     moreArgs))
     
     fwrite(df,
            fname,

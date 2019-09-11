@@ -4,7 +4,7 @@
     "names": {
       "type": "character",
       "attributes": {},
-      "value": ["controlGroups", "normalize", "useNormalized", "analysesSelected", "numClusters", "analysesAvailable2", "logNormalized", "dbselected", "analysesAvailable", "fileGrouping", "rtCorrAnaCheck", "noRtCorrAnaCheck"]
+      "value": ["controlGroups", "normalize", "analysesSelected2", "useNormalized", "analysesSelected", "numClusters", "analysesAvailable2", "logNormalized", "dbselected", "analysesAvailable", "fileGrouping", "rtCorrAnaCheck", "noRtCorrAnaCheck"]
     }
   },
   "value": [
@@ -19,6 +19,11 @@
       "value": [true]
     },
     {
+      "type": "character",
+      "attributes": {},
+      "value": ["Fast peak shapes"]
+    },
+    {
       "type": "logical",
       "attributes": {},
       "value": [true]
@@ -26,7 +31,7 @@
     {
       "type": "character",
       "attributes": {},
-      "value": ["Basic analysis"]
+      "value": ["Basic analysis", "anova", "PCA features", "PCA samples", "mzMatch"]
     },
     {
       "type": "double",

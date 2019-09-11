@@ -139,7 +139,7 @@ setMethod("saveMseekFT",
           function(object, file, writeCSV = FALSE, writeRDS = TRUE){
               
               object <- addProcessHistory(object, FTProcessHistory(info = paste0("Saved MseekFT object to file:", file),
-                                                                   inputHash = MseekHash(res),
+                                                                   inputHash = MseekHash(object),
                                                                          param = FunParam(fun = "Metaboseek::saveMseekFT",
                                                                                           args = list(file = file,
                                                                                                       writeCSV = writeCSV,
@@ -285,6 +285,7 @@ setMethod("saveMseekGraph",
               object <- addProcessHistory(object, FTProcessHistory(info = paste0("Saved MseekGraph object to file:", file),
                                                                    param = FunParam(fun = "Metaboseek::saveMseekFT",
                                                                                     args = list(file = file,
+                                                                                                inputHash = MseekHash(object),
                                                                                                 writeGraphML = writeGraphML,
                                                                                                 writeRDS = writeRDS))))
               #make sure file extension is .mskFT

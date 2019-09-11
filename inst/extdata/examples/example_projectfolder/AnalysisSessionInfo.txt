@@ -19,7 +19,7 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] CAMERA_1.41.1       Metaboseek_0.9.5.15 xcms_3.7.2         
+ [1] CAMERA_1.41.1       Metaboseek_0.9.5.23 xcms_3.7.2         
  [4] MSnbase_2.11.5      ProtGenerics_1.17.4 S4Vectors_0.23.20  
  [7] mzR_2.19.3          Rcpp_1.0.2          BiocParallel_1.19.2
 [10] Biobase_2.45.0      BiocGenerics_0.31.5

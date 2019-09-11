@@ -514,12 +514,14 @@ NetworkModule <- function(input,output, session,
                 legendranges <- safelog(vertex_attr(internalValues$graph,input$vlabelcol))
                 legendranges <- range(legendranges[is.finite(legendranges)])
                 }else{
-                    legendranges <- range((vertex_attr(internalValues$graph,input$vlabelcol)))
+                    legendranges <- vertex_attr(internalValues$graph,input$vlabelcol)
                     legendranges <- range(legendranges[is.finite(legendranges)])
                     
                     }
                 
-                legendranges <- seq(min(legendranges), max(legendranges), length.out = 200)
+                legendranges <- seq(min(na.omit(legendranges)),
+                                    max(na.omit(legendranges)),
+                                    length.out = 200)
                 
                 colorRampLegend(legendranges,
                                 assignColor(legendranges,
