@@ -22,12 +22,14 @@
             <div class="panel panel-default">
               <div class="panel-heading red-heading">Version 0.9.6</div>
               <div class="panel-body">
-                <p class="release-date">Last changed 2018-08-30</p>
+                <p class="release-date">Last changed 2018-09-09</p>
                 <h3>New features:</h3>
                 <ul>
                     <li>Metaboseek keeps track of most analysis steps now, and the processing history can be viewed in the app.</li>
                     <li>New file format (.mskFT) allows to save and load Feature Tables with processing history and other settings.</li>
-                    <li>Metaboseek sessions can now be saved into a single file and loaded back in. See documentation for details</li>
+                    <li>New file format (.mskg) allows to save and load molecular networking results with processing history and other settings.</li>
+                    <li>Molecular features from a Feature Table can now be mapped onto an existing molecular network (even when generated from other data), matching features with similar rt, mz and / or MS2 fragmentation patterns.</li>
+                    <li>Metaboseek sessions can now be saved into a single file (.msks) and loaded back in. See documentation for details</li>
                     <li>Added functionality to search for MS2 fragment patterns across all loaded files</li>
                     <li>In MS2 networking, added option to ignore small fragmet ions (below 100 mz, often dominant phosphate peaks) for testing purposes</li>
                                         
@@ -36,17 +38,20 @@
                   <ul>
                       <li>xcms script was rewritten to allow tracking of processing steps</li>
                       <li>File names in selection menus now wrap so they can be read in full even when very long</li>
+                      <li>Added option to calculate peak areas (instead of mean intensities) for Mseek intensities while running xcms script</li>
+                      <li>Network appearance (node positions) is now persistent when zooming back out into overview mode</li>
 
                     </ul>
                     <h3>Bug fixes</h3>
                   <ul>
                       <li>Sirius results can now be loaded if no fingerID results present</li>
-                      <li>Fixed calculation of peak areas when using the integrated intensity calculation with option "Peak areas" (an option that is so far not used in the xcms processing workflow)</li>
+                      <li>Fixed calculation of peak areas when using the integrated intensity calculation with option "Peak areas"</li>
 
                     </ul>
                  <h3>Notes:</h3>
                 <ul>
                     <li>Get the newest version <a href = "https://github.com/mjhelf/METABOseek/releases" target = "_blank">here</a> </li>
+                    <li>If zooming in or out with double click does not work in spectrum or EIC plots, try CTRL + click. To zoom out of subnetwork views, Z + click is an alternative to double click in the network plot.</li>
                 </ul>
               </div>
             </div>

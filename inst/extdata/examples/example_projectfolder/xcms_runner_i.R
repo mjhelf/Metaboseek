@@ -216,18 +216,15 @@ if(outputs["peaktable_grouped", "Value"]){
   
   if(outputs["peaktable_grouped","xcms_peakfilling"]){
       
-     
-      history <- writeStatus (previous = history,
-                                 message = list(Status = paste0("Saving table ", filename),
-                                                Details = "Filling peaks (xcms fillChromPeaks)"))
+    history <- writeStatus (previous = history,
+                            message = list(Status = "Saving table",
+                                           Details = "Performing xcms peak filling. Saving peaktable_grouped_filled and running post-processing"))
      
       
       xset <- xcms::fillChromPeaks(xset, fparam,
                                    BPPARAM = bpparam())
       
-      history <- writeStatus (previous = history,
-                              message = list(Status = "Saving table",
-                                             Details = "Performing xcms peak fillingSaving peaktable_grouped_filled and running post-processing"))
+     
   
   peaktable_grouped  <- savetable(xset,
                                    importResultsFrom = peaktable_grouped, #will import post-processing and Mseek intensities from previous step if appropriate, otherwise will generate them de novo
@@ -317,17 +314,14 @@ peaktable_grouped  <- savetable(xset,
 if(outputs["peaktable_grouped_Rtcorr","xcms_peakfilling"]){
     
     
-    history <- writeStatus (previous = history,
-                            message = list(Status = paste0("Saving table ", filename),
-                                           Details = "Filling peaks (xcms fillChromPeaks)"))
-    
+  history <- writeStatus (previous = history,
+                          message = list(Status = "Saving table",
+                                         Details = "Performing xcms peak filling. Saving peaktable_grouped_RTcorr_filled and running post-processing"))
     
     xset <- xcms::fillChromPeaks(xset, fparam,
                                  BPPARAM = bpparam())
     
-    history <- writeStatus (previous = history,
-                            message = list(Status = "Saving table",
-                                           Details = "Performing xcms peak fillingSaving peaktable_grouped_filled and running post-processing"))
+   
     
     peaktable_grouped  <- savetable(xset,
                                     importResultsFrom = peaktable_grouped, #will import post-processing and Mseek intensities from previous step if appropriate, otherwise will generate them de novo

@@ -171,8 +171,7 @@ savetable <- function(xset,
                              editable = F,
                              processHistory = NULL)
     
-    #set NAs to 0 (mostly important if !fill)
-    tb_mskFT <- removeNAs(tb_mskFT)
+   
     
     
     if(!is.null(intensities) & !is.null(rawdata)){
@@ -195,6 +194,9 @@ savetable <- function(xset,
         }
     }
     
+    #set NAs to 0 (mostly important if !fill)
+    tb_mskFT <- removeNAs(tb_mskFT)
+    
         saveMseekFT(tb_mskFT, file = tb_mskFT$tablename, 
                     writeCSV = TRUE, writeRDS = TRUE)
         
@@ -216,6 +218,9 @@ savetable <- function(xset,
                                       ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
                                       controlGroup = postProc$controlGroups,
                                       numClusters = postProc$numClusters,
+                                      mzMatchParam = list(db = postProc$dbselected,
+                                                          ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
+                                                          mzdiff = if(!is.null(postProc$ppm)){postProc$ppm*1e-6*200}else{5*1e-6*200}),
                                       workers = bparams$workers))
 
             #reflect in filename that this is now processed...

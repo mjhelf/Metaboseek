@@ -6,7 +6,8 @@
 \title{MatchReferenceModule}
 \usage{
 MatchReferenceModule(input, output, session,
-  values = reactiveValues(featureTables = NULL, Networks = NULL))
+  values = reactiveValues(featureTables = NULL, Networks = NULL, MSData =
+  NULL))
 
 MatchReferenceModuleUI(id)
 }

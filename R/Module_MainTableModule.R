@@ -184,9 +184,14 @@ MainTableModule <- function(input, output, session,
           values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(FeatureTable(values)$df)]
       }else{colnames(FeatureTable(values)$df)}
       
+      #make sure non-atomic columns [such as specList] dont get into the handsontable (cause crashes):
+      if(length(selcols)){
+      selcols <- selcols[sapply(FeatureTable(values)$df[,selcols,drop = FALSE],is.atomic)]
+      }
+      
               internalValues$renderedTable <- activeFT(values)
 
-      rhandsontable(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage, selcols],
+      rhandsontable(FeatureTable(values)$df[internalValues$inpage, selcols],
                     readOnly = !FeatureTable(values)$editable,
                     contextMenu = FeatureTable(values)$editable,
                     selectCallback = TRUE,

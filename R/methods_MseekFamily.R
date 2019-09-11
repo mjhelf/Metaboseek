@@ -321,7 +321,7 @@ setMethod("FTFilter", c("MseekFT"),
                   p1 <- (proc.time() - p1)["elapsed"]
                   afterHash <- MseekHash(object)
                   
-                  if(length(err)){
+                  if(!length(err)){
                       msg <- paste("Filtered Feature Table; before:", beforeRows,
                                    "Features, after:", nrow(object$df), "Features" )
                   }else{
