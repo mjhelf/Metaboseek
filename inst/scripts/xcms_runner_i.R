@@ -151,8 +151,11 @@ history <- writeStatus (previous = history,
 
 #xcmsRaw object list for Mseek intensity method
 if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) 
-   || (length(ppOptions) && "Peak shapes" %in%  ppOptions$analysesSelected)){
+   || (length(ppOptions) 
+       && any(grepl("shapes", ppOptions$analysesSelected)))){ #needed for peak shapes analysis types
 rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
+}else{
+ rfiles <- NULL   
 }
 
   fileaccess <- readMSData(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),

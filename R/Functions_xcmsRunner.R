@@ -150,8 +150,19 @@ savetable <- function(xset,
     if(!is.null(postProc)){
         if(is.null(intensities) || is.null(rawdata)){
             #remove the __XIC in column names if no MseekIntensiy requested
-            postProc$fileGrouping <- lapply(postProc$fileGrouping,grep, pattern = "__XIC",replacement = "")
-        }
+            postProc$fileGrouping <- lapply(postProc$fileGrouping,gsub, pattern = "__XIC",replacement = "")
+            
+            #additional handling to make sure xcms column names are correct
+            #add an X to the beginning of  the column name if it begins with a number
+            postProc$fileGrouping <- lapply(postProc$fileGrouping,function(x){
+                                            sel <- grepl(x, pattern = "^[0:9]")
+                                            if(any(sel)){
+                                                x[sel] <- paste0("X", x[sel])
+                                            }
+                                            return(x)})
+            #replace dashes by dots
+            postProc$fileGrouping <- lapply(postProc$fileGrouping,gsub, pattern = "-",replacement = ".")
+            }
         
         if(length(postProc$fileGrouping)){      
             grouptable <- data.frame(Column = unlist(postProc$fileGrouping),
