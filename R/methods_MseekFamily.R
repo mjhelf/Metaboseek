@@ -294,16 +294,16 @@ setMethod("FTFilter", c("MseekFT"),
               
               
               p1 <- proc.time()
-              
+              beforeRows <- nrow(object$df)
+
               err <- list()
               tryCatch({
                   
-                  if((missing(filters) 
-                      || !length(filters)) && !length(sortBy)){
+                  if(missing(filters) 
+                     || (!length(filters) && !length(sortBy))){
                       return(object)
                   }
                   
-                  beforeRows <- nrow(object$df)
                   
                   object$df <- FTFilter(object$df,
                                         filters = filters,

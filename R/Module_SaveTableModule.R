@@ -132,10 +132,13 @@ SaveTableModule <- function(input,output, session,
                            actionButton(ns("modalProjectFolder"),
                                         "Save locally"))),
                    fluidRow(
+                       if(!is.null(values$featureTables)
+                          && "mskFT" %in% static$allowformats){
                    div( title = "Also save as .mskFT file when saving to a Project Folder (in addition to inclusion list or .csv format.
                                  .mskFT files retain process history and grouping information.",
                         checkboxInput(ns("alwaysMskFT"),
-                                     "also save as mskFT", value = TRUE))))
+                                     "also save as mskFT", value = TRUE))}
+                           ))
           )),
         title = "Save table",
         easyClose = T,
@@ -269,11 +272,11 @@ SaveTableModule <- function(input,output, session,
                          duration = 10)
         }
         
-        if(!is.null(input$selFormat) && input$selFormat != "mskFT"){
+        if(is.null(input$selFormat) || input$selFormat != "mskFT"){
       
       written <- tableWriter(if(is.null(values$featureTables)){reactives()$df}
                              else{
-                               values$featureTables$tables[[values$featureTables$active]]$df[values$featureTables$Maintable$order,]
+                               FeatureTable(values)$df[values$featureTables$Maintable$order,]
                              },
                              fname =  file.path(values$projectData$projectFolder, 
                                                 file.path(dirname(reactives()$filename),
