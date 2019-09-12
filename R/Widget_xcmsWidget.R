@@ -41,7 +41,8 @@ xcmsWidget <- function(input,output, session,
                        static = list(servermode = F,
                                      rootpath = .MseekOptions$filePaths,
                                      activateXCMS = T,
-                                     filePattern = .MseekOptions$filePattern)
+                                     filePattern = .MseekOptions$filePattern,
+                                     defaultSettings = "Metaboseek_defaults")
 ){
   
   ns <- NS(session$ns(NULL))
@@ -51,25 +52,26 @@ xcmsWidget <- function(input,output, session,
   
   
   internalValues <- reactiveValues(params = list(filegroups = data.frame(File = character(1), Group = character(1), stringsAsFactors = F),
-                                                 centWave = read.csv(system.file("config", "xcms_defaults", "centWave.csv",package = "Metaboseek"),
+                                                 centWave = read.csv(system.file("config", "xcms", static$defaultSettings, "centWave.csv",package = "Metaboseek"),
                                                                      row.names = 1,
                                                                      stringsAsFactors = F),
-                                                 group = read.csv(system.file("config", "xcms_defaults", "group.csv",package = "Metaboseek"),
+                                                 group = read.csv(system.file("config", "xcms", static$defaultSettings, "group.csv",package = "Metaboseek"),
                                                                   row.names = 1,
                                                                   stringsAsFactors = F),
-                                                 retcor = read.csv(system.file("config", "xcms_defaults", "retcor.csv",package = "Metaboseek"),
+                                                 retcor = read.csv(system.file("config", "xcms", static$defaultSettings, "retcor.csv",package = "Metaboseek"),
                                                                    row.names = 1,
                                                                    stringsAsFactors = F),
-                                                 outputs = read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "Metaboseek"),
+                                                 outputs = read.csv(system.file("config", "xcms", static$defaultSettings, "outputs.csv",package = "Metaboseek"),
                                                                     row.names = 1,
                                                                     stringsAsFactors = F),
-                                                 peakfilling = read.csv(system.file("config", "xcms_defaults", "peakfilling.csv",package = "Metaboseek"),
+                                                 peakfilling = read.csv(system.file("config", "xcms", static$defaultSettings, "peakfilling.csv",package = "Metaboseek"),
                                                                         row.names = 1,
                                                                         stringsAsFactors = F),
-                                                 camera = read.csv(system.file("config", "xcms_defaults", "camera.csv",package = "Metaboseek"),
+                                                 camera = read.csv(system.file("config", "xcms", static$defaultSettings, "camera.csv",package = "Metaboseek"),
                                                                    row.names = 1,
                                                                    stringsAsFactors = F)
   ),
+  defaultDescription = readLines(system.file("config", "xcms", static$defaultSettings, "description.txt", package = "Metaboseek")),
   wd = character(),
   active = "centWave",
   jobs = NULL,
@@ -77,6 +79,59 @@ xcmsWidget <- function(input,output, session,
   xcmsModule_loaded = F,
   noRtCorrAnaCheck = T,
   rtCorrAnaCheck = T)
+  
+  output$defaultSelector <- renderUI({
+      
+      tagList(selectizeInput(ns("selDefault"), "Use default settings", choices = list.dirs(system.file("config", "xcms", package = "Metaboseek"),
+                                                                   recursive = FALSE,
+                                                                   full.names = FALSE),
+                             selected = static$defaultSettings)
+      )
+      
+      })
+  
+  observeEvent(input$selDefault,{
+      print(input$selDefault)
+      if(!is.null(input$selDefault) && input$selDefault != ""){
+      
+      internalValues$params <- list(filegroups = internalValues$params$filegroups,
+                    centWave = read.csv(system.file("config", "xcms",
+                                                    input$selDefault, "centWave.csv",package = "Metaboseek"),
+                                        row.names = 1,
+                                        stringsAsFactors = F),
+                    group = read.csv(system.file("config", "xcms",
+                                                 input$selDefault, "group.csv",package = "Metaboseek"),
+                                     row.names = 1,
+                                     stringsAsFactors = F),
+                    retcor = read.csv(system.file("config", "xcms",
+                                                  input$selDefault, "retcor.csv",package = "Metaboseek"),
+                                      row.names = 1,
+                                      stringsAsFactors = F),
+                    outputs = read.csv(system.file("config", "xcms",
+                                                   input$selDefault, "outputs.csv",package = "Metaboseek"),
+                                       row.names = 1,
+                                       stringsAsFactors = F),
+                    peakfilling = read.csv(system.file("config", "xcms",
+                                                       input$selDefault, "peakfilling.csv",package = "Metaboseek"),
+                                           row.names = 1,
+                                           stringsAsFactors = F),
+                    camera = read.csv(system.file("config", "xcms",
+                                                  input$selDefault, "camera.csv",package = "Metaboseek"),
+                                      row.names = 1,
+                                      stringsAsFactors = F)
+      )
+      internalValues$defaultDescription <- readLines(system.file("config", "xcms",
+                                                                input$selDefault, "description.txt",
+                                                                package = "Metaboseek"))
+      }
+      }, ignoreInit = TRUE, ignoreNULL = TRUE)
+  
+  
+  output$defaultDescription <- renderUI({
+      
+      lapply(internalValues$defaultDescription,p)
+      
+  })
   
   observeEvent(externalFilegroups(),{
     
@@ -143,7 +198,7 @@ xcmsWidget <- function(input,output, session,
     
     #if an old outputs.csv file is loaded, replace it with the new default.
     if(ncol(internalValues$params$outputs) < 5) {
-      internalValues$params$outputs <- read.csv(system.file("config", "xcms_defaults", "outputs.csv",package = "Metaboseek"),
+      internalValues$params$outputs <- read.csv(system.file("config", "xcms", input$selDefault,"outputs.csv",package = "Metaboseek"),
                                                 row.names = 1,
                                                 stringsAsFactors = F)
     }
@@ -232,23 +287,25 @@ xcmsWidget <- function(input,output, session,
     
     fo <- file.path(internalValues$wd, paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),"_", input$xcms_name))
     dir.create(fo)
+    setfo <- file.path(fo,"settings")
+    dir.create(setfo)
     
     write.csv(data.frame(X=1,Time=0,Status="",Details="",elapsed_time=0), file = file.path(fo,"status.csv"))
     internalValues$jobs <- c(internalValues$jobs, fo)
-    file.copy(system.file("scripts", "xcms_runner_i.R",package = "Metaboseek"),fo)
+    file.copy(system.file("scripts", "xcms_runner_i.R",package = "Metaboseek"),setfo)
     
     for(i in 1:length(internalValues$params)){
-      write.csv(internalValues$params[[i]], file = file.path(fo,paste0(names(internalValues$params)[i],".csv")), row.names = T)
+      write.csv(internalValues$params[[i]], file = file.path(setfo,paste0(names(internalValues$params)[i],".csv")), row.names = T)
     }
     
     posSettings <- reactiveValuesToList(tAnalysisX)
     posSettings$rtCorrAnaCheck <- internalValues$rtCorrAnaCheck
     posSettings$noRtCorrAnaCheck <- internalValues$noRtCorrAnaCheck
     
-    write(jsonlite::serializeJSON(posSettings, pretty = T), file.path(fo, "postProcessingSettings.json"))
+    write(jsonlite::serializeJSON(posSettings, pretty = T), file.path(setfo, "postProcessingSettings.json"))
     
     
-    zip(file.path(fo,"settings.zip"), grep(list.files(fo, full.names = T), pattern = "status.csv", invert = T, value = T), flags = "-j")
+    zip(file.path(setfo,"settings.zip"), grep(list.files(setfo, full.names = T), pattern = "status.csv", invert = T, value = T), flags = "-j")
     
     runner <- system.file("scripts", "xcms_runner_i.R",package = "Metaboseek")
     rpath <- file.path(R.home(component = "bin"), "Rscript")
@@ -349,7 +406,7 @@ xcmsWidget <- function(input,output, session,
     internalValues$noRtCorrAnaCheck <- input$nortcorrcheck
   })
   
-  output$ouputSelection <- renderUI({
+  output$outputSelection <- renderUI({
     tagList(
       div(title= "Which output files should be generated?",
           hr(),
@@ -539,9 +596,16 @@ fluidRow(
                                    actionButton(ns('xcms_start'),"Start analysis!", style="color: #fff; background-color: #C41230; border-color: #595959")),
                             
                             column(6,
-                                   fileInput(ns('xcms_settingsLoad'),"Load settings", accept = "application/zip"),
+                                   fluidRow(
+                                   htmlOutput(ns('defaultSelector'))),
+                                   fluidRow(
+                                       h5("About the current default settings:"),
+                                       htmlOutput(ns("defaultDescription"))
+                                   ),
+                                   hr(),
+                                   fileInput(ns('xcms_settingsLoad'),"Load your own settings", accept = "application/zip"),
                                    
-                                   downloadButton(ns("xcms_settingsDL"), "Download settings")
+                                   downloadButton(ns("xcms_settingsDL"), "Download current settings")
                             ))
                           
       )),
@@ -557,8 +621,9 @@ fluidRow(
                               rhandsontable::rHandsontableOutput(ns('xcms_settingstab'))
                             ),
                             fluidRow(
-                              htmlOutput(ns("ouputSelection"))
+                              htmlOutput(ns("outputSelection"))
                             ),
+                           
                             fluidRow(
                               hr(),
                               h3("Automatic post-processing of MS data"),

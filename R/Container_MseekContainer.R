@@ -28,7 +28,8 @@ MseekContainer <- function(input,output, session){
                         static = list(servermode = .MseekOptions$serverMode,
                                       activateXCMS = .MseekOptions$activateXCMS,
                                       rootpath = .MseekOptions$filePaths,
-                                      filePattern = .MseekOptions$filePattern)
+                                      filePattern = .MseekOptions$filePattern,
+                                      defaultSettings = "Metaboseek_defaults")
   )
   
   callModule(updaterModule, 'update', tag = ns('update'), set =list(package = "Metaboseek",

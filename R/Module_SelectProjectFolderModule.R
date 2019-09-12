@@ -134,14 +134,14 @@ SelectProjectFolderModule <- function(input,output, session,
           selectizeInput(ns("modalSelect"), "select feature table to load",
                          choices = internalValues$fileSelection,
                          multiple = F),
-          div(title = "Try to load Metaboseek intensities (columns with '__XIC' 
-              suffix rather than xcms provided intensities. 
-              Recommended if no xcms peak filling was performed. NOTE: If the 
-              project folder contains a .tGrouping file (Feature Table grouping 
-              saved by Metaboseek), the pre-saved grouping is loaded.",
-              checkboxInput(ns("checkMseekIntensities"), 
-                        "Load Metaboseek intensities if available (WARNING: if the selected table has already been analyzed (e.g. calculation of foldChanges during 'Basic Analysis'), make sure this selection is in line with the previous analysis, or reanalyze the table!)",
-                        value = values$GlobalOpts$preferMseekIntensities)),
+          # div(title = "Try to load Metaboseek intensities (columns with '__XIC' 
+          #     suffix rather than xcms provided intensities. 
+          #     Recommended if no xcms peak filling was performed. NOTE: If the 
+          #     project folder contains a .tGrouping file (Feature Table grouping 
+          #     saved by Metaboseek), the pre-saved grouping is loaded.",
+          #     checkboxInput(ns("checkMseekIntensities"), 
+          #               "Load Metaboseek intensities if available (WARNING: if the selected table has already been analyzed (e.g. calculation of foldChanges during 'Basic Analysis'), make sure this selection is in line with the previous analysis, or reanalyze the table!)",
+          #               value = values$GlobalOpts$preferMseekIntensities)),
           # div(title = "Load the .mskFT file instead of the .csv file, if available.
           #              Using .mskFT will provide all previous grouping information and processing history and 
           #              is the preferred option.",
@@ -196,16 +196,23 @@ SelectProjectFolderModule <- function(input,output, session,
             feats[,charCols] <- character(nrow(feats))
           }
           
-          ColumnNames <- gsub("-",
-                              ".",
-                              paste0(basename(internalValues$filegroups$File),
-                                     if(values$GlobalOpts$preferMseekIntensities){"__XIC"}else{""})
-                              )
-          
-          ColumnNames2 <- ColumnNames
+          if(length(grep("__XIC$",colnames(feats)))){
+              ColumnNames <- paste0(basename(internalValues$filegroups$File),"__XIC")
+              ColumnNames2 <- ColumnNames
+              
+              
+          }else{
+              ColumnNames <- gsub("-",
+                                  ".",
+                                  basename(internalValues$filegroups$File)) 
+            ColumnNames2 <- ColumnNames
           ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))])
+            
+              }
+         
           
-          if(values$GlobalOpts$preferMseekIntensities){
+          
+          if(length(grep("__XIC$",colnames(feats)))){
           intColRange <- grep("__XIC$",colnames(feats))
           }else{
             intColRange <- grep(values$GlobalOpts$filePattern,colnames(feats))
@@ -307,9 +314,9 @@ SelectProjectFolderModule <- function(input,output, session,
     
   })
   
-  observeEvent(input$checkMseekIntensities,{
-    values$GlobalOpts$preferMseekIntensities <- input$checkMseekIntensities
-  })
+  # observeEvent(input$checkMseekIntensities,{
+  #   values$GlobalOpts$preferMseekIntensities <- input$checkMseekIntensities
+  # })
   
   observeEvent(c(AltFileFolder$dir),{
     #print(AltFileFolder$dir)
