@@ -91,7 +91,6 @@ xcmsWidget <- function(input,output, session,
       })
   
   observeEvent(input$selDefault,{
-      print(input$selDefault)
       if(!is.null(input$selDefault) && input$selDefault != ""){
       
       internalValues$params <- list(filegroups = internalValues$params$filegroups,
