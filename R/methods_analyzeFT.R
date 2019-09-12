@@ -35,7 +35,12 @@ setMethod("analyzeFT",
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
 
-              if(param@normalize || (param@useNormalized && !identical(grep("__norm",colnames(object$df), value = T), paste0(object$intensities,"__norm")))){ 
+              if(param@normalize 
+                 || (param@useNormalized 
+                     && !identical(grep("__norm",colnames(object$df), value = T),
+                                   paste0(object$intensities,"__norm")))){ 
+                  
+                  object <- removeNAs(object)
                   
                   object <- FTNormalize(object,
                                         logNormalized = param@logNormalized)
@@ -207,8 +212,6 @@ setMethod("FTNormalize", "MseekFT",
               tryCatch({
                   if(missing(intensityCols) 
                      || is.null(intensityCols)){
-                      print(intensityCols(object))
- 
                       intensityCols <- intensityCols(object)
                   }
                   
