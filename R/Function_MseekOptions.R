@@ -69,7 +69,7 @@ MseekOptions <- function(..., defaults = F){
                              plotTransparency = 0.8,
                             groupBy = "grouping",
                             colorBy = "file",
-                            preferMseekIntensities = TRUE,
+                            #preferMseekIntensities = TRUE,
                             relPlotToggle = F,
                             raiseToggle = F,
                            recentProjects = system.file("extdata","examples", "example_projectfolder", package = "Metaboseek"),

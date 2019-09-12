@@ -12,7 +12,7 @@ fols <- commandArgs(trailingOnly=TRUE)
 
 setwd(fols[1])
 
-writeLines(utils::capture.output(utils::sessionInfo()), "AnalysisSessionInfo.txt")
+writeLines(utils::capture.output(utils::sessionInfo()), "settings/AnalysisSessionInfo.txt")
 
 history <- writeStatus (previous = NULL,
                         message = list(Status = paste0("Starting analysis with xcms_runner in Metaboseek v",packageVersion("Metaboseek")," and xcms version ", packageVersion("xcms")),
@@ -20,14 +20,14 @@ history <- writeStatus (previous = NULL,
 
 #Load settings from csv files in wd
 ##########################
-filegroups = read.csv("filegroups.csv",
+filegroups = read.csv("settings/filegroups.csv",
                    row.names = 1,
                    stringsAsFactors = F)
 
 mzxml_pos <- filegroups$File
 fgroups <- as.integer(as.factor(filegroups$Group))
 #########################
-centWave = read.csv("centWave.csv",
+centWave = read.csv("settings/centWave.csv",
                     row.names = 1,
                     stringsAsFactors = F)
 
@@ -56,7 +56,7 @@ BiocParallel::register(
 
 #bparam <- SnowParam(workers = as.integer(centWave["workers",1]))
 ##########################
-groupparam = read.csv("group.csv",
+groupparam = read.csv("settings/group.csv",
                  row.names = 1,
                  stringsAsFactors = F)
 
@@ -70,7 +70,7 @@ gparam <- PeakDensityParam(sampleGroups = if(as.logical(groupparam["usegroups",1
 )
 #########################
 
-peakfilling = read.csv("peakfilling.csv",
+peakfilling = read.csv("settings/peakfilling.csv",
                        row.names = 1,
                        stringsAsFactors = F)
 
@@ -85,7 +85,7 @@ mos_fparam <- list(ppm = as.numeric(peakfilling["ppm_m",1]),
                    )
 
 ##########################
-retcorParam = read.csv("retcor.csv",
+retcorParam = read.csv("settings/retcor.csv",
                        row.names = 1,
                        stringsAsFactors = F)
 #retcor parameters
@@ -110,7 +110,7 @@ pgparam <- PeakGroupsParam(minFraction = as.numeric(retcorParam["minFraction",1]
 
 
 
-camera = read.csv("camera.csv",
+camera = read.csv("settings/camera.csv",
                        row.names = 1,
                        stringsAsFactors = F)
 
@@ -127,7 +127,7 @@ cam_param <- list(polarity = as.character(camera["polarity",1]),
                   filter = as.logical(camera["filter",1]))
 
 ##########################
-outputs = read.csv("outputs.csv",
+outputs = read.csv("settings/outputs.csv",
                        row.names = 1,
                        stringsAsFactors = F)
 
@@ -140,8 +140,8 @@ for (i in seq(ncol(outputs) - 1)){
 
 ppOptions <- NULL
 try({
-ppOptions <- jsonlite::unserializeJSON(readChar("postProcessingSettings.json",
-                                                file.info("postProcessingSettings.json")$size))
+ppOptions <- jsonlite::unserializeJSON(readChar("settings/postProcessingSettings.json",
+                                                file.info("settings/postProcessingSettings.json")$size))
 })
 ##########
 
@@ -151,8 +151,11 @@ history <- writeStatus (previous = history,
 
 #xcmsRaw object list for Mseek intensity method
 if(any(na.omit(as.logical(outputs$MOSAIC_intensities))) 
-   || (length(ppOptions) && "Peak shapes" %in%  ppOptions$analysesSelected)){
+   || (length(ppOptions) 
+       && any(grepl("shapes", ppOptions$analysesSelected2)))){ #needed for peak shapes analysis types
 rfiles <- loadRawM(filelist= mzxml_pos, MSn = F, workers = as.integer(centWave["workers",1]), rnames = mzxml_pos)
+}else{
+ rfiles <- NULL   
 }
 
   fileaccess <- readMSData(mzxml_pos, pdata = NULL, verbose = isMSnbaseVerbose(),
