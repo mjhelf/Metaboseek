@@ -17,6 +17,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(Metaboseek)
 ```
 
+
+
+```{r, eval = FALSE}
+
+print(paste("Metaboseek version:",packageVersion("Metaboseek")))
+```
 Metaboseek is an interactive, browser-based tool to analyze and browse your mass spectrometry data. Here is a quick introduction to the basic functions.
 
 # Install Metaboseek
@@ -34,11 +40,9 @@ We recommend computers with a monitor with at least full HD (1920 x 1080 pixels)
 All files are loaded into memory, so that browsing will be very quick: It is easy to look at extracted ion chromatograms (EICs) for many MS features of interest across dozens of files within a fraction of a second. However, the initial loading of the data will take some time, and you may experience issues if you load many files at a time. We strongly recommend using centroided data files, as they will have a smaller memory footprint. Loading 50 data files from 20-minute high resolution LC/MS data acquisition should not be a problem on a computer with 16 GB of RAM. 
 
 ### Java {#javainfo}
-Metaboseek, as pre-packaged in the installer or .zip file for Windows, version 0.9.3 and up **requires** Java. If you install Metaboseek manually, Java is still needed for full functionality. Make sure to install 64-bit Java if you are running 64-bit R (which is most likely), or 32-bit Java if you are running 32-bit R. If you go to java.com and follow the download buttons there, it will send you to download the version that corresponds to your browser (32- or 64-bit) by default, which may or may not be the version you need. Get the appropriate Java version from this page: [https://www.java.com/en/download/manual.jsp](https://www.java.com/en/download/manual.jsp). 
+If installed from an R session, Metaboseek will require Java to be installed for full functionality (in particular, molecular structure plotting in the SIRIUS module. Java is also a requirement for installing SIRIUS itself). Make sure to install 64-bit Java if you are running 64-bit R (which is most likely), or 32-bit Java if you are running 32-bit R. If you go to java.com and follow the download buttons there, it will send you to download the version that corresponds to your browser (32- or 64-bit) by default, which may or may not be the version you need. Get the appropriate Java version from this page: [https://www.java.com/en/download/manual.jsp](https://www.java.com/en/download/manual.jsp). 
 
 ## Install on Windows
-
-You will need to get the [appropriate java version](#javainfo), which in the case of the .zip file and the installer, is **64-bit**.
 
 ###Using the installer
 
@@ -46,16 +50,20 @@ You will need to get the [appropriate java version](#javainfo), which in the cas
 2. Follow the installation steps.
 3. Metaboseek 0.9 should now be installed and can be launched like any other Windows program. When Metaboseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the Metaboseek command line window.
 
+The installer version of Metaboseek has one limitation: it does not plot molecular structures for predicted structures in the SIRIUS module. This is a compromise made so that this installation of Metaboseek does not require Java to be installed on your system.
+
 ###Using a .zip file
 
 1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
 2. Unzip the file on your computer (this may take a while!)
 3. Run Metaboseek by executing runMetaboseek.exe In the unzipped folder.
 
-###Updating Metaboseek for Windows
+The .zip version of Metaboseek has one limitation: it does not plot molecular structures for predicted structures in the SIRIUS module. This is a compromise made so that this installation of Metaboseek does not require Java to be installed on your system.
 
-Windows users can update Metaboseek to the newest version from inside the Metaboseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to Metaboseek.
-   
+<!-- ###Updating Metaboseek for Windows -->
+
+<!-- Windows users can update Metaboseek to the newest version from inside the Metaboseek app (Update/Help section in the navigation bar on the left). This method is easier than downloading a new installer or .zip file, but currently updates can fail, especially when there are a lot of changes to Metaboseek. -->
+
 ## Install on Mac / Linux
 Consider getting the [Metaboseek Docker image](#Docker), or follow these steps to install Metaboseek:
 
@@ -216,7 +224,6 @@ peaks, the processing time is relatively long and many false-positives
  
 
 
-
 ## Data Explorer
 
 At the heart of Metaboseek is the interaction between data visualization in the "Data viewer" box, and a table of LC/MS data features in the `Feature table` box
@@ -288,10 +295,24 @@ Feature Tables can be loaded in these formats:
 with retention time values in seconds.
 * .mskFT: Metaboseek's format to keep feature tables with metadata, including processing history
 
-
 ###Visualize EICs
 
+Once you have loaded MS data and a Feature Table into Metaboseek, you can easily visualize the extracted ion chromatogram for each molecular feature in the table by clicking on it in the Feature Table
+
 ###Interactive MS data view
+
+### Special Columns in the Metaboseek Feature Table
+
+```{r column legend, echo = FALSE}
+
+coldf <- read.csv("assets/columnLegend.csv")
+
+knitr::kable(coldf)
+
+
+```
+
+
 
 ###View MS/MS data
 

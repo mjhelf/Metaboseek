@@ -1,0 +1,17 @@
+Column,Description,calculated by,method
+<Sample>__XIC,Columns with intensities as calculated by Metaboseek,"Get Intensities, xcms script, ",
+<Sample>,Columns with intensities as reported by xcms,xcms script,xcms::groupChromPeaks
+<IntensityColumn>__norm,"Normalized intensity values for an intensity column, typically named <Sample>__norm or <Sample>__XIC__norm; by default : (1) replaces zeros by lowest value in entire intensity dataset (assuming it represents the detection limit), (2) intensity values of each column are adjusted so that each column has the mean intensity equal to the mean intensity of the entire dataset.",Normalize data,FTNormalize
+massdefppm,"Mass defect in ppm, calculation: ((mz-floor(mz))/mz)*1e6",Basic analysis,FTBasicAnalysis
+maxint,Maximum intensity across all samples,Basic analysis,FTBasicAnalysis
+topgroup,Sample group with highest mean intensity,Basic analysis,FTBasicAnalysis
+maxfold,Highest fold change between the mean intensities of any 2 sample groups,Basic analysis,FTBasicAnalysis
+maxfoldover2,Fold change between the mean intensities of topgroup over group with second highest mean intensity,Basic analysis,FTBasicAnalysis
+<Group>__meanInt,sample group mean intensity,Basic analysis,FTBasicAnalysis
+<Group>__foldOverRest,Fold change of the mean intensity of G1 over mean intensities of all other samples outside of G1,Basic analysis,FTBasicAnalysis
+<Group>__minFold,Fold change of the lowest intensity sample in G1 over the highest intensity sample of all other samples outside of G1,Basic analysis,FTBasicAnalysis
+<Group>__minFoldMean,Fold change of the mean intensity of G1 over the highest intensity sample of all other samples outside of G1,Basic analysis,FTBasicAnalysis
+<Group>__foldOverCtrl,Fold change of the mean intensity of G1 over mean intensity of the control group,Basic analysis,FTBasicAnalysis
+best_minFold,The highest minFold value reported across all groups,Basic analysis,FTBasicAnalysis
+best_minFoldMean,The highest minFoldMean value reported across all groups,Basic analysis,FTBasicAnalysis
+best_minFoldCtrl,The highest minFoldCtrl value reported across all groups,Basic analysis,FTBasicAnalysis
