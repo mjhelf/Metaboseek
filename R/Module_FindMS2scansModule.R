@@ -32,7 +32,10 @@ FindMS2ScansModule <- function(input,output, session, values,
         fluidPage(
           fluidRow(
             p(strong("Find all MS2 scans for parent m/z values in your Feature table")),
-            p("A column named MS2scans will be generated in your Feature Table that liosts all scans matching a feature. Empty entries mean no hits. If this column already exists, it will be overriden.")
+            p("A column named MS2scans will be generated in your Feature Table 
+              that lists all scans matching a feature. Empty entries mean no hits.
+              If this column already exists, it will be overriden. Will look in 
+              all MS data files that are loaded in the current layout.")
           ),
           hr(),
           fluidRow(
@@ -76,25 +79,28 @@ FindMS2ScansModule <- function(input,output, session, values,
         updateFT(values)
         
       withProgress(message = 'Please wait!', detail = "Finding MS2 scans", value = 0.5, {
-        
-        MS2s <-  data.frame(MS2scans = listMS2scans(mz = values$featureTables$tables[[values$featureTables$active]]$df$mz,
-                                      rt = values$featureTables$tables[[values$featureTables$active]]$df$rt,
-                                     ppm = input$MS2ppm,
-                                                      rtw = input$MS2rtw,
-                                                      MSData = values$MSData$data,
-                                     rtMatch = input$rtMatch), stringsAsFactors = F)
-      
-      values$featureTables$tables[[values$featureTables$active]] <- updateFeatureTable(values$featureTables$tables[[values$featureTables$active]],MS2s)
-})
+          FeatureTable(values) <- FTMS2scans(FeatureTable(values),
+                                             values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
+                                             ppm = input$MS2ppm,
+                                             rtw = input$MS2rtw,
+                                             uniqueMatch = input$rtMatch)
+     })
+      if(hasError(previousStep(FeatureTable(values)))){
+          showNotification(paste("An error occured: ",
+                                 unlist(error(previousStep(FeatureTable(values))))),
+                           duration = 0, type = "error")
+          
+      }else{
 
       showNotification(paste("Finished MS2 search"), duration = 10)
       removeModal()
+      }
       internalValues$done <- TRUE
       
     },
     error = function(e){
-      print(e)
-      showNotification(paste("A problem occured and MS2 search failed"), type = "error", duration = 0)
+      #print(e)
+      showNotification(paste("A problem occured and MS2 search failed:", e), type = "error", duration = 0)
     }
   )
   })

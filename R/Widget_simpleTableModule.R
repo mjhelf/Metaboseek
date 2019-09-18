@@ -33,8 +33,16 @@ simpleTableModule <- function(input,output, session,
   
   intDF <- reactive({
     internalValues$update
+      
+      if(!is.null(internalValues$df)){
+          
+          return(internalValues$df[,sapply(internalValues$df,is.atomic), drop = FALSE])
+          
+          }else{
+      
     return(internalValues$df)
-  })
+          }
+              })
   
   output$maintable <- renderRHandsontable({
     if(!is.null(
@@ -45,7 +53,7 @@ simpleTableModule <- function(input,output, session,
       #&& internalValues$update
     ){ 
       rhandsontable(#internalValues$df
-        if(!is.null(df())){df()}else{intDF()}
+        if(!is.null(df())){df()[,sapply(df(),is.atomic), drop = FALSE]}else{intDF()}
         #intDF()
         ,
         readOnly = static$readOnly,

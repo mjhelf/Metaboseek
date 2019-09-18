@@ -104,8 +104,12 @@ MainTableModule <- function(input, output, session,
                            label = "Save Table",
                            format = c("csv"),
                            allowformats = list("Comma separated (.csv)" = "csv",
+                                               "Metaboseek Feature Table (.mskFT)" = "mskFT",
                                                "Inclusion/Exclusion list" = "instrumentList"))
   )
+  
+  callModule(MseekHistoryWidget, "tablehistory", FT = reactive({FeatureTable(values)}))
+  
   
   observeEvent(c(internalValues$page,
                  internalValues$decreasing,
@@ -180,9 +184,14 @@ MainTableModule <- function(input, output, session,
           values$featureTables$selectedCols[values$featureTables$selectedCols %in% colnames(FeatureTable(values)$df)]
       }else{colnames(FeatureTable(values)$df)}
       
+      #make sure non-atomic columns [such as specList] dont get into the handsontable (cause crashes):
+      if(length(selcols)){
+      selcols <- selcols[sapply(FeatureTable(values)$df[,selcols,drop = FALSE],is.atomic)]
+      }
+      
               internalValues$renderedTable <- activeFT(values)
 
-      rhandsontable(values$featureTables$tables[[values$featureTables$active]]$df[internalValues$inpage, selcols],
+      rhandsontable(FeatureTable(values)$df[internalValues$inpage, selcols],
                     readOnly = !FeatureTable(values)$editable,
                     contextMenu = FeatureTable(values)$editable,
                     selectCallback = TRUE,
@@ -299,9 +308,11 @@ MainTableModule <- function(input, output, session,
       column(2,
              htmlOutput(ns('perPageI'))
       ),
-      column(2,
+      column(1,
              SaveTableModuleUI(ns("savetable"))
       ),
+      column(1,
+             MseekHistoryWidgetUI(ns("tablehistory"))),
       column(3,
              SelectActiveTableModuleUI(ns("tablechange"))
       )

@@ -15,6 +15,8 @@ assignColor(datarange, colscale, center = NULL, manualRange = NULL,
 \item{center}{force the middle of the color vector to correspond to this value}
 
 \item{manualRange}{enter a range to fit the color range to, if not range(datarange)}
+
+\item{NAcolor}{color to assign to NA values}
 }
 \value{
 a character vector of same length as \code{datarange} with color values

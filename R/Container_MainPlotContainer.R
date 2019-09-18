@@ -37,7 +37,8 @@ MainPlotContainer <- function(input,output, session,
   MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
                            values = reactiveValues(featureTables = values$featureTables,
                                                    MSData = values$MSData,
-                                                   GlobalOpts = values$GlobalOpts),
+                                                   GlobalOpts = values$GlobalOpts,
+                                                   projectData = values$projectData),
                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
   
   #### Quickplots #####

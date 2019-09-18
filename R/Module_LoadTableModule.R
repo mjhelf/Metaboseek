@@ -128,6 +128,12 @@ LoadTableModule <- function(input,output, session,
         
         tabid <- paste0("table",length(values$featureTables$tables))
         
+        if(grepl('\\.[Mm][Ss][Kk][Ff][Tt]$',input$modalSelect)[1]){
+            
+            values$featureTables$tables[[tabid]] <- loadMseekFT(input$modalSelect)
+            
+        }else{
+        
         feats <- as.data.frame(data.table::fread(input$modalSelect,
                                                  header = static$format$header,
                                                  stringsAsFactors = static$format$stringsAsFactors,
@@ -169,7 +175,7 @@ LoadTableModule <- function(input,output, session,
         
         incProgress(0.3, detail = "Formatting Feature Table")
         
-        values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
+        values$featureTables$tables[[tabid]] <- buildMseekFT(feats,
                                                                       mzcol= "mz", #column in df with mz values (columnname)
                                                                       rtcol= "rt", #column in df with mz values (columnname)
                                                                       commentcol = "comments",
@@ -178,6 +184,8 @@ LoadTableModule <- function(input,output, session,
                                                                       anagrouptable = anagroup,
                                                                       tablename = basename(input$modalSelect),
                                                                       editable = F)
+        }
+        
         values$featureTables$index <- updateFTIndex(values$featureTables$tables)
         values$featureTables$active <- tabid
       })

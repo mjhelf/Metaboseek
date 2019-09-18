@@ -7,7 +7,7 @@
 mergepeaks2(pl, rttol = 3, minint = 0, minrelint = 0, topN = 100)
 }
 \arguments{
-\item{pl}{a peaklist, such as list items returned by \code{\link{findPeaks2}()}}
+\item{pl}{a peaklist, such as list items returned by \code{\link{find_peaks2}()}}
 
 \item{rttol}{retention time tolerance in seconds to merge peaks}
 

@@ -28,6 +28,130 @@ ListToReactiveValues <- function(ls){
   
 }
 
+#' reactiveValuesToListRec
+#' 
+#' recursively converts reactiveValues to lists, essentially a recursive version of 
+#' \code{\link[shiny]{reactiveValuesToList}()}. Has to be called in a shiny
+#'  session.
+#' 
+#' @param x a \code{\link[shiny]{reactiveValues}} object
+#' 
+#' @importFrom shiny reactiveValues is.reactivevalues
+#' 
+#' @return a list object
+#' 
+#' @export
+reactiveValuesToListRec <- function(x){
+    
+    #note: 
+    if(!is.reactivevalues(x)){
+        return(x)
+    }
+    
+    re <- reactiveValuesToList(x)
+    class(re) <- "reactiveValuesInList"
+    for (i in names(re)){
+        re[[i]] <- reactiveValuesToListRec(re[[i]])
+    }
+    return(re)
+    
+}
+
+#' saveMseekSession
+#' 
+#' save the current Metaboseek session
+#' 
+#' @param values a \code{\link[shiny]{reactiveValues}} object that in effect 
+#' gives read and write access to external objects
+#' @param path file path to save to. if NULL, the MseekSession object is returned
+#' @param MSData if TRUE, MSData will be included in saved file. If false, only 
+#' MS data file paths will be saved
+#' 
+#' @return an MseekSession object
+#' 
+#' @export
+saveMseekSession <- function(values, path = NULL, MSData = T){
+    
+    isolate({
+    savedValues <- reactiveValuesToListRec(values)
+    
+    class(savedValues) <- "MseekSession"
+    
+    if(!MSData){
+        savedValues$MSData$MSnExp <- NULL
+        savedValues$MSData$data <- names(values$MSData$data)
+    }
+    
+    if(!is.null(path)){
+    saveRDS(savedValues, path)
+    }else{
+    return(savedValues)
+    }
+    })
+}
+
+
+#' reconstructValues
+#' 
+#' reconstructs the MseekTree (values object) from a saved values object (that 
+#' contains all data to be loaded as lists rather than reactiveValues).
+#' 
+#' @param values an MseekTree (reactivevalues) object
+#' @param savedValues a saved values object (created by applying
+#'  \code{reactiveValuesToListRec()} to an MseekTree object)
+#' 
+#' @return nothing, but modifies the global values object
+#' 
+#' @export
+reconstructValues <- function(values, savedValues){
+    
+    for(n in names(savedValues)){
+        
+        if(n %in% names(values) && is.reactivevalues(values[[n]])){
+            
+            reconstructValues(values[[n]], savedValues[[n]])
+            
+        }else{
+            values[[n]] <- savedValues[[n]]
+        }
+        
+    }
+}
+
+#' loadMseekSession
+#' 
+#' load a Metaboseek session
+#' 
+#' @param values a \code{\link[shiny]{reactiveValues}} object that in effect 
+#' gives read and write access to external objects 
+#' @param savedValues an MseekSession object or a file path to an MseekSession
+#' saved as RDS file.
+#' 
+#' @return nothing, but modifies the global values object
+#' 
+#' @export
+loadMseekSession <- function(values, savedValues){
+    
+    isolate({
+        if(is.character(savedValues)){
+        savedValues <- readRDS(savedValues)
+        }
+        
+        if(is.character(savedValues$MSData$data)){
+            savedValues$MSData$MSnExp <- MSnbase::readMSData(savedValues$MSData$data, pdata = NULL, verbose = F,
+                                                        centroided. = T,
+                                                        smoothed. = NA, mode = "onDisk")
+            savedValues$MSData$data <- loadRawM(savedValues$MSData$data,
+                                                workers = values$GlobalOpts$enabledCores)
+            
+            
+            }
+        
+        reconstructValues(values, savedValues)
+    })
+}
+
+
 #' checkFolders
 #'
 #' Looks for folders as specified in \code{query}
@@ -149,4 +273,43 @@ Mseek.colors<- function (n, alpha){
   }
   
   
+}
+
+#' parsePatterns
+#'
+#' parse patterns from a data.frame into a list that can be used with 
+#' MassTools::findPatterns.
+#' 
+#' @param df a data.frame with at least the columns \code{name} and
+#'  \code{pattern}, there pattern has to be numeric values separated 
+#'  by whitespace.
+#'
+#'
+#' @export
+parsePatterns <- function(df){
+    
+    spl <- strsplit(df$pattern, "[[:space:]]", perl = F)
+    spl <- lapply(spl, function(x){
+        na.omit(as.numeric(x))
+        })
+    names(spl) <- df$name
+    
+    return(spl)
+    
+}
+
+#' matchedToCharacter
+#'
+#' summarize named logical vectors into a single character vector
+#' 
+#' @param matchedPatterns a list of named logical vectors
+#' @param sep character string to use as separator between matches
+#'
+#' @return a character vector
+#'
+#' @export
+matchedToCharacter <- function(matchedPatterns, sep = "|"){
+    
+    sapply(matchedPatterns, function(x){paste(names(x)[x], collapse = sep)})
+    
 }

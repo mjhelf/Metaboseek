@@ -1,0 +1,4 @@
+,Value,MOSAIC_intensities,xcms_peakfilling,CAMERA_analysis,Description
+peaktable_all,TRUE,FALSE,FALSE,FALSE,"table of all peaks detected in all samples, ungrouped. NOTE: Options for additional peak filling and processing are disabled."
+peaktable_grouped,TRUE,TRUE,FALSE,FALSE,"Table of peaks, grouped, missing peaks reported as intensity 0. Values for missing peaks filled in by xcms and/or Metaboseek. Optional annotation of adducts and isotope peaks with CAMERA."
+peaktable_grouped_Rtcorr,TRUE,TRUE,FALSE,TRUE,"Table of peaks, grouped and retention time corrected, missing peaks reported as intensity 0. Values for missing peaks filled in by xcms and/or Metaboseek. Optional annotation of adducts and isotope peaks with CAMERA."

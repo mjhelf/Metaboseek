@@ -26,7 +26,7 @@ PeptideCalcModule <- function(input,output, session, values){
     
     ns <- NS(session$ns(NULL))
     
-    dialog <- callModule(MseekModalModule, "calcbutton",
+    dialog <- callModule(ModalWidget, "calcbutton",
                          reactives = reactive({  
                              list(fp = fluidPage(
                                  fluidRow(
@@ -109,5 +109,5 @@ PeptideCalcModule <- function(input,output, session, values){
 #' @export
 PeptideCalcModuleUI <- function(id){
     ns <- NS(id)
-    MseekModalModuleUI(ns("calcbutton"))
+    ModalWidgetUI(ns("calcbutton"))
 }

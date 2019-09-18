@@ -1,10 +1,10 @@
 Package: Metaboseek
 Title: Metaboseek platform
-Version: 0.9.5
+Version: 0.9.6
 Authors@R: person("Maximilian", "Helf", email = "maximilian.helf@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1393-3999"))
 biocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
-Depends: R (>= 3.3.0)
+Depends: R (>= 3.6.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -24,9 +24,10 @@ Imports: Biobase,
     igraph,
     jsonlite,
     lsa,
-    MassTools (>= 0.2.7),
+    MassTools (>= 0.2.9),
     methods,
     MSnbase,
+    mzR,
     plotly,
     qgraph,
     Rdisop,
@@ -55,3 +56,110 @@ Suggests: covr,
     testthat,
     xml2
 VignetteBuilder: knitr
+Collate: 
+    'Classes.R'
+    'Container_FeatureTableContainer.R'
+    'Container_FilterContainer.R'
+    'Container_MainPageContainer.R'
+    'Container_MainPlotContainer.R'
+    'Container_MseekContainer.R'
+    'Container_OptionsContainer.R'
+    'Documentation_templates.R'
+    'Function_MseekOptions.R'
+    'Function_PlotWindow.R'
+    'Function_massquery.R'
+    'Function_runMseek.R'
+    'Function_specplot.R'
+    'methods_buildMseekFT.R'
+    'methods_MseekFamily.R'
+    'Functions_FeatureTable_analysis.R'
+    'Functions_SIRIUS.R'
+    'Functions_calcMZ.R'
+    'Functions_class_MSdata.R'
+    'Functions_class_featureTable.R'
+    'Functions_deprecated.R'
+    'Functions_extract_EICs.R'
+    'Functions_extract_Scans.R'
+    'Functions_featureReport.R'
+    'Functions_formatting_utilities.R'
+    'Functions_graph_utilities.R'
+    'Functions_peakPicking.R'
+    'Functions_plotting_EICs.R'
+    'Functions_plotting_genericData.R'
+    'Functions_rcdk.R'
+    'Functions_retcorAdjust.R'
+    'Functions_xcmsRunner.R'
+    'Module_ChangeFTGroupingModule.R'
+    'Module_EICOptionsModule.R'
+    'Module_EICmodule.R'
+    'Module_FeatureReportModule.R'
+    'Module_FilePathModule.R'
+    'Module_FilterModule.R'
+    'Module_FindMS2scansModule.R'
+    'Module_FindPatternsModule.R'
+    'Module_GetIntensitiesModule.R'
+    'Module_GlobalOptionsModule.R'
+    'Module_GroupedEICModule.R'
+    'Module_LoadDataModule.R'
+    'Module_LoadMSDataModule.R'
+    'Module_LoadNetworkModule.R'
+    'Module_LoadSessionModule.R'
+    'Module_LoadTableModule.R'
+    'Module_MS2BrowserModule.R'
+    'Module_MZcalcModule.R'
+    'Module_MainTableModule.R'
+    'Module_MassShiftsModule.R'
+    'Module_MatchReferenceModule.R'
+    'Module_MultiEICmodule.R'
+    'Module_MultiFilterModule.R'
+    'Module_MultiSpecmodule.R'
+    'Module_MzqueryModule.R'
+    'Module_NetworkModule.R'
+    'Module_PcaViewModule.R'
+    'Module_PeakPickModule.R'
+    'Module_PeptideAnnotationModule.R'
+    'Module_PeptideCalcModule.R'
+    'Module_PeptideModificationsModule.R'
+    'Module_PlotBrowserModule.R'
+    'Module_PlotModule.R'
+    'Module_QuickPlotModule.R'
+    'Module_RegroupMSDataModule.R'
+    'Module_RtCorrViewModule.R'
+    'Module_SaveNetworkModule.R'
+    'Module_SaveSessionModule.R'
+    'Module_SaveTableModule.R'
+    'Module_SelectActiveTableModule.R'
+    'Module_SelectMS2Module.R'
+    'Module_SelectMSGroupingModule.R'
+    'Module_SelectProjectFolderModule.R'
+    'Module_ShowSiriusModule.R'
+    'Module_SimplifyNetworkModule.R'
+    'Module_SiriusModule.R'
+    'Module_SiriusOptionsModule.R'
+    'Module_SpecModule2.R'
+    'Module_Specmodule.R'
+    'Module_TableAnalysisModule.R'
+    'Module_TableModule.R'
+    'Module_UploadTableModule.R'
+    'Module_VennDiagramModule.R'
+    'Module_WelcomePageModule.R'
+    'Module_columnSelModule.R'
+    'Module_updaterModule.R'
+    'Server_components.R'
+    'UI_components.R'
+    'Widget_GetSiriusWidget.R'
+    'Widget_ModalWidget.R'
+    'Widget_MseekHistoryWidget.R'
+    'Widget_PeptideSequencePlotWidget.R'
+    'Widget_SpecModuleWidget.R'
+    'Widget_SwitchButton.R'
+    'Widget_TableModule2.R'
+    'Widget_VennWidgetModule.R'
+    'Widget_densPlotWidget.R'
+    'Widget_simpleTableModule.R'
+    'Widget_xcmsWidget.R'
+    'getset_MSData.R'
+    'getset_featureTables.R'
+    'methods_Spectrum.R'
+    'methods_analyzeFT.R'
+    'zzz.R'

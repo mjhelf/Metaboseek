@@ -1,0 +1,15 @@
+"","Time","Status","Details","elapsed_time"
+"1","20190909_141511","ERROR","An error has occured: Error: cannot allocate vector of size 749.4 Mb
+",0
+"2","20190909_141242","CAMERA annotation","Adduct and isotope annotation with the CAMERA package (after RT correction)",149.224
+"3","20190909_130600","Saving table","Performing xcms peak filling. Saving peaktable_grouped_RTcorr_filled and running post-processing",4001.676
+"4","20190909_123956","Saving table","Saving peaktable_grouped_RTcorr and running post-processing",1563.646
+"5","20190909_123805","Regroup peaks","group.density",111.603
+"6","20190909_123805","Exporting data","Retention time correction information",0.0140000000001237
+"7","20190909_123757","Retention time correction","obiwarp",7.60399999999981
+"8","20190909_121104","Saving table","Saving peaktable_grouped and running post-processing",1613.104
+"9","20190909_120906","Group peaks","group.density",118.404
+"10","20190909_120905","Exporting data","peaktable_all.csv",0.119000000000028
+"11","20190909_120047","Finding peaks","XcmsSet peak detection",498.38
+"12","20190909_120036","Starting analysis","loading files",10.742
+"13","20190909_120035","Starting analysis with xcms_runner in Metaboseek v0.9.5.23 and xcms version 3.7.2","initializing parameters",1.415

@@ -1,0 +1,3 @@
+The xcms_default settings are using the default settings for the functions used in the xcms script. Adjust them to fit with your data.
+
+In comparison to the Metaboseek_default settings, these settings are more geared towards finding features that are present in all samples and mass tolerances are relatively high, so make sure to decrease the ppm and mztol paramters if appropriate for your instrument.

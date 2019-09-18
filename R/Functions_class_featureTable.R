@@ -21,6 +21,7 @@
 #' @param tablename Name of the table as displayed by Mseek
 #' @param editable allow editing of this table in the Mseek app? if FALSE, only
 #'  comments column can be edited. editable tables are also not paginated.
+#' @param processHistory a list of \code{\link[xcms]{processHistory}} objects
 #' 
 #' @return an \code{MseekFT} object containing a feature table and metadata
 #' 
@@ -33,7 +34,8 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
                           rtFormat = "sec", # "sec" or "min" 
                           anagrouptable = NULL,
                           tablename = "Custom Table",
-                          editable = T){ #T: free editing (add rows), but always see all columns in viewer, F: only comments can be edited directly, no adding of columns
+                          editable = T,
+                          processHistory = list()){ #T: free editing (add rows), but always see all columns in viewer, F: only comments can be edited directly, no adding of columns
     
     #make columns if they don't exist:
     if (class(try(df[,mzcol], silent = T))=="try-error"){ df[,mzcol] <- numeric(nrow(df)) }
@@ -108,14 +110,13 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
     FT$ctrlGroups = NULL
     FT$useNorm = F
     
+    FT$.processHistory <- c(processHistory)
+    
     class(FT) <- "MseekFT"
     
     return(FT)
 
 }
-
-
-
 
 #' updateDF
 #' 
@@ -133,7 +134,7 @@ constructFeatureTable <- function(df= data.frame(mz=numeric(3), rt = numeric(3))
 updateDF <- function(a, b){
 
         for (i in colnames(a)){
-             b[,i] <- a[,i]}
+             b[,i] <- a[,i, drop = FALSE]} #drop = FALSE added to avoid issues with list columns
         
         return(b)
     }
@@ -346,7 +347,7 @@ tableGrouping <- function(df=NULL, anagrouptable){
 tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
                        moreArgs = list()){
   
-  if(length(format)==0 || is.na(format)){
+  if(!length(format) || is.na(format[1])){
     warning("File format selected was empty. Could not export data to file")
    return(invisible(NULL)) 
   }
@@ -360,8 +361,8 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
          csv = {sep <- ","},
            tsv = {sep <- "\t"})
   
-  
-  fwrite(df,
+  #don't save complex columns
+  fwrite(df[,sapply(df,is.atomic)],
          fname,
          sep = sep,
          quote = T,
@@ -374,7 +375,8 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
     
       moreArgs <- moreArgs[names(moreArgs) %in% c("rtwin", "polarity","instrument", "listType", "restrictRT")]
     
-    df <- do.call(asInclusionlist, c(list(parenttable = df), moreArgs))
+    df <- do.call(asInclusionlist, c(list(parenttable = df[,sapply(df,is.atomic)]),
+                                     moreArgs))
     
     fwrite(df,
            fname,

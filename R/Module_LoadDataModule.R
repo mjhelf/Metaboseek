@@ -47,7 +47,7 @@ LoadDataModule <- function(input,output, session,
                                                        sep = NULL,
                                                        quote = '"',
                                                        stringsAsFactors = F),
-                                         pattern = "\\.csv$")
+                                         pattern = "\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$")
   )
   
   Projectfolder <- callModule(SelectProjectFolderModule, "projectfolder",
@@ -65,6 +65,7 @@ LoadDataModule <- function(input,output, session,
                                                      GlobalOpts = values$GlobalOpts)
   )
   
+  callModule(LoadSessionModule, "loadsession",values)
   
   
   internalValues <- reactiveValues(Table = Table,
@@ -90,14 +91,17 @@ LoadDataModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      column(4, style = "text-align:center;", htmlOutput(ns("showfolder"))
-      ),
-      column(4, style = "justify-content:center;display:flex", SelectProjectFolderModuleUI(ns("projectfolder"))
-             ),
+      column(12, style = "text-align:center;", htmlOutput(ns("showfolder"))
+      )),
+    fluidRow(
       column(2, style = "justify-content:center;display:flex", LoadTableModuleUI(ns("table"))
              ),
       column(2, style = "justify-content:center;display:flex", LoadMSDataModuleUI(ns("msdata"))
-             )
+             ),
+      column(4, style = "justify-content:center;display:flex", SelectProjectFolderModuleUI(ns("projectfolder"))
+             ),
+      column(4, style = "justify-content:center;display:flex", LoadSessionModuleUI(ns("loadsession"))
+      )
     )
       
   )

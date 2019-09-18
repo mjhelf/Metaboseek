@@ -13,7 +13,8 @@
 #' 
 #' @export 
 NetworkModule <- function(input,output, session, 
-                          values = reactiveValues(Networks = NULL),
+                          values = reactiveValues(Networks = NULL,
+                                                  MSData = NULL),
                           reactives = reactive({list(active = T,
                                                      highlights = integer(0) # fixed__id values of nodes to be highlighted
                           )
@@ -54,6 +55,19 @@ NetworkModule <- function(input,output, session,
                                      logscale = T
     )
     
+    callModule(MseekHistoryWidget, "nethistory", FT = reactive({
+        if(length(values$Networks)
+           && length(internalValues$active)
+           && internalValues$active %in% names(values$Networks)){
+        values$Networks[[internalValues$active]]
+        }else{NULL}
+        
+        }),
+        buttonLabel = ""
+        )
+    
+    callModule(MatchReferenceModule, "matchref", values = values)
+    
     
     output$activenetwork <- renderUI({
         if(!static$noSelection){
@@ -70,6 +84,10 @@ NetworkModule <- function(input,output, session,
         }
     })
     
+    regChange <- reactive({if(length(values$Networks)
+                              && length(internalValues$active)){
+        MseekHash(values$Networks[[internalValues$active]])
+        }else{"nothing"}})
     
     observeEvent(c(internalValues$active),{
         if(!is.null(values$Networks) 
@@ -110,7 +128,23 @@ NetworkModule <- function(input,output, session,
             # print( V(internalValues$layouts$subgraphs[[1]])$fixed__id )
             
             internalValues$activelayout$graph <- internalValues$graph
-            internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+            
+            if(!is.null(V(internalValues$activelayout$graph)$x__coord)
+               && !is.null(V(internalValues$activelayout$graph)$y__coord)){
+                
+                    internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
+                                                                                V(internalValues$activelayout$graph)$y__coord),
+                                                                             ncol = 2))
+                    
+                    
+                    
+                }else{
+                internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+    
+                }
+            
+            
+            
             colnames(internalValues$activelayout$layout) <- c("x", "y")
             
             #if there are subgraphs, start in overview mode
@@ -186,7 +220,12 @@ NetworkModule <- function(input,output, session,
                            div(style="display:inline-block", title = "Activate interactive highlighting on the network plot when hovering or selecting items in the feature table. Poor performance for large networks.",
                                checkboxInput(ns('hoveractive'), "Highlights", value = internalValues$hoverActive)),
                            div(style="display:inline-block",title = "Use log10 scale for Node Color scales.",
-                               checkboxInput(ns('logscale'), "log", value = internalValues$logscale))),
+                               checkboxInput(ns('logscale'), "log", value = internalValues$logscale)),
+                           div(style="display:inline-block",title = "Show processing history of this network",
+                           MseekHistoryWidgetUI(ns("nethistory"))),
+                           div(style="display:inline-block",
+                               MatchReferenceModuleUI(ns("matchref")))
+                           ),
                        
                        fluidRow(sliderInput(ns("seledges"), "Filter edges",
                                             min = 0, max = 1,
@@ -227,9 +266,11 @@ NetworkModule <- function(input,output, session,
     observeEvent(input$elabelsel,{internalValues$elabels <- input$elabelsel})
     
     output$nettables <- renderUI({
-        if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$tables)){
+        if(!is.null(reactives()$active) 
+           && reactives()$active 
+           && !is.null(internalValues$activelayout)){
             
-            selectizeInput(ns('tabs'), "Show network table", choices = c("",names(internalValues$tables)), selected = internalValues$activeTab)
+            selectizeInput(ns('tabs'), "Show network table", choices = c("","nodes", "edges"), selected = internalValues$activeTab)
             
         }
     })
@@ -437,7 +478,12 @@ NetworkModule <- function(input,output, session,
                  main = if(internalValues$overview){"Overview"}else{NULL},
                  margin = 0,
                  rescale = F,
-                 layout=internalValues$activelayout$layout)
+                 layout=
+                     
+                     internalValues$activelayout$layout
+                 
+                 
+                 )
             
             internalValues$recordedPlot <- recordPlot()
             
@@ -468,12 +514,14 @@ NetworkModule <- function(input,output, session,
                 legendranges <- safelog(vertex_attr(internalValues$graph,input$vlabelcol))
                 legendranges <- range(legendranges[is.finite(legendranges)])
                 }else{
-                    legendranges <- range((vertex_attr(internalValues$graph,input$vlabelcol)))
+                    legendranges <- vertex_attr(internalValues$graph,input$vlabelcol)
                     legendranges <- range(legendranges[is.finite(legendranges)])
                     
                     }
                 
-                legendranges <- seq(min(legendranges), max(legendranges), length.out = 200)
+                legendranges <- seq(min(na.omit(legendranges)),
+                                    max(na.omit(legendranges)),
+                                    length.out = 200)
                 
                 colorRampLegend(legendranges,
                                 assignColor(legendranges,
@@ -513,7 +561,18 @@ NetworkModule <- function(input,output, session,
                 
                 
                 internalValues$activelayout$graph <- internalValues$layouts$subgraphs[[subg]]
+                
+                if(!is.null(V(internalValues$activelayout$graph)$x__coord)
+                   && !is.null(V(internalValues$activelayout$graph)$y__coord)){
+                internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
+                                                                            V(internalValues$activelayout$graph)$y__coord),
+                                                                         ncol = 2))
+                    
+                    }else{
                 internalValues$activelayout$layout <- norm_coords(as.matrix(internalValues$layouts$sublayouts[[subg]]))
+                    
+                }
+                
                 colnames(internalValues$activelayout$layout) <- c("x", "y")
                 internalValues$hover <- NULL
                 internalValues$marker <- NULL
@@ -540,10 +599,21 @@ NetworkModule <- function(input,output, session,
                    && !internalValues$overview){
                     internalValues$activelayout$graph <- disjoint_union(internalValues$layouts$subgraphs)#internalValues$graph
                     
-                    #update large layout with new coords from changes in subgraphs
-                    internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs, internalValues$layouts$sublayouts)
+                    #update large layout with new coords from changes in subgraphs, but only if there is no predefined layout
+                    if(is.null(V(internalValues$activelayout$graph)$x__coord)
+                       || is.null(V(internalValues$activelayout$graph)$y__coord)){
+                        
+                    internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs,
+                                                                  internalValues$layouts$sublayouts)
                     internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+                        
+                        }else{
+                    internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
+                                                                                        V(internalValues$activelayout$graph)$y__coord),
+                                                                                     ncol = 2))
+                            }
                     colnames(internalValues$activelayout$layout) <- c("x", "y")
+          
                     internalValues$overview <- T
                     internalValues$hover <- NULL
                     internalValues$marker <- NULL
@@ -584,7 +654,8 @@ NetworkModule <- function(input,output, session,
         if(internalValues$hoverActive && is.null(input$Netw_brush) && !(length(keys())>0 && keys() == 17)){
             
             
-            #print("h1")
+            #print(input$Netw_hover)
+            #print(internalValues$activelayout$layout)
             internalValues$hover <- nearPoints(as.data.frame(internalValues$activelayout$layout),
                                                input$Netw_hover,
                                                xvar = "x",
@@ -592,11 +663,12 @@ NetworkModule <- function(input,output, session,
                                                threshold = 100,
                                                maxpoints = 1)
             
-            #print("h2")
+            #print(internalValues$hover)
             internalValues$hover$vertex <- which(internalValues$activelayout$layout[,1] == internalValues$hover$x
                                                  & internalValues$activelayout$layout[,2] == internalValues$hover$y)
-            
-            #print("h3")
+            #print(internalValues$hover)
+           # print(V(internalValues$activelayout$graph)$fixed__id[internalValues$hover$vertex])
+        #    print(internalValues$layouts$subgraphs)
             if(internalValues$overview && !is.null(internalValues$hover)){
                 #print("h4")
                 internalValues$hover$subgraph <- findsubgraph(V(internalValues$activelayout$graph)$fixed__id[internalValues$hover$vertex], internalValues$layouts$subgraphs)
@@ -634,9 +706,22 @@ NetworkModule <- function(input,output, session,
                && !internalValues$overview){
                 internalValues$activelayout$graph <- disjoint_union(internalValues$layouts$subgraphs)#internalValues$graph
                 
+                #update large layout with new coords from changes in subgraphs, but only if there is no predefined layout
+                if(is.null(V(internalValues$activelayout$graph)$x__coord)
+                   || is.null(V(internalValues$activelayout$graph)$y__coord)){
+                        internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs,
+                                                                      internalValues$layouts$sublayouts)
+                        internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+                        
+                    }else{
+                        internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
+                                                                                    V(internalValues$activelayout$graph)$y__coord),
+                                                                                 ncol = 2))
+                    }
+                
                 #update large layout with new coords from changes in subgraphs
-                internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs, internalValues$layouts$sublayouts)
-                internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
+                #internalValues$layouts$layout <- merge_coords(internalValues$layouts$subgraphs, internalValues$layouts$sublayouts)
+                #internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
                 colnames(internalValues$activelayout$layout) <- c("x", "y")
                 internalValues$overview <- T
                 internalValues$hover <- NULL
@@ -648,9 +733,25 @@ NetworkModule <- function(input,output, session,
             
         }})
     
-    
-    #Edge or Node table
-    table1 <- callModule(TableModule,'nettab', tag = ns('nettab'), set = reactive({list(df =  internalValues$tables[[internalValues$activeTab]],
+    showtable <- reactive({
+        if(length(internalValues$activelayout)
+           && length(internalValues$activelayout$graph)){
+            
+            if(internalValues$activeTab == "nodes"){
+            type.convert(as_data_frame(internalValues$activelayout$graph, "vertices"), as.is = T)
+            
+        }else if(internalValues$activeTab == "edges"){
+            type.convert(as_data_frame(internalValues$activelayout$graph, "edges"), as.is = T)
+
+            }else{
+                NULL}
+        }else{
+            NULL
+            }
+        
+        })
+    #Edge or Node table, now calculated on demand and for the currently shown subgraph
+    table1 <- callModule(TableModule,'nettab', tag = ns('nettab'), set = reactive({list(df =  showtable(),
                                                                                         update = NULL,
                                                                                         layout = list(
                                                                                             perpage = 100,

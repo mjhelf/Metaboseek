@@ -1,0 +1,3 @@
+The Metaboseek_default settings are tuned towards small molecule discovery workflows in LC- HRMS (high resolution mass spectrometry) experiments using Thermo Orbitrap Qexactive or Qexactive HF instruments.
+
+To maximize sensitivity, molecular features that are only detected in a single MS data file are still reported in the result files, and the signal-to-noise ratio is set to a low value. The high sensitivity for small peaks comes with the drawback of longer analysis runtimes and more false-positive peaks. Most unintertesting features can be filtered out by using the post-processing analysis in Metaboseek.

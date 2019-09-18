@@ -1,0 +1,128 @@
+{
+  "type": "list",
+  "attributes": {
+    "names": {
+      "type": "character",
+      "attributes": {},
+      "value": ["controlGroups", "normalize", "analysesSelected2", "useNormalized", "analysesSelected", "numClusters", "analysesAvailable2", "logNormalized", "dbselected", "analysesAvailable", "fileGrouping", "rtCorrAnaCheck", "noRtCorrAnaCheck"]
+    }
+  },
+  "value": [
+    {
+      "type": "character",
+      "attributes": {},
+      "value": ["WT"]
+    },
+    {
+      "type": "logical",
+      "attributes": {},
+      "value": [true]
+    },
+    {
+      "type": "character",
+      "attributes": {},
+      "value": ["Fast peak shapes"]
+    },
+    {
+      "type": "logical",
+      "attributes": {},
+      "value": [true]
+    },
+    {
+      "type": "character",
+      "attributes": {},
+      "value": ["Basic analysis", "anova", "PCA features", "PCA samples", "mzMatch"]
+    },
+    {
+      "type": "double",
+      "attributes": {},
+      "value": [2]
+    },
+    {
+      "type": "character",
+      "attributes": {},
+      "value": ["Peak shapes", "Fast peak shapes"]
+    },
+    {
+      "type": "logical",
+      "attributes": {},
+      "value": [false]
+    },
+    {
+      "type": "character",
+      "attributes": {},
+      "value": ["/home/max/R/x86_64-pc-linux-gnu-library/3.6/Metaboseek/db/smid-db_pos.csv"]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["Grouping required", "No grouping required", "No intensities required"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["Basic analysis", "clara_cluster", "anova", "t-test"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["PCA features", "PCA samples"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["mzMatch"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["mzMatch"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["Mut", "WT"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AA03.mzXML__XIC", "AA05.mzXML__XIC", "AA07.mzXML__XIC"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["AA10.mzXML__XIC", "AA12.mzXML__XIC", "AA14.mzXML__XIC", "AA16.mzXML__XIC"]
+        }
+      ]
+    },
+    {
+      "type": "logical",
+      "attributes": {},
+      "value": [true]
+    },
+    {
+      "type": "logical",
+      "attributes": {},
+      "value": [true]
+    }
+  ]
+}

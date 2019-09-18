@@ -29,3 +29,8 @@ numeric vector with intensity values for all features defined by
 \description{
 Lightweight variant of multiEIC to extract average in a file, more suitable for large featuretables.
 }
+\section{Functions}{
+\itemize{
+\item \code{exIntensities}: extract intensities base function
+}}
+

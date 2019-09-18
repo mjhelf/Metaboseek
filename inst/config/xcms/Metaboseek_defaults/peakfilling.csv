@@ -1,0 +1,12 @@
+,Value,Description
+TITLE,peak filling parameters,Set parameters for peak filling using the MOSAIC or xcms method
+XCMS,,
+expandMz,0.005,"numeric(1) defining the value by which the mz width of peaks should be expanded. Each peak is expanded in mz direction by expandMz * their original mz width. A value of 0 means no expansion, a value of 1 grows each peak by 1 * the mz width of the peak resulting in peakswith twice their original size in mz direction (expansion by half mz width to both sides)."
+expandRt,5,"numeric(1), same as expandRt but for the retention time width."
+ppm,3,"numeric(1) optionally specifying a ppm by which the mz width of the peak region should be expanded. For peaks with an mz width smaller than mean(c(mzmin, mzmax)) * ppm / 1e6, the mzmin will be replaced by mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6) and mzmax by mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6). This is applied before eventually expanding the mz width using the expandMz parameter."
+,,
+METABOSEEK,,These are parameters for Mseek peak filling:
+ppm_m,5,"mz width, in ppm around the xcms-reported mz"
+rtw,5,"retention time window width, in seconds around the xcms-reported rtmin and rtmax"
+rtrange,TRUE,"True if rtw should extend from rtmin and rtmax, false if rtmid should be used instead"
+areaMode,FALSE,"if TRUE, will calculate peak areas rather than mean intensities"

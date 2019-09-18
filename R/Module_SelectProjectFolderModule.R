@@ -63,6 +63,19 @@ SelectProjectFolderModule <- function(input,output, session,
       
       if(length(internalValues$filegroupsfile) >0 ){
         
+          if(file.exists(file.path(values$projectData$projectFolder, 
+                                   pattern="RTcorr_data.Rds"))){
+              values$MSData$RTcorr <- readRDS(file.path(values$projectData$projectFolder, 
+                                                        "RTcorr_data.Rds"))
+              
+              for(i in 1:length(values$MSData$RTcorr$noncorr)){
+                  
+                  values$MSData$RTcorr[["rtdiff"]][[i]] <- values$MSData$RTcorr$noncorr[[i]]-values$MSData$RTcorr$corr[[i]]
+                  
+              }
+              
+          }else{
+          #for backwards compatibility with old project folders
         rtfile <- list.files(values$projectData$projectFolder, 
                              pattern="RTcorr_data.Rdata",
                              recursive = TRUE, full.names=T)
@@ -75,6 +88,8 @@ SelectProjectFolderModule <- function(input,output, session,
             
           }
         }
+          }
+        
         internalValues$filegroups <- read.csv(internalValues$filegroupsfile,
                                               stringsAsFactors = F, header = T)
         
@@ -83,7 +98,7 @@ SelectProjectFolderModule <- function(input,output, session,
         }
         
         
-        temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$",
+        temp <-  list.files(values$projectData$projectFolder, pattern="\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$",
                             recursive =  T, full.names = T)
         
         temp <- temp[!basename(temp) %in% c("camera.csv",
@@ -113,20 +128,26 @@ SelectProjectFolderModule <- function(input,output, session,
         
         
         showModal(modalDialog(
-          p("You have selected a folder that contaions one specific Mseek xcms job. Would you like to load its settings?"),
+          p("You have selected a folder that contains one specific Metaboseek xcms job. Would you like to load its results?"),
           p("If you do not select a .csv file, only the MS data files will be loaded."),
           checkboxInput(ns("checkModal"), "Load a Feature Table", value = T),
           selectizeInput(ns("modalSelect"), "select feature table to load",
                          choices = internalValues$fileSelection,
                          multiple = F),
-          div(title = "Try to load Metaboseek intensities (columns with '__XIC' 
-              suffix rather than xcms provided intensities. 
-              Recommended if no xcms peak filling was performed. NOTE: If the 
-              project folder contains a .tGrouping file (Feature Table grouping 
-              saved by Metaboseek), the pre-saved grouping is loaded.",
-              checkboxInput(ns("checkMseekIntensities"), 
-                        "Load Metaboseek intensities if available (WARNING: if the selected table has already been analyzed (e.g. calculation of foldChanges during 'Basic Analysis'), make sure this selection is in line with the previous analysis, or reanalyze the table!)",
-                        value = values$GlobalOpts$preferMseekIntensities)),
+          # div(title = "Try to load Metaboseek intensities (columns with '__XIC' 
+          #     suffix rather than xcms provided intensities. 
+          #     Recommended if no xcms peak filling was performed. NOTE: If the 
+          #     project folder contains a .tGrouping file (Feature Table grouping 
+          #     saved by Metaboseek), the pre-saved grouping is loaded.",
+          #     checkboxInput(ns("checkMseekIntensities"), 
+          #               "Load Metaboseek intensities if available (WARNING: if the selected table has already been analyzed (e.g. calculation of foldChanges during 'Basic Analysis'), make sure this selection is in line with the previous analysis, or reanalyze the table!)",
+          #               value = values$GlobalOpts$preferMseekIntensities)),
+          # div(title = "Load the .mskFT file instead of the .csv file, if available.
+          #              Using .mskFT will provide all previous grouping information and processing history and 
+          #              is the preferred option.",
+          #     checkboxInput(ns("checkMseekFT"), 
+          #                   "Load .mskFT files if available",
+          #                   value = TRUE)),
           actionButton(ns("projectLoadOk"), "OK"),
           
           title = "Import xcms results",
@@ -151,6 +172,16 @@ SelectProjectFolderModule <- function(input,output, session,
           
           tabid <- paste0("table",length(values$featureTables$tables))
           
+          if(grepl('\\.[Mm][Ss][Kk][Ff][Tt]$',input$modalSelect)[1]){
+              
+              values$featureTables$tables[[tabid]] <- loadMseekFT(input$modalSelect)
+              values$featureTables$index <- updateFTIndex(values$featureTables$tables)
+              values$featureTables$active <- tabid
+              
+              
+              }else{
+          
+          
           feats <- as.data.frame(data.table::fread(input$modalSelect,
                                                    header = T,
                                                    stringsAsFactors = F,
@@ -165,16 +196,23 @@ SelectProjectFolderModule <- function(input,output, session,
             feats[,charCols] <- character(nrow(feats))
           }
           
-          ColumnNames <- gsub("-",
-                              ".",
-                              paste0(basename(internalValues$filegroups$File),
-                                     if(values$GlobalOpts$preferMseekIntensities){"__XIC"}else{""})
-                              )
-          
-          ColumnNames2 <- ColumnNames
+          if(length(grep("__XIC$",colnames(feats)))){
+              ColumnNames <- paste0(basename(internalValues$filegroups$File),"__XIC")
+              ColumnNames2 <- ColumnNames
+              
+              
+          }else{
+              ColumnNames <- gsub("-",
+                                  ".",
+                                  basename(internalValues$filegroups$File)) 
+            ColumnNames2 <- ColumnNames
           ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))] <- paste0("X",ColumnNames2[which(substring(ColumnNames2,1,1) %in% as.character(0:9))])
+            
+              }
+         
           
-          if(values$GlobalOpts$preferMseekIntensities){
+          
+          if(length(grep("__XIC$",colnames(feats)))){
           intColRange <- grep("__XIC$",colnames(feats))
           }else{
             intColRange <- grep(values$GlobalOpts$filePattern,colnames(feats))
@@ -227,7 +265,7 @@ SelectProjectFolderModule <- function(input,output, session,
           }
           incProgress(0.3, detail = "Formatting Feature Table")
           
-          values$featureTables$tables[[tabid]] <- constructFeatureTable(feats,
+          values$featureTables$tables[[tabid]] <- buildMseekFT(feats,
                                                                         mzcol= "mz", #column in df with mz values (columnname)
                                                                         rtcol= "rt", #column in df with mz values (columnname)
                                                                         commentcol = "comments",
@@ -239,6 +277,7 @@ SelectProjectFolderModule <- function(input,output, session,
           values$featureTables$index <- updateFTIndex(values$featureTables$tables)
           values$featureTables$active <- tabid
           
+              }
         }
         removeModal()
         
@@ -275,9 +314,9 @@ SelectProjectFolderModule <- function(input,output, session,
     
   })
   
-  observeEvent(input$checkMseekIntensities,{
-    values$GlobalOpts$preferMseekIntensities <- input$checkMseekIntensities
-  })
+  # observeEvent(input$checkMseekIntensities,{
+  #   values$GlobalOpts$preferMseekIntensities <- input$checkMseekIntensities
+  # })
   
   observeEvent(c(AltFileFolder$dir),{
     #print(AltFileFolder$dir)

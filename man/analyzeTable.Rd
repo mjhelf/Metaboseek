@@ -9,8 +9,8 @@ analyzeTable(df, intensities, groups, analyze = c("Basic analysis",
   "PCA features", "PCA samples", "mzMatch"), normalize = T,
   useNormalized = T, logNormalized = F, MSData = NULL, ppm = 5,
   controlGroup = NULL, numClusters = 2,
-  mzMatchParam = list(system.file("db", "smid-db_pos.csv", package =
-  "Metaboseek"), ppm = 5, mzdiff = 0.001), workers = 1)
+  mzMatchParam = list("smid-db_pos.csv", ppm = 5, mzdiff = 0.001),
+  workers = 1)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values, rt and mz values}
