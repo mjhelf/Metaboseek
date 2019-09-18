@@ -79,7 +79,7 @@ OptionsContainerUI <- function(id){
   ns <- NS(id)
  
   tabBox(title = "Options",
-         id = "PlotOpts", width = 12, side = "right", selected = "EIC options",
+         id = "PlotOpts", width = 12, side = "right", selected = "_",
          
          tabPanel("_"),
          # 

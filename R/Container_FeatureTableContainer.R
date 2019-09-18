@@ -27,16 +27,16 @@ FeatureTableContainer <- function(input,output, session,
   
   ####TODO move these modules out of this container and make the feature table box more compact/ not a tabBox
   #TabGrouping <- 
-      callModule(ChangeFTGroupingModule, "tabgrouping",
-                          values = reactiveValues(fileGrouping = NULL,
-                                                  featureTables = values$featureTables,
-                                                  MSData = values$MSData,
-                                                  projectData = values$projectData))
+      # callModule(ChangeFTGroupingModule, "tabgrouping",
+      #                     values = reactiveValues(fileGrouping = NULL,
+      #                                             featureTables = values$featureTables,
+      #                                             MSData = values$MSData,
+      #                                             projectData = values$projectData))
   
 
   
-      callModule(TableAnalysisModule, "tabanalysis", values,
-                          reactives = reactive({list()}))
+      # callModule(TableAnalysisModule, "tabanalysis", values,
+      #                     reactives = reactive({list()}))
 
     
   # internalValues <- reactiveValues(MainTable = MainTable#,
@@ -54,7 +54,7 @@ FeatureTableContainer <- function(input,output, session,
 FeatureTableContainerUI <- function(id){
   ns <- NS(id)
   
-  tabBox(title = "Feature table",
+  tabBox(title = "Feature Table",
          id = ns("TableBox"),
          #status = "primary",
          #collapsible = T,
@@ -64,12 +64,12 @@ FeatureTableContainerUI <- function(id){
          
          tabPanel("_"),
          
-         tabPanel("Regroup Table",
-                  ChangeFTGroupingModuleUI(ns("tabgrouping"))
-                  ),
-         tabPanel("Analyze Table",
-                  TableAnalysisModuleUI(ns("tabanalysis"))
-         ),
+         # tabPanel("Regroup Table",
+         #          ChangeFTGroupingModuleUI(ns("tabgrouping"))
+         #          ),
+         # tabPanel("Analyze Table",
+         #          TableAnalysisModuleUI(ns("tabanalysis"))
+         # ),
          tabPanel("View Table",
                 MainTableModuleUI(ns("maintable"))
          )

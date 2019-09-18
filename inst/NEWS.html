@@ -22,7 +22,7 @@
             <div class="panel panel-default">
               <div class="panel-heading red-heading">Version 0.9.6</div>
               <div class="panel-body">
-                <p class="release-date">Last changed 2018-09-09</p>
+                <p class="release-date">Last changed 2018-09-18</p>
                 <h3>New features:</h3>
                 <ul>
                     <li>Metaboseek keeps track of most analysis steps now, and the processing history can be viewed in the app.</li>
@@ -31,21 +31,22 @@
                     <li>Molecular features from a Feature Table can now be mapped onto an existing molecular network (even when generated from other data), matching features with similar rt, mz and / or MS2 fragmentation patterns.</li>
                     <li>Metaboseek sessions can now be saved into a single file (.msks) and loaded back in. See documentation for details</li>
                     <li>Added functionality to search for MS2 fragment patterns across all loaded files</li>
-                    <li>In MS2 networking, added option to ignore small fragmet ions (below 100 mz, often dominant phosphate peaks) for testing purposes</li>
+                    <li>In MS2 networking, added option to ignore small fragment ions (below 100 mz, often dominant phosphate peaks) for testing purposes</li>
                                         
                   </ul>
                   <h3>Improvements:</h3>
                   <ul>
-                      <li>xcms script was rewritten to allow tracking of processing steps</li>
-                      <li>File names in selection menus now wrap so they can be read in full even when very long</li>
                       <li>Added option to calculate peak areas (instead of mean intensities) for Mseek intensities while running xcms script</li>
                       <li>Network appearance (node positions) is now persistent when zooming back out into overview mode</li>
-
-                    </ul>
+                      <li>xcms script was rewritten to allow tracking of processing steps</li>
+                      <li>xcms settings are now saved in the settings subfolder of a project folder to keep them separate from analysis results</li>
+                      <li>File names in selection menus now wrap so they can be read in full even when very long</li>
+                      </ul>
                     <h3>Bug fixes</h3>
                   <ul>
                       <li>Sirius results can now be loaded if no fingerID results present</li>
                       <li>Fixed calculation of peak areas when using the integrated intensity calculation with option "Peak areas"</li>
+                      <li>Fixed colorrange issue with NA values in Network plots</li>
 
                     </ul>
                  <h3>Notes:</h3>
