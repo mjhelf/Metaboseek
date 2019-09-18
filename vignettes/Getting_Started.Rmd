@@ -46,7 +46,7 @@ If installed from an R session, Metaboseek will require Java to be installed for
 
 ###Using the installer
 
-1. Download the installer of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
+1. Download the installer of the most recent release version <a href="https://github.com/mjhelf/Metaboseek/releases" target = "_blank">here</a>
 2. Follow the installation steps.
 3. Metaboseek 0.9 should now be installed and can be launched like any other Windows program. When Metaboseek launches, a command line window will appear, and the user interface will open up in your default web browser. To close the program, close the Metaboseek command line window.
 
@@ -54,7 +54,7 @@ The installer version of Metaboseek has one limitation: it does not plot molecul
 
 ###Using a .zip file
 
-1. Download the .zip file of the most recent release version [here](https://github.com/mjhelf/Metaboseek/releases)
+1. Download the .zip file of the most recent release version <a href="https://github.com/mjhelf/Metaboseek/releases" target = "_blank">here</a>
 2. Unzip the file on your computer (this may take a while!)
 3. Run Metaboseek by executing runMetaboseek.exe In the unzipped folder.
 
@@ -67,8 +67,8 @@ The .zip version of Metaboseek has one limitation: it does not plot molecular st
 ## Install on Mac / Linux
 Consider getting the [Metaboseek Docker image](#Docker), or follow these steps to install Metaboseek:
 
-1.	[Download](https://cloud.r-project.org/) and install R.
-2.	Mac users: Get [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=12).
+1.	<a href="https://cloud.r-project.org/" target = "_blank">Download</a>.
+2.	Mac users: Get <a href="https://itunes.apple.com/us/app/xcode/id497799835?mt=12" target = "_blank">Xcode</a>.
 3.	Run R, enter this line:
 ```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_Metaboseek.R") 
