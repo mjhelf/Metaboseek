@@ -384,7 +384,7 @@ knitr::kable(coldf[,1:3])
 
 This section will help you to set up an xcms analysis in Metaboseek in order to identify LC/MS features that are differential between sets of data files. This can, for instance, be useful to assess the impact of a mutation on the metabolome of an organism or to identify compounds associated with the activity of an enzyme.
 
-![Running an xcms analysis - a description of the highlighted steps is below.](img/XcmsAnalysis.png){width=100%}
+![Running an xcms analysis - a description of the highlighted steps is below.](img/xcmsAnalysis.png){width=100%}
 
 1. Select a folder with MS data files. All files with 
 [supported file extensions](#supportedFiles) in the selected folders and all its
