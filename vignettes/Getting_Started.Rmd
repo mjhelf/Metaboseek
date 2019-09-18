@@ -19,7 +19,7 @@ library(Metaboseek)
 
 
 
-```{r, eval = FALSE}
+```{r, eval = TRUE, echo = FALSE}
 
 print(paste("Metaboseek version:",packageVersion("Metaboseek")))
 ```
