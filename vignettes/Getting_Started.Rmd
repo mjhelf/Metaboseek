@@ -237,43 +237,48 @@ with retention time values in seconds.
 
 At the heart of Metaboseek is the interaction between data visualization in the "Data viewer" box, and a table of LC/MS data features in the `Feature table` box
 
+###Options box
+
+This box provides a number of optional functionality, including setting up SIRIUS,
+calculating molecular formulas and controling the appearance of extracted ion 
+chromatograms (EICs) in the `Data Viewer` box.
+
+###Data Viewer
+
+This box provides plots of data that is selected in the `Feature Table` box.
+Different kinds of data plots and browsing options are available, mostly for 
+extracted ion chromatograms (EICs) and spectrum plots, but also bar plots,
+venn diagrams and plots from principal component analysis.
 
 
-###Visualize EICs
+####MS2 Browser
 
-Once you have loaded MS data and a Feature Table into Metaboseek, you can easily visualize the extracted ion chromatogram for each molecular feature in the table by clicking on it in the Feature Table
+If you have [loaded MS data files](#loadMSData) which contain MS/MS data, go 
+to the `MS2 browser` tab in the `Data viewer` box to look at MS/MS scans in one of two ways:
 
-###Interactive MS data view
+1. **Use the feature table:** When you select one (or multiple) entries in the 
+`Feature Table`, Metaboseek will find any MS/MS scans that have a parent mass 
+matching the selected `Feature Table` entry (e.g. within 5 ppm and 200 seconds,
+customizable).
 
-### Special Columns in the Metaboseek Feature Table
+2. **Use the molecular network viewer:** If you have loaded or generated a 
+molecular network, you can also display spectra for each network node, as long 
+as the files used to generate the network are [loaded into Metaboseek.](#loadMSData)
+Navigate from the network overview to a contingent network cluster (or "subgraph")
+by clicking on it while holding the `SHIFT` key. The view will now zoom in on the
+subgraph. You can use the control menu above the network to show node and edge labels
+of your choice (e.g. Parent m/z and m/z difference between nodes ("deltaMZ")),
+and apply a coloring scheme (e.g. color by default groups). To select a node and
+display all MS/MS spectra associated with it, click on a node while holding the
+`SHIFT` key.
 
-```{r column legend, echo = FALSE}
-
-coldf <- read.csv("assets/columnLegend.csv")
-
-knitr::kable(coldf)
-
-
-```
-
-
-
-###View MS/MS data
-
-If you have [loaded MS data files](#loadMSData) which contain MS/MS data, go to the `MS2 browser` tab in the `Data viewer` box to look at MS/MS scans in one of two ways:
-
-####1. Use the feature table{.unnumbered}
-
-When you select one (or multiple) entries in the `Feature Table`, Metaboseek will find any MS/MS scans that have a parent mass matching the selected `Feature Table` entry (e.g. within 5 ppm and 200 seconds, customizable).
-
-####2. Use the molecular network viewer{.unnumbered}
-
-If you have loaded or generated a molecular network, you can also display spectra for each network node, as long as the files used to generate the network are [loaded into Metaboseek.](#loadMSData) Navigate from the network overview to a contingent network cluster (or "subgraph") by clicking on it while holding the `SHIFT` key. The view will now zoom in on the subgraph. You can use the control menu above the network to show node and edge labels of your choice (e.g. Parent m/z and m/z difference between nodes ("deltaMZ")), and apply a coloring scheme (e.g. color by default groups). To select a node and display all MS/MS spectra associated with it, click on a node while holding the `SHIFT` key.
-
-You can move nodes by dragging them with your mouse while holding the `CTRL` key (this helps make all labels visible in a dense network). Return back to the network overview by double clicking on the graph.
+You can move nodes by dragging them with your mouse while holding the `CTRL` key 
+(this helps make all labels visible in a dense network). Return back to the network
+overview by double clicking on the graph. If double-clicking does not work,
+you can also zoom out by clicking while holding the `Z` key.
 
 
-###Get structure predictions with SIRIUS
+#####Get structure predictions with SIRIUS
 
 [SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/) is a stand-alone software developed in the Boecker lab at the University of Jena that can use MS/MS data to predict the molecular formulas of fragment and parent ion peaks. It also offers an interface to CSI:FingerID to match fragmentation patterns with structure databases.
 
@@ -282,11 +287,98 @@ MS2 data can be analyzed with SIRIUS from inside the Metaboseek app. For this to
 To run Sirius, use the "Run SIRIUS" Button above the MS2 scan table. Make sure to select appropriate options in the "Sirius options" section at the top of the app (Options box).
 The results can be accessed through Metaboseek as soon as a Sirius analysis run finishes by clicking "Show SIRIUS". Select items in the tables that show up to view fragmentation trees and proposed structures.
 
-####Manage and compare MS2 spectra{.unnumbered}
+#####Manage and compare MS2 spectra{.unnumbered}
 
 All MS/MS scans matching a selection (from a network or from the `Feature Table`) are shown in a table in the `MS2 browser` tab. An average spectrum of all scans shown in this `scan table` is displayed on the left. You can select single or multiple scans in the `scan table` to show the spectrum of only the selected scan(s).
 
 MS/MS spectra are shown on the right side. You can choose to `keep` a spectrum view - it will then not be overridden when you select a new `Feature table` entry or network node. You can show up to 5 spectrum views at the same time. By default, all peaks that occur in more than one of the shown spectra are highlighted in blue. You can disable this comparison with the `Compare` checkbox. You can also download the shown spectrum views in .pdf format by clicking `Download spectra`.
+
+
+###Feature Table
+
+This box contains the main table and allows selection of molecular features for 
+which you want to view data in the `Data Viewer`.
+
+###Feature Table Actions
+
+In this box you can run analyses on the currently selected `Feature Table` and filter it.
+
+####Analyze Table
+
+The `Analyze Table` tab is the central hub for data analysis on your
+`Feature Table`. Most analysis steps will generate new columns in the `Feature Table`
+which you can then use to filter your table to get to your features of interest.
+[See below](#columnExplain) for a guide to the columns generated by the analysis
+steps. 
+
+#####Analysis options
+
+* **Normalize data: **Select this option ONLY if the current table has not been 
+filtered and is the result of an unbiased xcms analysis. "Normalization" will make a copy
+of the current intensity columns with the suffix "__norm". In these new columns, 
+all zero intensity values will be set to the lowest non-zero value across all
+sample intensity columns (assuming it represents the detection limit). Then, a 
+normalization factor is applied so that the average intensiy of each individual
+column is the same and equal to the average intensity across all columns prior to 
+normalization. **If you do this on a table that has been pre-filtered, for instance 
+containing only features that are upregulated in one sample group, this will fatally
+distort the data!**
+
+* **Use normalized data: **
+
+* **Select control group:**
+
+* **Apply log10:**
+
+#####Basic analysis
+
+* **Basic analysis:** Selecting this option will calculate a set of fold changes 
+between sample groups and some summary information columns such as `maxint`.
+[See below](#columnLegend) for a description of all columns generated by this 
+analysis step.
+
+* **clara cluster:**
+
+* **anova:**
+
+* **t-test:**
+
+* **PCA features:**
+
+* **PCA samples:**
+
+* **mzMatch:**
+
+* **Peak shapes:**
+
+* **Fast peak shapes:**
+
+#####Advanced analysis
+
+* **Get intensities:**
+
+* **Find MS2 scans:**
+
+* **MS2 patterns:**
+
+* **Find peaks:**
+
+* **Calculate m/z:**
+
+### Special Columns in the Metaboseek Feature Table{#columnExplain}
+
+```{r column legend, echo = FALSE}
+
+coldf <- read.csv("assets/columnLegend.csv")
+
+colnames(coldf) <- c("Column", "Description", "calculated by", "method")
+
+knitr::kable(coldf[,1:3])
+
+
+```
+
+
 
 ##XCMS analysis {#runXcms}
 
