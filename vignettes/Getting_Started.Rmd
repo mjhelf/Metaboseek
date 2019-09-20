@@ -68,15 +68,26 @@ The .zip version of Metaboseek has one limitation: it does not plot molecular st
 Consider getting the [Metaboseek Docker image](#Docker), or follow these steps to install Metaboseek:
 
 1.	<a href="https://cloud.r-project.org/" target = "_blank">Download</a>.
-2.	Mac users: Get <a href="https://itunes.apple.com/us/app/xcode/id497799835?mt=12" target = "_blank">Xcode</a>.
+2.	Mac users: Get Xcode by entering this line into your `Terminal` window:
+```
+xcode-select --install
+```
+Follow the instructions. This will install parts of Xcode that are required to install Metaboseek.
 3.	Run R, enter this line:
 ```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_Metaboseek.R") 
 ```
+* If there is an error during installation, try to additionally install
+<a href="https://itunes.apple.com/us/app/xcode/id497799835?mt=12" target = "_blank">Xcode</a> from the AppStore.
 5. To run Metaboseek, enter this line into your R console:
 ```{r, eval = FALSE}
 Metaboseek::runMseek()
 ```
+* If Metaboseek starts up, but an unresponsive grey screen appears, there is most likely an issue related to the rcdk package and Java). Restart R and enter this line:
+```
+remove.packages('rcdk')
+```
+Then try to run Metaboseek again.
 
 
 ## Get the Docker image {#Docker}
