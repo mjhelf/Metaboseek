@@ -3,6 +3,7 @@ title: "Getting started with Metaboseek"
 author: "Maximilian Helf"
 date: "September 2019"
 output: rmarkdown::html_vignette
+bibliography: bibliography.bib
 vignette: >
   %\VignetteIndexEntry{Getting started with Metaboseek}
   %\VignetteEngine{knitr::rmarkdown}
@@ -254,6 +255,17 @@ This box provides a number of optional functionality, including setting up SIRIU
 calculating molecular formulas and controling the appearance of extracted ion 
 chromatograms (EICs) in the `Data Viewer` box.
 
+####Sirius options
+
+####Molecular formula prediction
+
+####RT correction
+
+####Mass shifts
+
+####EIC options
+
+
 ###Data Viewer
 
 This box provides plots of data that is selected in the `Feature Table` box.
@@ -291,7 +303,7 @@ you can also zoom out by clicking while holding the `Z` key.
 
 #####Get structure predictions with SIRIUS
 
-[SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/) is a stand-alone software developed in the Boecker lab at the University of Jena that can use MS/MS data to predict the molecular formulas of fragment and parent ion peaks. It also offers an interface to CSI:FingerID to match fragmentation patterns with structure databases.
+[SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/) (@Duhrkop2019) is a stand-alone software developed in the Boecker lab at the University of Jena that can use MS/MS data to predict the molecular formulas of fragment and parent ion peaks. It also offers an interface to CSI:FingerID to match fragmentation patterns with structure databases.
 
 MS2 data can be analyzed with SIRIUS from inside the Metaboseek app. For this to work, you first need to tell Metaboseek where the SIRIUS executable is located. Click on the "Global settings for Metaboseek" button at the top of the app (gear symbol, next to the "Open..." button). Select the SIRIUS folder. Metaboseek will generate a new folder there to store results from Sirius runs.
 
@@ -304,6 +316,17 @@ All MS/MS scans matching a selection (from a network or from the `Feature Table`
 
 MS/MS spectra are shown on the right side. You can choose to `keep` a spectrum view - it will then not be overridden when you select a new `Feature table` entry or network node. You can show up to 5 spectrum views at the same time. By default, all peaks that occur in more than one of the shown spectra are highlighted in blue. You can disable this comparison with the `Compare` checkbox. You can also download the shown spectrum views in .pdf format by clicking `Download spectra`.
 
+####PCA Viewer
+
+####Venn Diagrams
+
+####Quickplots
+
+####MS Browser
+
+####Grouped EICs
+
+####Regroup MS data
 
 ###Feature Table
 
@@ -314,6 +337,8 @@ which you want to view data in the `Data Viewer`.
 
 In this box you can run analyses on the currently selected `Feature Table` and filter it.
 
+####Filter Table
+
 ####Analyze Table
 
 The `Analyze Table` tab is the central hub for data analysis on your
@@ -323,6 +348,8 @@ which you can then use to filter your table to get to your features of interest.
 steps. 
 
 #####Analysis options
+
+For more in-depth information on the underlying functions in `R`, see <a href="https://rdrr.io/github/mjhelf/METABOseek/man/analyzeFT.html" target = "_blank"> the Metaboseek::analyzeFT documentation</a>.
 
 * **Normalize data: **Select this option ONLY if the current table has not been 
 filtered and is the result of an unbiased xcms analysis. "Normalization" will make a copy
@@ -335,7 +362,8 @@ normalization. **If you do this on a table that has been pre-filtered, for insta
 containing only features that are upregulated in one sample group, this will fatally
 distort the data!**
 
-* **Use normalized data: **
+* **Use normalized data: ** Use the normalized data for when running analyses that 
+use intensity values, such as Basic Analysis, anova
 
 * **Select control group:**
 
@@ -358,7 +386,9 @@ analysis step.
 
 * **PCA samples:**
 
-* **mzMatch:**
+* **mzMatch: ** Match the m/z values of your featureTable to a list of known compounds.
+Note that these matches based on MS1 data alone are ambiguous. Will generate multiple columns
+in the `Feature Table`, as described [below](#columnLegend).
 
 * **Peak shapes:**
 
@@ -366,15 +396,42 @@ analysis step.
 
 #####Advanced analysis
 
-* **Get intensities:**
+* **Get intensities:** For each molecular feature, an EIC is generated across 
+all MS files currently loaded in the MS data layout. The retention time boundaries
+of the EIC can be chosen to be seconds around the features retention time (rt)
+or around its peak boundaries as reported in the rtmin and rtmax columns of the 
+feature table. If retention time correction information is used, the EIC 
+retention time window is moved accordingly for each file. Intensities within 
+this EIC range are averaged and reported for each file. Alternatively, the peak areas
+can be calculated instead of the average intensities, leading to results that are 
+more easily comparable to xcms-based intensities.
 
 * **Find MS2 scans:**
 
 * **MS2 patterns:**
 
-* **Find peaks:**
+* **Find peaks: ** For each m/z value in the feature table, an EIC for the full 
+retention time range is generated, and a simple peak detection algorithm is 
+applied to identify maxima that stand out from background noise.
+
+<details>
+    <summary>Click here for details on the peak detection algorithm</summary>
+    
+    the peakDetect() function uses a modified version of an algorithm presented by Ma et al.24 as follows:
+For the global noise level, let $N $ be the number of EIC data points, and $S_{i}$ the intensity value of the $i^{th}$ data point. $K$ is a user definable variable.
+$GlobalNoiseThreshold = (GlobalMaximum + GlobalAverage)/100 + K * Deviation$
+ where :
+$GlobalAverage = \displaystyle \frac{\sum_{i=1}^N|S_{i}|}{N}$; $Deviation = \displaystyle \frac{\sum_{i=1}^N|S_{i} - GlobalAverage|}{N}$
+In addition to the global noise threshold, a local noise threshold is calculated for each data point $S_{i}$ in the EIC, using a similar equation limited to a small retention time window around $S_{i}$. Let $n$ be the number of scans to consider for local noise level calculation in each direction, and $noise_{i}$ the local noise level for a data point in the EIC.
+$noise_{i} = (LocalMaximum + LocalAverage)/2 + K * Local Deviation$
+$LocalAverage = \displaystyle \frac{\sum_{i-n}^{i+n}|S_{i}|}{2n + 1}$; $LocalDeviation = \displaystyle \frac{\sum_{i-n}^{i+n}|S_{i} - LocalAverage|}{2n + 1}$
+In a first step, all local maxima and their adjacent minima in an EIC are detected, and peak boundaries are defined by the two minima surrounding a maximum. Peaks are selected if their maximum is above both the local noise level at its position in the EIC and above the global noise level. If two peaks are adjacent, and the local minimum that separates them is at least 1/3 the intensity of either peak maximum, these two peaks are merged. Additional filters include selection for peaks spanning at least a given number of scans, and a factor by which a peak maximum has to be above the average intensity inside the peak boundaries.
+Peaks are merged between files by first matching peaks with maxima within a specified retention time window. The peak boundary and maximum position are then calculated from the weighted average boundary and maximum positions of all peaks that are matched, weighted by the maximum intensity of each peak.
+</details>
 
 * **Calculate m/z:**
+
+####Regroup Table
 
 ### Special Columns in the Metaboseek Feature Table{#columnExplain}
 
@@ -455,5 +512,5 @@ peaks, the processing time is relatively long and many false-positives
 4. You can save settings as a .zip file (on windows computers, 7-zip or other software allowing for the zip command line prompt must be installed), or load a .zip file with settings from a previous run.
  + Note that loading settings will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
  
-
+# References
 

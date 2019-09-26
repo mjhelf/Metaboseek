@@ -15,3 +15,6 @@ maxfoldover2,Fold change between the mean intensities of topgroup over group wit
 best_minFold,The highest minFold value reported across all groups,Basic analysis,FTBasicAnalysis
 best_minFoldMean,The highest minFoldMean value reported across all groups,Basic analysis,FTBasicAnalysis
 best_minFoldCtrl,The highest minFoldCtrl value reported across all groups,Basic analysis,FTBasicAnalysis
+mzMatches,"identity of the seach hits in the selected compound lists, taken from the ""id"" column of the compound lists. If there are multiple hits across the selected compound lists, they will be separated by ""|"" within the mzMatches, mzMatchError and all mzMatch_{variable} columns.",mzMatch,FTMzMatch
+mzMatchError," ppm error, based on difference between mz in the feature table and the mz in the compound list.",,
+mzMatch_{variable},All other columns from the compound list are added as well with the prefix mzMatch_. ,,
