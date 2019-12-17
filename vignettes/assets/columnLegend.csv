@@ -1,20 +1,27 @@
 Column,Description,calculated by,method
-{Sample}__XIC,Columns with intensities as calculated by Metaboseek,"Get Intensities, xcms script, ",
-{Sample},Columns with intensities as reported by xcms,xcms script,xcms::groupChromPeaks
-{IntensityColumn}__norm,"Normalized intensity values for an intensity column, typically named {Sample}__norm or {Sample}__XIC__norm; by default : (1) replaces zeros by lowest value in entire intensity dataset (assuming it represents the detection limit), (2) intensity values of each column are adjusted so that each column has the mean intensity equal to the mean intensity of the entire dataset.",Normalize data,FTNormalize
-massdefppm,"Mass defect in ppm, calculation: ((mz-floor(mz))/mz)*1e6",Basic analysis,FTBasicAnalysis
-maxint,Maximum intensity across all samples,Basic analysis,FTBasicAnalysis
-topgroup,Sample group with highest mean intensity,Basic analysis,FTBasicAnalysis
-maxfold,Highest fold change between the mean intensities of any 2 sample groups,Basic analysis,FTBasicAnalysis
-maxfoldover2,Fold change between the mean intensities of topgroup over group with second highest mean intensity,Basic analysis,FTBasicAnalysis
-{Group}__meanInt,sample group mean intensity,Basic analysis,FTBasicAnalysis
+{Group}__foldOverCtrl,Fold change of the mean intensity of G1 over mean intensity of the control group,Basic analysis,FTBasicAnalysis
 {Group}__foldOverRest,Fold change of the mean intensity of G1 over mean intensities of all other samples outside of G1,Basic analysis,FTBasicAnalysis
+{Group}__meanInt,sample group mean intensity,Basic analysis,FTBasicAnalysis
 {Group}__minFold,Fold change of the lowest intensity sample in G1 over the highest intensity sample of all other samples outside of G1,Basic analysis,FTBasicAnalysis
 {Group}__minFoldMean,Fold change of the mean intensity of G1 over the highest intensity sample of all other samples outside of G1,Basic analysis,FTBasicAnalysis
-{Group}__foldOverCtrl,Fold change of the mean intensity of G1 over mean intensity of the control group,Basic analysis,FTBasicAnalysis
+{Group}__pval,"p value between this group and all samples in all other groups, as calculated by stats::t.test()",t-test,FTT.test
+{Group}__pval_adj,"p values, adjusted by the ""bonferroni"" method using stats::p.adjust()",t-test,FTT.test
+{Group}__sdev,coefficient of variatioin (relative standard deviation = sd/mean) within the group,t-test,FTT.test
+{IntensityColumn}__norm,"Normalized intensity values for an intensity column, typically named {Sample}__norm or {Sample}__XIC__norm; by default : (1) replaces zeros by lowest value in entire intensity dataset (assuming it represents the detection limit), (2) intensity values of each column are adjusted so that each column has the mean intensity equal to the mean intensity of the entire dataset.",Normalize data,FTNormalize
+{Sample},Columns with intensities as reported by xcms,xcms script,xcms::groupChromPeaks
+{Sample}__XIC,"Columns with intensities as calculated by Metaboseek, can have a suffix other than ""_XIC"" if generated with the ""Get intensities"" button.","Get Intensities, xcms script, ",
+ANOVA__pvalue,per-row one-way ANOVA between grouped columns of the feature table,anova,FTAnova
 best_minFold,The highest minFold value reported across all groups,Basic analysis,FTBasicAnalysis
-best_minFoldMean,The highest minFoldMean value reported across all groups,Basic analysis,FTBasicAnalysis
 best_minFoldCtrl,The highest minFoldCtrl value reported across all groups,Basic analysis,FTBasicAnalysis
+best_minFoldMean,The highest minFoldMean value reported across all groups,Basic analysis,FTBasicAnalysis
+cluster__clara,listing the cluster into which each feature falls after using cluster::clara() with the selected number of clusters,clara cluster,FTCluster
+massdefppm,"Mass defect in ppm, calculation: ((mz-floor(mz))/mz)*1e6",Basic analysis,FTBasicAnalysis
+maxfold,Highest fold change between the mean intensities of any 2 sample groups,Basic analysis,FTBasicAnalysis
+maxfoldover2,Fold change between the mean intensities of topgroup over group with second highest mean intensity,Basic analysis,FTBasicAnalysis
+maxint,Maximum intensity across all samples,Basic analysis,FTBasicAnalysis
+MS2scans,"Lists the MS2 scans found for each feature in the MS2 data loaded when the ""Find MS2 scans"" analysis was run",Find MS2 scans,FTMS2scans
+mzMatch_{variable},All other columns from the compound list are added as well with the prefix mzMatch_. ,mzMatch,FTMzMatch
+mzMatchError," ppm error, based on difference between mz in the feature table and the mz in the compound list.",mzMatch,FTMzMatch
 mzMatches,"identity of the seach hits in the selected compound lists, taken from the ""id"" column of the compound lists. If there are multiple hits across the selected compound lists, they will be separated by ""|"" within the mzMatches, mzMatchError and all mzMatch_{variable} columns.",mzMatch,FTMzMatch
-mzMatchError," ppm error, based on difference between mz in the feature table and the mz in the compound list.",,
-mzMatch_{variable},All other columns from the compound list are added as well with the prefix mzMatch_. ,,
+PCA__#,Principal component coordinates for each feature  (components are numbered),PCA features,FTPCA
+topgroup,Sample group with highest mean intensity,Basic analysis,FTBasicAnalysis

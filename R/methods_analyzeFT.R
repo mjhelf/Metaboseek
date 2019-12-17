@@ -932,7 +932,7 @@ setMethod("FTAnova", c("MseekFT"),
 
 #' @aliases FTCluster
 #' 
-#' @description \code{FTCluster}: calculate two-way ANOVA between multiple sample groups.
+#' @description \code{FTCluster}: cluster the feature table with cluster::clara()
 #'  See also \code{\link{MosCluster}()}
 #' @param numClusters number of clusters to group the features in. Will 
 #' automatically be set to be at most number of features - 1.
