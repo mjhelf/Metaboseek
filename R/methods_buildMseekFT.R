@@ -173,10 +173,13 @@ setMethod("saveMseekFT",
 #' except that the bulk of data is kept in an \code{igraph} object instead of 
 #' a \code{data.frame}. These objects are read and displayed by the 
 #' \code{\link{NetworkModule}}.
+#' @param layoutFunction function to use for layout of the resulting graph
 #' 
 #' @export
 setMethod("buildMseekGraph", c("MseekFT"),
-          function(object, cosineThreshold = 0.6){
+          function(object, cosineThreshold = 0.6,
+                   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold"
+          ){
               beforeHash <- MseekHash(object)
               
               p1 <- proc.time()
@@ -224,7 +227,7 @@ setMethod("buildMseekGraph", c("MseekFT"),
                   
                   #make a fixed layout and add it to the graph in a way the NetworkModule will understand
                   if(is.null(V(g1)$x__coord) || is.null(V(g1)$y__coord)){
-                      layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+                      layo <- layout_components_qgraph(g1, eval(parse(text =  layoutFunction)))# qgraph::qgraph.layout.fruchtermanreingold)
                       
                       V(g1)$x__coord <- layo$layout[,1]
                       V(g1)$y__coord <- layo$layout[,2]
@@ -314,13 +317,17 @@ setMethod("saveMseekGraph",
 
 #' @aliases loadMseekGraph
 #' 
+#' @param layoutFunction function to use for layout of the resulting graph
+#' 
 #' @description \code{loadMseekGraph}: load a \code{MseekGraph} object from an 
 #' .mskg or .graphml file (file extensions inform how file is loaded in)
 #' @rdname buildMseekFT
 #' @export
 setMethod("loadMseekGraph", 
           signature(object = "character"),
-          function(object){
+          function(object,
+                   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold"
+                   ){
               
               if(length(object)>1){
                   lapply(object, loadMseekFT)
@@ -340,7 +347,8 @@ setMethod("loadMseekGraph",
                       if(is.null(V(res$graph)$x__coord) 
                          || is.null(V(res$graph)$y__coord)){
                           layo <- layout_components_qgraph(res$graph,
-                                                           qgraph::qgraph.layout.fruchtermanreingold)
+                                                           eval(parse(text =  layoutFunction)))
+                                                          # qgraph::qgraph.layout.fruchtermanreingold)
                           
                           V(res$graph)$x__coord <- layo$layout[,1]
                           V(res$graph)$y__coord <- layo$layout[,2]
@@ -362,7 +370,8 @@ setMethod("loadMseekGraph",
                                                                  sessionInfo = sessionInfo(),
                                                                  outputHash = MseekHash(res),
                                                                  param = FunParam(fun = "Metaboseek::loadMseekGraph",
-                                                                                  args = list(file = object))))
+                                                                                  args = list(file = object,
+                                                                                              layoutFunction = layoutFunction))))
                   
                   return(res)
               }

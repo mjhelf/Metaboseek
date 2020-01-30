@@ -121,7 +121,7 @@ NetworkModule <- function(input,output, session,
             
             
             #generate the initial layout
-            res <- layout_components_qgraph(internalValues$graph, qgraph::qgraph.layout.fruchtermanreingold)
+            res <- layout_components_qgraph(internalValues$graph, eval(parse(text = values$GlobalOpts$graph.layouts.selected)))# qgraph::qgraph.layout.fruchtermanreingold)
             
             internalValues$layouts <- res
             
@@ -191,6 +191,7 @@ NetworkModule <- function(input,output, session,
     
     output$controls <- renderUI({
         if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$activelayout$graph)){
+            tagList(
             fluidRow(
                 
                 if(!static$noSelection){column(4,
@@ -232,9 +233,18 @@ NetworkModule <- function(input,output, session,
                                             value = c(0,1) #internalValues$sliderValues
                        )
                        ))
+            ),
+            fluidRow(
+                
+                selectizeInput(ns('selectedLayout'), 'Show Network',
+                               selected = values$GlobalOpts$graph.layouts.selected,
+                               choices = values$GlobalOpts$graph.layouts.available,
+                               multiple = FALSE)
+            )
             )
         }
     })
+   observeEvent(input$selectedLayout,{values$GlobalOpts$graph.layouts.selected <- input$selectedLayout})
     
     observeEvent(input$hoveractive,{internalValues$hoverActive <- input$hoveractive})
     observeEvent(input$logscale,{internalValues$logscale <- input$logscale})

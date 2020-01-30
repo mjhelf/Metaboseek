@@ -22,18 +22,36 @@
 #' \item \code{subedgelist} list of edgelists for each subgraph
 #' }
 #' 
+#' @examples
+#' \dontrun{
+#' 
+#' g <- igraph::erdos.renyi.game(30, 3/30)
+#' V(g)$id <- 1:30
+#' 
+#' l1 <- layout_components_qgraph(g, qgraph::qgraph.layout.fruchtermanreingold)
+#' l2 <- layout_components_qgraph(g, igraph::layout_with_kk)
+#' 
+#' }
+#' 
 #' @export
 layout_components_qgraph <- function (graph, layout, ...) 
 {
   if (!is_igraph(graph)) {
     stop("Not a graph object")
   }
+  
+ 
+  
   V(graph)$id <- seq(vcount(graph))
   gl <- decompose(graph)
   el <- lapply(gl, get.edgelist, names = F)
   vl <- lapply(gl, vcount)
   al <- relist(8*(unlist(vl)^2), vl)
   rl <- relist((unlist(vl)^3.1), vl)
+  if(is.character(layout)){
+  print("layout was character")
+    layout <- eval(parse(text =  layout))
+  }
   
   if(!identical(layout,qgraph.layout.fruchtermanreingold)){
     ll <- lapply(gl, layout, ...)}
@@ -49,12 +67,15 @@ layout_components_qgraph <- function (graph, layout, ...)
     #if(!is.list(ll)){ll <- list(ll)}
   }
   
+
   l <- merge_coords(gl, ll)
   l[unlist(sapply(gl, vertex_attr, "id")), ] <- l[]
   return(list(layout = l,
               subgraphs = gl,
               sublayouts = ll,
               subedgelist = el))
+  
+
 }
 
 

@@ -8,7 +8,8 @@
 #' @describeIn LoadNetworkModule server logic
 #' @export 
 LoadNetworkModule <- function(input,output, session, values,
-                              reactives = reactive({list(active = NULL)})){
+                              reactives = reactive({list(active = NULL)}),
+                              layoutFunction = reactive({})){
   
   ns <- NS(session$ns(NULL))
   
@@ -36,7 +37,7 @@ LoadNetworkModule <- function(input,output, session, values,
   #load and reformat a  network from a file
   observeEvent(input$networkFileLoad$datapath,{
       tryCatch({  
-    res <- loadMseekGraph(input$networkFileLoad$datapath)
+    res <- loadMseekGraph(input$networkFileLoad$datapath, layoutFunction = layoutFunction())
     
     internalValues[[gsub("\\.[^.]*$","",input$networkFileLoad$name)]] <- res
     internalValues$numNetworks <- internalValues$numNetworks + 1
@@ -295,7 +296,8 @@ observeEvent(input$makeNetwork2,{
   
   tryCatch({  
   
-    internalValues[[gsub("\\.[^.]*$","",input$NetName2)]] <- buildMseekGraph(FeatureTable(values), cosineThreshold = input$cosThresh)
+    internalValues[[gsub("\\.[^.]*$","",input$NetName2)]] <- buildMseekGraph(FeatureTable(values), cosineThreshold = input$cosThresh,
+                                                                             layoutFunction = layoutFunction())
     
     internalValues$numNetworks <- internalValues$numNetworks + 1
     removeModal()

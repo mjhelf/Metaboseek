@@ -10,7 +10,8 @@
 #' 
 #' @export 
 SimplifyNetworkModule <- function(input,output, session,
-                                  values = reactiveValues(Networks = NULL),
+                                  values = reactiveValues(Networks = NULL,
+                                                          GlobalOpts = NULL),
                                   reactives = reactive({list(activeNetwork = NULL)})){
   
   ns <- NS(session$ns(NULL))
@@ -221,7 +222,9 @@ SimplifyNetworkModule <- function(input,output, session,
             tempgraph <- simplify(values$Networks[[reactives()$activeNetwork]],
                                                                      rankBy = if(input$maxKcheck){input$maxKcol}else{NULL},
                                                                      maxK = input$maxK,
-                                                                     cosineThreshold = if(input$cosThreshCheck){input$cosThresh}else{NULL})
+                                                                     cosineThreshold = if(input$cosThreshCheck){input$cosThresh}else{NULL},
+                                  layoutFunction = values$GlobalOpts$graph.layouts.selected
+                                  )
              if(hasError(previousStep(tempgraph))){
           showNotification(paste("An error occured: ",
                                  unlist(error(previousStep(tempgraph)))),

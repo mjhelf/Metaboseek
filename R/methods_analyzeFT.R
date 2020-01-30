@@ -1654,10 +1654,14 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
 #' @param maxK if length > 0, will only alllow at most this many edges from each node
 #' @param rankBy if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges
 #' @param cosineThreshold if length > 0, will remove all edges with a cosine value below this
+#' @param layoutFunction function to use for layout of the resulting graph
 #' @export
 setMethod("simplify", c("MseekGraph"),
           function(object, rankBy = NULL,
-                   maxK = 10, cosineThreshold = NULL) {
+                   maxK = 10,
+                   cosineThreshold = NULL,
+                   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold"
+                   ) {
               beforeHash <- MseekHash(object)
               
               p1 <- proc.time()
@@ -1750,7 +1754,7 @@ setMethod("simplify", c("MseekGraph"),
                   V(g1)$subcl <-  clusters(g1)$membership
                   
                   if(nedgesBefore != nrow(tables$edges)){
-                              layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
+                              layo <- layout_components_qgraph(g1, eval(parse(text =  layoutFunction))) #qgraph::qgraph.layout.fruchtermanreingold)
 
                               V(g1)$x__coord <- layo$layout[,1]
                               V(g1)$y__coord <- layo$layout[,2]

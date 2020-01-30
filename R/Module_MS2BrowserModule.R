@@ -158,17 +158,20 @@ MS2BrowserModule <- function(input,output, session,
   Networks <- callModule(LoadNetworkModule, "loadnetworks", values = reactiveValues(featureTables = values$featureTables,
                                                                                     MSData = values$MSData,
                                                                                     projectData = values$projectData),
-                         reactives = reactive({list(active = NetMod$active)}))
+                         reactives = reactive({list(active = NetMod$active)}),
+                         layoutFunction = reactive({values$GlobalOpts$graph.layouts.selected}))
   
   NetMod <- callModule(NetworkModule, "shownetworks", values = reactiveValues(Networks = Networks,
                                                                               featureTables = values$featureTables,
-                                                                              MSData = values$MSData),
+                                                                              MSData = values$MSData,
+                                                                              GlobalOpts = values$GlobalOpts),
                        reactives = reactive({list(active = T)}),
                        static = list(noSelection = T),
                        keys = reactive({keys()}))
   
   
-  SimplifyMod <- callModule(SimplifyNetworkModule, 'simplify', values = reactiveValues(Networks = Networks),
+  SimplifyMod <- callModule(SimplifyNetworkModule, 'simplify', values = reactiveValues(Networks = Networks,
+                                                                                       GlobalOpts = values$GlobalOpts),
                             reactives = reactive({list(activeNetwork = NetMod$active)}))
   
   

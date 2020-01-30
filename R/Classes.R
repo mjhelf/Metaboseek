@@ -36,7 +36,7 @@ setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
-setGeneric("loadMseekGraph", function(object) standardGeneric("loadMseekGraph"))
+setGeneric("loadMseekGraph", function(object, ...) standardGeneric("loadMseekGraph"))
 
 setGeneric("matchReference", function(object, query, ...) standardGeneric("matchReference"))
 setGeneric("MseekHash", function(object) standardGeneric("MseekHash"))
