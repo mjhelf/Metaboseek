@@ -4,13 +4,22 @@
 \alias{analyzeTable}
 \title{analyzeTable}
 \usage{
-analyzeTable(df, intensities, groups, analyze = c("Basic analysis",
-  "clara_cluster", "t-test", "Peak shapes", "Fast peak shapes",
-  "PCA features", "PCA samples", "mzMatch"), normalize = T,
-  useNormalized = T, logNormalized = F, MSData = NULL, ppm = 5,
-  controlGroup = NULL, numClusters = 2,
+analyzeTable(
+  df,
+  intensities,
+  groups,
+  analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes",
+    "Fast peak shapes", "PCA features", "PCA samples", "mzMatch"),
+  normalize = T,
+  useNormalized = T,
+  logNormalized = F,
+  MSData = NULL,
+  ppm = 5,
+  controlGroup = NULL,
+  numClusters = 2,
   mzMatchParam = list("smid-db_pos.csv", ppm = 5, mzdiff = 0.001),
-  workers = 1)
+  workers = 1
+)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values, rt and mz values}

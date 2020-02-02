@@ -5,8 +5,12 @@
 \alias{PlotModuleUI}
 \title{PlotModule}
 \usage{
-PlotModule(input, output, session, reactives = reactive({    
-  list(reactiveValues(plot = p, interactive = F)) }))
+PlotModule(
+  input,
+  output,
+  session,
+  reactives = reactive({     list(reactiveValues(plot = p, interactive = F)) })
+)
 
 PlotModuleUI(id)
 }

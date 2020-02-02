@@ -4,9 +4,14 @@
 \alias{asInclusionlist}
 \title{asInclusionlist}
 \usage{
-asInclusionlist(parenttable, rtwin = 2.5, polarity = "Positive",
-  instrument = c("QExactive", "QExactive-HF"), listType = "inclusion",
-  restrictRT = F)
+asInclusionlist(
+  parenttable,
+  rtwin = 2.5,
+  polarity = "Positive",
+  instrument = c("QExactive", "QExactive-HF"),
+  listType = "inclusion",
+  restrictRT = F
+)
 }
 \arguments{
 \item{parenttable}{feature table as data.frame, with mz and rt columns.}

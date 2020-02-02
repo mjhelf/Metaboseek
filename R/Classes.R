@@ -48,6 +48,9 @@ setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseek
 setGeneric("saveMseekGraph", function(object, file, ...) standardGeneric("saveMseekGraph"))
 
 setGeneric("searchFunParam", function(object, fun, ...) standardGeneric("searchFunParam"))
+setGeneric("setLayout", function(object, layout, ...) standardGeneric("setLayout"))
+
+
 setGeneric("shortPrint", function(object) standardGeneric("shortPrint"))
 setGeneric("simplify", function(object, ...) standardGeneric("simplify"))
 

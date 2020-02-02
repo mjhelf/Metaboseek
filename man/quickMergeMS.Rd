@@ -4,8 +4,7 @@
 \alias{quickMergeMS}
 \title{quickMergeMS}
 \usage{
-quickMergeMS(speclist, ppm = 5, mzdiff = 0.0005, removeNoise = NULL,
-  count = F)
+quickMergeMS(speclist, ppm = 5, mzdiff = 0.0005, removeNoise = NULL, count = F)
 }
 \arguments{
 \item{speclist}{list of spectra (matrix with mz and intensity values)}

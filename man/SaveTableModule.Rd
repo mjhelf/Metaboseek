@@ -5,11 +5,15 @@
 \alias{SaveTableModuleUI}
 \title{SaveTableModule}
 \usage{
-SaveTableModule(input, output, session,
+SaveTableModule(
+  input,
+  output,
+  session,
   values = reactiveValues(projectData = NULL, featureTables = NULL),
   reactives = reactive({     list(df = NULL, filename = "table.csv") }),
-  static = list(tooltip = "Save", label = "Save", format = c("tsv",
-  "csv"), allowformats = NULL))
+  static = list(tooltip = "Save", label = "Save", format = c("tsv", "csv"), allowformats
+    = NULL)
+)
 
 SaveTableModuleUI(id)
 }

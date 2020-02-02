@@ -4,8 +4,13 @@
 \alias{mDownloadButton}
 \title{mDownloadButton}
 \usage{
-mDownloadButton(outputId, label = "Download", class = NULL,
-  icon = icon("download"), ...)
+mDownloadButton(
+  outputId,
+  label = "Download",
+  class = NULL,
+  icon = icon("download"),
+  ...
+)
 }
 \arguments{
 \item{outputId}{The name of the output slot that the \code{downloadHandler} is assigned to.}

@@ -49,7 +49,6 @@ layout_components_qgraph <- function (graph, layout, ...)
   al <- relist(8*(unlist(vl)^2), vl)
   rl <- relist((unlist(vl)^3.1), vl)
   if(is.character(layout)){
-  print("layout was character")
     layout <- eval(parse(text =  layout))
   }
   

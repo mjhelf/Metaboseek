@@ -5,11 +5,14 @@
 \alias{LoadTableModuleUI}
 \title{LoadTableModule}
 \usage{
-LoadTableModule(input, output, session,
+LoadTableModule(
+  input,
+  output,
+  session,
   values = reactiveValues(projectData = NULL, featureTables = NULL),
-  static = list(tooltip = "Load", label = "Load", format = list(header =
-  T, sep = "\\t", quote = "\\"", stringsAsFactors = F), pattern =
-  "\\\\.tGrouping$"))
+  static = list(tooltip = "Load", label = "Load", format = list(header = T, sep = "\\t",
+    quote = "\\"", stringsAsFactors = F), pattern = "\\\\.tGrouping$")
+)
 
 LoadTableModuleUI(id)
 }

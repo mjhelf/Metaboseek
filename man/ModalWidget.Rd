@@ -5,10 +5,15 @@
 \alias{ModalWidgetUI}
 \title{ModalWidget}
 \usage{
-ModalWidget(input, output, session, reactives = reactive({     fp = NULL
-  }), static = list(tooltip = "Tooltip", title = "title", label =
-  "label", icon = icon("bar-chart", lib = "font-awesome")),
-  useActionLink = F)
+ModalWidget(
+  input,
+  output,
+  session,
+  reactives = reactive({     fp = NULL }),
+  static = list(tooltip = "Tooltip", title = "title", label = "label", icon =
+    icon("bar-chart", lib = "font-awesome")),
+  useActionLink = F
+)
 
 ModalWidgetUI(id)
 }

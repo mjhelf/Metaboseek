@@ -5,9 +5,13 @@
 \alias{LoadMSDataModuleUI}
 \title{LoadMSDataModule}
 \usage{
-LoadMSDataModule(input, output, session,
-  values = reactiveValues(projectData = NULL, featureTables = NULL,
-  MSData = NULL, GlobalOpts = NULL))
+LoadMSDataModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(projectData = NULL, featureTables = NULL, MSData = NULL,
+    GlobalOpts = NULL)
+)
 
 LoadMSDataModuleUI(id)
 }

@@ -5,10 +5,14 @@
 \alias{xcmsWidgetUI}
 \title{xcmsWidget}
 \usage{
-xcmsWidget(input, output, session, externalFilegroups = reactive({    
-  NULL }), static = list(servermode = F, rootpath =
-  .MseekOptions$filePaths, activateXCMS = T, filePattern =
-  .MseekOptions$filePattern, defaultSettings = "Metaboseek_defaults"))
+xcmsWidget(
+  input,
+  output,
+  session,
+  externalFilegroups = reactive({     NULL }),
+  static = list(servermode = F, rootpath = .MseekOptions$filePaths, activateXCMS = T,
+    filePattern = .MseekOptions$filePattern, defaultSettings = "Metaboseek_defaults")
+)
 
 xcmsWidgetUI(id)
 }

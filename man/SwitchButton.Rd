@@ -5,10 +5,15 @@
 \alias{SwitchButtonUI}
 \title{SwitchButton}
 \usage{
-SwitchButton(input, output, session, states = list(on = list(label = "",
-  title = "it's on", icon = icon("react"), style =
-  "background-color: #1BBF1E;"), off = list(label = "", icon =
-  icon("react"), title = "it's off")), type = "actionButton")
+SwitchButton(
+  input,
+  output,
+  session,
+  states = list(on = list(label = "", title = "it's on", icon = icon("react"), style =
+    "background-color: #1BBF1E;"), off = list(label = "", icon = icon("react"), title =
+    "it's off")),
+  type = "actionButton"
+)
 
 SwitchButtonUI(id)
 }

@@ -5,9 +5,14 @@
 \alias{TableAnalysisModuleUI}
 \title{TableAnalysisModule}
 \usage{
-TableAnalysisModule(input, output, session, values,
+TableAnalysisModule(
+  input,
+  output,
+  session,
+  values,
   reactives = reactive({     list(fileGrouping = NULL) }),
-  static = list())
+  static = list()
+)
 
 TableAnalysisModuleUI(id)
 }

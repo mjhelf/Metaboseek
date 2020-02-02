@@ -4,9 +4,12 @@
 \alias{getpeaks2}
 \title{getpeaks2}
 \usage{
-getpeaks2(EIC, findProps = list(SN = 1, minwidth = 4, localNoise = 7,
-  localNoiseFactor = 0.5, globalNoiseFactor = 0.5, extend = T),
-  mergeProps = list(rttol = 3, minint = 0, minrelint = 0, topN = 100))
+getpeaks2(
+  EIC,
+  findProps = list(SN = 1, minwidth = 4, localNoise = 7, localNoiseFactor = 0.5,
+    globalNoiseFactor = 0.5, extend = T),
+  mergeProps = list(rttol = 3, minint = 0, minrelint = 0, topN = 100)
+)
 }
 \arguments{
 \item{EIC}{a single EIC object (list item of multiEIC output), or a list of EIC items (multiEIC output)}

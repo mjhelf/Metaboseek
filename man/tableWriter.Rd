@@ -4,8 +4,12 @@
 \alias{tableWriter}
 \title{tableWriter}
 \usage{
-tableWriter(df, fname, format = c("csv", "tsv", "instrumentList"),
-  moreArgs = list())
+tableWriter(
+  df,
+  fname,
+  format = c("csv", "tsv", "instrumentList"),
+  moreArgs = list()
+)
 }
 \arguments{
 \item{df}{feature table as data.frame, with mz and rt columns.}

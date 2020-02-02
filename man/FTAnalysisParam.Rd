@@ -4,13 +4,21 @@
 \alias{FTAnalysisParam}
 \title{Constructor for FTAnalysisParam class}
 \usage{
-FTAnalysisParam(intensities = character(), groups = list(),
-  .files = character(), analyze = c("Basic analysis", "clara_cluster",
-  "t-test", "Peak shapes", "Fast peak shapes", "PCA features",
-  "PCA samples", "mzMatch"), normalize = T, useNormalized = T,
-  logNormalized = F, ppm = 5, controlGroup = NULL, numClusters = 2,
+FTAnalysisParam(
+  intensities = character(),
+  groups = list(),
+  .files = character(),
+  analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes",
+    "Fast peak shapes", "PCA features", "PCA samples", "mzMatch"),
+  normalize = T,
+  useNormalized = T,
+  logNormalized = F,
+  ppm = 5,
+  controlGroup = NULL,
+  numClusters = 2,
   mzMatchParam = list(db = "smid-db_pos.csv", ppm = 5, mzdiff = 0.001),
-  workers = 1)
+  workers = 1
+)
 }
 \arguments{
 \item{intensities}{the intensity column names, before normalization 

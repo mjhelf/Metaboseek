@@ -4,9 +4,16 @@
 \alias{massquery}
 \title{massquery}
 \usage{
-massquery(mz, range = 0.01, ppm = 5,
-  elem = "C0-100H0-202N0-10O0-10F0-3Cl0-3Br0-1", charge = 1,
-  IntegerSaturation = FALSE, minUnsat = 0, maxUnsat = 40)
+massquery(
+  mz,
+  range = 0.01,
+  ppm = 5,
+  elem = "C0-100H0-202N0-10O0-10F0-3Cl0-3Br0-1",
+  charge = 1,
+  IntegerSaturation = FALSE,
+  minUnsat = 0,
+  maxUnsat = 40
+)
 }
 \arguments{
 \item{mz}{m/z value}

@@ -5,9 +5,14 @@
 \alias{SpecModule2UI}
 \title{SpecModule2}
 \usage{
-SpecModule2(input, output, session, values, reactives = reactive({    
-  list(scantable = NULL, type = "ms2", spectrum = NULL, specinfo = NULL,
-  xrange = NULL, markermz = NULL) }))
+SpecModule2(
+  input,
+  output,
+  session,
+  values,
+  reactives = reactive({     list(scantable = NULL, type = "ms2", spectrum = NULL,
+    specinfo = NULL, xrange = NULL, markermz = NULL) })
+)
 
 SpecModule2UI(id)
 }

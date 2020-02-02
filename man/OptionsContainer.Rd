@@ -5,9 +5,13 @@
 \alias{OptionsContainerUI}
 \title{OptionsContainer}
 \usage{
-OptionsContainer(input, output, session,
-  values = reactiveValues(projectData = NULL, featureTables = NULL,
-  MSData = NULL, GlobalOpts = NULL, MainPlotBox = NULL, MainTable = NULL))
+OptionsContainer(
+  input,
+  output,
+  session,
+  values = reactiveValues(projectData = NULL, featureTables = NULL, MSData = NULL,
+    GlobalOpts = NULL, MainPlotBox = NULL, MainTable = NULL)
+)
 
 OptionsContainerUI(id)
 }

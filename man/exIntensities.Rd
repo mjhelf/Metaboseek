@@ -4,8 +4,15 @@
 \alias{exIntensities}
 \title{exIntensities}
 \usage{
-exIntensities(rawfile, mz, ppm = 5, rtw = data.frame(0, 10),
-  baselineSubtract = T, SN = NULL, areaMode = F)
+exIntensities(
+  rawfile,
+  mz,
+  ppm = 5,
+  rtw = data.frame(0, 10),
+  baselineSubtract = T,
+  SN = NULL,
+  areaMode = F
+)
 }
 \arguments{
 \item{rawfile}{an xcmsRaw object}

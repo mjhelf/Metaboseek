@@ -5,8 +5,9 @@
 \alias{densplotModuleUI}
 \title{densplotWidget}
 \usage{
-densplotWidget(input, output, session, reactives = reactive({     list()
-  }))
+densplotWidget(input, output, session, reactives = reactive({
+    list()
+}))
 
 densplotModuleUI(id)
 }

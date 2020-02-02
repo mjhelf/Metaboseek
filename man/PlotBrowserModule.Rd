@@ -5,9 +5,13 @@
 \alias{PlotBrowserModuleUI}
 \title{PlotBrowserModule}
 \usage{
-PlotBrowserModule(input, output, session, reactives = reactive({    
-  reactiveValues(PCAtable = df, active = T) }), static = list(patterns =
-  list(axis = "PCA__", color = "", hover = "")))
+PlotBrowserModule(
+  input,
+  output,
+  session,
+  reactives = reactive({     reactiveValues(PCAtable = df, active = T) }),
+  static = list(patterns = list(axis = "PCA__", color = "", hover = ""))
+)
 
 PlotBrowserModuleUI(id)
 }

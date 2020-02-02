@@ -68,7 +68,10 @@ is.MseekFT <- function(x){
 #' @rdname MseekFamily
 #' @export
 is.MseekGraph <- function(x){
-    (length(x) && "MseekGraph" %in% class(x))
+    (length(x) 
+     && "MseekGraph" %in% class(x)
+     && length(x$graph))
+    
 }
 
 #' @rdname MseekFamily
