@@ -92,7 +92,7 @@ NetworkModule <- function(input,output, session,
             internalValues$regChange <- "nothing"}})
     
     observeEvent(internalValues$regChange,{#values$Networks[[internalValues$active]],{#c(internalValues$active),{
-        print('registered regChange')
+       # print('registered regChange')
         if(!is.null(values$Networks) 
            && length(names(values$Networks)[names(values$Networks) != "numNetworks"]) > 0
            # && !is.null(internalValues$active) 

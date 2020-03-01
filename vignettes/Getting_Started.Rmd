@@ -11,11 +11,13 @@ vignette: >
 ---
 
 
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(Metaboseek)
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
+htmltools::tagList(rmarkdown::html_dependency_bootstrap("default"))
+
+
+#library(Metaboseek)
 ```
 
 
@@ -163,6 +165,7 @@ Then, you can use Metaboseek to browse the data, find molecular features of inte
 
 ## Overview
 Metaboseek is structured into two major sections, the `Data Explorer` section for visualization and statistical analysis tasks, and the `XCMS analysis` to identify LC/MS features in MS data files. You can switch between these sections with the navigation menu on the left of the screen. 
+
 
 ##Start Page / Loading Data {#loadMSData}
 
@@ -511,6 +514,30 @@ peaks, the processing time is relatively long and many false-positives
   place. See [Project Folders](#projectFolders) for more information.
 4. You can save settings as a .zip file (on windows computers, 7-zip or other software allowing for the zip command line prompt must be installed), or load a .zip file with settings from a previous run.
  + Note that loading settings will override your selection of MS data files. If you want to apply the settings to a new set of data files, load the settings first and then select a folder (step 1).
- 
+
+## Navigation bar items
+
+The buttons in the navigation bar either help with the user interface, or allow quick
+access to important functionalities.
+
+### Interface buttons
+The leftmost <svg style="height:0.8em;top:.04em;position:relative;" viewBox="0 0 448 512"><path fill="currentColor" d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg>`Menu`button can be used to hide the navigation bar on the left side, allowing you to maximize screensize. Likewise, you can use the <svg class="bi bi-arrows-fullscreen" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M4 11.5a.5.5 0 01.5.5v3.5H8a.5.5 0 010 1H4a.5.5 0 01-.5-.5v-4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M8.854 11.11a.5.5 0 010 .708l-4.5 4.5a.5.5 0 11-.708-.707l4.5-4.5a.5.5 0 01.708 0zm7.464-7.464a.5.5 0 010 .708l-4.5 4.5a.5.5 0 11-.707-.708l4.5-4.5a.5.5 0 01.707 0z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M11.5 4a.5.5 0 01.5-.5h4a.5.5 0 01.5.5v4a.5.5 0 01-1 0V4.5H12a.5.5 0 01-.5-.5zm4.5 7.5a.5.5 0 00-.5.5v3.5H12a.5.5 0 000 1h4a.5.5 0 00.5-.5v-4a.5.5 0 00-.5-.5z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M11.146 11.11a.5.5 0 000 .708l4.5 4.5a.5.5 0 00.708-.707l-4.5-4.5a.5.5 0 00-.708 0zM3.682 3.646a.5.5 0 000 .708l4.5 4.5a.5.5 0 10.707-.708l-4.5-4.5a.5.5 0 00-.707 0z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M8.5 4a.5.5 0 00-.5-.5H4a.5.5 0 00-.5.5v4a.5.5 0 001 0V4.5H8a.5.5 0 00.5-.5z" clip-rule="evenodd"/>
+</svg>`Fullscreen` button to maximize the size of the browser window.
+
+### Functional buttons
+
+The <svg style="height:0.8em;top:.04em;position:relative;" viewBox="0 0 576 512"><path d="M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 117.989 224 152 224z"/></svg> `Load` button allows you to load MS data, feature Tables and entire Metaboseek projects, [as detailed here.](#loadMSData).
+
+Use the <i class="glyphicon glyphicon-floppy-disk"></i>`Save` button
+
+![The Navigation bar, always showing up at the top of the Metaboseek interface](img/Mseek_Navbar_screenshot.png){width=100%}
+
+
+
 # References
 
