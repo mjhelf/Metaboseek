@@ -252,13 +252,33 @@ with retention time values in seconds.
 
 At the heart of Metaboseek is the interaction between data visualization in the "Data viewer" box, and a table of LC/MS data features in the `Feature table` box
 
-###Options box
+###Options box {#OptionsBox}
 
 This box provides a number of optional functionality, including setting up SIRIUS,
 calculating molecular formulas and controling the appearance of extracted ion 
 chromatograms (EICs) in the `Data Viewer` box.
 
 ####Sirius options
+
+The settings here are passed on the the SIRIUS executable. Please have a look at the SIRIUS documentation
+to learn more about them.
+
+* **Database:** Restrict SIRIUS analysis to a database ()
+
+* **Ion:** 
+
+* **Get FingerID:**
+
+* **Use MS1 spectrum:**
+
+* **Instrument:**
+
+* **Allow elements:** Enter Element symbols you want to include in the search without spaces. To limit the maximum number of an element per molecule,
+add a number in brackets after the Element symbol (e.g. `CHNOP[5]S[5]`)
+
+* **Sirius Folder:** Path to a SIRIUS executable
+
+
 
 ####Molecular formula prediction
 
@@ -308,9 +328,9 @@ you can also zoom out by clicking while holding the `Z` key.
 
 [SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/) (@Duhrkop2019) is a stand-alone software developed in the Boecker lab at the University of Jena that can use MS/MS data to predict the molecular formulas of fragment and parent ion peaks. It also offers an interface to CSI:FingerID to match fragmentation patterns with structure databases.
 
-MS2 data can be analyzed with SIRIUS from inside the Metaboseek app. For this to work, you first need to tell Metaboseek where the SIRIUS executable is located. Click on the "Global settings for Metaboseek" button at the top of the app (gear symbol, next to the "Open..." button). Select the SIRIUS folder. Metaboseek will generate a new folder there to store results from Sirius runs.
+MS2 data can be analyzed with SIRIUS from inside the Metaboseek app. All settings for SIRIUS can be found in the [`Options box`](#OptionsBox). You first need to tell Metaboseek where the SIRIUS executable is located ("SIRIUS folder"). Metaboseek will generate a new folder there to store results from Sirius runs.
 
-To run Sirius, use the "Run SIRIUS" Button above the MS2 scan table. Make sure to select appropriate options in the "Sirius options" section at the top of the app (Options box).
+To run Sirius, use the "Run SIRIUS" Button above the MS2 scan table. Make sure to select appropriate options in the `Sirius options` section at the top of the app `Options box`.
 The results can be accessed through Metaboseek as soon as a Sirius analysis run finishes by clicking "Show SIRIUS". Select items in the tables that show up to view fragmentation trees and proposed structures.
 
 #####Manage and compare MS2 spectra{.unnumbered}
@@ -519,6 +539,7 @@ peaks, the processing time is relatively long and many false-positives
 
 The buttons in the navigation bar either help with the user interface, or allow quick
 access to important functionalities.
+![The Navigation bar, always showing up at the top of the Metaboseek interface](img/Mseek_Navbar_screenshot.png){width=100%}
 
 ### Interface buttons
 The leftmost <svg style="height:0.8em;top:.04em;position:relative;" viewBox="0 0 448 512"><path fill="currentColor" d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg>`Menu`button can be used to hide the navigation bar on the left side, allowing you to maximize screensize. Likewise, you can use the <svg class="bi bi-arrows-fullscreen" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -531,12 +552,27 @@ The leftmost <svg style="height:0.8em;top:.04em;position:relative;" viewBox="0 0
 
 ### Functional buttons
 
+#### Load MS Data, Feature Tables or Sessions
 The <svg style="height:0.8em;top:.04em;position:relative;" viewBox="0 0 576 512"><path d="M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 117.989 224 152 224z"/></svg> `Load` button allows you to load MS data, feature Tables and entire Metaboseek projects, [as detailed here.](#loadMSData).
 
-Use the <i class="glyphicon glyphicon-floppy-disk"></i>`Save` button
+#### Save Session
+Use the <i class="glyphicon glyphicon-floppy-disk"></i>`Save` button to  save the current Metaboseek session.
+This will save all Feature Tables, Molecular Networks and MS data files that you have loaded into the current session. You can choose to include the MS data 
+in the session file (e.g. for simple sharing of an analysis with colleagues). However, this will increase file size significantly and may slow down the 
+saving process. If MS data is not included in the saved session, Metaboseek will expect the MS data files to be in the same location when you load the session.
 
-![The Navigation bar, always showing up at the top of the Metaboseek interface](img/Mseek_Navbar_screenshot.png){width=100%}
+#### Settings
+<svg style="height:0.8em;top:.04em;position:relative;" viewBox="0 0 512 512"><path fill="currentColor" d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"></path></svg> Settings available:
 
+* **Enabled cores:** Number of CPU threads to use for parallel processing jobs. Changes to this settings require a restart of 
+Metaboseek (close and restart the process)
+
+* **Per page:** Set how many Features should be shown per page for the Main Feature Table. Very large numbers here will slow down 
+browsing the table.
+
+* **Database Folder:** Currently not used
+
+* **Sirius Folder:** NOTE: This setting has been moved to the Sirius options Tab of the [Options Box](#OptionsBox) in Metaboseek 0.9.6.3.
 
 
 # References

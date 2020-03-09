@@ -14,15 +14,22 @@ SiriusOptionsModule <- function(input,output, session, values){
   
   ns <- NS(session$ns(NULL))
   
+  SiriusFolder <- callModule(FilePathModule, "siriusFolder",
+                             filepaths = reactive({values$GlobalOpts$filePaths}),
+                             label = "Sirius Folder", description= "Select folder that contains the sirius executable (sirius-console-64.exe or sirius in linux/macOS)",
+                             displayFolder = T)
+  
+  SiriusFolder$dir <- .MseekOptions$siriusFolder
+  
   
   output$controlSirius <- renderUI({
     
     fluidRow(
-      column(3,
+      column(1,
              selectizeInput(ns("selDB"), "Database:",
                             choices = values$GlobalOpts$SiriusDBoptions,
                             selected = values$GlobalOpts$SiriusDBselected)),
-      column(2,
+      column(1,
              selectizeInput(ns("selIon"),
                             "Ion", 
                             choices = list("[M+?]+" = "[M+?]+",
@@ -32,10 +39,10 @@ SiriusOptionsModule <- function(input,output, session, values){
                                            "[M-H}-" = "[M-H]-",
                                            "[M+Cl]-" = "[M+Cl]-"), 
                             selected = values$GlobalOpts$SiriusSelIon)),
-      column(2,
+      column(1,
              checkboxInput(ns("checkFinger"), "Get FingerID",
                            value = values$GlobalOpts$SiriusCheckFinger)),
-      column(2,
+      column(1,
              checkboxInput(ns("useMS1"), "Use MS1 spectrum", 
                            value = values$GlobalOpts$SiriusUseMS1)),
       
@@ -47,7 +54,9 @@ SiriusOptionsModule <- function(input,output, session, values){
                             selected = values$GlobalOpts$SiriusSelInstrument)),
       column(2, 
              textInput(ns("elements"), "Allow elements:",
-                       value = values$GlobalOpts$SiriusElements))
+                       value = values$GlobalOpts$SiriusElements)),
+      column(4,
+             FilePathModuleUI(ns("siriusFolder")))
     )
   })
   
@@ -91,6 +100,14 @@ SiriusOptionsModule <- function(input,output, session, values){
     values$GlobalOpts$SiriusElements <- input$elements
     MseekOptions(SiriusElements = input$elements)
   })
+  
+  observeEvent(SiriusFolder$dir,{
+    if(length(SiriusFolder$dir) > 0 && !is.na(SiriusFolder$dir)){
+      values$GlobalOpts$siriusFolder <- SiriusFolder$dir
+      MseekOptions(siriusFolder=SiriusFolder$dir)
+    }
+  }, ignoreInit =T)
+  
 }
 
 #' @describeIn SiriusOptionsModule UI elements
