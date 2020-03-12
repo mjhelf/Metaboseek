@@ -307,7 +307,26 @@ If you load a `Project Folder` from a finished xcms job that included retention 
 
 ####Mass shifts
 
+You can define mass shifts that will be shown in the `Data viewer` -> `Grouped EICs` window as additional EIC traces (in dashed lines). Mol_formula and charge columns are currently ignored. Click `Update mass shifts` to update the EIC view and to save your edits to the mass shift table (will be restored in your next session). 
+
 ####EIC options
+
+This allows control of various formatting options for the EICs in `Data viewer` -> `Grouped EICs` as well as `Data viewer` -> `MS2 Browser` -> `Feature Report`, and in part also for `Data viewer` -> `MS Browser`
+
+* **Mass tol (ppm):** Relative mass tolerance in parts per milion (ppm) around the m/z value selected in the `Feature Table` for generation of extracted ion chromatograms (EICs).
+* **Plots per row:** Maximum number of EIC plots per row, will add additional rows of plots if necessary.
+* **TIC:** Plot Total Ion Chormatogram (TIC) instead of EIC. Will ignore the m/z value selected in the `Feature Table` but will use its retention time information.
+* **Relative intensities:** Change y-axis labels to percentages instead of raw intensity numbers.
+* **RT window (sec):** width of the retention time range in the EIC plots, +/- from the retention time defined in `Feature Table` `rt` column.
+* **Full RT range:** Show chromatogram for entire retention time range instead of using RT window.
+* **Group by:** Use this Group to define which files get plotted in the same EIC plot; Edit grouping information in `Data viewer` -> `Regroup MS data`.
+* **Y-axis zoom:** Zoom in on the Y-axis (intensity) by this factor. Use this to inspect small peaks that would otherwise not be visible because they are plotted in the same plot as large peaks.
+* **Line width:** Thickness of the EIC lines
+* **Mark feature RT:** Show a dashed line at the retention time as defined in the `Feature Table` `rt` column
+* **Raise EICs:** Raise up the y-axis view so you can see sections of the EIC that are close to zero and may be hidden behind the x-axis
+* **Font size:** Control the font size for axis labels in EIC plots.
+* **Color palette:** Change the color scheme for EIC traces.
+* **Color by:** Use this Group to define which files get plotted in the same color; Edit grouping information in `Data viewer` -> `Regroup MS data`. Coloring by `Mass shift` not implemented yet.
 
 
 ###Data Viewer
