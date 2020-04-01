@@ -25,7 +25,10 @@ FeatureReportModule <- function(input,output, session,
   ns <- NS(session$ns(NULL))
   
   EICcache <- reactiveValues()
-  
+  internalValues <- reactiveValues(iSpec1 = reactive({NULL}),
+                                   yaxmax = NULL,
+                                   reltoCheck = F,
+                                   subtitleColumns = "comments")
   
   
   output$pdfButton <- downloadHandler(filename= function(){
@@ -345,6 +348,12 @@ FeatureReportModule <- function(input,output, session,
                       # static = list(title = "MS1 spectrum")
   )
   
+  observeEvent(iSpec1,{internalValues$iSpec1 <- iSpec1},
+               once = TRUE,
+               ignoreNULL = FALSE)
+  
+ 
+  
   MS2spec <- callModule(Specmodule,"ms2spec", tag = ns("ms2spec"), 
                        set = reactive({MS2feed()}), 
                        keys = reactive({values$GlobalOpts$keyinput.keydown})
@@ -355,10 +364,7 @@ FeatureReportModule <- function(input,output, session,
                                  static = list(editOnly = F)
   )
   
-  internalValues <- reactiveValues(iSpec1 = iSpec1,
-                                   yaxmax = NULL,
-                                   reltoCheck = F,
-                                   subtitleColumns = "comments")
+ 
   
   output$reltocheck <- renderUI({
     div(title = "Plot EICs for all groups to the same scale (the highest intensity value in all EICs for a feature).",

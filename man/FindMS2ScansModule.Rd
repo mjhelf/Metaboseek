@@ -10,8 +10,8 @@ FindMS2ScansModule(
   output,
   session,
   values,
-  static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table", label =
-    "Find MS2 scans")
+  static = list(tooltip = "Find MS2 scans for all parent m/zs in feature table", label
+    = "Find MS2 scans")
 )
 
 FindMS2ScansModuleUI(id)

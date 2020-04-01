@@ -11,8 +11,8 @@ SaveTableModule(
   session,
   values = reactiveValues(projectData = NULL, featureTables = NULL),
   reactives = reactive({     list(df = NULL, filename = "table.csv") }),
-  static = list(tooltip = "Save", label = "Save", format = c("tsv", "csv"), allowformats
-    = NULL)
+  static = list(tooltip = "Save", label = "Save", format = c("tsv", "csv"),
+    allowformats = NULL)
 )
 
 SaveTableModuleUI(id)

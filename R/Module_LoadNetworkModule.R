@@ -251,9 +251,9 @@ LoadNetworkModule <- function(input,output, session, values,
                 ),
             hr(),
             fluidRow(
-              p("Hint: You can remove edges from this network later."),
+              p("Hint: You can remove edges from this network later, e.g. by setting a higher (more strict) cosine threshold. However, you have to rebuild the network if you want to use a lower cosine score threshold later."),
               div( title = "Remove edges with cosine below this threshold: ", 
-                   numericInput(ns("cosThresh"), "Cosine threshold", value = 0.8))
+                   numericInput(ns("cosThresh"), "Cosine threshold", value = 0.6))
               
             ),
             fluidRow(
@@ -264,7 +264,7 @@ LoadNetworkModule <- function(input,output, session, values,
                    actionButton(ns("makeNetwork2"), "Make Network"))
             )
         ),
-        title = "Search MS2 scans",
+        title = "Finish Molecular Network",
         easyClose = T,
         fade = F,
         size = "l",

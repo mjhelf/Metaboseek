@@ -10,8 +10,8 @@ MainTableModule(
   output,
   session,
   values = reactiveValues(featureTables = NULL, GlobalOpts = NULL, projectData = NULL),
-  static = list(height = 300, readOnly = TRUE, contextMenu = TRUE, fixedColumnsLeft = 1,
-    invertReadOnly = NULL, controls = TRUE, format = list(col = NULL, format = NULL))
+  static = list(height = 300, readOnly = TRUE, contextMenu = TRUE, fixedColumnsLeft =
+    1, invertReadOnly = NULL, controls = TRUE, format = list(col = NULL, format = NULL))
 )
 
 MainTableModuleUI(id)

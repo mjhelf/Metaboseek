@@ -10,8 +10,8 @@ groupPlot(
   plotProps = list(TIC = TRUE, cx = 1, colr = topo.colors(nrow(EIClist[[1]]), alpha =
     1), ylim = NULL, xlim = NULL, lw = 1, midline = 100, yzoom = 1),
   compProps = list(mfrow = c(1, 2), oma = c(0, 2, 8, 0), xpd = NA, bg = NA, header =
-    paste0(names(EIClist)), header2 = NULL, pdfFile = NULL, pdfHi = 6, pdfWi = 12, cx = 1,
-    adductLabs = c("0", "1", "2")),
+    paste0(names(EIClist)), header2 = NULL, pdfFile = NULL, pdfHi = 6, pdfWi = 12, cx =
+    1, adductLabs = c("0", "1", "2")),
   raise = F,
   relPlot = F,
   margins = NULL,

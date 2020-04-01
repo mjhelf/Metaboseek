@@ -11,8 +11,8 @@ TableModule(
   session,
   tag,
   set = list(df = NULL, update = 1, layout = list(perpage = 100, height = 300, readOnly
-    = T, contextMenu = T, fixedColumnsLeft = 1, invertReadOnly = NULL, format = list(col =
-    NULL, format = NULL)))
+    = T, contextMenu = T, fixedColumnsLeft = 1, invertReadOnly = NULL, format = list(col
+    = NULL, format = NULL)))
 )
 
 TableModuleUI(id)

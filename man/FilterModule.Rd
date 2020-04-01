@@ -12,8 +12,8 @@ FilterModule(
   values = reactiveValues(featureTables = NULL, MultiFilter = NULL),
   static = list(lab = "Filter"),
   initValues = list(active = F, filter = TRUE, colSelected = NULL, summary = NULL,
-    numeric = T, minSel = NULL, maxSel = NULL, modeSel = NULL, txtSel = NULL, minSelInit =
-    NULL, maxSelInit = NULL, modeSelInit = NULL, txtSelInit = NULL, loadingFilters = F)
+    numeric = T, minSel = NULL, maxSel = NULL, modeSel = NULL, txtSel = NULL, minSelInit
+    = NULL, maxSelInit = NULL, modeSelInit = NULL, txtSelInit = NULL, loadingFilters = F)
 )
 
 FilterModuleUI(id)

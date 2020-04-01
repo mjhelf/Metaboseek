@@ -10,8 +10,8 @@ SpecplotWidget(
   output,
   session,
   reactives = reactive({     list(x = NULL, y = NULL, norm = NULL, cx = 1.5, k = 10,
-    fileName = "title", yrange = c(0, 100), xrange = NULL, maxi = NULL, labels = NULL, mar
-    = c(4, 6, 6, 2), ylab = "Relative Intensity (\%)", ylabshift = 0) }),
+    fileName = "title", yrange = c(0, 100), xrange = NULL, maxi = NULL, labels = NULL,
+    mar = c(4, 6, 6, 2), ylab = "Relative Intensity (\%)", ylabshift = 0) }),
   layout = reactive({     list(active = T, height = 550, selectCallback = T) }),
   keys = reactive({     "NO" })
 )
