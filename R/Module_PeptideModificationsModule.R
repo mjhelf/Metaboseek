@@ -24,7 +24,7 @@ PeptideModificationsModule <- function(input,output, session, values){
     
     internalValues <- reactiveValues(variableTrigger = 1,
                                      Peptides.variableMods = if(file.exists(file.path(system.file("config", package = "Metaboseek"), "variableMods.tsv"))){
-                                         fixme <- fread(file.path(system.file("config", package = "Metaboseek"), "variableMods.tsv"))
+                                         fixme <- data.table::fread(file.path(system.file("config", package = "Metaboseek"), "variableMods.tsv"))
                                          #making sure no problems arise from empty columns(which would be loaded as logical)
                                          fixme$active <- as.logical(fixme$active)
                                          
@@ -35,7 +35,7 @@ PeptideModificationsModule <- function(input,output, session, values){
                                          fixme$min <- as.numeric(fixme$min)
                                          fixme$max <- as.numeric(fixme$max)
                                          fixme$mass <- as.numeric(fixme$mass)
-                                         fixme
+                                         as.data.frame(fixme, stringsAsFactors = FALSE)
                                      }else{fixme <- data.frame(active = TRUE,
                                                                tag = "Ep",
                                                                min = 0,

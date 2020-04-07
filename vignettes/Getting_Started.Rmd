@@ -20,7 +20,15 @@ htmltools::tagList(rmarkdown::html_dependency_bootstrap("default"))
 #library(Metaboseek)
 ```
 
-
+<style>
+#TOC {
+  background: url(https://raw.githubusercontent.com/mjhelf/Metaboseek/devel_raw/vignettes/img/logo_web_full_240.png);
+  background-size: 150px;
+  padding-top: 180px !important;
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+</style>
 
 ```{r, eval = TRUE, echo = FALSE}
 
@@ -29,7 +37,6 @@ print(paste("Metaboseek version:",packageVersion("Metaboseek")))
 
 # Metaboseek Documentation
 
-<img align = "left" src="img/logo_web_full_240.png" height="200">
 
 Metaboseek offers a graphical user interface to set up data analysis with the `xcms` package to detect and align molecular features from LC/MS data across multiple samples. You can then load xcms results into the app as a "Feature Table" (using `xcms` and [`MSnbase`](https://bioconductor.org/packages/release/bioc/html/MSnbase.html) packages, [`mzR`](https://bioconductor.org/packages/release/bioc/html/mzR.html)-based) and run statistical analyses to identify molecular features of interest.
 
@@ -368,14 +375,14 @@ be filtered using the rules proposed by the "Seven Golden Rules for heuristic fi
 
 If you load a `Project Folder` from a finished xcms job that included retention time correction, you can review the effect of retention time correction across your files here. Retention time is plotted on the x-axis for each file, and deviation from the uncorrected retention time is shown on the y-axis. Very large RT deviations or very different behavior between groups of samples can point to problems with your chromatography setup or retention time correction settings.
 
-####Mass Shifts
+#### Mass Shifts
 
 ![Mass shifts](img/Options_Mass_shifts.png){width=100%}
 
 
 You can define mass shifts that will be shown in the `Data viewer` -> `Grouped EICs` window as additional EIC traces (in dashed lines). Mol_formula and charge columns are currently ignored. Click `Update mass shifts` to update the EIC view and to save your edits to the mass shift table (will be restored in your next session). 
 
-####EIC Options
+#### EIC Options
 
 ![EIC options](img/Options_EIC_options.png){width=100%}
 
@@ -398,7 +405,7 @@ This allows control of various formatting options for the EICs in `Data viewer` 
 * **Color by:** Use this Group to define which files get plotted in the same color; Edit grouping information in `Data viewer` -> `Regroup MS data`. Coloring by `Mass shift` not implemented yet.
 
 
-###Data Viewer
+### Data Viewer
 
 This box provides plots of data that is selected in the `Feature Table` box.
 Different kinds of data plots and browsing options are available, mostly for 
@@ -406,7 +413,7 @@ extracted ion chromatograms (EICs) and spectrum plots, but also bar plots,
 venn diagrams and plots from principal component analysis.
 
 
-####MS2 Browser
+#### MS2 Browser
 ![The MS2 browser](img/MS2browser_overview.png){width=100%}
 
 If you have [loaded MS data files](#loadMSData) which contain MS2 (tandem-MS) data,
