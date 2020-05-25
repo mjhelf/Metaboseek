@@ -1683,8 +1683,8 @@ setMethod("LabelFinder", signature(object = "MseekFamily"),
                                                     rawdata = MSData,
                                                     ...),
                                          processHistory = object$.processHistory,
-                                         tablename = newName)
-                  
+                                         tablename = newName,
+                                         editable = FALSE)
                   
               },
               error = function(e){

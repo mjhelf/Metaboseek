@@ -110,6 +110,7 @@ MainTableModule <- function(input, output, session,
   
   callModule(MseekHistoryWidget, "tablehistory", FT = reactive({FeatureTable(values)}))
   
+  callModule(RenameTableModule, "tablerename", values)
   
   observeEvent(c(internalValues$page,
                  internalValues$decreasing,
@@ -299,7 +300,7 @@ MainTableModule <- function(input, output, session,
              htmlOutput(ns('sortC')),
              htmlOutput(ns('decreasingC'))
       ),
-      column(3,
+      column(2,
              htmlOutput(ns('sortByC'))
       ),
       column(1,
@@ -314,8 +315,10 @@ MainTableModule <- function(input, output, session,
       column(1,
              MseekHistoryWidgetUI(ns("tablehistory"))),
       column(3,
-             SelectActiveTableModuleUI(ns("tablechange"))
-      )
+             SelectActiveTableModuleUI(ns("tablechange"))),
+      column(1,
+             RenameTableModuleUI(ns("tablerename")))
+      
     )
     
   })
