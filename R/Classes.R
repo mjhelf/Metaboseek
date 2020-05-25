@@ -61,6 +61,8 @@ setGeneric("importMseekIntensities", function(object, rawdata, importFrom, ...) 
 #setGeneric("processHistory", function(object, ...) standardGeneric("processHistory"))
 setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistory"))
 
+setGeneric("LabelFinder", function(object, ...) standardGeneric("LabelFinder"))
+
 
 ## Registered S3 classes
 setOldClass("MseekFT")

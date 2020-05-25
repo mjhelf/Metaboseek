@@ -1,5 +1,5 @@
 ## Methods to analyze MseekFT objects
-#' @include Functions_FeatureTable_analysis.R
+#' @include Functions_FeatureTable_analysis.R Functions_Labelfinder.R
 
 
 #' @title analyzeFT
@@ -1647,3 +1647,71 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
               
           })
 
+#' @aliases LabelFinder
+#' 
+#' @description \code{LabelFinder}: Find labeled features
+#' @param ... arguments passed to findLabels()
+#' 
+#' 
+#' @examples 
+#' MseekExamplePreload(data = T, tables = T)
+#' LabelFinderResults <- LabelFinder(object = tab2, #remove intensity columns to have them replaced with new ones from rawdata
+#'                                 object2 = tab2,
+#'                                 newName = "Test",
+#'                                 MSData = MSD$data,
+#'                                 ref_intensityCols = tab2$intensities[1:3],
+#'                                 comp_intensityCols = tab2$intensities[4:7],
+#'                                 labelmz = 2*1.00335,
+#'                                 ifoldS1 = 10,
+#'                                 ifoldS2 = 10000)
+#'
+#' @export
+setMethod("LabelFinder", signature(object = "MseekFamily"),
+          function(object, object2, MSData, newName, ...){
+              beforeHash <- MseekHash(object)
+              p1 <- proc.time()
+              err <- list()
+              tryCatch({
+                  
+             
+                  object$df <- object$df[,colnames(object$df) %in% c("rt", "mz", "rtmin","rtmax", "comments")]
+                  object2$df <- object2$df[,colnames(object2$df) %in% c("rt", "mz", "rtmin","rtmax", "comments")]
+                  
+                  
+                  object <- buildMseekFT(findLabels(reflist = object$df,
+                                                    complist = object2$df,
+                                                    rawdata = MSData,
+                                                    ...),
+                                         processHistory = object$.processHistory,
+                                         tablename = newName)
+                  
+                  
+              },
+              error = function(e){
+                  #this assigns to object err in function environment,
+                  #but err has to exist in the environment, otherwise
+                  #will move through scopes up to global environment..
+                  err$LabelFinder <<- paste(e)
+              },
+              finally = {
+                  p1 <- (proc.time() - p1)["elapsed"]
+                  afterHash <- MseekHash(object)
+                  object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
+                                                                       inputHash = beforeHash,
+                                                                       outputHash = afterHash,
+                                                                       error = err,
+                                                                       processingTime = p1,
+                                                                       sessionInfo = NULL,
+                                                                       info = "Tried to find labels",
+                                                                       param = FunParam(fun = "Metaboseek::LabelFinder",
+                                                                                        args = c(list(...),
+                                                                                                 list(
+                                                                                                     newName = newName
+                                                                                                 )),
+                                                                                        longArgs = list(object2 = MseekHash(object2),
+                                                                                                        MSData = summary(MSData)))
+                                                                       
+                  ))
+              })
+              return(object)
+          })

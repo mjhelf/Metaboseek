@@ -1,6 +1,6 @@
 Package: Metaboseek
 Title: Metaboseek platform
-Version: 0.9.6.5
+Version: 0.9.6.6
 Authors@R: person("Maximilian", "Helf", email = "maximilian.helf@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1393-3999"))
 biocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
@@ -74,6 +74,7 @@ Collate:
     'methods_MseekFamily.R'
     'methods_MseekGraph.R'
     'Functions_FeatureTable_analysis.R'
+    'Functions_Labelfinder.R'
     'Functions_SIRIUS.R'
     'Functions_calcMZ.R'
     'Functions_class_MSdata.R'
@@ -101,6 +102,7 @@ Collate:
     'Module_GetIntensitiesModule.R'
     'Module_GlobalOptionsModule.R'
     'Module_GroupedEICModule.R'
+    'Module_LabelFinderModule.R'
     'Module_LoadDataModule.R'
     'Module_LoadMSDataModule.R'
     'Module_LoadNetworkModule.R'

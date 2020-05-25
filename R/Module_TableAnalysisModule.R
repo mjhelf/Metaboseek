@@ -231,7 +231,9 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
       column(2,
              FindMS2ScansModuleUI(ns("findms2"))),
       column(2,
-             FindPatternsModuleUI(ns("findpatterns")))
+             FindPatternsModuleUI(ns("findpatterns"))),
+      column(2,
+             LabelFinderModuleUI(ns("labelfinder")))
       ),
     fluidRow(
       hr(),
@@ -284,6 +286,8 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   callModule(MZcalcModule, "mzcalc", values)
   
   callModule(FindPatternsModule, "findpatterns", values)
+  
+  callModule(LabelFinderModule, "labelfinder", values)
   
   
   return(internalValues)
