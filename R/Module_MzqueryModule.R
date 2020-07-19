@@ -91,11 +91,11 @@ output$mzUI <- renderUI({
              ),
     fluidRow(
       column(3,
-             selectizeInput(ns("source"), label = "source", choices = c(internalValues$sources, "custom") )),
+             selectizeInput(ns("source"), label = "source", choices = c(internalValues$sources, "custom"), selected = values$GlobalOpts$mzquery.source)),
       column(3,
-             numericInput(ns("mzquery"), label = "custom m/z:", value = 0)),
+             numericInput(ns("mzquery"), label = "custom m/z:", value = values$GlobalOpts$mzquery.customMZ)),
       column(3,
-             checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = FALSE),
+             checkboxInput(ns("autoCalc"), label = "Calculate automatically", value = values$GlobalOpts$mzquery.autoCalc),
              htmlOutput(ns("mzInfo"))),
       column(2,
              actionButton(ns("mzButton"), "calculate")),
@@ -121,7 +121,10 @@ observeEvent(c(input$selelements, input$mzppm, input$mzcharge,
                ),{
   
                    
-  if(length(input$selelements) >0 && (is.null(values$GlobalOpts$mzquery.elements) || input$selelements != values$GlobalOpts$mzquery.elements)){
+  if(length(input$selelements) >0 && (is.null(values$GlobalOpts$mzquery.elements) 
+                                      || !all(input$selelements %in% values$GlobalOpts$mzquery.elements)
+                                      || !all(values$GlobalOpts$mzquery.elements %in% input$selelements)
+                                      )){
   values$GlobalOpts$mzquery.elements <- input$selelements
   
                    }
@@ -144,14 +147,20 @@ observeEvent(c(input$selelements, input$mzppm, input$mzcharge,
   
   values$GlobalOpts$mzquery.moreratios <- input$moreratios
   values$GlobalOpts$mzquery.elementheuristic <- input$elementheuristic
+
+  values$GlobalOpts$mzquery.source <- input$source
+  values$GlobalOpts$mzquery.customMZ <- input$mzquery
+  values$GlobalOpts$mzquery.autoCalc <- input$autoCalc
   
+  
+    
 })
 
 observeEvent(values$GlobalOpts$mzquery.elements,{
-             if(length(values$GlobalOpts$mzquery.elements) >0 
-                && (is.null(values$GlobalOpts$mzquery.elements))){
-    values$GlobalOpts$mzquery.InitializedElements <- initializeElements(input$selelements)
-             }
+            # if(length(values$GlobalOpts$mzquery.elements) >0 
+             #   && (is.null(values$GlobalOpts$mzquery.elements))){
+    values$GlobalOpts$mzquery.InitializedElements <- initializeElements(values$GlobalOpts$mzquery.elements)
+             #}
 })
 
 
