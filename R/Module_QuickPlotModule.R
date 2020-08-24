@@ -53,7 +53,7 @@ QuickPlotsModule <- function(input, output, session, values){
   })
   
   
-  output$fplot <- renderPlot({if(!is.null(FTselection(values)) 
+  fplot <- reactive({if(!is.null(FTselection(values)) 
                                  && is.data.frame(FTselection(values)) 
                                  && nrow(FTselection(values)) > 0){
     p <- groupedplot(data = mx2(), 
@@ -80,8 +80,15 @@ QuickPlotsModule <- function(input, output, session, values){
     if(input$log10){ p <- p + ggplot2::scale_y_continuous(na.value = 0, trans = "log10")}
     p
     
-  }
+  }else{NULL}
   })
+  
+  
+  callModule(PlotModule, "fplot",
+             reactives = reactive({reactiveValues(plot = fplot(),
+                                                  interactive = FALSE)
+             }))
+  
   output$info <- renderPrint({if(!is.null(mx2())
                                  &&!is.null(mx2()$values)){
     summary(as.vector(mx2()$values))}   
@@ -118,8 +125,8 @@ QuickPlotsModuleUI <- function(id){
              column(3,
                     verbatimTextOutput(ns('info')))),
            fluidRow(
-             
-             plotOutput(ns('fplot'), height = "550px"))),
+             PlotModuleUI(ns('fplot')))),
+            # plotOutput(ns('fplot'), height = "550px"))),
     column(6,
            h4("Freestyle data plotting"),
            p("uses entire feature table"),

@@ -9,7 +9,7 @@ PlotModule(
   input,
   output,
   session,
-  reactives = reactive({     list(reactiveValues(plot = p, interactive = F)) })
+  reactives = reactive({     list(plot = NULL, interactive = F) })
 )
 
 PlotModuleUI(id)
