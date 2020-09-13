@@ -1470,7 +1470,7 @@ setMethod("matchReference", c("data.frame","data.frame"),
 #' (will pick the one with best MS2 similarity)
 #' @param queryPrefix prefix for columns transferred from the matched query object
 #' @param returnMapping if true, returns a matrix defining the indices of matched features between object and query
-#' @param ... additional arguments passed to \code{\link[MassTools]{network1}()}
+#' @param ... additional arguments passed to internal methods (e. g. \code{\link[MassTools]{network1}()})
 #' 
 #' @description \code{matchReference}: Match molecular features between a 
 #' \code{MseekGraph} or \code{MseekFT} object and another \code{MseekFT} object
@@ -1649,8 +1649,8 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
 
 #' @aliases LabelFinder
 #' 
-#' @description \code{LabelFinder}: Find labeled features
-#' @param ... arguments passed to findLabels()
+#' @description \code{LabelFinder}: Find labeled features, see \code{\link{findLabels}()}
+#' @param newName name for the LabelFinder result object
 #' 
 #' 
 #' @examples 
@@ -1665,6 +1665,7 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
 #'                                 ifoldS1 = 10,
 #'                                 ifoldS2 = 10000)
 #'
+#' @rdname analyzeFT
 #' @export
 setMethod("LabelFinder", signature(object = "MseekFamily"),
           function(object, object2, MSData, newName, ...){
@@ -1714,4 +1715,106 @@ setMethod("LabelFinder", signature(object = "MseekFamily"),
                   ))
               })
               return(object)
+          })
+
+#' @aliases PatternFinder
+#' 
+#' @description \code{PatternFinder}: Find Pattern in Spectra
+#' @param peaks names list of mz values (like output from \code{parsePatterns()}) to look for in spectra
+#' @param losses names list of mz values (like output from \code{parsePatterns()}) to look for in spectra (as neutral losses)
+#' @param noise remove peaks below this relative intensity when merging spectra (relative to highest peak, not percent)
+#' 
+#' @examples 
+#' MseekExamplePreload(data = T, tables = T)
+#' tab1 <- FTMS2scans(tab1, MSD$data)
+#' LabelFinderResults <- PatternFinder(object = tab1, #needs to have an MS2
+#'                                 MSData = MSD$data,
+#'                                 peaks = list(testpeak = 85.02895),
+#'                                 losses = list(testloss = 18.010788))
+#' LabelFinderResults$df$matched_losses
+#' LabelFinderResults$df$matched_patterns
+#' 
+#' @rdname analyzeFT
+#' @export
+setMethod("PatternFinder", signature(object = "MseekFamily"),
+          function(object, MSData,
+                   peaks, losses,
+                   ppm = 5, mzdiff = 0.002,
+                   noise = 0.02){
+            beforeHash <- MseekHash(object)
+            p1 <- proc.time()
+            err <- list()
+            tryCatch({
+              
+              
+              if(!length(object$df$MS2scans)){
+                stop('Run the "Find MS2 scans" process (FTMS2scans method) before searching patterns in these scans!')
+                
+              }
+              
+              AllSpecLists <- lapply(makeScanlist2(object$df$MS2scans),
+                                     getAllScans, MSData,
+                                     removeNoise = NULL)#input$noise*0.01)
+              
+              
+
+              MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = ppm, mzdiff = 0, noiselevel = noise)
+              
+                if(length(peaks)){
+                matchedPatterns <- data.frame(matched_patterns = matchedToCharacter(findPatterns(MergedSpecs,
+                                                                                                 peaks,
+                                                                                                 ppm = ppm,
+                                                                                                 mzdiff = mzdiff)), 
+                                              stringsAsFactors = FALSE)
+                
+                object <- updateFeatureTable(object,matchedPatterns)
+              }
+              
+              if(length(losses)){
+                MergedSpecs[lengths(MergedSpecs) > 0] <- mapply(function(x,y){
+                  x[,1] <- y - x[,1]
+                  x <- x[rev(seq_len(nrow(x))),, drop = FALSE] #because input is increasing, this will make output increasing (maybe faster than order()?)
+                  return(x[x[,1] > 0,, drop = FALSE]) #remove negative mz values
+                }, 
+                x = MergedSpecs[lengths(MergedSpecs) > 0],
+                y = object$df$mz[lengths(MergedSpecs) > 0],
+                SIMPLIFY = FALSE)
+                matchedPatterns <- data.frame(matched_losses = matchedToCharacter(findPatterns(MergedSpecs,
+                                                                                               losses,
+                                                                                               ppm = ppm,
+                                                                                               mzdiff = mzdiff)), 
+                                              stringsAsFactors = FALSE)
+                object <- updateFeatureTable(object,matchedPatterns)
+              }
+              
+            },
+            error = function(e){
+              #this assigns to object err in function environment,
+              #but err has to exist in the environment, otherwise
+              #will move through scopes up to global environment..
+              err$PatternFinder <<- paste(e)
+            },
+            finally = {
+              p1 <- (proc.time() - p1)["elapsed"]
+              afterHash <- MseekHash(object)
+              object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
+                                                                   inputHash = beforeHash,
+                                                                   outputHash = afterHash,
+                                                                   error = err,
+                                                                   processingTime = p1,
+                                                                   sessionInfo = NULL,
+                                                                   info = "Found Patterns in MS2 data",
+                                                                   param = FunParam(fun = "Metaboseek::PatternFinder",
+                                                                                    args = c(#list(...),
+                                                                                             list(
+                                                                                               peaks = peaks,
+                                                                                               losses = losses,
+                                                                                               ppm = ppm,
+                                                                                               mzdiff = mzdiff
+                                                                                             )),
+                                                                                    longArgs = list(MSData = summary(MSData)))
+                                                                   
+              ))
+            })
+            return(object)
           })

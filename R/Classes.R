@@ -41,6 +41,9 @@ setGeneric("loadMseekGraph", function(object, ...) standardGeneric("loadMseekGra
 setGeneric("matchReference", function(object, query, ...) standardGeneric("matchReference"))
 setGeneric("MseekHash", function(object) standardGeneric("MseekHash"))
 
+
+setGeneric("PatternFinder", function(object, ...) standardGeneric("PatternFinder"))
+
 setGeneric("previousStep", function(object, ...) standardGeneric("previousStep"))
 setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
 setGeneric("rename", function(object, ...) standardGeneric("rename"))

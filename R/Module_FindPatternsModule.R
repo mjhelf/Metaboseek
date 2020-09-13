@@ -20,10 +20,12 @@ FindPatternsModule <- function(input,output, session, values,
     internalValues  <- reactiveValues(df = NULL,
                                       filename = NULL,
                                       patternTable = data.frame(active = FALSE,
+                                                                "as_loss" = TRUE,
+                                                                "as_peak" = TRUE,
                                                                 name = "Phosphate",
                                                                 pattern = "78.95905",
-                                                                stringsAsFactors = FALSE
-                                                                )
+                                                                stringsAsFactors = FALSE,
+                                                                check.names = FALSE )
                                       )
     
     patternTab <- callModule(simpleTableModule,'patterntab', 
@@ -67,8 +69,18 @@ FindPatternsModule <- function(input,output, session, values,
             #making sure no problems arise from empty columns(which would be loaded as logical)
             fixme$active <- as.logical(fixme$active)
             
+            if(!"as_peak" %in% colnames(fixme)){
+                fixme$`as_peak` <- TRUE
+            }
+            if(!"as_loss" %in% colnames(fixme)){
+                fixme$`as_loss` <- TRUE
+            }
+            fixme$`as_peak` <- as.logical(fixme$`as_peak`)
+            fixme$`as_loss` <- as.logical(fixme$`as_loss`)
+            
             fixme$name <- as.character(fixme$name)
             fixme$pattern <- as.character(fixme$pattern)
+            
             
             
             internalValues$patternTable <- fixme
@@ -97,7 +109,8 @@ FindPatternsModule <- function(input,output, session, values,
                              list(fp = fluidPage(
                                  
                                  fluidRow(
-                                     p("Find patterns in MS2 spectra")
+                                     p('Find patterns in MS2 spectra. Up to two new columns will be added: "matched_patterns" and "matched_losses". Losses are calculated based on the parent masses as reported in the "mz" column.'),
+                                     p('This requires to first match MS2 scans to molecular features with the "Find MS2 scans" process!')
                                  ),
                                  fluidRow(
                                      
@@ -136,23 +149,27 @@ FindPatternsModule <- function(input,output, session, values,
     
     observeEvent(input$findpattern,{
         tryCatch({
-            withProgress(message = 'Please wait!', detail = "Finding Patterns", value = 0, {
-              
+            
                 updateFT(values)
 
-                incProgress(0.1, detail = "Extracting MS2 scans")
-                
-                AllSpecLists <- lapply(makeScanlist2(FeatureTable(values)$df$MS2scans),
-                                       getAllScans, values$MSData$data,
-                                       removeNoise = NULL)#input$noise*0.01)
-                
-                
-                incProgress(0.2, detail = "Merging MS2 scans for each feature in Feature Table")
-                
-                
-                MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = input$ppmdiff, mzdiff = 0, noiselevel = input$noise*0.01)
-                
-                incProgress(0.5, detail = "Finding Patterns")
+                # incProgress(0.1, detail = "Extracting MS2 scans")
+                # 
+                # if(!length(FeatureTable(values)$df$MS2scans)){
+                #     stop('Run the "Find MS2 scans" process before searching patterns in these scans!')
+                #     
+                # }
+                # 
+                # AllSpecLists <- lapply(makeScanlist2(FeatureTable(values)$df$MS2scans),
+                #                        getAllScans, values$MSData$data,
+                #                        removeNoise = NULL)#input$noise*0.01)
+                # 
+                # 
+                # incProgress(0.2, detail = "Merging MS2 scans for each feature in Feature Table")
+                # 
+                # 
+                # MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = input$ppmdiff, mzdiff = 0, noiselevel = input$noise*0.01)
+                # 
+                # incProgress(0.5, detail = "Finding Patterns")
                 
                 prevariable <- patternTab$liveView[(!is.na(patternTab$liveView$active)
                                                     & !is.na(patternTab$liveView$name)
@@ -161,19 +178,59 @@ FindPatternsModule <- function(input,output, session, values,
                 
                 values$GlobalOpts$patternTable <- prevariable[prevariable$active,]
                 
-                matchedPatterns <- data.frame(matched_patterns = matchedToCharacter(findPatterns(MergedSpecs,
-                                                parsePatterns(values$GlobalOpts$patternTable),
-                                         ppm = input$ppmdiff,
-                                         mzdiff = input$mzdiff)), 
-                                       stringsAsFactors = FALSE)
+                # if(any(na.omit(values$GlobalOpts$patternTable$`as_peak`))){
+                # matchedPatterns <- data.frame(matched_patterns = matchedToCharacter(findPatterns(MergedSpecs,
+                #                                                                                  parsePatterns(values$GlobalOpts$patternTable[!is.na(values$GlobalOpts$patternTable$`as_peak`)
+                #                                                                                                                               & values$GlobalOpts$patternTable$`as_peak`]),
+                #                                                                                  ppm = input$ppmdiff,
+                #                                                                                  mzdiff = input$mzdiff)), 
+                #                               stringsAsFactors = FALSE)
+                # 
+                # FeatureTable(values) <- updateFeatureTable(FeatureTable(values),matchedPatterns)
+                # }
+                # 
+                # if(any(na.omit(values$GlobalOpts$patternTable$`as_loss`))){
+                #     MergedSpecs[lengths(MergedSpecs) > 0] <- mapply(function(x,y){
+                #         x[,1] <- y - x[,1]
+                #         x <- x[rev(seq_len(nrow(x))),, drop = FALSE] #because input is increasing, this will make output increasing (maybe faster than order()?)
+                #         return(x[x[,1] > 0,, drop = FALSE]) #remove negative mz values
+                #     }, 
+                #     x = MergedSpecs[lengths(MergedSpecs) > 0],
+                #     y = FeatureTable(values)$df$mz[lengths(MergedSpecs) > 0],
+                #     SIMPLIFY = FALSE)
+                #     matchedPatterns <- data.frame(matched_losses = matchedToCharacter(findPatterns(MergedSpecs,
+                #                                                                                      parsePatterns(values$GlobalOpts$patternTable[!is.na(values$GlobalOpts$patternTable$`as_loss`) 
+                #                                                                                                                                   & values$GlobalOpts$patternTable$`as_loss`]),
+                #                                                                                      ppm = input$ppmdiff,
+                #                                                                                      mzdiff = input$mzdiff)), 
+                #                                   stringsAsFactors = FALSE)
+                #     FeatureTable(values) <- updateFeatureTable(FeatureTable(values),matchedPatterns)
+                # }
                 
-                FeatureTable(values) <- updateFeatureTable(FeatureTable(values),matchedPatterns)
                 
-                
+            # })
+            withProgress(message = 'Please wait!', detail = "Finding Patterns", value = 0.5, {
+                FeatureTable(values) <- PatternFinder(FeatureTable(values),
+                                                      values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],
+                                         peaks = parsePatterns(values$GlobalOpts$patternTable[!is.na(values$GlobalOpts$patternTable$`as_peak`)
+                                                                                              & values$GlobalOpts$patternTable$`as_peak`]),
+                                         losses = parsePatterns(values$GlobalOpts$patternTable[!is.na(values$GlobalOpts$patternTable$`as_loss`) 
+                                                                                               & values$GlobalOpts$patternTable$`as_loss`]),
+                                         ppm = input$ppmdiff, mzdiff = input$mzdiff,
+                                         noise = input$noise*0.01)
+                    
+                   
             })
-            
-            removeModal()
-            showNotification(paste("Pattern finding completed!"), duration = 0, type = "message")
+            if(hasError(previousStep(FeatureTable(values)))){
+                showNotification(paste("An error occured: ",
+                                       unlist(error(previousStep(FeatureTable(values))))),
+                                 duration = 0, type = "error")
+                
+            }else{
+                
+                showNotification(paste("Pattern finding completed!"), duration = 10)
+                removeModal()
+            }
             
         }
         ,

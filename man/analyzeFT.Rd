@@ -31,6 +31,10 @@
 \alias{FTedges,MseekFT-method}
 \alias{matchReference,MseekFT,MseekFT-method}
 \alias{matchReference,MseekGraph,MseekFT-method}
+\alias{LabelFinder,MseekFamily-method}
+\alias{LabelFinder}
+\alias{PatternFinder,MseekFamily-method}
+\alias{PatternFinder}
 \title{analyzeFT}
 \usage{
 \S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData, param)
@@ -135,6 +139,18 @@
   returnMapping = FALSE,
   ...
 )
+
+\S4method{LabelFinder}{MseekFamily}(object, object2, MSData, newName, ...)
+
+\S4method{PatternFinder}{MseekFamily}(
+  object,
+  MSData,
+  peaks,
+  losses,
+  ppm = 5,
+  mzdiff = 0.002,
+  noise = 0.02
+)
 }
 \arguments{
 \item{object}{an MseekFT or data.frame object.}
@@ -228,7 +244,15 @@ will not filter for MS2 similarity score if NULL.}
 
 \item{returnMapping}{if true, returns a matrix defining the indices of matched features between object and query}
 
-\item{...}{additional arguments passed to \code{\link[MassTools]{network1}()}}
+\item{...}{additional arguments passed to internal methods (e. g. \code{\link[MassTools]{network1}()})}
+
+\item{newName}{name for the LabelFinder result object}
+
+\item{peaks}{names list of mz values (like output from \code{parsePatterns()}) to look for in spectra}
+
+\item{losses}{names list of mz values (like output from \code{parsePatterns()}) to look for in spectra (as neutral losses)}
+
+\item{noise}{remove peaks below this relative intensity when merging spectra (relative to highest peak, not percent)}
 }
 \value{
 an object of the same class as \code{object}, with analyses performed 
@@ -291,4 +315,30 @@ MS2 spectra available inside the object and generating similarity scores.
 \code{MseekGraph} or \code{MseekFT} object and another \code{MseekFT} object
  by a customizable combination of retention time, m/z and MS2 similarity
   matching
+
+\code{LabelFinder}: Find labeled features, see \code{\link{findLabels}()}
+
+\code{PatternFinder}: Find Pattern in Spectra
+}
+\examples{
+MseekExamplePreload(data = T, tables = T)
+LabelFinderResults <- LabelFinder(object = tab2, #remove intensity columns to have them replaced with new ones from rawdata
+                                object2 = tab2,
+                                newName = "Test",
+                                MSData = MSD$data,
+                                ref_intensityCols = tab2$intensities[1:3],
+                                comp_intensityCols = tab2$intensities[4:7],
+                                labelmz = 2*1.00335,
+                                ifoldS1 = 10,
+                                ifoldS2 = 10000)
+
+MseekExamplePreload(data = T, tables = T)
+tab1 <- FTMS2scans(tab1, MSD$data)
+LabelFinderResults <- PatternFinder(object = tab1, #needs to have an MS2
+                                MSData = MSD$data,
+                                peaks = list(testpeak = 85.02895),
+                                losses = list(testloss = 18.010788))
+LabelFinderResults$df$matched_losses
+LabelFinderResults$df$matched_patterns
+
 }
