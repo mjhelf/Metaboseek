@@ -179,6 +179,7 @@ activeFT <- function(x){
 updateFT <- function(values){
     
     if(!is.null(values$featureTables) 
+       && !is.null(values$featureTables$Maintable$hasUpdates)
        && values$featureTables$Maintable$hasUpdates
        && values$featureTables$Maintable$updatedFrom == activeFT(values)
     ){
