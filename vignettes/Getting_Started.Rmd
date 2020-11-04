@@ -702,7 +702,12 @@ in `.mskFT` format):
 
 
 
-* **Active Table:**
+* **Active Table:** Select which Feature Table to display in the Feature Table box.
+You can load multiple Feature tables and switch between them here (e.g. tables filtered 
+for different criteria)
+
+* **Rename:** Rename the currently active Feature Table (names of Feature Tables 
+in the current session are displayed in the 'Active Table' selection box)
 
 ### Feature Table Actions
 
@@ -815,6 +820,66 @@ browser Module to identify feature-specific spectra for MS2 networking.
 ![The "Find MS2 scans" dialog](img/Analysis_SearchMS2.png){width=70%}
 
 * **MS2 patterns:** Allows to search for combinations of MS2 fragment peaks in all loaded MS data files.
+
+* **Labelfinder:** Find stable isotope labeled compounds in datasets containing labeled and unlabeled samples.
+
+For the Labelfinder, follow these steps:
+
+1. Run two xcms analyses independently for the labeled and the unlabeled samples.
+
+2. Load the results from both analyses into the Metaboseek session (potentially 
+use the renaming functionality in the `Feature Table` box to keep track of which results come from
+the labeled and unlabeled samples).
+
+3. Make sure to also load all MS files into the session, for both labeled and unlabeled samples.
+
+4. Select the unlabeled `Feature Table` as active table in the `Feature Table` box
+
+5. Open the `Labelfinder` dialog and select the labeled sample feature table.
+
+6. Read the tooltips on the settings for explanations on the individual settings.
+You can deselect samples from both the labeled and unlabeled feature tables if necessary
+
+7. Press `Go` to start the `Labelfinder` analysis. This will generate a new `Feature Table`
+with likely labeled compounds using the the selected name (by default has "Labelfinder_"
+as a prefix). The *unlabeled* features will be reported in the resulting table.
+
+8. To browse the results, you can add the label m/z of interest to the `Options -> Mass shifts`.
+This will allow you to see overlays of EICs for the labeled and unlabeled compounds. Note that you
+may have to manually load additional raw files (e.g. those for the labeled samples) to display
+all relevant information.
+
+<details>
+    <summary>Click here for details on the Labelfinder algorithm</summary>
+    
+The `findLabels()` function compares two Feature Tables with each other, 
+assuming that one of them contains an enrichment of labeled compounds.
+
+In a first step, `featlistCompare()` is used to identify entries in the reference (unlabeled) Feature Table
+which have a corresponding, labeled feature in the comparison (labeled) Feature Table 
+(m/z in comparison Feature Table should be within tolerance of reference m/z + expected label and also within retention time tolerance).
+
+Each entry from the reference Feature Table (dubbed `I1S1`, for Isotopologue 1, Sample Group 1) can have multiple matches in each of these categories:
+1. m/z + label match in reference table (`I2S1`)
+2. m/z match in comparison table (`I1S2`)
+3. m/z + label in comparison table (`I2S2`)
+
+For each match, only the match closest in retention time to `I1S1` is kept for further processing.
+Intensities are re-extracted for all matched peaks (`I1S1`, `I2S1`, `I1S2`, `I2S2`), using 
+the m/z values identified for `I1S1` (for `I1S1` and `I1S2`) and `I2S2` (for `I1S2` and `I2S2`),
+and the rt values for `I1S1` (for `I1S1` and `I2S1`) and `I2S2` (for `I2S2` and `I2S2`).
+The extracted intensities are used to calculate mean intensity across the unlabeled (S1) and unlabeled (S2) samples for both isotopologs.
+
+Key filter criteria that are user-controlled are the minimum ratio of `I1S1/I2S1` 
+(because a high ratio is expected in the unlabeled sample `S1` where 
+the unlabeled compound `I1` is expected to be more abundant than the labeled compound) and the maximum ratio of `I1S2/I2S2` (where a low value
+is indicative of the label being enriched).
+The Features from the reference Feature Table which meet the filter criteria are
+then exported to a new Feature Table that contains intensity information for 
+`I1S1`, `I2S1`, `I1S2` and `I2S2`. The reported m/z and rt values are directly 
+carreid over from the original reference Feature Table.
+
+</details>
 
 * **Find peaks: ** For each m/z value in the feature table, an EIC for the full 
 retention time range is generated, and a simple peak detection algorithm is 

@@ -243,7 +243,7 @@ findLabels <- function(reflist,
     
     combinat <- mergecollectlist(collectlist)
     
-    # TODO Optionally, re-extract EICs here and put in new columns [with appropriate IXSX prefix]
+    # Optionally, re-extract EICs here and put in new columns [with appropriate IXSX prefix]
     
     if(length(rawdata)){
         
@@ -272,7 +272,7 @@ findLabels <- function(reflist,
             thisfile <- rawdata[[which(sapply(names(rawdata), function(x){grepl(basename(x), s)}))]]
             
             combinat[[paste0("I1S2.",s)]] <- Metaboseek::exIntensities(thisfile,
-                                                                       mz = combinat$I1S2.mz,
+                                                                       mz = combinat$mz, #used this before, but that would contain NAs: combinat$I1S2.mz,
                                                                        rtw= data.frame(combinat$I2S2.rtmin-rtw_extract,combinat$I2S2.rtmax+rtw_extract), #changed these to use I2S2 rts instead of I1S1.rt to guess I1S2 rt 
                                                                        ppm = ppm_extract,
                                                                        areaMode = TRUE)
