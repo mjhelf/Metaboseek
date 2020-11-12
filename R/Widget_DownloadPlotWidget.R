@@ -56,17 +56,22 @@ DownloadPlotWidget <- function(input,output, session,
                        reactives = reactive({  
                          list(fp = fluidPage(
                            fluidRow(
-                             column(4,
+                             column(3,
                                     textInput(ns("fname"), "File Name:",
                                               value = R.filename())
                                               ),
-                             column(4,
+                             column(3,
                                     selectizeInput(ns("fformat"), "Format", choices = c("pdf"))),
                              
                              
-                             column(4,
-                                    downloadButton(ns("downloadPlot"), "Download Image"))
+                             column(3,
+                                    downloadButton(ns("downloadPlot"), "Download Image")),
+                            
+                             column(3,
+                                    if(ggplot2::is.ggplot(R.plot())){downloadButton(ns("downloadData"), "Download Data")}
+                                    )
                              
+                              
                            ),
                            fluidRow(
                              column(4,
@@ -84,8 +89,8 @@ DownloadPlotWidget <- function(input,output, session,
                            )
                            
                          ) }),
-                       static = list(tooltip = "Show process History for this Feature Table",
-                                     title = "Process History", 
+                       static = list(tooltip = "Download plot as pdf file",
+                                     title = "Download Plot", 
                                      label = static$label,
                                      icon = static$icon))
   
@@ -125,6 +130,35 @@ DownloadPlotWidget <- function(input,output, session,
       
     },
     contentType = "application/pdf")
+  
+  output$downloadData <- downloadHandler(filename= function(){
+    paste0(input$fname,".tsv")
+  }, 
+  content = function(file){
+    tryCatch({
+      
+      showNotification(paste("Downloading plot data: ", 
+                             paste0(input$fname,".tsv")),
+                       #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
+                       duration = 10)
+      
+      
+     if(ggplot2::is.ggplot(R.plot())){
+       fwrite(R.plot()$data,file,sep ='\t')
+     }else{
+         writeLines("This did not work because this plot is not ggplot-based.", file)
+       }
+      
+    },
+    error = function(e){
+      showNotification(paste("ERROR:  Download failed. Error message: ",e), type = "error", duration = NULL)
+      
+    })
+    
+  },
+  contentType = "text/tab-separated-values")
+  
+  
   }
 
 #' @describeIn DownloadPlotWidget UI elements
