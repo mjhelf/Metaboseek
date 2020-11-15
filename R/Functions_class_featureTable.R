@@ -337,14 +337,22 @@ tableGrouping <- function(df=NULL, anagrouptable){
 #' @param fname file name
 #' @param format output format
 #' @param moreArgs named list of additional arguments to be 
-#' passed to \code{\link{asInclusionlist}}
+#' passed to \code{\link{asInclusionlist}} or \code{\link{asMetaboAnalyst}}
 #' 
 #' @importFrom data.table fwrite
 #' 
 #' @return Returns nothing, but writes a file to disk
 #' 
+#' @examples 
+#' \dontrun{
+#' MseekExamplePreload(data = FALSE, tables = TRUE)
+#' tableWriter(tab1$df, "test_MA.csv", format = "MetaboAnalyst", moreArgs = list(groups = tab1$anagrouptable))
+#' }
+#' 
 #' @export
-tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
+tableWriter <-function(df, fname, format = c("csv", "tsv",
+                                             "instrumentList",
+                                             "MetaboAnalyst"),
                        moreArgs = list()){
   
   if(!length(format) || is.na(format[1])){
@@ -388,6 +396,32 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
     
     return(fname)
   }
+    
+    if(format[1] %in% c("MetaboAnalyst")){
+    
+      
+      ma <- do.call(asMetaboAnalyst, c(list(df = df),
+                                       moreArgs))
+      
+      fwrite(ma$header,
+             fname,
+             sep =  ",",
+             quote = TRUE,
+             row.names = FALSE
+      )
+      
+      fwrite(ma$body,
+             fname,
+             append = TRUE, #this also means colnames/header will not be written again
+             sep =  ",",
+             quote = TRUE,
+             row.names = FALSE
+      )
+      
+      return(invisible(NULL))
+      
+      }
+    
   
   warning("Invalid file format selected. Could not export data to file")
   },
@@ -411,6 +445,8 @@ tableWriter <-function(df, fname, format = c("csv", "tsv", "instrumentList"),
 #' restrict retention time in inclusion/exclusion list
 #' 
 #' @return A data.frame that, when written to a file, has the expected format for a given instrument
+#' 
+#'
 #' 
 #' @export
 asInclusionlist <- function(parenttable,
@@ -464,4 +500,34 @@ asInclusionlist <- function(parenttable,
   }
   
   return(out) 
+}
+
+#' asMetaboAnalyst
+#' 
+#' Reformat a data.frame to MetaboAnalyst csv format
+#'
+#' @examples 
+#' \dontrun{
+#' MseekExamplePreload(data = FALSE, tables = TRUE)
+#' asMetaboAnalyst(tab1$df, groups = tab1$anagrouptable)
+#' }
+#'
+#' @param df data.frame with intensity values and rt and mz columns
+#' @param groups a data.frame with grouping information (Sample names in first column, groups in additional columns)
+#' 
+#' @return A list with header and body of the MetaboAnalyst formatted table
+#'
+asMetaboAnalyst <- function(df, groups){
+  
+  body <- data.frame(Sample = paste0(df$mz,"/",df$rt),
+             df[,groups[,1]],
+             stringsAsFactors = FALSE)
+  
+  header <- as.data.frame(t(groups), stringsAsFactors = FALSE)
+  colnames(header) <- groups[,1]
+  header <- cbind(data.frame(Sample = colnames(groups[-1])),
+        header[-1,])
+  
+  list(header = header,
+       body = body)
 }

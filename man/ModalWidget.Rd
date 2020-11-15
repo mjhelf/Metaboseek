@@ -24,8 +24,9 @@ ModalWidget(
   session,
   reactives = reactive({     fp = NULL }),
   static = list(tooltip = "Tooltip", title = "title", label = "label", icon =
-    icon("bar-chart", lib = "font-awesome")),
-  useActionLink = F
+    icon("bar-chart", lib = "font-awesome"), modalButtonLabel = "Cancel"),
+  useActionLink = F,
+  style = "color:#ffffff;padding:15px;border-left-width:0;border-right:1px solid #eee"
 )
 
 ModalWidgetUI(id)

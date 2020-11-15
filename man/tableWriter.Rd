@@ -7,7 +7,7 @@
 tableWriter(
   df,
   fname,
-  format = c("csv", "tsv", "instrumentList"),
+  format = c("csv", "tsv", "instrumentList", "MetaboAnalyst"),
   moreArgs = list()
 )
 }
@@ -19,11 +19,18 @@ tableWriter(
 \item{format}{output format}
 
 \item{moreArgs}{named list of additional arguments to be 
-passed to \code{\link{asInclusionlist}}}
+passed to \code{\link{asInclusionlist}} or \code{\link{asMetaboAnalyst}}}
 }
 \value{
 Returns nothing, but writes a file to disk
 }
 \description{
 Writes a feature table to a file in a given format.
+}
+\examples{
+\dontrun{
+MseekExamplePreload(data = FALSE, tables = TRUE)
+tableWriter(tab1$df, "test_MA.csv", format = "MetaboAnalyst", moreArgs = list(groups = tab1$anagrouptable))
+}
+
 }

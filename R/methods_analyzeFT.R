@@ -35,16 +35,22 @@ setMethod("analyzeFT",
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
 
-              if(param@normalize 
-                 || (param@useNormalized 
-                     && !identical(grep("__norm",colnames(object$df), value = T),
-                                   paste0(object$intensities,"__norm")))){ 
-                  
-                  object <- removeNAs(object)
+              
+              if(!is.null(param@replaceNAs)){
+                object <- removeNAs(object,
+                                    replacement = param@replaceNAs)
+              }
+              
+              # if(param@normalize 
+              #    || (param@useNormalized 
+              #        && !identical(grep("__norm",colnames(object$df), value = T),
+              #                      paste0(object$intensities,"__norm")))){ 
                   
                   object <- FTNormalize(object,
-                                        logNormalized = param@logNormalized)
-              }
+                                        normalize = param@normalize,
+                                        logNormalized = param@logNormalized,
+                                        zeroReplacement = param@zeroReplacement)
+             # }
               
               if(param@useNormalized){
                   param@intensities <- paste0(object$intensities,"__norm")
@@ -162,7 +168,7 @@ setMethod("removeNAs", "MseekFT",
                   
                   ints <- object$df[,intensityCols]
                   
-                  ints[is.na(ints)] <-0
+                  ints[is.na(ints)] <- replacement
                   
                   object$df <- updateDF(ints, object$df)
                   
@@ -204,7 +210,11 @@ setMethod("removeNAs", "MseekFT",
 #' @rdname analyzeFT
 #' @export
 setMethod("FTNormalize", "MseekFT",
-          function(object, intensityCols = NULL, logNormalized = FALSE){
+          function(object,
+                   normalize = TRUE,
+                   intensityCols = NULL,
+                   logNormalized = FALSE,
+                   zeroReplacement = NULL){
               beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
@@ -226,16 +236,19 @@ setMethod("FTNormalize", "MseekFT",
                   #normalize data and save it in matrix
                   mx <- as.matrix(object$df[,intensityCols])
                   mx <- featureTableNormalize(mx,
-                                              raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-                  # 
+                                              raiseZeros =  if(!is.numeric(zeroReplacement)){min(mx[which(!mx==0, arr.ind=T)])}else{zeroReplacement}
+                                              )
+                  if(normalize){ 
                   mx <- featureTableNormalize(mx, normalize = "colMeans")
                   if(!is.null(logNormalized) && logNormalized){
                       mx <- featureTableNormalize(mx, log =  "log10")
                   }
-                  
+                  }
                   #make copy of normalized intensities in active table df
                   mx <- as.data.frame(mx)
                   colnames(mx) <- paste0(colnames(mx),"__norm")
+                  
+                  
                   object <- updateFeatureTable(object,mx)
               },
               error = function(e){

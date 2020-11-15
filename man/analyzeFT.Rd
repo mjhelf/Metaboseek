@@ -41,7 +41,13 @@
 
 \S4method{removeNAs}{MseekFT}(object, intensityCols = NULL, replacement = 0)
 
-\S4method{FTNormalize}{MseekFT}(object, intensityCols = NULL, logNormalized = FALSE)
+\S4method{FTNormalize}{MseekFT}(
+  object,
+  normalize = TRUE,
+  intensityCols = NULL,
+  logNormalized = FALSE,
+  zeroReplacement = NULL
+)
 
 \S4method{FTBasicAnalysis}{MseekFT}(
   object,

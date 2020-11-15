@@ -31,6 +31,11 @@ TableAnalysisModule <- function(input,output, session, values,
                                    useNormalized = T,
                                    logNormalized = F,
                                    controlGroups = NULL,
+                                   
+                                   normalizationFactors = NULL,
+                                   zeroReplacement = NULL,
+                                   replaceNAs = 0,
+                                   
                                    analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test"),
                                                             "No grouping required" = c("PCA features", "PCA samples"),
                                                             "No intensities required" = list("mzMatch" = "mzMatch")),
@@ -43,6 +48,14 @@ TableAnalysisModule <- function(input,output, session, values,
                                    dbselected = system.file("db", "smid-db_pos.csv", package = "Metaboseek")
   )
   
+  tempValues <- reactiveValues(zeroReplacementIntermediate = "lowest intensity value") #keep this one separate because it is not an FTAnalysisParam slot
+  
+  # observeEvent(internalValues$zeroReplacement,{
+  #   print(internalValues$zeroReplacement)
+  # },
+  # ignoreNULL = FALSE,
+  # ignoreInit = FALSE)
+  # 
   observeEvent(values$featureTables,{
     internalValues$normalize <- is.null(values$featureTables)
     internalValues$useNormalized <- is.null(values$featureTables)
@@ -67,14 +80,60 @@ TableAnalysisModule <- function(input,output, session, values,
   
   output$normDataUseCheck <- renderUI({
     div(title= "Use normalized data for subsequent analysis. Requires normalized data in table and will generate it if not present.",
-        checkboxInput(ns('usenormdata'), 'Use normalized data', value = internalValues$useNormalized))
+        checkboxInput(ns('usenormdata'), 'Use normalized/imputed data', value = internalValues$useNormalized)
+        )
   })
-  
- 
-  
-  observeEvent(input$usenormdata,{
+   observeEvent(input$usenormdata,{
     internalValues$useNormalized <- input$usenormdata
+  }) 
+  
+  checkboxInput(ns("replaceNAs"), "Replace NA values with 0.",
+                value = TRUE)
+ 
+  output$replaceNAsCheck <- renderUI({
+    div(title= "Replaces NA values in the intensity columns by 0 (before normalization, affects the original intensity columns).",
+        checkboxInput(ns("replaceNAs"), "Replace NA values with 0.", value = !is.null(internalValues$replaceNAs))
+    )
   })
+  
+  observeEvent(input$replaceNAs,{
+    if(input$replaceNAs){
+      internalValues$replaceNAs <- 0
+    }else{
+      internalValues$replaceNAs <- NULL
+    }
+  })
+  
+  output$zeroReplacementCheck <- renderUI({
+    div(title= "Replaces 0 values in the 'normalized/imputed' intensity columns by a non-zero value (after NA replacement and before normalization, does not the original intensity columns.).",
+  selectizeInput(ns("zeroReplacement"), "Replace zero values with", 
+                 choices = c("lowest intensity value",
+                             "1",
+                             "100",
+                             "1000",
+                             "do not replace"),
+                 selected = tempValues$zeroReplacementIntermediate
+                 )
+    )
+  })
+  
+  #this seems necessary to avoid feedback loops...
+  observeEvent(input$zeroReplacement,{
+    tempValues$zeroReplacementIntermediate <- input$zeroReplacement
+  })
+  
+  observeEvent(tempValues$zeroReplacementIntermediate,{
+    
+    switch(tempValues$zeroReplacementIntermediate,
+           "lowest intensity value" = {internalValues$zeroReplacement <- NULL},
+           "100" = {internalValues$zeroReplacement <- 100},
+           "1000" = {internalValues$zeroReplacement <- 1000},
+           "do not replace" = {internalValues$zeroReplacement <- 0},
+           "1" = {internalValues$zeroReplacement <- 1}
+    )
+    
+  })
+
   
    output$logDataUseCheck <- renderUI({
     div(title= "Calculate logarithm with base 10 of normalized intensity values (will replace normalized intensity values)",
@@ -156,6 +215,11 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                                   normalize = internalValues$normalize,
                                                                   useNormalized = internalValues$useNormalized,
                                                                   logNormalized = internalValues$logNormalized,
+                                                                  
+                                                                  normalizationFactors = internalValues$normalizationFactors,
+                                                                  zeroReplacement = internalValues$zeroReplacement,
+                                                                  replaceNAs = internalValues$replaceNAs,
+                                                                  
                                                                   .files = if(length(values$MSData$layouts[[values$MSData$active]]$filelist)){
                                                                       values$MSData$layouts[[values$MSData$active]]$filelist
                                                                       }else{
@@ -219,6 +283,48 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     
   })
   
+  NormSettings <- callModule(ModalWidget, "normSettings",
+                       reactives = reactive({  
+                         list(fp = fluidPage(
+                           fluidRow(
+                             column(4,
+                                    htmlOutput(ns("replaceNAsCheck"))
+                             ),
+                             column(4,
+                                    htmlOutput(ns("zeroReplacementCheck"))
+                                    )),
+                           
+                             fluidRow(
+                               
+                               column(4,
+                                      htmlOutput(ns('normDataCheck'))
+                               ),
+                               column(4,
+                                      htmlOutput(ns('logDataUseCheck'))
+                               ),
+                               column(4,
+                                             selectizeInput(ns("normalizationMethod"), "Normalization Method", 
+                                                            choices = c("Equalize mean between columns"
+                                                            )))
+                               
+                               
+                               )
+                             
+                            
+                             )
+                         
+                         ) }),
+                       static = list(tooltip = "Settings for Imputation and Normalization",
+                                     title = "Settings for Imputation and Normalization", 
+                                     label = "Normalization/Imputation Settings...",
+                                     icon = NULL,
+                                     modalButtonLabel = "Close"),
+                       useActionLink = TRUE,
+                       style = "color:#C41230;padding:2px;")
+  
+ 
+  
+
   
   
   output$advancedana <- renderUI({ 
@@ -302,17 +408,17 @@ TableAnalysisModuleUI <- function(id){
     
     fluidRow(
       h4("Prepare data"),
-      column(3,
-             htmlOutput(ns('normDataCheck'))
+      column(4,
+             div(style="display:inline-block",
+                 htmlOutput(ns('normDataUseCheck')),
+                 ModalWidgetUI(ns('normSettings'))
+             )
       ),
-      column(3,
-             htmlOutput(ns('normDataUseCheck'))
-      ),
+      # column(3,
+      #        htmlOutput(ns('normDataUseCheck'))
+      # ),
       column(3,
              htmlOutput(ns('ctrlSelect'))
-      ),
-      column(3,
-             htmlOutput(ns('logDataUseCheck'))
       )
       ),
     fluidRow(

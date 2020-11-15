@@ -105,7 +105,8 @@ MainTableModule <- function(input, output, session,
                            format = c("csv"),
                            allowformats = list("Comma separated (.csv)" = "csv",
                                                "Metaboseek Feature Table (.mskFT)" = "mskFT",
-                                               "Inclusion/Exclusion list" = "instrumentList"))
+                                               "Inclusion/Exclusion list" = "instrumentList",
+                                               "MetaboAnalyst Peak Intensity Table" = "MetaboAnalyst"))
   )
   
   callModule(MseekHistoryWidget, "tablehistory", FT = reactive({FeatureTable(values)}))
