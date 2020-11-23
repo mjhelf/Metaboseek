@@ -11,6 +11,9 @@ asMetaboAnalyst(df, groups)
 
 \item{groups}{a data.frame with grouping information (Sample names in first column, groups in additional columns)}
 }
+\value{
+A list with header and body of the MetaboAnalyst formatted table
+}
 \description{
 Reformat a data.frame to MetaboAnalyst csv format
 }

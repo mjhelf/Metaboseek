@@ -152,25 +152,6 @@ FindPatternsModule <- function(input,output, session, values,
             
                 updateFT(values)
 
-                # incProgress(0.1, detail = "Extracting MS2 scans")
-                # 
-                # if(!length(FeatureTable(values)$df$MS2scans)){
-                #     stop('Run the "Find MS2 scans" process before searching patterns in these scans!')
-                #     
-                # }
-                # 
-                # AllSpecLists <- lapply(makeScanlist2(FeatureTable(values)$df$MS2scans),
-                #                        getAllScans, values$MSData$data,
-                #                        removeNoise = NULL)#input$noise*0.01)
-                # 
-                # 
-                # incProgress(0.2, detail = "Merging MS2 scans for each feature in Feature Table")
-                # 
-                # 
-                # MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = input$ppmdiff, mzdiff = 0, noiselevel = input$noise*0.01)
-                # 
-                # incProgress(0.5, detail = "Finding Patterns")
-                
                 prevariable <- patternTab$liveView[(!is.na(patternTab$liveView$active)
                                                     & !is.na(patternTab$liveView$name)
                                                     & !is.na(patternTab$liveView$pattern)),]
@@ -178,37 +159,8 @@ FindPatternsModule <- function(input,output, session, values,
                 
                 values$GlobalOpts$patternTable <- prevariable[prevariable$active,]
                 
-                # if(any(na.omit(values$GlobalOpts$patternTable$`as_peak`))){
-                # matchedPatterns <- data.frame(matched_patterns = matchedToCharacter(findPatterns(MergedSpecs,
-                #                                                                                  parsePatterns(values$GlobalOpts$patternTable[!is.na(values$GlobalOpts$patternTable$`as_peak`)
-                #                                                                                                                               & values$GlobalOpts$patternTable$`as_peak`]),
-                #                                                                                  ppm = input$ppmdiff,
-                #                                                                                  mzdiff = input$mzdiff)), 
-                #                               stringsAsFactors = FALSE)
-                # 
-                # FeatureTable(values) <- updateFeatureTable(FeatureTable(values),matchedPatterns)
-                # }
-                # 
-                # if(any(na.omit(values$GlobalOpts$patternTable$`as_loss`))){
-                #     MergedSpecs[lengths(MergedSpecs) > 0] <- mapply(function(x,y){
-                #         x[,1] <- y - x[,1]
-                #         x <- x[rev(seq_len(nrow(x))),, drop = FALSE] #because input is increasing, this will make output increasing (maybe faster than order()?)
-                #         return(x[x[,1] > 0,, drop = FALSE]) #remove negative mz values
-                #     }, 
-                #     x = MergedSpecs[lengths(MergedSpecs) > 0],
-                #     y = FeatureTable(values)$df$mz[lengths(MergedSpecs) > 0],
-                #     SIMPLIFY = FALSE)
-                #     matchedPatterns <- data.frame(matched_losses = matchedToCharacter(findPatterns(MergedSpecs,
-                #                                                                                      parsePatterns(values$GlobalOpts$patternTable[!is.na(values$GlobalOpts$patternTable$`as_loss`) 
-                #                                                                                                                                   & values$GlobalOpts$patternTable$`as_loss`]),
-                #                                                                                      ppm = input$ppmdiff,
-                #                                                                                      mzdiff = input$mzdiff)), 
-                #                                   stringsAsFactors = FALSE)
-                #     FeatureTable(values) <- updateFeatureTable(FeatureTable(values),matchedPatterns)
-                # }
+                if(!nrow(values$GlobalOpts$patternTable)){stop('Please select at least one pattern as "active"!')}
                 
-                
-            # })
             withProgress(message = 'Please wait!', detail = "Finding Patterns", value = 0.5, {
                 FeatureTable(values) <- PatternFinder(FeatureTable(values),
                                                       values$MSData$data[values$MSData$layouts[[values$MSData$active]]$filelist],

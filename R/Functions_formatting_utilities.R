@@ -288,7 +288,7 @@ Mseek.colors<- function (n, alpha){
 #' @export
 parsePatterns <- function(df){
     
-    spl <- strsplit(df$pattern, "[[:space:]]", perl = F)
+    spl <- strsplit(as.character(df$pattern), "[[:space:]]", perl = F)
     spl <- lapply(spl, function(x){
         na.omit(as.numeric(x))
         })
