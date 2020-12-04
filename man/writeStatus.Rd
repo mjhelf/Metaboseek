@@ -4,8 +4,11 @@
 \alias{writeStatus}
 \title{writeStatus}
 \usage{
-writeStatus(previous = NULL, message = list(Status =
-  "Starting analysis", Details = "loading files"), wd = getwd())
+writeStatus(
+  previous = NULL,
+  message = list(Status = "Starting analysis", Details = "loading files"),
+  wd = getwd()
+)
 }
 \arguments{
 \item{previous}{a \code{writeStatus} object to be updated (must have same 

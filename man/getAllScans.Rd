@@ -4,8 +4,12 @@
 \alias{getAllScans}
 \title{getAllScans}
 \usage{
-getAllScans(scanlist, MSData, removeNoise = NULL, type = c("ms2",
-  "ms1", "acquisition"))
+getAllScans(
+  scanlist,
+  MSData,
+  removeNoise = NULL,
+  type = c("ms2", "ms1", "acquisition")
+)
 }
 \arguments{
 \item{scanlist}{as returned by makeScanlist2()}

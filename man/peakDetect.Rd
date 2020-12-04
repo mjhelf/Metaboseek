@@ -4,8 +4,15 @@
 \alias{peakDetect}
 \title{peakDetect}
 \usage{
-peakDetect(trace, SN = 1, minwidth = 4, localNoise = 7,
-  localNoiseFactor = 0.5, globalNoiseFactor = 0.5, extend = T)
+peakDetect(
+  trace,
+  SN = 1,
+  minwidth = 4,
+  localNoise = 7,
+  localNoiseFactor = 0.5,
+  globalNoiseFactor = 0.5,
+  extend = T
+)
 }
 \arguments{
 \item{trace}{numeric vector of intensity values. it is assumed that the 

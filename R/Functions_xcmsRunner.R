@@ -225,6 +225,11 @@ savetable <- function(xset,
                                       analyze = c(postProc$analysesSelected,postProc$analysesSelected2), 
                                       normalize = postProc$normalize,
                                       useNormalized = postProc$useNormalized,
+                                      
+                                      normalizationFactors = postProc$normalizationFactors,
+                                      zeroReplacement = postProc$zeroReplacement,
+                                      replaceNAs = postProc$replaceNAs,
+                                      
                                       logNormalized = postProc$logNormalized,
                                       ppm = if(!is.null(postProc$ppm)){postProc$ppm}else{5},
                                       controlGroup = postProc$controlGroups,

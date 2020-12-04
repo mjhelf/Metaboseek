@@ -4,10 +4,17 @@
 \alias{featureReport}
 \title{featureReport}
 \usage{
-featureReport(pdf_settings = list(file = "testReport.pdf", width = NULL,
-  height = NULL), layout_settings = 3, EICplots = NULL, MS1 = NULL,
-  MS2 = NULL, tree = NULL, fragments = NULL, cx = 1,
-  selectMS2 = NULL)
+featureReport(
+  pdf_settings = list(file = "testReport.pdf", width = NULL, height = NULL),
+  layout_settings = 3,
+  EICplots = NULL,
+  MS1 = NULL,
+  MS2 = NULL,
+  tree = NULL,
+  fragments = NULL,
+  cx = 1,
+  selectMS2 = NULL
+)
 }
 \arguments{
 \item{pdf_settings}{if NULL, plot to current device, otherwise takes list 

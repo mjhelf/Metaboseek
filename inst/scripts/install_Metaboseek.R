@@ -15,7 +15,7 @@ install.packages("shinyFiles")
 
 
 devtools::install_github("mjhelf/Metaboseek",
-                         dependencies = TRUE,
+                         dependencies = NA, #will not include suggests (rcdk et al)
                          ref = if(length(commandArgs(trailingOnly=TRUE)) > 0 ){
                            commandArgs(trailingOnly=TRUE)[1]
                          }else{

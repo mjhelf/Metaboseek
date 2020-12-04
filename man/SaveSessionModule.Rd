@@ -5,8 +5,14 @@
 \alias{SaveSessionModuleUI}
 \title{SaveSessionModule}
 \usage{
-SaveSessionModule(input, output, session, values, reactives = reactive({ 
-     list(filename = "savedSessions/session") }), useActionLink = F)
+SaveSessionModule(
+  input,
+  output,
+  session,
+  values,
+  reactives = reactive({     list(filename = "savedSessions/session") }),
+  useActionLink = F
+)
 
 SaveSessionModuleUI(id)
 }

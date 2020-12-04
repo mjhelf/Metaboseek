@@ -5,10 +5,13 @@
 \alias{MainPageContainerUI}
 \title{MainPageContainer}
 \usage{
-MainPageContainer(input, output, session,
-  values = reactiveValues(projectData = values$projectData, featureTables
-  = values$featureTables, MSData = values$MSData, GlobalOpts =
-  values$GlobalOpts))
+MainPageContainer(
+  input,
+  output,
+  session,
+  values = reactiveValues(projectData = values$projectData, featureTables =
+    values$featureTables, MSData = values$MSData, GlobalOpts = values$GlobalOpts)
+)
 
 MainPageContainerUI(id)
 }

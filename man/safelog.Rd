@@ -4,8 +4,7 @@
 \alias{safelog}
 \title{safelog}
 \usage{
-safelog(x, base = 10, replaceZeros = NULL,
-  replaceNonFinites = NA_real_)
+safelog(x, base = 10, replaceZeros = NULL, replaceNonFinites = NA_real_)
 }
 \arguments{
 \item{x}{numeric vector of positive values}

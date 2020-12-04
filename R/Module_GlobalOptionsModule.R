@@ -29,8 +29,6 @@ GlobalOptionsModule <- function(input,output, session, values){
    
    output$perPage <- renderUI({
      
-     
-     
      div(id = ns("perPageDiv"), 
          title = "How many features should be shown per page?",
          numericInput(ns('perPage'), 
@@ -48,14 +46,6 @@ GlobalOptionsModule <- function(input,output, session, values){
    
    MSFolder$dir <- .MseekOptions$msdatabaseFolder
      
-   
-   SiriusFolder <- callModule(FilePathModule, "siriusFolder",
-                              filepaths = reactive({values$GlobalOpts$filePaths}),
-                              label = "Sirius Folder", description= "Select folder that contains the sirius executable (sirius-console-64.exe or sirius in linux/macOS)",
-                              displayFolder = T)
-   
-   SiriusFolder$dir <- .MseekOptions$siriusFolder
-   
     observeEvent(input$EnabledCores,{
      values$GlobalOpts$enabledCores <- input$EnabledCores
      MseekOptions(enabledCores = input$EnabledCores)
@@ -75,12 +65,7 @@ if(length(SiriusFolder$dir) > 0
      }
    }, ignoreInit =T)
    
-   observeEvent(SiriusFolder$dir,{
-     if(length(SiriusFolder$dir) > 0 && !is.na(SiriusFolder$dir)){
-     values$GlobalOpts$siriusFolder <- SiriusFolder$dir
-     MseekOptions(siriusFolder=SiriusFolder$dir)
-     }
-   }, ignoreInit =T)
+ 
    
 
 }
@@ -102,9 +87,7 @@ GlobalOptionsModuleUI <- function(id){
       column(6,
            FilePathModuleUI(ns("msFolder"))
 
-    ),
-    column(6,
-           FilePathModuleUI(ns("siriusFolder")))
+    )
   )
   )
   

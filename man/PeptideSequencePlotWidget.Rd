@@ -5,9 +5,13 @@
 \alias{PeptideSequencePlotWidgetUI}
 \title{PeptideSequencePlotWidget}
 \usage{
-PeptideSequencePlotWidget(input, output, session, reactives = reactive({ 
-     list() }), layout = reactive({     list(active = T, height = 550)
-  }))
+PeptideSequencePlotWidget(
+  input,
+  output,
+  session,
+  reactives = reactive({     list() }),
+  layout = reactive({     list(active = T, height = 550) })
+)
 
 PeptideSequencePlotWidgetUI(id)
 }

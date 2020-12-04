@@ -5,8 +5,14 @@
 \alias{updaterModuleUI}
 \title{updaterModule}
 \usage{
-updaterModule(input, output, session, tag, set = list(package =
-  "Metaboseek", refs = c("master", "devel", "devel_raw"), active = T))
+updaterModule(
+  input,
+  output,
+  session,
+  tag,
+  set = list(package = "Metaboseek", refs = c("master", "devel", "devel_raw"), active =
+    T)
+)
 
 updaterModuleUI(id)
 }

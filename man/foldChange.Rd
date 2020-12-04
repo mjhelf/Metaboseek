@@ -4,8 +4,16 @@
 \alias{foldChange}
 \title{foldChange}
 \usage{
-foldChange(mx, groups, ctrl = NULL, calc = "mean", topgroup = T,
-  maxFold = T, foldMaxK = 2, foldmode = "simple")
+foldChange(
+  mx,
+  groups,
+  ctrl = NULL,
+  calc = "mean",
+  topgroup = T,
+  maxFold = T,
+  foldMaxK = 2,
+  foldmode = "simple"
+)
 }
 \arguments{
 \item{mx}{a matrix of positive numeric (intensity) values}

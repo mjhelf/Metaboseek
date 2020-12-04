@@ -5,10 +5,13 @@
 \alias{ShowSiriusModuleUI}
 \title{ShowSiriusModule}
 \usage{
-ShowSiriusModule(input, output, session,
+ShowSiriusModule(
+  input,
+  output,
+  session,
   values = reactiveValues(SiriusModule = NULL, GlobalOpts = NULL),
-  reactives = reactive({     list(splash = NULL, ms1splash = NULL, mz =
-  NULL) }))
+  reactives = reactive({     list(splash = NULL, ms1splash = NULL, mz = NULL) })
+)
 
 ShowSiriusModuleUI(id)
 }

@@ -4,8 +4,13 @@
 \alias{rawEICm}
 \title{rawEICm}
 \usage{
-rawEICm(object, mzrange = numeric(), rtrange = numeric(),
-  scanrange = numeric(), viewermode = T)
+rawEICm(
+  object,
+  mzrange = numeric(),
+  rtrange = numeric(),
+  scanrange = numeric(),
+  viewermode = T
+)
 }
 \arguments{
 \item{object}{xcmsRaw object}

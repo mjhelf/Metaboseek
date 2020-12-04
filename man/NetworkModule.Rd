@@ -5,10 +5,15 @@
 \alias{NetworkModuleUI}
 \title{NetworkModule}
 \usage{
-NetworkModule(input, output, session, values = reactiveValues(Networks =
-  NULL, MSData = NULL), reactives = reactive({     list(active = T,
-  highlights = integer(0)) }), static = list(noSelection = T),
-  keys = reactive({     "NO" }))
+NetworkModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(Networks = NULL, MSData = NULL),
+  reactives = reactive({     list(active = T, highlights = integer(0)) }),
+  static = list(noSelection = T),
+  keys = reactive({     "NO" })
+)
 
 NetworkModuleUI(id)
 }

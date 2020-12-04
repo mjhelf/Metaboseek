@@ -4,10 +4,16 @@
 \alias{savetable}
 \title{savetable}
 \usage{
-savetable(xset, importResultsFrom = NULL, filename = "tableoutxx",
-  bparams = SerialParam(), intensities = list(ppm = 5, rtw = 5, rtrange
-  = TRUE, areaMode = FALSE), rawdata = NULL, saveR = T,
-  postProc = NULL)
+savetable(
+  xset,
+  importResultsFrom = NULL,
+  filename = "tableoutxx",
+  bparams = SerialParam(),
+  intensities = list(ppm = 5, rtw = 5, rtrange = TRUE, areaMode = FALSE),
+  rawdata = NULL,
+  saveR = T,
+  postProc = NULL
+)
 }
 \arguments{
 \item{xset}{an xcms::XCMSnExp, xcms::xcmsSet or xcms::xsAnnotate object from 

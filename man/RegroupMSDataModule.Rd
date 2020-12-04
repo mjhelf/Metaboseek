@@ -5,8 +5,12 @@
 \alias{RegroupMSDataModuleUI}
 \title{RegroupMSDataModule}
 \usage{
-RegroupMSDataModule(input, output, session,
-  values = reactiveValues(MSData = NULL, projectData = NULL))
+RegroupMSDataModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(MSData = NULL, projectData = NULL)
+)
 
 RegroupMSDataModuleUI(id)
 }

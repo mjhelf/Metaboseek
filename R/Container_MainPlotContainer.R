@@ -28,22 +28,21 @@ MainPlotContainer <- function(input,output, session,
                             keys = reactive({values$GlobalOpts$keyinput.keydown})
   )
   
+  
+  #### Ratio Plot #####
+  callModule(RatioPlotModule, "ratioplots", values)
+  
+  #### Quickplots #####
+  callModule(QuickPlotsModule, "quickplots", values)
+  
+  
   #### MS2Browsewr #####
-  
-  
-  
-  
-  
   MS2Browser <- callModule(MS2BrowserModule, 'MS2B', 
                            values = reactiveValues(featureTables = values$featureTables,
                                                    MSData = values$MSData,
                                                    GlobalOpts = values$GlobalOpts,
                                                    projectData = values$projectData),
                            keys = reactive({values$GlobalOpts$keyinput.keydown}))
-  
-  #### Quickplots #####
-  callModule(QuickPlotsModule, "quickplots", values)
-  
   #### interactiveView #####
   MultiEICout <- callModule(MultiEICmodule,"MultiE", values)
   
@@ -115,14 +114,17 @@ MainPlotContainerUI <- function(id){
          tabPanel("Grouped EICs",
                   GroupedEICModuleUI(ns("groupedeics"))
          ),
+         tabPanel("Ratio Plot",
+                  RatioPlotModuleUI(ns("ratioplots"))
+         ),
+         tabPanel("Quickplots",
+                  QuickPlotsModuleUI(ns("quickplots"))
+         ),
          tabPanel("MS Browser",
                   fluidPage(
                     MultiEICmoduleUI(ns("MultiE")),
                     MultiSpecmoduleUI(ns("Spec2"))
                   )
-         ),
-         tabPanel("Quickplots",
-                  QuickPlotsModuleUI(ns("quickplots"))
          ),
          tabPanel("Venn Diagrams",
                   VennDiagramModuleUI(ns("venndiagrams"))

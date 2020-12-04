@@ -5,11 +5,17 @@
 \alias{SpecmoduleUI}
 \title{Specmodule}
 \usage{
-Specmodule(input, output, session, tag, set = list(spec = list(xrange =
-  NULL, yrange = NULL, maxxrange = NULL, maxyrange = NULL, sel = NULL, mz =
-  NULL, data = NULL, MS2 = T), layout = list(lw = 1, cex = 1, controls = F,
-  ppm = 5, active = T, highlights = NULL, height = 550), msdata = NULL,
-  moreArgs = NULL), keys)
+Specmodule(
+  input,
+  output,
+  session,
+  tag,
+  set = list(spec = list(xrange = NULL, yrange = NULL, maxxrange = NULL, maxyrange =
+    NULL, sel = NULL, mz = NULL, data = NULL, MS2 = T), layout = list(lw = 1, cex = 1,
+    controls = F, ppm = 5, active = T, highlights = NULL, height = 550), msdata = NULL,
+    moreArgs = NULL),
+  keys
+)
 
 SpecmoduleUI(id)
 }

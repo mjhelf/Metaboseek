@@ -14,13 +14,23 @@
 #' 
 #' @export 
 PlotModule <- function(input,output, session,
-                       reactives = reactive({list(reactiveValues(plot = p,
-                                                                 interactive = F))})
+                       reactives = reactive({list(plot = NULL,
+                                                                 interactive = F)})
 ){
   
   ns <- NS(session$ns(NULL))
   
   internalValues <- reactiveValues(interactive = F)
+  
+  
+ callModule(DownloadPlotWidget, "dlbutton",
+            R.filename = reactive({paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"), "_","plotoutput")}),
+            R.plot = reactive({reactives()$plot}),
+            static = list(tooltip = "Download this plot",
+                          title = "Download Options",
+                          label = "",
+                          icon = icon("download", lib = "font-awesome"))
+                      )
   
   # observeEvent(c(reactives()$interactive,
   #                reactives()$plot),{
@@ -58,7 +68,7 @@ PlotModule <- function(input,output, session,
     }
   })
   
- 
+  
   
 }
 
@@ -67,12 +77,20 @@ PlotModule <- function(input,output, session,
 PlotModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
-    
-    fluidRow(
-      plotOutput(ns('fplot'), height = "550px"),
-      plotlyOutput(ns('iplot'), height = "550px")
-      
+    div(class = "flex-container",
+        style = "display: flex; flex-direction: row",
+        div(class = "column",
+            DownloadPlotWidgetUI(ns("dlbutton"))),
+        div(style = "width:100%",
+            plotOutput(ns('fplot'), height = "550px"),
+            plotlyOutput(ns('iplot'), height = "550px")
     )
+    )
+  #  fluidRow(
+  #    plotOutput(ns('fplot'), height = "550px"),
+  #    plotlyOutput(ns('iplot'), height = "550px")
+      
+  #  )
   )
   
   

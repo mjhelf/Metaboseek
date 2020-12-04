@@ -4,8 +4,14 @@
 \alias{dashboardHeaderM}
 \title{dashboardHeaderM}
 \usage{
-dashboardHeaderM(..., title = NULL, titleWidth = NULL,
-  disable = FALSE, .list = NULL, left = NULL)
+dashboardHeaderM(
+  ...,
+  title = NULL,
+  titleWidth = NULL,
+  disable = FALSE,
+  .list = NULL,
+  left = NULL
+)
 }
 \arguments{
 \item{...}{additional UI elements for the header}

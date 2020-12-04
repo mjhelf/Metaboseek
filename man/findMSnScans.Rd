@@ -10,8 +10,7 @@ findMSnScans(data, ...)
 
 \method{findMSnScans}{reactivevalues}(data, ...)
 
-\method{findMSnScans}{OnDiskMSnExp}(data, mz, rt, ppm = 5, mzwid = 0,
-  rtwid = 30, MSlevel = 2)
+\method{findMSnScans}{OnDiskMSnExp}(data, mz, rt, ppm = 5, mzwid = 0, rtwid = 30, MSlevel = 2)
 }
 \arguments{
 \item{data}{an OnDiskMSnExp or MseekValues (reactivevalues) object}

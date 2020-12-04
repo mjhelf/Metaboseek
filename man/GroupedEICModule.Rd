@@ -5,9 +5,14 @@
 \alias{GroupedEICModuleUI}
 \title{GroupedEICModule}
 \usage{
-GroupedEICModule(input, output, session, values = reactiveValues(MSData =
-  NULL, featureTables = NULL, GlobalOpts = NULL, projectData = NULL),
-  keys = reactive({     "NO" }))
+GroupedEICModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(MSData = NULL, featureTables = NULL, GlobalOpts = NULL,
+    projectData = NULL),
+  keys = reactive({     "NO" })
+)
 
 GroupedEICModuleUI(id)
 }

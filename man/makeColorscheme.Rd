@@ -4,8 +4,12 @@
 \alias{makeColorscheme}
 \title{makeColorscheme}
 \usage{
-makeColorscheme(maingroup, colorgroup, colrange = "Mseek.colors",
-  transparency = 0.8)
+makeColorscheme(
+  maingroup,
+  colorgroup,
+  colrange = "Mseek.colors",
+  transparency = 0.8
+)
 }
 \arguments{
 \item{maingroup}{a named list defining the main plot grouping scheme

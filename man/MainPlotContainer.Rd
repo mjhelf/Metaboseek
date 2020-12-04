@@ -5,9 +5,13 @@
 \alias{MainPlotContainerUI}
 \title{MainPlotContainer}
 \usage{
-MainPlotContainer(input, output, session,
-  values = reactiveValues(projectData = NULL, featureTables = NULL,
-  MSData = NULL, GlobalOpts = NULL))
+MainPlotContainer(
+  input,
+  output,
+  session,
+  values = reactiveValues(projectData = NULL, featureTables = NULL, MSData = NULL,
+    GlobalOpts = NULL)
+)
 
 MainPlotContainerUI(id)
 }

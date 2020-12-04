@@ -94,7 +94,20 @@ MseekOptions <- function(..., defaults = F){
                            mzquery.valencefilter = TRUE,
                            mzquery.hcratio = TRUE,
                            mzquery.moreratios = TRUE,
-                           mzquery.elementheuristic = TRUE
+                           mzquery.elementheuristic = TRUE,
+                           mzquery.source = NULL,
+                           mzquery.customMZ = 0,
+                           mzquery.autoCalc = FALSE,
+                           
+                           graph.layouts.available = c("qgraph.layout.fruchtermanreingold",
+                                                       "layout_nicely",
+                                                       "layout_with_kk",
+                                                       "layout_with_fr",
+                                                       "layout_with_dh",
+                                                       "layout_with_drl",
+                                                       "layout_components"),
+                           graph.layouts.selected = "qgraph.layout.fruchtermanreingold"
+                           
                            )
     
   }

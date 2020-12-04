@@ -5,8 +5,13 @@
 \alias{simpleTableModuleUI}
 \title{simpleTableModule}
 \usage{
-simpleTableModule(input, output, session, df = reactive({     NULL }),
-  static = list(readOnly = T, contextMenu = F, height = "auto"))
+simpleTableModule(
+  input,
+  output,
+  session,
+  df = reactive({     NULL }),
+  static = list(readOnly = T, contextMenu = F, height = "auto")
+)
 
 simpleTableModuleUI(id)
 }

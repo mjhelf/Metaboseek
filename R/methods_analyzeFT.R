@@ -1,5 +1,5 @@
 ## Methods to analyze MseekFT objects
-#' @include Functions_FeatureTable_analysis.R
+#' @include Functions_FeatureTable_analysis.R Functions_Labelfinder.R
 
 
 #' @title analyzeFT
@@ -35,16 +35,22 @@ setMethod("analyzeFT",
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
 
-              if(param@normalize 
-                 || (param@useNormalized 
-                     && !identical(grep("__norm",colnames(object$df), value = T),
-                                   paste0(object$intensities,"__norm")))){ 
-                  
-                  object <- removeNAs(object)
+              
+              if(!is.null(param@replaceNAs)){
+                object <- removeNAs(object,
+                                    replacement = param@replaceNAs)
+              }
+              
+              # if(param@normalize 
+              #    || (param@useNormalized 
+              #        && !identical(grep("__norm",colnames(object$df), value = T),
+              #                      paste0(object$intensities,"__norm")))){ 
                   
                   object <- FTNormalize(object,
-                                        logNormalized = param@logNormalized)
-              }
+                                        normalize = param@normalize,
+                                        logNormalized = param@logNormalized,
+                                        zeroReplacement = param@zeroReplacement)
+             # }
               
               if(param@useNormalized){
                   param@intensities <- paste0(object$intensities,"__norm")
@@ -162,7 +168,7 @@ setMethod("removeNAs", "MseekFT",
                   
                   ints <- object$df[,intensityCols]
                   
-                  ints[is.na(ints)] <-0
+                  ints[is.na(ints)] <- replacement
                   
                   object$df <- updateDF(ints, object$df)
                   
@@ -204,7 +210,11 @@ setMethod("removeNAs", "MseekFT",
 #' @rdname analyzeFT
 #' @export
 setMethod("FTNormalize", "MseekFT",
-          function(object, intensityCols = NULL, logNormalized = FALSE){
+          function(object,
+                   normalize = TRUE,
+                   intensityCols = NULL,
+                   logNormalized = FALSE,
+                   zeroReplacement = NULL){
               beforeHash <- MseekHash(object)
               p1 <- proc.time()
               
@@ -226,16 +236,19 @@ setMethod("FTNormalize", "MseekFT",
                   #normalize data and save it in matrix
                   mx <- as.matrix(object$df[,intensityCols])
                   mx <- featureTableNormalize(mx,
-                                              raiseZeros =  min(mx[which(!mx==0, arr.ind=T)]))
-                  # 
+                                              raiseZeros =  if(!is.numeric(zeroReplacement)){min(mx[which(!mx==0, arr.ind=T)])}else{zeroReplacement}
+                                              )
+                  if(normalize){ 
                   mx <- featureTableNormalize(mx, normalize = "colMeans")
                   if(!is.null(logNormalized) && logNormalized){
                       mx <- featureTableNormalize(mx, log =  "log10")
                   }
-                  
+                  }
                   #make copy of normalized intensities in active table df
                   mx <- as.data.frame(mx)
                   colnames(mx) <- paste0(colnames(mx),"__norm")
+                  
+                  
                   object <- updateFeatureTable(object,mx)
               },
               error = function(e){
@@ -918,7 +931,7 @@ setMethod("FTAnova", c("MseekFT"),
                                                                error = err,
                                                                sessionInfo = NULL,
                                                                processingTime = p1,
-                                                               info = "Calculated t-test.",
+                                                               info = "Calculated ANOVA.",
                                                                param = FunParam(fun = "Metaboseek::FTAnova",
                                                                                 args = list(grouping = grouping,
                                                                                             intensityCols = intensityCols),
@@ -932,7 +945,7 @@ setMethod("FTAnova", c("MseekFT"),
 
 #' @aliases FTCluster
 #' 
-#' @description \code{FTCluster}: calculate two-way ANOVA between multiple sample groups.
+#' @description \code{FTCluster}: cluster the feature table with cluster::clara()
 #'  See also \code{\link{MosCluster}()}
 #' @param numClusters number of clusters to group the features in. Will 
 #' automatically be set to be at most number of features - 1.
@@ -1470,7 +1483,7 @@ setMethod("matchReference", c("data.frame","data.frame"),
 #' (will pick the one with best MS2 similarity)
 #' @param queryPrefix prefix for columns transferred from the matched query object
 #' @param returnMapping if true, returns a matrix defining the indices of matched features between object and query
-#' @param ... additional arguments passed to \code{\link[MassTools]{network1}()}
+#' @param ... additional arguments passed to internal methods (e. g. \code{\link[MassTools]{network1}()})
 #' 
 #' @description \code{matchReference}: Match molecular features between a 
 #' \code{MseekGraph} or \code{MseekFT} object and another \code{MseekFT} object
@@ -1647,150 +1660,174 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
               
           })
 
-#' @rdname analyzeFT
-#' @description \code{simplify}: simplify an MseekGraph object, reducting the number of edges 
-#' using additional filters.
+#' @aliases LabelFinder
 #' 
-#' @param maxK if length > 0, will only alllow at most this many edges from each node
-#' @param rankBy if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges
-#' @param cosineThreshold if length > 0, will remove all edges with a cosine value below this
+#' @description \code{LabelFinder}: Find labeled features, see \code{\link{findLabels}()}
+#' @param newName name for the LabelFinder result object
+#' 
+#' 
+#' @examples 
+#' MseekExamplePreload(data = T, tables = T)
+#' LabelFinderResults <- LabelFinder(object = tab2, #remove intensity columns to have them replaced with new ones from rawdata
+#'                                 object2 = tab2,
+#'                                 newName = "Test",
+#'                                 MSData = MSD$data,
+#'                                 ref_intensityCols = tab2$intensities[1:3],
+#'                                 comp_intensityCols = tab2$intensities[4:7],
+#'                                 labelmz = 2*1.00335,
+#'                                 ifoldS1 = 10,
+#'                                 ifoldS2 = 10000)
+#'
+#' @rdname analyzeFT
 #' @export
-setMethod("simplify", c("MseekGraph"),
-          function(object, rankBy = NULL,
-                   maxK = 10, cosineThreshold = NULL) {
+setMethod("LabelFinder", signature(object = "MseekFamily"),
+          function(object, object2, MSData, newName, ...){
               beforeHash <- MseekHash(object)
-              
               p1 <- proc.time()
               err <- list()
-              
               tryCatch({
                   
-                  
-                  tables <- list(nodes = type.convert(as_data_frame(object$graph, "vertices"), as.is = T),
-                                edges =  type.convert(as_data_frame(object$graph, "edges"), as.is = T))
-                  
-                  nedgesBefore <- nrow(tables$edges)
-                  
-
-                  if(length(cosineThreshold)){
-                      tables$edges <- tables$edges[tables$edges$cosine >= cosineThreshold,]
-                      }
-                  
-                  if(! "fixed__id" %in% colnames(tables$nodes)){
-                      tables$nodes$fixed__id <- tables$nodes[,1]
-                  }
-                  
-                  ####TEMPORARILY DISABLED
-                  # if(FALSE
-                  #    #input$mergeCheck
-                  # ){
-                  #     if(input$mergeCheck2){
-                  #         res <- list(tables = simplifyGraph(res$tables$nodes,
-                  #                                            res$tables$edges,
-                  #                                            which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
-                  #                                                  & res$tables$edges[[internalValues$colSelected1]] <= input$col1max
-                  #                                                  & res$tables$edges[[internalValues$colSelected2]] >= input$col2min
-                  #                                                  & res$tables$edges[[internalValues$colSelected2]] <= input$col2max
-                  #                                            )),
-                  #                     graph = NULL)
-                  #     }else{
-                  #         res <- list(tables = simplifyGraph(res$tables$nodes,
-                  #                                            res$tables$edges,
-                  #                                            which(res$tables$edges[[internalValues$colSelected1]] >= input$col1min
-                  #                                                  & res$tables$edges[[internalValues$colSelected1]] <= input$col1max)),
-                  #                     graph = NULL)
-                  #         
-                  #     }
-                  #     
-                  # }
+             
+                  object$df <- object$df[,colnames(object$df) %in% c("rt", "mz", "rtmin","rtmax", "comments")]
+                  object2$df <- object2$df[,colnames(object2$df) %in% c("rt", "mz", "rtmin","rtmax", "comments")]
                   
                   
-                  
-                  if(length(maxK)){
-                      #select edges to remove
-                      #  print("beforeremoval")
-                      if(!length(rankBy)){
-                          rankBy <- 1
-                      }
-                      
-                      removeindices <- integer(0)
-                      for(i in unique(c(tables$edges[,1], tables$edges[,2]))){
-                          
-                          selall <- which(tables$edges[,1] == i | tables$edges[,2] ==i)
-                          if(length(selall) > maxK){
-                              
-                              removeindices <- c(removeindices, selall[order(tables$edges[selall,rankBy])][1:max(c(1,(length(selall)-maxK)))])
-                              
-                          }
-                          
-                      }
-                      if(length(removeindices) > 0){
-                          tables$edges <- tables$edges[-unique(removeindices),]
-                      }
-                      
-                  }
-                  # print(res$tables$edges)
-                  #  print(res$tables$nodes)
-                  
-                  if(!length(object$edges)){
-                      object$edges <- tables$edges
-                  }
-                  
-                  
-                  g1 <- graph_from_data_frame(d=tables$edges, vertices=tables$nodes, directed=F) 
-                  
-                  
-                  #V(g1)$label <- V(g1)$parent.mass
-                  V(g1)$id <- seq(vcount(g1))
-                  
-                  # Removing loops from the graph:
-                  g1 <- igraph::simplify(g1, remove.multiple = F, remove.loops = T) 
-                  
-                  #important for overview mode!
-                  V(g1)$subcl <-  clusters(g1)$membership
-                  
-                  if(nedgesBefore != nrow(tables$edges)){
-                              layo <- layout_components_qgraph(g1, qgraph::qgraph.layout.fruchtermanreingold)
-
-                              V(g1)$x__coord <- layo$layout[,1]
-                              V(g1)$y__coord <- layo$layout[,2]
-
-                          }
-                  
-                  object$graph <- g1
-                  
-                  
+                  object <- buildMseekFT(findLabels(reflist = object$df,
+                                                    complist = object2$df,
+                                                    rawdata = MSData,
+                                                    ...),
+                                         processHistory = object$.processHistory,
+                                         tablename = newName,
+                                         editable = FALSE)
                   
               },
               error = function(e){
                   #this assigns to object err in function environment,
                   #but err has to exist in the environment, otherwise
                   #will move through scopes up to global environment..
-                  err$simplify <<- paste(e)
-                  
+                  err$LabelFinder <<- paste(e)
               },
-              finally = 
-              {
+              finally = {
                   p1 <- (proc.time() - p1)["elapsed"]
                   afterHash <- MseekHash(object)
-                  
-                  object <- addProcessHistory(object,
-                                              FTProcessHistory(changes = afterHash != beforeHash,
-                                                               inputHash = beforeHash,
-                                                               outputHash = afterHash,
-                                                               # fileNames = names(rawdata),
-                                                               error = err,
-                                                               sessionInfo = NULL,
-                                                               processingTime = p1,
-                                                               info = paste0("Simplified network"),
-                                                               param = FunParam(fun = "Metaboseek::simplify",
-                                                                                args = list(rankBy = rankBy,
-                                                                                         maxK = maxK,
-                                                                                         cosineThreshold = cosineThreshold),
-                                                                                longArgs = list())
-                                              ))
+                  object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
+                                                                       inputHash = beforeHash,
+                                                                       outputHash = afterHash,
+                                                                       error = err,
+                                                                       processingTime = p1,
+                                                                       sessionInfo = NULL,
+                                                                       info = "Tried to find labels",
+                                                                       param = FunParam(fun = "Metaboseek::LabelFinder",
+                                                                                        args = c(list(...),
+                                                                                                 list(
+                                                                                                     newName = newName
+                                                                                                 )),
+                                                                                        longArgs = list(object2 = MseekHash(object2),
+                                                                                                        MSData = summary(MSData)))
+                                                                       
+                  ))
               })
-              
               return(object)
+          })
+
+#' @aliases PatternFinder
+#' 
+#' @description \code{PatternFinder}: Find Pattern in Spectra
+#' @param peaks names list of mz values (like output from \code{parsePatterns()}) to look for in spectra
+#' @param losses names list of mz values (like output from \code{parsePatterns()}) to look for in spectra (as neutral losses)
+#' @param noise remove peaks below this relative intensity when merging spectra (relative to highest peak, not percent)
+#' 
+#' @examples 
+#' MseekExamplePreload(data = T, tables = T)
+#' tab1 <- FTMS2scans(tab1, MSD$data)
+#' LabelFinderResults <- PatternFinder(object = tab1, #needs to have an MS2
+#'                                 MSData = MSD$data,
+#'                                 peaks = list(testpeak = 85.02895),
+#'                                 losses = list(testloss = 18.010788))
+#' LabelFinderResults$df$matched_losses
+#' LabelFinderResults$df$matched_patterns
+#' 
+#' @rdname analyzeFT
+#' @export
+setMethod("PatternFinder", signature(object = "MseekFamily"),
+          function(object, MSData,
+                   peaks, losses,
+                   ppm = 5, mzdiff = 0.002,
+                   noise = 0.02){
+            beforeHash <- MseekHash(object)
+            p1 <- proc.time()
+            err <- list()
+            tryCatch({
               
+              
+              if(!length(object$df$MS2scans)){
+                stop('Run the "Find MS2 scans" process (FTMS2scans method) before searching patterns in these scans!')
+                
+              }
+              
+              AllSpecLists <- lapply(makeScanlist2(object$df$MS2scans),
+                                     getAllScans, MSData,
+                                     removeNoise = NULL)#input$noise*0.01)
+              
+              
+
+              MergedSpecs <- lapply(AllSpecLists, mergeMS, ppm = ppm, mzdiff = 0, noiselevel = noise)
+              
+                if(length(peaks)){
+                matchedPatterns <- data.frame(matched_patterns = matchedToCharacter(findPatterns(MergedSpecs,
+                                                                                                 peaks,
+                                                                                                 ppm = ppm,
+                                                                                                 mzdiff = mzdiff)), 
+                                              stringsAsFactors = FALSE)
+                
+                object <- updateFeatureTable(object,matchedPatterns)
+              }
+              
+              if(length(losses)){
+                MergedSpecs[lengths(MergedSpecs) > 0] <- mapply(function(x,y){
+                  x[,1] <- y - x[,1]
+                  x <- x[rev(seq_len(nrow(x))),, drop = FALSE] #because input is increasing, this will make output increasing (maybe faster than order()?)
+                  return(x[x[,1] > 0,, drop = FALSE]) #remove negative mz values
+                }, 
+                x = MergedSpecs[lengths(MergedSpecs) > 0],
+                y = object$df$mz[lengths(MergedSpecs) > 0],
+                SIMPLIFY = FALSE)
+                matchedPatterns <- data.frame(matched_losses = matchedToCharacter(findPatterns(MergedSpecs,
+                                                                                               losses,
+                                                                                               ppm = ppm,
+                                                                                               mzdiff = mzdiff)), 
+                                              stringsAsFactors = FALSE)
+                object <- updateFeatureTable(object,matchedPatterns)
+              }
+              
+            },
+            error = function(e){
+              #this assigns to object err in function environment,
+              #but err has to exist in the environment, otherwise
+              #will move through scopes up to global environment..
+              err$PatternFinder <<- paste(e)
+            },
+            finally = {
+              p1 <- (proc.time() - p1)["elapsed"]
+              afterHash <- MseekHash(object)
+              object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
+                                                                   inputHash = beforeHash,
+                                                                   outputHash = afterHash,
+                                                                   error = err,
+                                                                   processingTime = p1,
+                                                                   sessionInfo = NULL,
+                                                                   info = "Found Patterns in MS2 data",
+                                                                   param = FunParam(fun = "Metaboseek::PatternFinder",
+                                                                                    args = c(#list(...),
+                                                                                             list(
+                                                                                               peaks = peaks,
+                                                                                               losses = losses,
+                                                                                               ppm = ppm,
+                                                                                               mzdiff = mzdiff
+                                                                                             )),
+                                                                                    longArgs = list(MSData = summary(MSData)))
+                                                                   
+              ))
+            })
+            return(object)
           })

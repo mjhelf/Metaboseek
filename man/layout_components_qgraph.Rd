@@ -31,3 +31,15 @@ Elements of the returned list
 \item \code{subedgelist} list of edgelists for each subgraph
 }
 }
+\examples{
+\dontrun{
+
+g <- igraph::erdos.renyi.game(30, 3/30)
+V(g)$id <- 1:30
+
+l1 <- layout_components_qgraph(g, qgraph::qgraph.layout.fruchtermanreingold)
+l2 <- layout_components_qgraph(g, igraph::layout_with_kk)
+
+}
+
+}

@@ -5,8 +5,14 @@
 \alias{LoadNetworkModuleUI}
 \title{LoadNetworkModule}
 \usage{
-LoadNetworkModule(input, output, session, values, reactives = reactive({ 
-     list(active = NULL) }))
+LoadNetworkModule(
+  input,
+  output,
+  session,
+  values,
+  reactives = reactive({     list(active = NULL) }),
+  layoutFunction = reactive({ })
+)
 
 LoadNetworkModuleUI(id)
 }

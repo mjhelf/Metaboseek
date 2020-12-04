@@ -5,9 +5,14 @@
 \alias{VennWidgetModuleUI}
 \title{VennWidgetModule}
 \usage{
-VennWidgetModule(input, output, session, reactives = reactive({    
-  list(x = list(A = 1:105, B = 101:115), ext.percent = c(0.01, 0.01, 0.01),
-  filename = NULL) }), static = list())
+VennWidgetModule(
+  input,
+  output,
+  session,
+  reactives = reactive({     list(x = list(A = 1:105, B = 101:115), ext.percent =
+    c(0.01, 0.01, 0.01), filename = NULL) }),
+  static = list()
+)
 
 VennWidgetModuleUI(id)
 }

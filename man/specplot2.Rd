@@ -4,10 +4,24 @@
 \alias{specplot2}
 \title{specplot2}
 \usage{
-specplot2(x, y, spectrum, norm = NULL, cx = 1, k = 10,
-  fileName = "", yrange = NULL, xrange = NULL, maxi = NULL,
-  labels = NULL, highlights = NULL, mar = c(3, 4, 6, 1),
-  ylab = "Relative Intensity (\%)", ylabshift = 2, parseLabels = F)
+specplot2(
+  x,
+  y,
+  spectrum,
+  norm = NULL,
+  cx = 1,
+  k = 10,
+  fileName = "",
+  yrange = NULL,
+  xrange = NULL,
+  maxi = NULL,
+  labels = NULL,
+  highlights = NULL,
+  mar = c(3, 4, 6, 1),
+  ylab = "Relative Intensity (\%)",
+  ylabshift = 2,
+  parseLabels = F
+)
 }
 \arguments{
 \item{x}{mz coordinates}

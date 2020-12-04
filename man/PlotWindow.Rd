@@ -4,10 +4,21 @@
 \alias{PlotWindow}
 \title{PlotWindow}
 \usage{
-PlotWindow(cx = 1, ylim = c(0, 1), xlim = c(0, 1),
-  heading = "test", single = F, par = T, relto = NULL,
-  ylab = "Intensity", xlab = "RT (min)", ysci = T, liwi = 1,
-  textadj = 0.5, ylabshift = 0)
+PlotWindow(
+  cx = 1,
+  ylim = c(0, 1),
+  xlim = c(0, 1),
+  heading = "test",
+  single = F,
+  par = T,
+  relto = NULL,
+  ylab = "Intensity",
+  xlab = "RT (min)",
+  ysci = T,
+  liwi = 1,
+  textadj = 0.5,
+  ylabshift = 0
+)
 }
 \arguments{
 \item{cx}{character expansion factor (font size)}

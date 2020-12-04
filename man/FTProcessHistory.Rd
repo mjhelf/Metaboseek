@@ -4,9 +4,17 @@
 \alias{FTProcessHistory}
 \title{Constructor for FTProcessHistory class}
 \usage{
-FTProcessHistory(error = list(), changes = TRUE, inputHash = NULL,
-  outputHash = NULL, sessionInfo = NULL, fileNames = character(),
-  processingTime = NA_real_, msLevel = NA_integer_, ...)
+FTProcessHistory(
+  error = list(),
+  changes = TRUE,
+  inputHash = NULL,
+  outputHash = NULL,
+  sessionInfo = NULL,
+  fileNames = character(),
+  processingTime = NA_real_,
+  msLevel = NA_integer_,
+  ...
+)
 }
 \arguments{
 \item{error}{a named list of character() vectors, reporting errors that 
