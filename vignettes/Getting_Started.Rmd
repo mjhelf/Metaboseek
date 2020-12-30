@@ -96,7 +96,7 @@ Consider getting the [Metaboseek Docker image](#Docker), or follow these steps t
 ```
 xcode-select --install
 ```
-Follow the instructions. This will install parts of Xcode that are required to install Metaboseek.
+* Follow the instructions. This will install parts of Xcode that are required to install Metaboseek.
 3.	Run R, enter this line:
 ```{r, eval = FALSE}
 source("http://metaboseek.com/files/install_Metaboseek.R") 
