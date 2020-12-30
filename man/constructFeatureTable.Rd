@@ -4,10 +4,18 @@
 \alias{constructFeatureTable}
 \title{constructFeatureTable}
 \usage{
-constructFeatureTable(df = data.frame(mz = numeric(3), rt = numeric(3)),
-  mzcol = "mz", rtcol = "rt", commentcol = "comments",
-  fragmentcol = "fragments", rtFormat = "sec", anagrouptable = NULL,
-  tablename = "Custom Table", editable = T, processHistory = list())
+constructFeatureTable(
+  df = data.frame(mz = numeric(3), rt = numeric(3)),
+  mzcol = "mz",
+  rtcol = "rt",
+  commentcol = "comments",
+  fragmentcol = "fragments",
+  rtFormat = "sec",
+  anagrouptable = NULL,
+  tablename = "Custom Table",
+  editable = T,
+  processHistory = list()
+)
 }
 \arguments{
 \item{df}{feature table as data.frame, with retention time (rt), mz and 

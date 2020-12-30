@@ -5,10 +5,14 @@
 \alias{UploadTableModuleUI}
 \title{UploadTableModule}
 \usage{
-UploadTableModule(input, output, session,
-  values = reactiveValues(featureTables = NULL), static = list(title =
-  NULL, filetypes = NULL, format = list(header = T, sep = "\\t", quote =
-  "\\"", stringsAsFactors = F)))
+UploadTableModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(featureTables = NULL),
+  static = list(title = NULL, filetypes = NULL, format = list(header = T, sep = "\\t",
+    quote = "\\"", stringsAsFactors = F))
+)
 
 UploadTableModuleUI(id)
 }

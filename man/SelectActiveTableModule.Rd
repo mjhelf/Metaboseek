@@ -5,8 +5,12 @@
 \alias{SelectActiveTableModuleUI}
 \title{SelectActiveTableModule}
 \usage{
-SelectActiveTableModule(input, output, session,
-  values = reactiveValues(featureTables = NULL, MainTable = NULL))
+SelectActiveTableModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(featureTables = NULL, MainTable = NULL)
+)
 
 SelectActiveTableModuleUI(id)
 }

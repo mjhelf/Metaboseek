@@ -4,13 +4,35 @@
 \alias{EICgeneral}
 \title{EICgeneral}
 \usage{
-EICgeneral(rtmid, mzmid, glist, cols = NULL, colrange = "Mseek.colors",
-  transparency = 1, RTall = FALSE, TICall = FALSE, rtw = 30,
-  ppm = 5, rdata, pdfFile = "plotOutput.pdf", leadingTIC = T,
-  lw = 1, adducts = c(0), cx = 1, midline = T, yzoom = 1,
-  RTcorrect = NULL, importEIC = NULL, globalYmax = FALSE,
-  subtitles = NULL, raise = F, relPlot = F, margins = NULL,
-  ylabshift = 0, RescaleExclude = NULL)
+EICgeneral(
+  rtmid,
+  mzmid,
+  glist,
+  cols = NULL,
+  colrange = "Mseek.colors",
+  transparency = 1,
+  RTall = FALSE,
+  TICall = FALSE,
+  rtw = 30,
+  ppm = 5,
+  rdata,
+  pdfFile = "plotOutput.pdf",
+  leadingTIC = T,
+  lw = 1,
+  adducts = c(0),
+  cx = 1,
+  midline = T,
+  yzoom = 1,
+  RTcorrect = NULL,
+  importEIC = NULL,
+  globalYmax = FALSE,
+  subtitles = NULL,
+  raise = F,
+  relPlot = F,
+  margins = NULL,
+  ylabshift = 0,
+  RescaleExclude = NULL
+)
 }
 \arguments{
 \item{rtmid}{vector of retention time values (not ranges). If length >1, 

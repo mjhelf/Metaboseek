@@ -10,8 +10,7 @@ getSpectra(data, ...)
 
 \method{getSpectra}{reactivevalues}(data, ...)
 
-\method{getSpectra}{OnDiskMSnExp}(data, index, xcmsRawobject = NULL,
-  SpectrumClass = F)
+\method{getSpectra}{OnDiskMSnExp}(data, index, xcmsRawobject = NULL, SpectrumClass = F)
 }
 \arguments{
 \item{data}{an OnDiskMSnExp or MseekValues (reactivevalues) object}

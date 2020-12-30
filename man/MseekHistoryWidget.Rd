@@ -4,8 +4,13 @@
 \alias{MseekHistoryWidget}
 \title{MseekHistoryWidget}
 \usage{
-MseekHistoryWidget(input, output, session, FT = reactive({     NULL }),
-  buttonLabel = "History")
+MseekHistoryWidget(
+  input,
+  output,
+  session,
+  FT = reactive({     NULL }),
+  buttonLabel = "History"
+)
 }
 \arguments{
 \item{input}{arguments necessary for use with 

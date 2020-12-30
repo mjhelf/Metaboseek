@@ -106,7 +106,7 @@ MseekHistoryWidget <- function(input,output, session,
                                                       paste0(FT()$tablename,"_processHistory.txt")),
                                                 #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
                                                 duration = 10)
-                               
+                            capture.output(print(processHistory(FT())),file)
                                removeModal()
                                
                            },

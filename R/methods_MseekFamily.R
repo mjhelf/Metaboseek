@@ -68,7 +68,10 @@ is.MseekFT <- function(x){
 #' @rdname MseekFamily
 #' @export
 is.MseekGraph <- function(x){
-    (length(x) && "MseekGraph" %in% class(x))
+    (length(x) 
+     && "MseekGraph" %in% class(x)
+     && length(x$graph))
+    
 }
 
 #' @rdname MseekFamily
@@ -269,7 +272,7 @@ setMethod("FTFilter", c("data.frame"),
               }
               
               if(length(sortBy) && sortBy %in% colnames(object)){
-                  ord <- order(res[,sortBy],
+                  ord <- order(object[,sortBy],
                                decreasing = decreasing)
                   object <- object[ord,]
               }

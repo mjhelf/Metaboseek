@@ -5,8 +5,13 @@
 \alias{MzqueryModuleUI}
 \title{MzqueryModule}
 \usage{
-MzqueryModule(input, output, session, values, reactives = reactive({    
-  list(mz = NULL) }))
+MzqueryModule(
+  input,
+  output,
+  session,
+  values,
+  reactives = reactive({     list(mz = NULL) })
+)
 
 MzqueryModuleUI(id)
 }

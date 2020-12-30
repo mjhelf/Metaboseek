@@ -34,8 +34,10 @@ ModalWidget <- function(input,output, session,
                                static = list(tooltip = "Tooltip",
                                              title = "title", 
                                              label = "label",
-                                             icon = icon("bar-chart", lib = "font-awesome")),
-                             useActionLink = F
+                                             icon = icon("bar-chart", lib = "font-awesome"),
+                                             modalButtonLabel = "Cancel"),
+                             useActionLink = F,
+                        style="color:#ffffff;padding:15px;border-left-width:0;border-right:1px solid #eee"
 ){
   ns <- NS(session$ns(NULL))
   
@@ -47,7 +49,7 @@ ModalWidget <- function(input,output, session,
       
       
       actionLink(ns("modbutton"), static$label,
-                 icon = static$icon, style="color:#ffffff;padding:15px;border-left-width:0;border-right:1px solid #eee",
+                 icon = static$icon, style= style,
                  title = static$tooltip )
       
     }else{
@@ -74,7 +76,7 @@ ModalWidget <- function(input,output, session,
         easyClose = TRUE,
         fade = FALSE,
         size = "l",
-        footer = modalButton("Cancel") 
+        footer = modalButton(if(is.null(static$modalButtonLabel)){"Cancel"}else{static$modalButtonLabel}) 
       ))
     
   })

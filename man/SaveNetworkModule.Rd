@@ -5,12 +5,15 @@
 \alias{SaveNetworkModuleUI}
 \title{SaveNetworkModule}
 \usage{
-SaveNetworkModule(input, output, session,
+SaveNetworkModule(
+  input,
+  output,
+  session,
   values = reactiveValues(Networks = NULL, projectData = NULL),
-  reactives = reactive({     list(graphname = NULL, filename =
-  "table.graphml") }), static = list(tooltip =
-  "Save Network as a graphml file", label = "Save Network", allowformats =
-  list(`Metaboseek Graph (.mskg)` = ".mskg", graphML = ".graphML")))
+  reactives = reactive({     list(graphname = NULL, filename = "table.graphml") }),
+  static = list(tooltip = "Save Network as a graphml file", label = "Save Network",
+    allowformats = list(`Metaboseek Graph (.mskg)` = ".mskg", graphML = ".graphML"))
+)
 
 SaveNetworkModuleUI(id)
 }

@@ -4,10 +4,21 @@
 \alias{cameraWrapper}
 \title{cameraWrapper}
 \usage{
-cameraWrapper(xset, polarity = NULL, sigma = 6, perfwhm = 0.6,
-  cor_eic_th = 0.75, pval = 0.05, maxcharge = 3, maxiso = 4,
-  ppm = 5, mzabs = 0.01, minfrac = 0.5, filter = TRUE,
-  workers = 1)
+cameraWrapper(
+  xset,
+  polarity = NULL,
+  sigma = 6,
+  perfwhm = 0.6,
+  cor_eic_th = 0.75,
+  pval = 0.05,
+  maxcharge = 3,
+  maxiso = 4,
+  ppm = 5,
+  mzabs = 0.01,
+  minfrac = 0.5,
+  filter = TRUE,
+  workers = 1
+)
 }
 \arguments{
 \item{xset}{a \code{XCMSnExp} object}

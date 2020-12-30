@@ -5,9 +5,13 @@
 \alias{FeatureTableContainerUI}
 \title{FeatureTableContainer}
 \usage{
-FeatureTableContainer(input, output, session,
-  values = reactiveValues(featureTables = NULL, MSData = NULL, GlobalOpts
-  = NULL, projectData = NULL))
+FeatureTableContainer(
+  input,
+  output,
+  session,
+  values = reactiveValues(featureTables = NULL, MSData = NULL, GlobalOpts = NULL,
+    projectData = NULL)
+)
 
 FeatureTableContainerUI(id)
 }

@@ -36,10 +36,13 @@ setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
-setGeneric("loadMseekGraph", function(object) standardGeneric("loadMseekGraph"))
+setGeneric("loadMseekGraph", function(object, ...) standardGeneric("loadMseekGraph"))
 
 setGeneric("matchReference", function(object, query, ...) standardGeneric("matchReference"))
 setGeneric("MseekHash", function(object) standardGeneric("MseekHash"))
+
+
+setGeneric("PatternFinder", function(object, ...) standardGeneric("PatternFinder"))
 
 setGeneric("previousStep", function(object, ...) standardGeneric("previousStep"))
 setGeneric("removeNAs", function(object, ...) standardGeneric("removeNAs"))
@@ -48,6 +51,9 @@ setGeneric("saveMseekFT", function(object, file, ...) standardGeneric("saveMseek
 setGeneric("saveMseekGraph", function(object, file, ...) standardGeneric("saveMseekGraph"))
 
 setGeneric("searchFunParam", function(object, fun, ...) standardGeneric("searchFunParam"))
+setGeneric("setLayout", function(object, layout, ...) standardGeneric("setLayout"))
+
+
 setGeneric("shortPrint", function(object) standardGeneric("shortPrint"))
 setGeneric("simplify", function(object, ...) standardGeneric("simplify"))
 
@@ -57,6 +63,8 @@ setGeneric("importMseekIntensities", function(object, rawdata, importFrom, ...) 
 
 #setGeneric("processHistory", function(object, ...) standardGeneric("processHistory"))
 setGeneric("withHistory", function(object, fun, ...) standardGeneric("withHistory"))
+
+setGeneric("LabelFinder", function(object, ...) standardGeneric("LabelFinder"))
 
 
 ## Registered S3 classes
@@ -68,6 +76,7 @@ setOldClass("MseekGraph")
 setClassUnion("listOrNULL", c("list", "NULL"))
 setClassUnion("sessionInfoOrNULL", c("sessionInfo", "NULL"))
 setClassUnion("characterOrNULL", c("character", "NULL"))
+setClassUnion("numericOrNULL", c("numeric", "NULL"))
 setClassUnion("MseekFTOrNULL", c("MseekFT", "NULL"))
 setClassUnion("MseekFamily", c("MseekFT", "MseekGraph"))
 
@@ -116,6 +125,9 @@ setClass("FTAnalysisParam",
                    normalize = "logical",
                    useNormalized = "logical",
                    logNormalized = "logical",
+                   normalizationFactors = "numericOrNULL",
+                   zeroReplacement = "numericOrNULL",
+                   replaceNAs = "numericOrNULL",
                    ppm = "numeric",
                    controlGroup = "characterOrNULL",
                    numClusters = "numeric",
@@ -134,6 +146,9 @@ setClass("FTAnalysisParam",
              normalize = T,
              useNormalized = T,
              logNormalized = F,
+             normalizationFactors = NULL,
+             zeroReplacement = 1,
+             replaceNAs = 0,
              #MSData = NULL,
              ppm = 5,
              controlGroup = NULL,
@@ -633,6 +648,9 @@ FTAnalysisParam <- function(intensities = character(),
                             normalize = T,
                             useNormalized = T,
                             logNormalized = F,
+                            normalizationFactors = NULL,
+                            zeroReplacement = 1,
+                            replaceNAs = 0,
                             ppm = 5,
                             controlGroup = NULL,
                             numClusters = 2,
@@ -649,6 +667,9 @@ FTAnalysisParam <- function(intensities = character(),
                normalize = normalize,
                useNormalized = useNormalized,
                logNormalized = logNormalized,
+               normalizationFactors = normalizationFactors,
+               zeroReplacement = zeroReplacement,
+               replaceNAs = replaceNAs,
                #MSData = NULL,
                ppm = ppm,
                controlGroup = controlGroup,

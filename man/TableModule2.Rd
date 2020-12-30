@@ -5,11 +5,16 @@
 \alias{TableModule2UI}
 \title{TableModule}
 \usage{
-TableModule2(input, output, session, values, reactives = reactive({    
-  list(df = NULL, rowFilters = NULL, colFilters = NULL) }),
-  static = list(perpage = 100, height = 300, readOnly = T, contextMenu =
-  T, fixedColumnsLeft = 1, invertReadOnly = NULL, format = list(col = NULL,
-  format = NULL)))
+TableModule2(
+  input,
+  output,
+  session,
+  values,
+  reactives = reactive({     list(df = NULL, rowFilters = NULL, colFilters = NULL) }),
+  static = list(perpage = 100, height = 300, readOnly = T, contextMenu = T,
+    fixedColumnsLeft = 1, invertReadOnly = NULL, format = list(col = NULL, format =
+    NULL))
+)
 
 TableModule2UI(id)
 }

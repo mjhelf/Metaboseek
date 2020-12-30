@@ -89,7 +89,9 @@ ColumnSelModule <- function(input, output, session,
                  })
     
     
-    output$mainSelsProps <- renderUI({selectizeInput(ns('mainSelsProps'), 'Sample properties', 
+    output$mainSelsProps <- renderUI({
+        #print(FeatureTable(values)$sProps)
+        selectizeInput(ns('mainSelsProps'), 'Sample properties', 
                                                      choices = values$featureTables$tables[[values$featureTables$active]]$sProps,
                                                      selected = internalValues$sPropsSelected,
                                                      multiple = T,
@@ -99,20 +101,29 @@ ColumnSelModule <- function(input, output, session,
                  {internalValues$sPropsSelected <- input$mainSelsProps })
     
     output$mainSelIntensities <- renderUI({
-        intShowAs <- values$featureTables$tables[[values$featureTables$active]]$anagroupnames
-        singlegroups <- which(sapply(intShowAs,length) == 1)
-        for (i in singlegroups){
-            names(intShowAs[[i]]) <- intShowAs[[i]]
-        }
-        intNormShowAs <- values$featureTables$tables[[values$featureTables$active]]$anagroupnames_norm
-        singlegroups <- which(sapply(intNormShowAs,length) == 1)
-        for (i in singlegroups){
-            names(intNormShowAs[[i]]) <- intNormShowAs[[i]]
-        }
+        
+        
+        # intShowAs <- lapply(values$featureTables$tables[[values$featureTables$active]]$anagroupnames, as.list)
+        # singlegroups <- which(lengths(intShowAs) == 1)
+        # for (i in singlegroups){
+        #     names(intShowAs[[i]]) <- intShowAs[[i]]
+        # }
+        # 
+        # 
+        # intNormShowAs <- lapply(values$featureTables$tables[[values$featureTables$active]]$anagroupnames_norm, as.list)
+        # singlegroups <- which(sapply(intNormShowAs,length) == 1)
+        # for (i in singlegroups){
+        #     names(intNormShowAs[[i]]) <- intNormShowAs[[i]]
+        # }
+        
+        
+        # print(list(Intensities = intShowAs,
+        #            "Normalized Intensities" = intNormShowAs))
         
         selectizeInput(ns('mainSelIntensities'), 'Sample intensities', 
-                       choices = list(Intensities = intShowAs,
-                                      "Normalized Intensities" = intNormShowAs),
+                       choices = c(FeatureTable(values)$anagroupnames, FeatureTable(values)$anagroupnames_norm),
+                           # list(Intensities = intShowAs,
+                           #            "Normalized Intensities" = intNormShowAs),
                        selected = internalValues$intensitiesSelected,
                        multiple = T,
                        width = '100%')})

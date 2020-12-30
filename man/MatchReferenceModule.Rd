@@ -5,9 +5,12 @@
 \alias{MatchReferenceModuleUI}
 \title{MatchReferenceModule}
 \usage{
-MatchReferenceModule(input, output, session,
-  values = reactiveValues(featureTables = NULL, Networks = NULL, MSData =
-  NULL))
+MatchReferenceModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(featureTables = NULL, Networks = NULL, MSData = NULL)
+)
 
 MatchReferenceModuleUI(id)
 }

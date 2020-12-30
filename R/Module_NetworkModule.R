@@ -52,7 +52,8 @@ NetworkModule <- function(input,output, session,
                                      highlights = integer(0),
                                      hoverActive = T,
                                      recordedPlot = NULL,
-                                     logscale = T
+                                     logscale = T,
+                                     regChange = "nothing"
     )
     
     callModule(MseekHistoryWidget, "nethistory", FT = reactive({
@@ -84,12 +85,14 @@ NetworkModule <- function(input,output, session,
         }
     })
     
-    regChange <- reactive({if(length(values$Networks)
+   observe({if(length(values$Networks)
                               && length(internalValues$active)){
-        MseekHash(values$Networks[[internalValues$active]])
-        }else{"nothing"}})
+       internalValues$regChange <-  MseekHash(values$Networks[[internalValues$active]])
+        }else{
+            internalValues$regChange <- "nothing"}})
     
-    observeEvent(c(internalValues$active),{
+    observeEvent(internalValues$regChange,{#values$Networks[[internalValues$active]],{#c(internalValues$active),{
+       # print('registered regChange')
         if(!is.null(values$Networks) 
            && length(names(values$Networks)[names(values$Networks) != "numNetworks"]) > 0
            # && !is.null(internalValues$active) 
@@ -120,28 +123,30 @@ NetworkModule <- function(input,output, session,
             internalValues$graph <- values$Networks[[internalValues$active]]$graph
             
             
-            #generate the initial layout
-            res <- layout_components_qgraph(internalValues$graph, qgraph::qgraph.layout.fruchtermanreingold)
             
-            internalValues$layouts <- res
             
             # print( V(internalValues$layouts$subgraphs[[1]])$fixed__id )
             
             internalValues$activelayout$graph <- internalValues$graph
             
-            if(!is.null(V(internalValues$activelayout$graph)$x__coord)
-               && !is.null(V(internalValues$activelayout$graph)$y__coord)){
-                
-                    internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
-                                                                                V(internalValues$activelayout$graph)$y__coord),
-                                                                             ncol = 2))
+            # if(!is.null(V(internalValues$activelayout$graph)$x__coord)
+            #    && !is.null(V(internalValues$activelayout$graph)$y__coord)){
+            #     
+            #         internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
+            #                                                                     V(internalValues$activelayout$graph)$y__coord),
+            #                                                                  ncol = 2))
+            #         
+            #         
+            #         
+            #     }else{
+                    #generate the initial layout if needed
+                  #  res <- layout_components_qgraph(internalValues$graph, eval(parse(text = values$GlobalOpts$graph.layouts.selected)))# qgraph::qgraph.layout.fruchtermanreingold)
                     
+                    internalValues$layouts <- values$Networks[[internalValues$active]]$graphLayouts
                     
-                    
-                }else{
                 internalValues$activelayout$layout <- norm_coords(internalValues$layouts$layout)
     
-                }
+                # }
             
             
             
@@ -191,6 +196,7 @@ NetworkModule <- function(input,output, session,
     
     output$controls <- renderUI({
         if(!is.null(reactives()$active) && reactives()$active && !is.null(internalValues$activelayout$graph)){
+            tagList(
             fluidRow(
                 
                 if(!static$noSelection){column(4,
@@ -232,9 +238,28 @@ NetworkModule <- function(input,output, session,
                                             value = c(0,1) #internalValues$sliderValues
                        )
                        ))
+            ),
+            fluidRow(
+                
+                selectizeInput(ns('selectedLayout'), 'Show Network',
+                               selected = values$GlobalOpts$graph.layouts.selected,
+                               choices = values$GlobalOpts$graph.layouts.available,
+                               multiple = FALSE)
+            )
             )
         }
     })
+   observeEvent(input$selectedLayout,{
+       values$GlobalOpts$graph.layouts.selected <- input$selectedLayout
+           })
+   
+   observeEvent(values$GlobalOpts$graph.layouts.selected,{
+       if(length(internalValues$active) && internalValues$active %in% names(values$Networks)){
+       values$Networks[[internalValues$active]] <- setLayout(values$Networks[[internalValues$active]],
+                                                             layoutFunction = values$GlobalOpts$graph.layouts.selected )
+       }
+   })
+   
     
     observeEvent(input$hoveractive,{internalValues$hoverActive <- input$hoveractive})
     observeEvent(input$logscale,{internalValues$logscale <- input$logscale})

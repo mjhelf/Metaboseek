@@ -5,9 +5,13 @@
 \alias{SimplifyNetworkModuleUI}
 \title{SimplifyNetworkModule}
 \usage{
-SimplifyNetworkModule(input, output, session,
-  values = reactiveValues(Networks = NULL), reactives = reactive({    
-  list(activeNetwork = NULL) }))
+SimplifyNetworkModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(Networks = NULL, GlobalOpts = NULL),
+  reactives = reactive({     list(activeNetwork = NULL) })
+)
 
 SimplifyNetworkModuleUI(id)
 }

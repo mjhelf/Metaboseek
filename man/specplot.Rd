@@ -4,10 +4,21 @@
 \alias{specplot}
 \title{specplot}
 \usage{
-specplot(x, y, norm = max(y)/100, cx = 1.5, k = 10,
-  fileName = "title", yrange = c(0, 100), xrange = range(x),
-  maxi = max(y), labels = NULL, mar = c(4, 6, 6, 2),
-  ylab = "Relative Intensity (\%)", ylabshift = 0)
+specplot(
+  x,
+  y,
+  norm = max(y)/100,
+  cx = 1.5,
+  k = 10,
+  fileName = "title",
+  yrange = c(0, 100),
+  xrange = range(x),
+  maxi = max(y),
+  labels = NULL,
+  mar = c(4, 6, 6, 2),
+  ylab = "Relative Intensity (\%)",
+  ylabshift = 0
+)
 }
 \arguments{
 \item{x}{mz coordinates}

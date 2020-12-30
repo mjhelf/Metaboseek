@@ -51,7 +51,7 @@ SaveTableModule <- function(input,output, session,
              "csv" = {},
              "tsv" = {},
              "mskFT" = {},
-             
+             "MetaboAnalyst" = {},
              
              "instrumentList" = {
                tagList(
@@ -152,8 +152,9 @@ SaveTableModule <- function(input,output, session,
   output$modalDownload <- downloadHandler(filename= function(){
     #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))
     if(!is.null(input$selFormat)){ 
-       suffix <- if(input$selFormat == "instrumentList"){".txt"}
-                    else{paste0(".",input$selFormat)}
+       suffix <- if(input$selFormat == "instrumentList"){".txt"
+       }else if(!is.null(input$selFormat) && input$selFormat == "MetaboAnalyst"){paste0("_forMetaboAnalyst.csv")
+           }else{paste0(".",input$selFormat)}
        paste0(gsub('\\.[Mm][Ss][Kk][Ff][Tt]$|\\.csv$|\\.txt$','',
                    input$tabname),suffix)
     }else{
@@ -192,11 +193,16 @@ SaveTableModule <- function(input,output, session,
                            },
                            fname =  file,
                            format = if(static$format =="tsv"){"tsv"}else if(!is.null(input$selFormat)){input$selFormat}else{"csv"},
-                           moreArgs = list(rtwin = input$incRTw,
+                           moreArgs = switch(input$selFormat,
+                                             "MetaboAnalyst" = list(groups = FeatureTable(values)$anagrouptable),
+                                             "instrumentList" = list(rtwin = input$incRTw,
                                            polarity = input$incPolarity,
                                            instrument = "QExactive",
                                            listType = input$incType,
-                                           restrictRT = input$incUseRTw))
+                                           restrictRT = input$incUseRTw)
+                           )
+                           
+                           )
           }
     showNotification(paste("Downloading file: ", 
                            file),
@@ -281,6 +287,7 @@ SaveTableModule <- function(input,output, session,
                              fname =  file.path(values$projectData$projectFolder, 
                                                 file.path(dirname(reactives()$filename),
                                                           if(!is.null(input$selFormat) && input$selFormat == "instrumentList"){paste0(input$tabname,".txt")}
+                                                          else if(!is.null(input$selFormat) && input$selFormat == "MetaboAnalyst"){paste0(input$tabname,"_forMetaboAnalyst.csv")}
                                                           else{input$tabname})),
                              format = if(static$format =="tsv"){"tsv"}else if(!is.null(input$selFormat)){input$selFormat}else{"csv"},
                              moreArgs = list(rtwin = input$incRTw,

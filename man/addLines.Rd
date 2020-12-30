@@ -4,8 +4,13 @@
 \alias{addLines}
 \title{addLines}
 \usage{
-addLines(EIClist, TIC = F, colr = topo.colors(1, alpha = 1),
-  relto = NULL, liwi = 2)
+addLines(
+  EIClist,
+  TIC = F,
+  colr = topo.colors(1, alpha = 1),
+  relto = NULL,
+  liwi = 2
+)
 }
 \arguments{
 \item{EIClist}{matrix or list of EIC objects (potentially subsetted)}

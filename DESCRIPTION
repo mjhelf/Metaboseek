@@ -1,6 +1,6 @@
 Package: Metaboseek
 Title: Metaboseek platform
-Version: 0.9.6
+Version: 0.9.7
 Authors@R: person("Maximilian", "Helf", email = "maximilian.helf@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1393-3999"))
 biocViews: MassSpectrometry, DataAnalysis
 Description: Access some of the best mass spectrometry data analysis tools and databases from an intuitive user interface, with powerful comparative metabolomics workflows!
@@ -8,14 +8,14 @@ Depends: R (>= 3.6.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Imports: Biobase,
     BiocGenerics,
     BiocParallel,
     CAMERA,
     cluster,
     data.table,
-    DiagrammeR,
+    DiagrammeR (>= 1.0.5.9000),
     digest,
     ggplot2,
     graphics,
@@ -72,7 +72,9 @@ Collate:
     'Function_specplot.R'
     'methods_buildMseekFT.R'
     'methods_MseekFamily.R'
+    'methods_MseekGraph.R'
     'Functions_FeatureTable_analysis.R'
+    'Functions_Labelfinder.R'
     'Functions_SIRIUS.R'
     'Functions_calcMZ.R'
     'Functions_class_MSdata.R'
@@ -100,6 +102,7 @@ Collate:
     'Module_GetIntensitiesModule.R'
     'Module_GlobalOptionsModule.R'
     'Module_GroupedEICModule.R'
+    'Module_LabelFinderModule.R'
     'Module_LoadDataModule.R'
     'Module_LoadMSDataModule.R'
     'Module_LoadNetworkModule.R'
@@ -123,7 +126,9 @@ Collate:
     'Module_PlotBrowserModule.R'
     'Module_PlotModule.R'
     'Module_QuickPlotModule.R'
+    'Module_RatioPlotModule.R'
     'Module_RegroupMSDataModule.R'
+    'Module_RenameTableModule.R'
     'Module_RtCorrViewModule.R'
     'Module_SaveNetworkModule.R'
     'Module_SaveSessionModule.R'
@@ -147,6 +152,7 @@ Collate:
     'Module_updaterModule.R'
     'Server_components.R'
     'UI_components.R'
+    'Widget_DownloadPlotWidget.R'
     'Widget_GetSiriusWidget.R'
     'Widget_ModalWidget.R'
     'Widget_MseekHistoryWidget.R'

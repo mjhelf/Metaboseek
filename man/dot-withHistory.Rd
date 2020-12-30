@@ -4,9 +4,14 @@
 \alias{.withHistory}
 \title{.withHistory}
 \usage{
-.withHistory(fun = character(), args = list(), longArgs = list(),
-  addHistory = TRUE, continueWithErrors = FALSE,
-  returnIfError = NULL)
+.withHistory(
+  fun = character(),
+  args = list(),
+  longArgs = list(),
+  addHistory = TRUE,
+  continueWithErrors = FALSE,
+  returnIfError = NULL
+)
 }
 \arguments{
 \item{fun}{character(1), name of the function to apply}

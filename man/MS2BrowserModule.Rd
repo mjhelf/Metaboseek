@@ -5,8 +5,9 @@
 \alias{MS2BrowserModuleUI}
 \title{MS2BrowserModule}
 \usage{
-MS2BrowserModule(input, output, session, values, keys = reactive({    
-  "NO" }))
+MS2BrowserModule(input, output, session, values, keys = reactive({
+    "NO"
+}))
 
 MS2BrowserModuleUI(id)
 }

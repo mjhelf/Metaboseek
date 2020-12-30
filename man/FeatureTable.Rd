@@ -14,11 +14,9 @@ FeatureTable(x, ...)
 
 FeatureTable(x, ...) <- value
 
-\method{FeatureTable}{data.frame}(x, replace = F, update = T,
-  tableID = NULL) <- value
+\method{FeatureTable}{data.frame}(x, replace = F, update = T, tableID = NULL) <- value
 
-\method{FeatureTable}{MseekFT}(x, replace = T,
-  tableID = NULL) <- value
+\method{FeatureTable}{MseekFT}(x, replace = T, tableID = NULL) <- value
 }
 \arguments{
 \item{x}{the \code{values} object}

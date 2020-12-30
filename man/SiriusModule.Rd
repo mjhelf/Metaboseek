@@ -5,8 +5,12 @@
 \alias{SiriusModuleUI}
 \title{SiriusModule}
 \usage{
-SiriusModule(input, output, session, values = reactiveValues(GlobalOpts =
-  NULL))
+SiriusModule(
+  input,
+  output,
+  session,
+  values = reactiveValues(GlobalOpts = NULL)
+)
 
 SiriusModuleUI(id)
 }
