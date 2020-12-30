@@ -30,15 +30,15 @@ Metaboseek offers a graphical user interface to set up data analysis with the `x
 
 1. Filter the xcms results, view and export chromatograms and mass spectra for molecular features of interest.
 
-![browse_2|690x388](https://github.com/mjhelf/Metaboseek/raw/master/vignettes/img/browse_2.gif)
+![browse_2](https://github.com/mjhelf/Metaboseek/raw/master/vignettes/img/browse_2.gif)
 
 2. Generate and view molecular networks based on tandem-MS spectrum similarity between molecular features (using [`MassTools`](https://github.com/mjhelf/MassTools) and [`igraph`](https://github.com/igraph/rigraph) packages). The interactive plot is based on re-rendering plot.igraph() with different parameters depending on selections.
 
-![networking|690x388](https://github.com/mjhelf/Metaboseek/raw/master/vignettes/img/networking.gif) 
+![networking](https://github.com/mjhelf/Metaboseek/raw/master/vignettes/img/networking.gif) 
 
 3. Annotate fragments in tandem-MS spectra with [SIRIUS](https://bio.informatik.uni-jena.de/software/sirius/). Metaboseek sends jobs to the SIRIUS command line interface and retrieves them from the SIRIUS output folder.
 
-![SIRIUS|690x388](https://github.com/mjhelf/Metaboseek/raw/master/vignettes/img/SIRIUS.gif) 
+![SIRIUS](https://github.com/mjhelf/Metaboseek/raw/master/vignettes/img/SIRIUS.gif) 
 
 ## Technical Details
 
