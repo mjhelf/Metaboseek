@@ -48,7 +48,7 @@ Metaboseek is strictly built from shiny modules, allowing for easy reuse and rea
 
 * For improved code organization, Metaboseek is built from more than 70 different shiny modules, all of which are part of the Metaboseek package and documented. I am considering splitting grouping these modules into sub-packages for easier reuse by others.
 
-## Deployment
+## Try Metaboseek
 
 Unfortunately, it was not possible to deploy the app on shinyapps.io. There seems to be a problem with installing [one of the required packages (`mzR`)](https://community.rstudio.com/t/http-599-time-out-error-while-deployapp-with-package-mzr/20644/16). However, there are other options to try the app:
 
