@@ -14,7 +14,13 @@
 
 \S4method{buildMseekFT}{XCMSnExp}(object, processHistory = list(), ...)
 
-\S4method{buildMseekFT}{data.frame}(object, processHistory = list(), ...)
+\S4method{buildMseekFT}{data.frame}(
+  object,
+  processHistory = list(),
+  anagrouptable = NULL,
+  from = "auto",
+  ...
+)
 
 \S4method{loadMseekFT}{character}(object)
 

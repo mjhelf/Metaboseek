@@ -77,13 +77,23 @@ setMethod("buildMseekFT",
 #' @export
 setMethod("buildMseekFT", 
           signature(object = "data.frame"),
-          function(object, processHistory = list(), ...){
+          function(object,
+                   processHistory = list(),
+                   anagrouptable = NULL,
+                   from = "auto",
+                   ...){
               
-              res <- constructFeatureTable(df = object,
+            rf <- .reformatFeatureTable(object, from = from)
+            
+            if(!length(anagrouptable)){anagrouptable = rf$grouping}
+            
+              res <- constructFeatureTable(df = rf$df,
                                            processHistory = processHistory,
+                                           anagrouptable = anagrouptable,
                                            ...)
               
-              res <- addProcessHistory(res, FTProcessHistory(info = "Built MseekFT object from a data.frame.",
+              res <- addProcessHistory(res, FTProcessHistory(info = paste0("Built MseekFT object from a data.frame (",
+                                                                           rf$from, ")."),
                                                              sessionInfo = sessionInfo(),
                                                              outputHash = MseekHash(res),
                                                              param = FunParam(fun = "Metaboseek::buildMseekFT",
