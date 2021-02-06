@@ -36,7 +36,7 @@ TableAnalysisModule <- function(input,output, session, values,
                                    zeroReplacement = NULL,
                                    replaceNAs = 0,
                                    
-                                   analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test"),
+                                   analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test", "Calculate M"),
                                                             "No grouping required" = c("PCA features", "PCA samples"),
                                                             "No intensities required" = list("mzMatch" = "mzMatch")),
                                    

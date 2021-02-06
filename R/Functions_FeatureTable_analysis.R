@@ -766,3 +766,34 @@ mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){
   return(resdf)  
   
 }
+
+
+#' .calculateM
+#'
+#' Calculates M value as detailed by Vandesompele et al. (2002) 
+#' 
+#' 
+#' @author Aiden Kolodziej, Maximilian Helf
+#' @param x a matrix which is expected to contain imputed, log2-transformed intensity values only
+#' @param na.rm remove NA values for sd calculation?
+#' @param ... Arguments passed to \code{bplapply()}
+#' 
+#' @references 
+#' \enumerate{
+#' \item Vandesompele J. et al (2002) Accurate normalization of real-time 
+#' quantitative RT-PCR data by geometric averaging of multiple internal control genes.
+#'  Genome Biol. 3(7):research0034.1, doi: \href{https://dx.doi.org/10.1186%2Fgb-2002-3-7-research0034}{10.1186/gb-2002-3-7-research0034}
+#' }
+#'
+.calculateM <- function(x, na.rm = FALSE, ...){
+  
+  unlist(bplapply(seq_len(nrow(x)), function(i, m = x, rm.na = na.rm){ #assignment changes to avoid recursive default argument reference error in bplapply
+    
+    m <- t(t(m) - m[i,])
+    rowVars <- rowSums((m - rowMeans(m, na.rm=rm.na))^2, na.rm=rm.na) / (ncol(m) - 1) #https://stackoverflow.com/questions/55327096/r-tidyverse-calculating-standard-deviation-across-rows/61891777#61891777
+    sum(sqrt(rowVars))/ (nrow(m)-1)
+    
+  }, ...))
+}
+
+

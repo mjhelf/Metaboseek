@@ -59,7 +59,7 @@ Re-evaluate if one of the values they depend on is invalidated and return a valu
 reactivity in shiny.
 
 Inputs are kept in a reactiveValues() object in the shiny session:
-**Make sure you look at your console output when pushong the buttons to see the print output**
+**Make sure you look at your console output when pushing the buttons to see the print output**
 
 ```{r, eval = F}
 
@@ -138,7 +138,7 @@ Let's dive into an example that shows us some of the properties of `reactivevalu
 compared to `list` objects. This section is a bit long, but it should be 
 interesting for anyone starting to write apps in shiny!
 
-**Make sure you look at your console output when pushong the buttons to see the print output**
+**Make sure you look at your console output when pushing the buttons to see the print output**
 ```{r, eval = F}
 library(shiny)
 
@@ -301,7 +301,7 @@ but also demonstrates a number of things:
 - in this example, the button using the getter has a (somewhat artificially introduced) advantage and always adds the number currently specified in the numericInput, while the regular "add number" button does not automatically add currently selected number - it only does so after pressing the other button once.
 
 
-**Make sure you look at your console output when pushong the buttons to see the print output**
+**Make sure you look at your console output when pushing the buttons to see the print output**
 ```{r, eval = F}
 library(shiny)
 

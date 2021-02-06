@@ -41,6 +41,7 @@ setMethod("analyzeFT",
                                     replacement = param@replaceNAs)
               }
               
+            
               # if(param@normalize 
               #    || (param@useNormalized 
               #        && !identical(grep("__norm",colnames(object$df), value = T),
@@ -51,11 +52,23 @@ setMethod("analyzeFT",
                                         logNormalized = param@logNormalized,
                                         zeroReplacement = param@zeroReplacement)
              # }
+             
+             
+             
               
               if(param@useNormalized){
                   param@intensities <- paste0(object$intensities,"__norm")
                   param@groups <- lapply(object$anagroupnames, paste0, "__norm")
               }
+             
+             if("Calculate M" %in% param@analyze){
+               
+               object <- FTcalculateM(object,
+                                         intensityCols = NULL, #always use non-normalized values here
+                                         maxInvalid = length(object$intensities)/10, #10% missing values allowed
+                                         BPPARAM=bpparam())
+               
+             }
               
               if("Basic analysis" %in% param@analyze){
                   
@@ -83,6 +96,8 @@ setMethod("analyzeFT",
                                          workers = param@workers)
                   
               }
+                  
+                  
               
               if("mzMatch" %in% param@analyze){
                   
@@ -199,6 +214,86 @@ setMethod("removeNAs", "MseekFT",
               })
               return(object)
           })
+
+
+
+#' @aliases FTcalculateM
+#' 
+#' @description \code{FTcalculateM}: Calculates M value as detailed by Vandesompele et al. (2002) 
+#' @param maxInvalid maximum number of invalid values (0 or NA) allowed in rows that are used for M value calculation
+#' @param ... arguments passed to \code{bplapply()}
+#' 
+#' @references 
+#' \enumerate{
+#' \item Vandesompele J. et al (2002) Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes. Genome Biol. 3(7):research0034.1, doi: \href{https://dx.doi.org/10.1186%2Fgb-2002-3-7-research0034}{10.1186/gb-2002-3-7-research0034}
+#' }
+#'
+#' @rdname analyzeFT
+#' @export
+setMethod("FTcalculateM", "MseekFT",
+          function(object, intensityCols = NULL, maxInvalid = 0, ...){
+            beforeHash <- MseekHash(object)
+            p1 <- proc.time()
+            err <- list()
+            tryCatch({
+              
+              if(missing(intensityCols) || is.null(intensityCols)){
+                intensityCols <- object$intensities
+              }
+              
+              if(!length(intensityCols)){
+                stop("no intensityCols defined")
+              }
+              
+              if(!all(intensityCols %in% colnames(object$df))){
+                stop("Some expected intensityCols are not in the dataframe")
+              }
+              
+              ints <- as.matrix(object$df[,intensityCols])
+              
+              invalidCounts <- apply(ints, 1, function(r){sum(is.na(r) | r == 0)})
+              
+              res <- data.frame("M_Value" = rep(NA_real_,nrow(ints)), stringsAsFactors = FALSE)
+              
+              #input some low, random values
+              ints[is.na(ints) | ints == 0] <- runif(sum(is.na(ints) | ints == 0), 
+                                                         min = min(ints[!is.na(ints) & ints != 0])/4,
+                                                         max = min(ints[!is.na(ints) & ints != 0])/2)
+              
+              ints <- log2(ints)
+              
+              res$M_Value[invalidCounts <= maxInvalid] <- .calculateM(ints[invalidCounts <= maxInvalid,], na.rm = FALSE, ...)
+              
+              object <- updateFeatureTable(object, res)
+            },
+            error = function(e){
+              #this assigns to object err in function environment,
+              #but err has to exist in the environment, otherwise
+              #will move through scopes up to global environment..
+              err$FTcalculateM <<- paste(e)
+            },
+            finally = {
+              p1 <- (proc.time() - p1)["elapsed"]
+              afterHash <- MseekHash(object)
+              object <- addProcessHistory(object, FTProcessHistory(changes = afterHash != beforeHash,
+                                                                   inputHash = beforeHash,
+                                                                   outputHash = afterHash,
+                                                                   error = err,
+                                                                   processingTime = p1,
+                                                                   sessionInfo = sessionInfo(),
+                                                                   info = "Calculated M values.",
+                                                                   param = FunParam(fun = "Metaboseek::FTcalculateM",
+                                                                                    args = c(list(
+                                                                                      intensityCols = intensityCols,
+                                                                                      invalidCounts = invalidCounts),
+                                                                                      list(...)
+                                                                                    ))
+                                                                   
+              ))
+            })
+            return(object)
+          })
+
 
 #' @aliases FTNormalize
 #' 

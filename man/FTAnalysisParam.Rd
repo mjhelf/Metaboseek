@@ -9,7 +9,7 @@ FTAnalysisParam(
   groups = list(),
   .files = character(),
   analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes",
-    "Fast peak shapes", "PCA features", "PCA samples", "mzMatch"),
+    "Fast peak shapes", "PCA features", "PCA samples", "mzMatch", "Calculate M"),
   normalize = T,
   useNormalized = T,
   logNormalized = F,

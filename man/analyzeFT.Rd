@@ -4,6 +4,8 @@
 \alias{analyzeFT}
 \alias{removeNAs,MseekFT-method}
 \alias{removeNAs}
+\alias{FTcalculateM,MseekFT-method}
+\alias{FTcalculateM}
 \alias{FTNormalize,MseekFT-method}
 \alias{FTNormalize}
 \alias{FTBasicAnalysis,MseekFT-method}
@@ -40,6 +42,8 @@
 \S4method{analyzeFT}{MseekFT,listOrNULL,FTAnalysisParam}(object, MSData, param)
 
 \S4method{removeNAs}{MseekFT}(object, intensityCols = NULL, replacement = 0)
+
+\S4method{FTcalculateM}{MseekFT}(object, intensityCols = NULL, maxInvalid = 0, ...)
 
 \S4method{FTNormalize}{MseekFT}(
   object,
@@ -171,6 +175,10 @@ in the object as \code{$intensities}.}
 
 \item{replacement}{value to put in place of NA values}
 
+\item{maxInvalid}{maximum number of invalid values (0 or NA) allowed in rows that are used for M value calculation}
+
+\item{...}{additional arguments passed to internal methods (e. g. \code{\link[MassTools]{network1}()})}
+
 \item{logNormalized}{if TRUE, applies log10 to intensity values after normalization}
 
 \item{grouping}{named list of character vectors, defining column 
@@ -250,8 +258,6 @@ will not filter for MS2 similarity score if NULL.}
 
 \item{returnMapping}{if true, returns a matrix defining the indices of matched features between object and query}
 
-\item{...}{additional arguments passed to internal methods (e. g. \code{\link[MassTools]{network1}()})}
-
 \item{newName}{name for the LabelFinder result object}
 
 \item{peaks}{names list of mz values (like output from \code{parsePatterns()}) to look for in spectra}
@@ -271,6 +277,8 @@ Analyze MseekFT objects, recording a processing history .
  if available. See \code{\link{analyzeTable}} for the old version of this.
 
 \code{removeNAs}: remove NA values from a range of columns and replace them with another value
+
+\code{FTcalculateM}: Calculates M value as detailed by Vandesompele et al. (2002)
 
 \code{FTNormalize}: Replaces zeroes by the globally smallest 
 non-zero intensity value, then normalizes a feature table such that the mean
@@ -346,5 +354,8 @@ LabelFinderResults <- PatternFinder(object = tab1, #needs to have an MS2
                                 losses = list(testloss = 18.010788))
 LabelFinderResults$df$matched_losses
 LabelFinderResults$df$matched_patterns
+
+}
+\references{
 
 }

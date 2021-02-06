@@ -8,6 +8,9 @@ setGeneric("error", function(object) standardGeneric("error"))
 setGeneric("FTAnova", function(object, ...) standardGeneric("FTAnova"))
 
 setGeneric("FTBasicAnalysis", function(object, ...) standardGeneric("FTBasicAnalysis"))
+
+setGeneric("FTcalculateM", function(object, ...) standardGeneric("FTcalculateM"))
+
 setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
 setGeneric("FTedges", function(object, ...) standardGeneric("FTedges"))
 
@@ -644,7 +647,7 @@ FTAnalysisParam <- function(intensities = character(),
                             analyze = c("Basic analysis", "clara_cluster",
                                         "t-test", "Peak shapes",
                                         "Fast peak shapes", "PCA features",
-                                        "PCA samples", "mzMatch"), 
+                                        "PCA samples", "mzMatch", "Calculate M"), 
                             normalize = T,
                             useNormalized = T,
                             logNormalized = F,
