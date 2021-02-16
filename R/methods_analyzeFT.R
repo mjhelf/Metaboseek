@@ -50,7 +50,9 @@ setMethod("analyzeFT",
                   object <- FTNormalize(object,
                                         normalize = param@normalize,
                                         logNormalized = param@logNormalized,
-                                        zeroReplacement = param@zeroReplacement)
+                                        zeroReplacement = param@zeroReplacement,
+                                        normalizationFactors = param@normalizationFactors
+                                        )
              # }
              
              
@@ -308,6 +310,7 @@ setMethod("FTNormalize", "MseekFT",
           function(object,
                    normalize = TRUE,
                    intensityCols = NULL,
+                   normalizationFactors = NULL,
                    logNormalized = FALSE,
                    zeroReplacement = NULL){
               beforeHash <- MseekHash(object)
@@ -334,7 +337,11 @@ setMethod("FTNormalize", "MseekFT",
                                               raiseZeros =  if(!is.numeric(zeroReplacement)){min(mx[which(!mx==0, arr.ind=T)])}else{zeroReplacement}
                                               )
                   if(normalize){ 
-                  mx <- featureTableNormalize(mx, normalize = "colMeans")
+                  mx <- featureTableNormalize(mx,
+                                              normalize = normalize,
+                                              normalizationFactors = normalizationFactors)
+                 
+                  
                   if(!is.null(logNormalized) && logNormalized){
                       mx <- featureTableNormalize(mx, log =  "log10")
                   }
@@ -366,7 +373,9 @@ setMethod("FTNormalize", "MseekFT",
                                                                info = "Normalized intensity columns.",
                                                                param = FunParam(fun = "Metaboseek::FTNormalize",
                                                                                 args = list(intensityColumns = object$intensities,
-                                                                                            logNormalized = logNormalized),
+                                                                                            logNormalized = logNormalized,
+                                                                                            normalize = normalize,
+                                                                                            normalizationFactors = normalizationFactors),
                                                                                 longArgs = list())
                                               ))
               }

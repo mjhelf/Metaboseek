@@ -184,6 +184,32 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     internalValues$analysesSelected2 <- input$selAna2
   })
   
+  output$normMethod <- renderUI({
+    
+  selectizeInput(ns("normalizationMethod"), "Normalization Method", 
+                 choices = c("Column Means" = "mean",
+                             "Geometric Column Means" = "gm_mean"),
+                 selected = internalValues$normalizationMethod
+                 )
+  })
+  
+  observeEvent(input$normalizationMethod,{
+    internalValues$normalizationMethod <- input$normalizationMethod
+  })
+  
+  output$normSource <- renderUI({
+  div(title = "Use intensity columns from this table for normalization.\nWill use the NON-normalized columns to calculate normalization factors and ignore 0 and NA values.\nNeeds to have the same intensity column names as the currently active Feature Table.",
+      selectizeInput(ns("normalizationSource"), "Normalization Source Table",
+                     choices = values$featureTables$index,
+                     selected = activeFT(values))
+  )
+  })
+  
+  observeEvent(input$normalizationSource,{
+    internalValues$normalizationSource <- input$normalizationSource
+  })
+  
+  
   output$claraClusters <- renderUI({ 
     #if("clara_cluster" %in% internalValues$analysesSelected){
     div(title = "Number of clusters in which to group features based on their intensities across samples by k-medoids (clara).",
@@ -207,7 +233,22 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
           
       #  }
           stepsbefore <- length(processHistory(FeatureTable(values)))
+          
+          
+          if( length(FeatureTable(values)$intensities) != length(FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)
+             || !all(FeatureTable(values)$intensities == FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)){
+            stop("Normalization Source Table must have the same intensity column names as the currently active Feature Table!")
+          }
+          
+          ###calculate normalization factors
+          internalValues$normalizationFactors <- sapply(FeatureTable(values,
+                                                                     tableID = internalValues$normalizationSource)$df[,FeatureTable(values,
+                                                                                                                                    tableID = internalValues$normalizationSource)$intensities],
+                                                        get(internalValues$normalizationMethod))
+          
+          internalValues$normalizationFactors <- internalValues$normalizationFactors/mean(internalValues$normalizationFactors)
         
+          print(internalValues$normalizationFactors)
        
         FeatureTable(values) <- analyzeFT(object = FeatureTable(values),
                                           MSData = values$MSData$data,
@@ -303,10 +344,13 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                       htmlOutput(ns('logDataUseCheck'))
                                ),
                                column(4,
-                                             selectizeInput(ns("normalizationMethod"), "Normalization Method", 
-                                                            choices = c("Equalize mean between columns"
-                                                            )))
-                               
+                                      htmlOutput(ns('normMethod'))       
+                                      )),
+                               fluidRow(
+                                 column(6,
+                                        htmlOutput(ns('normSource'))       
+                                        
+                                        )
                                
                                )
                              

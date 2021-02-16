@@ -279,6 +279,7 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 #' @param log if not NULL, log10 will be applied to values in mx
 #' @param normalize if not NULL, column values will be normalized by 
 #' column averages
+#' @param normalizationFactors vector of length(ncol(mx)) with factors to apply to each column for normalization.
 #' @param threshold numeric(1). 
 #' @param thresholdMethod if not NULL, removes all rows in mx in which 
 #' no value is above threshold
@@ -294,7 +295,8 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 featureTableNormalize <- function (mx,
                       raiseZeros = NULL,#"min",
                       log = NULL,#"log10",
-                      normalize = NULL,#"columnMean",
+                      normalize = FALSE,#"columnMean",
+                      normalizationFactors = NULL,
                       threshold = NULL,#0.1,
                       thresholdMethod = NULL#"rowMax"
                       ){
@@ -310,13 +312,20 @@ featureTableNormalize <- function (mx,
         mx <- log10(mx)
     }
     
-    if(!is.null(normalize)){
+    if(!is.null(normalize) && normalize){
+      if(length(normalizationFactors)){
+        if(length(normalizationFactors) != ncol(mx)){stop("Length of normalizationFactors does not match number of intensity columns!")}
+        
+        mx <- t(t(mx) * normalizationFactors)
+        
+      }else{
         #calculate correction factor for each column
         mxmeans <- colMeans(mx)
         mxmeans <- mxmeans/mean(mxmeans)
         #apply it
         for (i in 1:ncol(mx)){
-        mx[,i] <- mx[,i]/mxmeans[i]} 
+        mx[,i] <- mx[,i]/mxmeans[i]}
+      }
     }
     
     if(!is.null(threshold) & !is.null(thresholdMethod)){

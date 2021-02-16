@@ -49,6 +49,7 @@
   object,
   normalize = TRUE,
   intensityCols = NULL,
+  normalizationFactors = NULL,
   logNormalized = FALSE,
   zeroReplacement = NULL
 )

@@ -9,7 +9,8 @@ featureTableNormalize(
   mx,
   raiseZeros = NULL,
   log = NULL,
-  normalize = NULL,
+  normalize = FALSE,
+  normalizationFactors = NULL,
   threshold = NULL,
   thresholdMethod = NULL
 )
@@ -28,6 +29,8 @@ defined by a character string. "min" will raise all zeros to the lowest
 
 \item{normalize}{if not NULL, column values will be normalized by 
 column averages}
+
+\item{normalizationFactors}{vector of length(ncol(mx)) with factors to apply to each column for normalization.}
 
 \item{threshold}{numeric(1).}
 
