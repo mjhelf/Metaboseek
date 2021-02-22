@@ -247,19 +247,28 @@ getFilters <- function(x, activeOnly = TRUE){
     
     if(!length(x$featureTables)
        ||!length(x$featureTables$Filters)){
-        return(list())
+        res <- list()
+        class(res) <- c("FilterList", class(res))
+        return(res)
         }
     
     res <- x$featureTables$Filters$filterSet
     
     
     if(!length(res) 
-       || !is.list(res)){return(list())}
+       || !is.list(res)){
+        res <- list()
+        class(res) <- c("FilterList", class(res))
+        return(res)
+        }
     
-    if(!activeOnly){return(res)}
+    if(activeOnly){
+    res <- res[sapply(res, function(n){n$active})]
+    }
+    
+    class(res) <- c("FilterList", class(res))
+    return(res)
 
-    res[sapply(res, function(n){n$active})]
-    
     }
 
 

@@ -383,6 +383,136 @@ setMethod("FTNormalize", "MseekFT",
               return(object)
           })
 
+#' @aliases FTNormalizationFactors
+#' 
+#' @description \code{FTNormalize}: Replaces zeroes by the globally smallest 
+#' non-zero intensity value, then normalizes a feature table such that the mean
+#'  values of all intensity columns will be equal. See also 
+#'  \code{\link{featureTableNormalize}()}
+#' @param logNormalized if TRUE, applies log10 to intensity values after normalization
+#' @rdname analyzeFT
+#' @export
+setMethod("FTNormalizationFactors", "MseekFT",
+          function(object,
+                   normalizeFrom = NULL,
+                   normalizationMethod = c("mean", "gm_mean", "no normalization"),
+                   transformation = NULL, # e.g. "log10"
+                   zeroReplacement = NULL
+                   ){
+            beforeHash <- MseekHash(object)
+            p1 <- proc.time()
+            
+            err <- list()
+            tryCatch({
+              normalizationSources <- "Undefined, likely an error occurred"
+                intensityCols <- intensityCols(object)
+              
+              
+              if(!length(intensityCols)){
+                stop("no intensityCols defined")
+              }
+              
+              if(!all(intensityCols %in% colnames(object$df))){
+                stop("Some expected intensityCols are not in the dataframe")
+              }
+              
+                if(normalizationMethod[1] == "no normalization"){
+                  
+                  normalizationSources <- list(Source = "No Normalization")
+                  
+                  object$normalizationFactors <- rep(1, length(intensityCols))
+                }else{
+                  
+                  
+                  if(!length(normalizeFrom)){
+                    
+                    fl <- list()
+                    class(fl) <- c("FilterList", class(fl))
+                    
+                    normalizationSources <- normalizationSources <- list(Source = "Entire Feature Table",
+                                                                         Filters = fl)
+                   
+                    intens <- object$df[,intensityCols]
+                    
+                    
+                  }else{
+                    if("FilterList" %in% class(normalizeFrom)){
+                      normalizationSubset <- FTFilter(object,
+                                                      filters = normalizeFrom)
+                      
+                      normalizationSources <- list(Source = "Subset of Feature Table",
+                                                   Filters = rbindlist(lapply(normalizeFrom, data.frame, stringsAsFactors = FALSE), idcol = "Filter", fill = TRUE),
+                                                   Features = normalizationSubset$df[,c("mz", "rt", "comments")])
+                      
+                      intens <- normalizationSubset$df[,intensityCols]
+                      
+                    }else if(is.MseekFT(normalizeFrom)){
+                      if(length(intensityCols) != length(intensityCols(normalizeFrom))
+                         || !all(intensityCols == intensityCols(normalizeFrom))){
+                        stop("Normalization Source Table must have the same intensity column names as the currently active Feature Table!")}
+                      
+                      normalizationSources <- list(Source = "Another Feature Table",
+                                                   Name = normalizeFrom$tablename,
+                                                   Features = normalizeFrom$df[,c("mz", "rt", "comments")])
+                      
+                      intens <- normalizeFrom$df[,intensityCols]
+                      
+                      
+                    }else{
+                      stop("normalizeFrom must be either of length 0, a FilterList or an MseekFT object.")
+                      }
+                    
+                    
+                }
+              
+                  raiseZeros =  if(!is.numeric(zeroReplacement)){min(unlist(intens)[unlist(intens) != 0])}else{zeroReplacement}
+
+                  intens <- data.frame(lapply(intens, function(d){
+                    d[d == 0] <- raiseZeros
+                    d
+                  }))
+                  
+                  if(length(transformation)){
+                    intens <- data.frame(lapply(intens, get(transformation)))
+                  }
+                                              
+                  
+              object$normalizationFactors <- sapply(lapply(intens, na.omit), #####################Throwing out NAs; TODO potentially reconsider this
+                                                    get(normalizationMethod[1]))
+                  
+              object$normalizationFactors <- object$normalizationFactors/mean(object$normalizationFactors)
+                }
+              
+            },
+            error = function(e){
+              #this assigns to object err in function environment,
+              #but err has to exist in the environment, otherwise
+              #will move through scopes up to global environment..
+              err$FTNormalizationFactors <<- paste(e)
+            },
+            finally = {
+              p1 <- (proc.time() - p1)["elapsed"]
+              afterHash <- MseekHash(object)
+              object <- addProcessHistory(object,
+                                          FTProcessHistory(changes = afterHash != beforeHash,
+                                                           inputHash = beforeHash,
+                                                           outputHash = afterHash,
+                                                           fileNames = character(),
+                                                           error = err,
+                                                           sessionInfo = NULL,
+                                                           processingTime = p1,
+                                                           info = "Updated normalization factors.",
+                                                           param = FunParam(fun = "Metaboseek::FTNormalizationFactors",
+                                                                            args = list(normalizationMethod = normalizationMethod[1],
+                                                                                        zeroReplacement = zeroReplacement,
+                                                                                        transformation = transformation),
+                                                                            longArgs = list(normalizeFrom = normalizationSources))
+                                          ))
+            }
+            )
+            return(object)
+          })
+
 #' @aliases FTBasicAnalysis
 #' 
 #' @description \code{FTBasicAnalysis}: calculate fold changes between groups of samples. See also 

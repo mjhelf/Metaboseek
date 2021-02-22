@@ -198,9 +198,12 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   })
   
   output$normSource <- renderUI({
+    tempitem <- 'filteredTable'
+    names(tempitem) <- paste0(names(values$featureTables$index)[values$featureTables$index == activeFT(values)], " (Filters applied)")
+    
   div(title = "Use intensity columns from this table for normalization.\nWill use the NON-normalized columns to calculate normalization factors and ignore 0 and NA values.\nNeeds to have the same intensity column names as the currently active Feature Table.",
       selectizeInput(ns("normalizationSource"), "Normalization Source Table",
-                     choices = values$featureTables$index,
+                     choices = c(tempitem, values$featureTables$index),
                      selected = activeFT(values))
   )
   })
@@ -235,20 +238,43 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
           stepsbefore <- length(processHistory(FeatureTable(values)))
           
           
-          if( length(FeatureTable(values)$intensities) != length(FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)
-             || !all(FeatureTable(values)$intensities == FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)){
-            stop("Normalization Source Table must have the same intensity column names as the currently active Feature Table!")
+          # if( length(FeatureTable(values)$intensities) != length(FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)
+          #    || !all(FeatureTable(values)$intensities == FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)){
+          #   stop("Normalization Source Table must have the same intensity column names as the currently active Feature Table!")
+          # }
+          # 
+          # ###calculate normalization factors
+          # internalValues$normalizationFactors <- sapply(FeatureTable(values,
+          #                                                            tableID = internalValues$normalizationSource)$df[,FeatureTable(values,
+          #                                                                                                                           tableID = internalValues$normalizationSource)$intensities],
+          #                                               get(internalValues$normalizationMethod))
+          # 
+          # internalValues$normalizationFactors <- internalValues$normalizationFactors/mean(internalValues$normalizationFactors)
+          # 
+          # print(internalValues$normalizationFactors)
+          
+          if(internalValues$normalizationSource == activeFT(values)){
+            print(1)
+            nfrom <- NULL
+          }else if(internalValues$normalizationSource %in% values$featureTables$index){
+            print(2)
+          nfrom <- FeatureTable(values,
+                                tableID = internalValues$normalizationSource)
+          }else if(internalValues$normalizationSource == "filteredTable"){
+            print(3)
+            nfrom <- getFilters(values)
+          }else{
+            print(4)
+            nfrom <- NULL
           }
+          print(internalValues$normalizationSource)
+          print(nfrom)
           
-          ###calculate normalization factors
-          internalValues$normalizationFactors <- sapply(FeatureTable(values,
-                                                                     tableID = internalValues$normalizationSource)$df[,FeatureTable(values,
-                                                                                                                                    tableID = internalValues$normalizationSource)$intensities],
-                                                        get(internalValues$normalizationMethod))
-          
-          internalValues$normalizationFactors <- internalValues$normalizationFactors/mean(internalValues$normalizationFactors)
-        
-          print(internalValues$normalizationFactors)
+          FeatureTable(values) <- FTNormalizationFactors(object = FeatureTable(values),
+                   normalizeFrom = nfrom,
+                   normalizationMethod = internalValues$normalizationMethod,
+                   zeroReplacement = internalValues$zeroReplacement,
+                   transformation = if(internalValues$logNormalized){"log10"}else{NULL})
        
         FeatureTable(values) <- analyzeFT(object = FeatureTable(values),
                                           MSData = values$MSData$data,
@@ -257,7 +283,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                                   useNormalized = internalValues$useNormalized,
                                                                   logNormalized = internalValues$logNormalized,
                                                                   
-                                                                  normalizationFactors = internalValues$normalizationFactors,
+                                                                  normalizationFactors = FeatureTable(values)$normalizationFactors,
                                                                   zeroReplacement = internalValues$zeroReplacement,
                                                                   replaceNAs = internalValues$replaceNAs,
                                                                   
@@ -415,7 +441,18 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     internalValues$dbselected <- input$selDB
   })
   
-
+  
+  output$NormInfoText <- renderPrint({FeatureTable(values)$normalizationFactors})
+  
+  output$NormalizationInfo <- renderUI({
+    tagList(
+    fluidRow(
+    p('Normalization Info:')),
+    fluidRow(
+     verbatimTextOutput(ns("NormInfoText")) 
+    )
+    )
+  })
   
   observe({
     toggle(id = 'seldbs', condition = "mzMatch" %in% internalValues$analysesSelected)
@@ -455,15 +492,15 @@ TableAnalysisModuleUI <- function(id){
       column(4,
              div(style="display:inline-block",
                  htmlOutput(ns('normDataUseCheck')),
-                 ModalWidgetUI(ns('normSettings'))
+                 ModalWidgetUI(ns('normSettings')),
              )
       ),
-      # column(3,
-      #        htmlOutput(ns('normDataUseCheck'))
-      # ),
       column(3,
              htmlOutput(ns('ctrlSelect'))
-      )
+      ),
+       column(5,
+        htmlOutput(ns('NormalizationInfo'))
+       )
       ),
     fluidRow(
       h4("Basic analysis"),

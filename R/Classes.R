@@ -21,6 +21,9 @@ setGeneric("FTMS2scans", function(object, rawdata, ...) standardGeneric("FTMS2sc
 setGeneric("FTMzMatch", function(object, ...) standardGeneric("FTMzMatch"))
 
 setGeneric("FTNormalize", function(object, fun, ...) standardGeneric("FTNormalize"))
+setGeneric("FTNormalizationFactors", function(object, ...) standardGeneric("FTNormalizationFactors"))
+
+
 setGeneric("FTOldPeakShapes", function(object, rawdata, ...) standardGeneric("FTOldPeakShapes"))
 setGeneric("FTPCA", function(object, ...) standardGeneric("FTPCA"))
 
@@ -74,6 +77,7 @@ setGeneric("LabelFinder", function(object, ...) standardGeneric("LabelFinder"))
 setOldClass("MseekFT")
 setOldClass("sessionInfo")
 setOldClass("MseekGraph")
+setOldClass("FilterList")
 
 ## Class unions
 setClassUnion("listOrNULL", c("list", "NULL"))

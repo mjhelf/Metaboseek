@@ -8,6 +8,8 @@
 \alias{FTcalculateM}
 \alias{FTNormalize,MseekFT-method}
 \alias{FTNormalize}
+\alias{FTNormalizationFactors,MseekFT-method}
+\alias{FTNormalizationFactors}
 \alias{FTBasicAnalysis,MseekFT-method}
 \alias{FTBasicAnalysis}
 \alias{getMseekIntensities,MseekFT,listOrNULL,missing-method}
@@ -51,6 +53,14 @@
   intensityCols = NULL,
   normalizationFactors = NULL,
   logNormalized = FALSE,
+  zeroReplacement = NULL
+)
+
+\S4method{FTNormalizationFactors}{MseekFT}(
+  object,
+  normalizeFrom = NULL,
+  normalizationMethod = c("mean", "gm_mean", "no normalization"),
+  transformation = NULL,
   zeroReplacement = NULL
 )
 
@@ -280,6 +290,11 @@ Analyze MseekFT objects, recording a processing history .
 \code{removeNAs}: remove NA values from a range of columns and replace them with another value
 
 \code{FTcalculateM}: Calculates M value as detailed by Vandesompele et al. (2002)
+
+\code{FTNormalize}: Replaces zeroes by the globally smallest 
+non-zero intensity value, then normalizes a feature table such that the mean
+ values of all intensity columns will be equal. See also 
+ \code{\link{featureTableNormalize}()}
 
 \code{FTNormalize}: Replaces zeroes by the globally smallest 
 non-zero intensity value, then normalizes a feature table such that the mean
