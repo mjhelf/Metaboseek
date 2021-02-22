@@ -237,38 +237,23 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
       #  }
           stepsbefore <- length(processHistory(FeatureTable(values)))
           
-          
-          # if( length(FeatureTable(values)$intensities) != length(FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)
-          #    || !all(FeatureTable(values)$intensities == FeatureTable(values, tableID = internalValues$normalizationSource)$intensities)){
-          #   stop("Normalization Source Table must have the same intensity column names as the currently active Feature Table!")
-          # }
-          # 
-          # ###calculate normalization factors
-          # internalValues$normalizationFactors <- sapply(FeatureTable(values,
-          #                                                            tableID = internalValues$normalizationSource)$df[,FeatureTable(values,
-          #                                                                                                                           tableID = internalValues$normalizationSource)$intensities],
-          #                                               get(internalValues$normalizationMethod))
-          # 
-          # internalValues$normalizationFactors <- internalValues$normalizationFactors/mean(internalValues$normalizationFactors)
-          # 
-          # print(internalValues$normalizationFactors)
+        
           
           if(internalValues$normalizationSource == activeFT(values)){
-            print(1)
             nfrom <- NULL
           }else if(internalValues$normalizationSource %in% values$featureTables$index){
-            print(2)
           nfrom <- FeatureTable(values,
                                 tableID = internalValues$normalizationSource)
           }else if(internalValues$normalizationSource == "filteredTable"){
-            print(3)
             nfrom <- getFilters(values)
           }else{
-            print(4)
             nfrom <- NULL
           }
-          print(internalValues$normalizationSource)
-          print(nfrom)
+          
+          if(internalValues$replaceNAs){
+            FeatureTable(values) <- removeNAs(object = FeatureTable(values),
+                                              replacement = 0)
+          }
           
           FeatureTable(values) <- FTNormalizationFactors(object = FeatureTable(values),
                    normalizeFrom = nfrom,

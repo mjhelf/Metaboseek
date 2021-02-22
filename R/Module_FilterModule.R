@@ -28,7 +28,8 @@ FilterModule <- function(input,output, session,
                                            maxSelInit = NULL,
                                            modeSelInit = NULL,
                                            txtSelInit = NULL,
-                                           loadingFilters = F)
+                                           loadingFilters = F,
+                                           excludeNAs = TRUE)
 ){
   
   ns <- NS(session$ns(NULL))
@@ -48,6 +49,16 @@ FilterModule <- function(input,output, session,
     
   })
   
+  output$NACheck <- renderUI({checkboxInput(ns('nacheck'), 'exclude NAs', value = internalValues$excludeNAs)})
+  
+  observeEvent(input$nacheck,{
+    
+    internalValues$excludeNAs <- input$nacheck
+    values$MultiFilter$outdated <- T
+    
+    
+  })
+  
   #inp <- reactive({input$colSel})
   
   # output$insider <- renderPrint({print(summary(df()[,input$colSel])
@@ -58,13 +69,15 @@ FilterModule <- function(input,output, session,
     tooltip <- if(internalValues$numeric){
       tryCatch({
       paste0("Numeric column, range:",
-             round(min(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected])),3),
+             round(min(as.numeric(FeatureTable(values)$df[,internalValues$colSelected]), na.rm = TRUE),3),
              " - ", 
-             round(max(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected])),3),
+             round(max(as.numeric(FeatureTable(values)$df[,internalValues$colSelected]), na.rm = TRUE),3),
              ", mean: ",
-             round(mean(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected])),3),
+             round(mean(as.numeric(FeatureTable(values)$df[,internalValues$colSelected]), na.rm = TRUE),3),
              ", median: ",
-             round(median(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected])),3)
+             round(median(as.numeric(FeatureTable(values)$df[,internalValues$colSelected]), na.rm = TRUE),3),
+             ", NAs: ",
+             sum(is.na(as.numeric(FeatureTable(values)$df[,internalValues$colSelected])))
       )},
       warning = function(w){paste("Error in calculation")},
       error = function(e){paste("Error in calculation")})
@@ -89,12 +102,14 @@ FilterModule <- function(input,output, session,
   observeEvent(internalValues$colSelected,{
     if(!internalValues$loadingFilters){
     #returns TRUE if the selected column is numeric
-    internalValues$numeric <- !is.na(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[1,internalValues$colSelected]))
+    #internalValues$numeric <- !is.na(as.numeric(FeatureTable(values)$df[1,internalValues$colSelected]))
+    internalValues$numeric <- is.numeric(FeatureTable(values)$df[1,internalValues$colSelected])
+    
     if(length(internalValues$numeric) > 0 && internalValues$numeric){
-    premin <- min(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
+    premin <- min(as.numeric(FeatureTable(values)$df[,internalValues$colSelected]), na.rm = TRUE)
     internalValues$minSelInit <- ifelse(premin < 0, premin*1.01, premin*0.99)
     
-    premax <- max(as.numeric(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues$colSelected]))
+    premax <- max(as.numeric(FeatureTable(values)$df[,internalValues$colSelected]), na.rm = TRUE)
     internalValues$maxSelInit <- ifelse(premax < 0, premax*0.99, premax*1.01)
     }
     }else{
@@ -172,10 +187,13 @@ FilterModuleUI <- function(id){
   if(!is.null(htmlOutput(ns('colSel')))){
     tagList(
       fluidRow(
-        column(2,
+        column(1,
                htmlOutput(ns('activeCheck'))
                #                   checkboxInput(ns('toggler'), 'activate')
         ),
+        column(1,
+               htmlOutput(ns('NACheck'))
+               ),
         column(4,    
                htmlOutput(ns('colSel'))),
                htmlOutput(ns('minSel')),
