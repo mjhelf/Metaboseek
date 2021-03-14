@@ -432,7 +432,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   output$NormalizationInfo <- renderUI({
     tagList(
     fluidRow(
-    p('Normalization Info:')),
+    p('Normalization Factors:')),
     fluidRow(
      verbatimTextOutput(ns("NormInfoText")) 
     )

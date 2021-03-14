@@ -91,6 +91,8 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       delnum <- which(selections$plots$spec$delete)
       activenum <- which(selections$plots$spec$active)
       
+     
+
       #move spectra up if the deleted one is not the last one
       if(delnum != max(activenum)){
         for(i in activenum[which(activenum > delnum)]){
@@ -102,6 +104,8 @@ MultiSpecmodule <- function(input,output, session, tag, set = list(spec = list(x
       #inactivate the deleted spectrum or the last spectrum in list if spectra were moved up
       selections$plots$sets[[max(activenum)]]$layout$active <- FALSE
       
+      #avoid deleted plots getting stuck inactivated
+      selections$plots$spec$keep[max(activenum)] <- FALSE 
       
       #reset deletion trigger
       isolate(selections$plots$spec$delete[delnum] <- FALSE)

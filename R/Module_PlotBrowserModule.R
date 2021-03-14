@@ -100,12 +100,17 @@ PlotBrowserModule <- function(input,output, session,
         try({
           suppressWarnings({
           p <- ggplot(reactives()$PCAtable,
-                                        aes_string(x=internalValues$x,
-                                                   y=internalValues$y)) + 
-            geom_point(aes_string(col = internalValues$color,
+                      aes(x=!!rlang::sym(internalValues$x),
+                                 y=!!rlang::sym(internalValues$y))
+                                        
+                      ) + 
+            geom_point(
+              # aes(col=!!rlang::sym(internalValues$x),
+              #     text=!!rlang::sym(internalValues$x))
+              aes_string(col = paste0("`",internalValues$color,"`"),
                                   #shape = 1,
-                                  text = as.factor(txtmake) 
-            )) +
+                                  text = as.factor(paste0("`",internalValues$color,"`")))# as.factor(txtmake) )
+              ) +
             if(is.factor(colvec) || is.character(colvec)){
               scale_color_hue()
             }

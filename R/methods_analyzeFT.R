@@ -385,11 +385,10 @@ setMethod("FTNormalize", "MseekFT",
 
 #' @aliases FTNormalizationFactors
 #' 
-#' @description \code{FTNormalize}: Replaces zeroes by the globally smallest 
-#' non-zero intensity value, then normalizes a feature table such that the mean
-#'  values of all intensity columns will be equal. See also 
-#'  \code{\link{featureTableNormalize}()}
-#' @param logNormalized if TRUE, applies log10 to intensity values after normalization
+#' @description \code{FTNormalizationFactors}: Calculates normalization factors.
+#' See also \code{\link{featureTableNormalize}()}
+#' @param normalizeFrom can be an MseekFT object with normalization features or NULL (in which case object itself acts as base for calculation)
+#' @param normalizationMethod function to apply to normalization feature intensities
 #' @rdname analyzeFT
 #' @export
 setMethod("FTNormalizationFactors", "MseekFT",
@@ -480,7 +479,7 @@ setMethod("FTNormalizationFactors", "MseekFT",
               object$normalizationFactors <- sapply(lapply(intens, na.omit), #####################Throwing out NAs; TODO potentially reconsider this
                                                     get(normalizationMethod[1]))
                   
-              object$normalizationFactors <- object$normalizationFactors/mean(object$normalizationFactors)
+              object$normalizationFactors <- 1/(object$normalizationFactors/mean(object$normalizationFactors))
                 }
               
             },

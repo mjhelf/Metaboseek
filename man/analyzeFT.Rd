@@ -192,6 +192,10 @@ in the object as \code{$intensities}.}
 
 \item{logNormalized}{if TRUE, applies log10 to intensity values after normalization}
 
+\item{normalizeFrom}{can be an MseekFT object with normalization features or NULL (in which case object itself acts as base for calculation)}
+
+\item{normalizationMethod}{function to apply to normalization feature intensities}
+
 \item{grouping}{named list of character vectors, defining column 
 names for different sample groups.}
 
@@ -296,10 +300,8 @@ non-zero intensity value, then normalizes a feature table such that the mean
  values of all intensity columns will be equal. See also 
  \code{\link{featureTableNormalize}()}
 
-\code{FTNormalize}: Replaces zeroes by the globally smallest 
-non-zero intensity value, then normalizes a feature table such that the mean
- values of all intensity columns will be equal. See also 
- \code{\link{featureTableNormalize}()}
+\code{FTNormalizationFactors}: Calculates normalization factors.
+See also \code{\link{featureTableNormalize}()}
 
 \code{FTBasicAnalysis}: calculate fold changes between groups of samples. See also 
 \code{\link{foldChange}()} and \code{\link{featureCalcs}()}for a description of the resulting columns
