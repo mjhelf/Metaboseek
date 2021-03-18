@@ -34,6 +34,7 @@ GetSiriusWidget <- function(input,output, session,
   observeEvent(input$getSirius,{
     if(!is.null(reactives())){
     tryCatch({
+      print(reactives())
   do.call(runSirius, reactives())
     }, error = function(e){
       print(e)

@@ -67,12 +67,15 @@ ShowSiriusModule <- function(input,output, session,
   
   
   output$getsiriusbutton <- renderUI({
+    
+    st <- "color: #000000; background-color: #C41230; border-color: #595959"
+    ti <- "SIRIUS results not (yet) available for this spectrum."
+    internalValues$query <- NULL
+    
     if(is.null(values$SiriusModule$siriusIndex) 
        || is.null(reactives()$splash) 
        || !reactives()$splash %in% values$SiriusModule$siriusIndex$splash){
-      st <- "color: #000000; background-color: #C41230; border-color: #595959"
-      ti <- "SIRIUS results not (yet) available for this spectrum."
-      internalValues$query <- NULL
+      
     }else{
       
       # fullquery  <- data.frame(mz = reactives()$mz,

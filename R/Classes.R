@@ -41,6 +41,8 @@ setGeneric("hasError", function(object) standardGeneric("hasError"))
 setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
+
+setGeneric("limitComponents", function(object, ...) standardGeneric("limitComponents"))
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
 setGeneric("loadMseekGraph", function(object, ...) standardGeneric("loadMseekGraph"))
 
