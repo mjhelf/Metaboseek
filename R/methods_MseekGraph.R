@@ -472,7 +472,7 @@ setMethod("limitComponents", c("MseekGraph"),
               allClusters <- clusters(g, mode="weak")
               
               while(any(allClusters$csize > n)){
-              print(max(allClusters$csize))
+              print(paste0("Largest cluster size: ", max(allClusters$csize), ". Increasing cosine threshold for large clusters..."))
               largeClusterNodes <- which(allClusters$membership %in% which(allClusters$csize > n))
               
               tables <- list(nodes = type.convert(as_data_frame(g, "vertices"), as.is = T),
@@ -487,6 +487,7 @@ setMethod("limitComponents", c("MseekGraph"),
               
               allClusters <- clusters(g, mode="weak")
               }
+              print(paste0("Success: Cluster sizes reduced. Largest cluster size: ", max(allClusters$csize)))
               
               
               nedgesBefore <- nrow(object$edges)

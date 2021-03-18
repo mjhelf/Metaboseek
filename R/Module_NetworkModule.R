@@ -91,7 +91,9 @@ NetworkModule <- function(input,output, session,
         }else{
             internalValues$regChange <- "nothing"}})
     
-    observeEvent(internalValues$regChange,{#values$Networks[[internalValues$active]],{#c(internalValues$active),{
+    observeEvent(internalValues$regChange,{
+       
+        #values$Networks[[internalValues$active]],{#c(internalValues$active),{
        # print('registered regChange')
         if(!is.null(values$Networks) 
            && length(names(values$Networks)[names(values$Networks) != "numNetworks"]) > 0
@@ -592,10 +594,10 @@ NetworkModule <- function(input,output, session,
                 internalValues$activelayout$layout <- norm_coords(matrix(c( V(internalValues$activelayout$graph)$x__coord,
                                                                             V(internalValues$activelayout$graph)$y__coord),
                                                                          ncol = 2))
-                    
+
                     }else{
                 internalValues$activelayout$layout <- norm_coords(as.matrix(internalValues$layouts$sublayouts[[subg]]))
-                    
+
                 }
                 
                 colnames(internalValues$activelayout$layout) <- c("x", "y")

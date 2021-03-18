@@ -253,7 +253,7 @@ MS2BrowserModule <- function(input,output, session,
   })
   
   observeEvent(NetMod$marker$vertex,{ 
-      if(!is.null(NetMod$marker$vertex)){
+      if(!is.null(NetMod$marker$vertex) & !is.null(values$MSData$data)){
           internalValues$spectab <- makeScanlist2(vertex_attr(NetMod$activelayout$graph,"MS2scans", NetMod$marker$vertex), MSData = values$MSData$data)[[1]]  
       }
   })
