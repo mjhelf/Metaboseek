@@ -479,7 +479,8 @@ setMethod("limitComponents", c("MseekGraph"),
                              edges =  type.convert(as_data_frame(g, "edges"), as.is = T))
               
               tables$edges <- tables$edges[-which(tables$edges$from %in% largeClusterNodes
-                                           & tables$edges[[rankBy]] < 1.01*min(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes])),]
+                                           & tables$edges[[rankBy]] <= quantile(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes], 0.01)#1.01*min(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes])
+                                           ),]
               
              # ie <- incident_edges(g, v = largeClusterNodes, mode = c("all"))
               
