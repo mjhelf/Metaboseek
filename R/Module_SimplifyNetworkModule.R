@@ -195,7 +195,10 @@ SimplifyNetworkModule <- function(input,output, session,
               column(4, 
                      numericInput(ns('maxConnections'), "Maximum Cluster size",
                                     value = 100)
-              )),
+              ),
+              column(3, div(title = "Remove 1% lowest value edges from large cluster each iteration (slower, but less chance of breaking up edges unnecessarily).",
+                            checkboxInput(ns("percentileCheck"),"Remove by percentile", value = TRUE)))
+              ),
               hr(),
             fluidRow(
               div( title = "Name of the simplified network:", 
@@ -228,7 +231,8 @@ SimplifyNetworkModule <- function(input,output, session,
   observeEvent(input$simplifyNow,{
     if(input$maxKcheck || input$cosThreshCheck || input$maxConnectionsCheck){
         tryCatch({  
-          
+          withProgress(message = 'Please wait!', detail = "Simplifying Network", value = 0.5, {
+            
           tempgraph <- values$Networks[[reactives()$activeNetwork]]
           if(input$maxKcheck || input$cosThreshCheck){
             tempgraph <- simplify(tempgraph,
@@ -256,7 +260,8 @@ SimplifyNetworkModule <- function(input,output, session,
             tempgraph <- limitComponents(tempgraph,
                                   rankBy = "cosine",
                                   n = input$maxConnections,
-                                  layoutFunction = values$GlobalOpts$graph.layouts.selected
+                                  layoutFunction = values$GlobalOpts$graph.layouts.selected,
+                                  percentile = input$percentileCheck
             )
             
             if(hasError(previousStep(tempgraph))){
@@ -272,7 +277,8 @@ SimplifyNetworkModule <- function(input,output, session,
               
             }
           }
-     
+          })
+          showNotification(paste("Network simplified!"), duration = 10)
           
     },
     error = function(e){
@@ -289,7 +295,9 @@ SimplifyNetworkModule <- function(input,output, session,
       )
     }
     
-        )}
+        )
+      
+      }
       else{
           showNotification(paste("You have to select a simplificatioin method to continue"), 
                            type = "warning", duration = 10)

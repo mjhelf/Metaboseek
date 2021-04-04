@@ -456,11 +456,13 @@ setMethod("simplify", c("MseekGraph"),
 #' @param rankBy if length > 0, will use this edge attribute to iteratively remove the lowest scoring edges from the large clusters until
 #' 
 #' @param layoutFunction function to use for layout of the resulting graph
+#' @param percentile remove edges in percentile steps
 #' @export
 setMethod("limitComponents", c("MseekGraph"),
           function(object, rankBy = "cosine",
                    n = Inf,
-                   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold"
+                   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold",
+                   percentile = TRUE
           ) {
             beforeHash <- MseekHash(object)
             
@@ -470,18 +472,30 @@ setMethod("limitComponents", c("MseekGraph"),
             tryCatch({
               g <- object$graph
               allClusters <- clusters(g, mode="weak")
+              maxClusSize <- max(allClusters$csize)
+              print(paste0("Largest cluster size: ", max(allClusters$csize), ". Increasing cosine threshold for large clusters..."))
+              
               
               while(any(allClusters$csize > n)){
+                if(maxClusSize > max(allClusters$csize)){
               print(paste0("Largest cluster size: ", max(allClusters$csize), ". Increasing cosine threshold for large clusters..."))
+                  maxClusSize <- max(allClusters$csize)
+                }
+                  
               largeClusterNodes <- which(allClusters$membership %in% which(allClusters$csize > n))
               
               tables <- list(nodes = type.convert(as_data_frame(g, "vertices"), as.is = T),
                              edges =  type.convert(as_data_frame(g, "edges"), as.is = T))
               
+              if(percentile){
               tables$edges <- tables$edges[-which(tables$edges$from %in% largeClusterNodes
                                            & tables$edges[[rankBy]] <= quantile(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes], 0.01)#1.01*min(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes])
                                            ),]
-              
+              }else{
+              tables$edges <- tables$edges[-which(tables$edges$from %in% largeClusterNodes
+                                                  & tables$edges[[rankBy]] < 1.01*min(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes])
+              ),]
+              }
              # ie <- incident_edges(g, v = largeClusterNodes, mode = c("all"))
               
               g <- graph_from_data_frame(d=tables$edges, vertices=tables$nodes, directed=F) 

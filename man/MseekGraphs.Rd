@@ -40,7 +40,8 @@
   object,
   rankBy = "cosine",
   n = Inf,
-  layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold"
+  layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold",
+  percentile = TRUE
 )
 }
 \arguments{
@@ -59,6 +60,8 @@
 \item{maxK}{if length > 0, will only allow at most this many edges from each node}
 
 \item{n}{maximum number of nodes connected in a cluster}
+
+\item{percentile}{remove edges in percentile steps}
 }
 \value{
 the \code{MseekFT} object, with saving event added to processHistory
