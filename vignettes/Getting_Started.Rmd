@@ -544,7 +544,7 @@ Below the sub-tab selection, you can see these elements:
 Information about completed SIRIUS analyses will show up here if available for the
 active molecular feature from the `Feature Table`.
 
-#####Get Structure Predictions with SIRIUS
+##### Get Structure Predictions with SIRIUS
 
 MS2 data can be analyzed with SIRIUS from inside the Metaboseek app. All 
 settings for SIRIUS can be found in the [`Options box`](#OptionsBox). In the 
@@ -868,7 +868,7 @@ For each match, only the match closest in retention time to `I1S1` is kept for f
 Intensities are re-extracted for all matched peaks (`I1S1`, `I2S1`, `I1S2`, `I2S2`), using 
 the m/z values identified for `I1S1` (for `I1S1` and `I1S2`) and `I2S2` (for `I1S2` and `I2S2`),
 and the rt values for `I1S1` (for `I1S1` and `I2S1`) and `I2S2` (for `I2S2` and `I2S2`).
-The extracted intensities are used to calculate mean intensity across the unlabeled (S1) and unlabeled (S2) samples for both isotopologs.
+The extracted intensities are used to calculate mean intensity across the unlabeled (S1) and labeled (S2) samples for both isotopologs.
 
 Key filter criteria that are user-controlled are the minimum ratio of `I1S1/I2S1` 
 (because a high ratio is expected in the unlabeled sample `S1` where 
@@ -877,7 +877,7 @@ is indicative of the label being enriched).
 The Features from the reference Feature Table which meet the filter criteria are
 then exported to a new Feature Table that contains intensity information for 
 `I1S1`, `I2S1`, `I1S2` and `I2S2`. The reported m/z and rt values are directly 
-carreid over from the original reference Feature Table.
+carried over from the original reference Feature Table.
 
 </details>
 

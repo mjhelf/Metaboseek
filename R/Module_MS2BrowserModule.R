@@ -401,7 +401,7 @@ MS2BrowserModule <- function(input,output, session,
                       
                       sirpath = list.files(values$GlobalOpts$siriusFolder,
                                            pattern = if(Sys.info()['sysname'] == "Windows"){
-                                             "^sirius-console"}else{"^sirius$"},
+                                             "^sirius\\.exe"}else{"^sirius$"},
                                            full.names = T,
                                            recursive = T)[1],
                       

@@ -224,16 +224,17 @@ runSirius <- function(outfolder,
   
   system(paste0(
     sirpath,
+    ' -i "',
+    filename,
+    '"',
     " -o ",
     '"',
     outfolder,
     '"',
     instrument,
     finger,
-    moreOpts,
-    ' "',
-    filename,
-    '"'),
+    moreOpts
+    ),
     intern = F, wait = F)
   
   if(file.exists(indexfile)){

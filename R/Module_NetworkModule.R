@@ -315,8 +315,9 @@ NetworkModule <- function(input,output, session,
             
             # set all frame color to black
             fc <- rep("black", times = vcount(internalValues$activelayout$graph))
-            #set all edge colors to grey
-            ec <- rep("grey50", times = ecount(internalValues$activelayout$graph))
+            #set all edge colors to black
+            ec <- rep("black",
+                      times = ecount(internalValues$activelayout$graph))
             
             #set all vertex colors
             if(internalValues$vlabccheck){

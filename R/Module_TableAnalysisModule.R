@@ -45,7 +45,8 @@ TableAnalysisModule <- function(input,output, session, values,
                                    analysesSelected = "Basic analysis",
                                    analysesSelected = NULL,
                                    numClusters = 2,
-                                   dbselected = system.file("db", "smid-db_pos.csv", package = "Metaboseek")
+                                   dbselected = system.file("db", "smid-db_pos.csv", package = "Metaboseek"),
+                                   normalizationMethod = "mean"
   )
   
   tempValues <- reactiveValues(zeroReplacementIntermediate = "lowest intensity value") #keep this one separate because it is not an FTAnalysisParam slot
@@ -239,7 +240,8 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
           
         
           
-          if(internalValues$normalizationSource == activeFT(values)){
+          if(!length(internalValues$normalizationSource) 
+             || internalValues$normalizationSource == activeFT(values)){
             nfrom <- NULL
           }else if(internalValues$normalizationSource %in% values$featureTables$index){
           nfrom <- FeatureTable(values,
