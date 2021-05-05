@@ -144,19 +144,20 @@ PlotBrowserModule <- function(input,output, session,
                             y=!!rlang::sym(internalValues$y))) + 
               theme_light() +
               geom_point(
-                aes(fill=if(internalValues$logCheck){
+                aes(color=if(internalValues$logCheck){
                   safelog(!!rlang::sym(internalValues$color))
                 }else{
                   !!rlang::sym(internalValues$color)}),
                 size = 2.5,
-                stroke = 1,
-                shape = 21,
+               # stroke = 1,
+               # shape = 21,
                 alpha = 0.8,
-                color = "black") 
+               # color = "black"
+               ) 
             if(is.factor(colvec) || is.character(colvec)){
               p <- p +  scale_color_hue()
             }else{
-              p <- p + scale_fill_gradient2(low = "blue",
+              p <- p + scale_color_gradient2(low = "blue",
                                             mid = "gray",
                                             high = "red",
                                             midpoint = if(internalValues$logCheck){0}else{mean(c(min(reactives()$PCAtable[[internalValues$color]], na.rm = TRUE),

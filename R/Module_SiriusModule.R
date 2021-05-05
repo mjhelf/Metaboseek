@@ -34,15 +34,20 @@ SiriusModule <- function(input,output, session,
                                                                                                 showTitle = FALSE, smaLimit = 100, sma = NULL) }else{NULL}
                                    )
   
+  rfr <- reactiveFileReader(1500,
+                            NULL,
+                            file.path(.MseekOptions$siriusFolder,
+                                      #values$GlobalOpts$siriusFolder,
+                                      "Metaboseek", "index.csv"),
+                            fread,
+                            stringsAsFactors = F)
   
   observe({
     if(!is.null(values$GlobalOpts$siriusFolder)){
+      cat('rF')
+     # print(rfr())
     internalValues$siriusIndex <- tryCatch({
-      as.data.frame(reactiveFileReader(1500,
-                                    NULL,
-                                    file.path(values$GlobalOpts$siriusFolder,"Metaboseek", "index.csv"),
-                                    fread,
-                                    stringsAsFactors = F)(), stringsAsFactors = F)
+      as.data.frame(rfr(), stringsAsFactors = F)
       },
                                     error = function(e){
                                       return(NULL)
@@ -55,7 +60,7 @@ SiriusModule <- function(input,output, session,
   #     
   #     tryCatch({
   #   internalValues$quickLookup <- paste(round(internalValues$siriusIndex$mz,4),
-  #      apply(internalValues$siriusIndex[,c("splash", "ion", "fingerid", "moreOpts", "Metaboseek_sirius_revision")],
+  #      apply(internalValues$siriusIndex[,c("hash", "ion", "fingerid", "moreOpts", "Metaboseek_sirius_revision")],
   #                                       1, paste, collapse = "//"), sep = "//")
   #     },
   #   error = function(e){print(e); return(character(0))})
@@ -89,7 +94,7 @@ SiriusModule <- function(input,output, session,
 
       tryCatch({
               internalValues$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "Metaboseek"),
-                                                       splash = SirBrowser$liveView[SirBrowser$selected_rows[1],"splash"],
+                                                       hash = SirBrowser$liveView[SirBrowser$selected_rows[1],"hash"],
                                                        ts = SirBrowser$liveView[SirBrowser$selected_rows[1],"timestamp"])
 
       },
@@ -131,7 +136,7 @@ SiriusModule <- function(input,output, session,
 
     if(!is.null(MFbrowser$selected_rows) && !is.null(MFbrowser$liveView)){
 
-      internalValues$activeMF <- getSiriusTree(internalValues$activeSirius,MFbrowser$liveView[MFbrowser$selected_rows,"formula"])
+      internalValues$activeMF <- getSiriusTree(internalValues$activeSirius,MFbrowser$liveView[MFbrowser$selected_rows,"molecularFormula"])
     }
 
   })
@@ -142,7 +147,7 @@ SiriusModule <- function(input,output, session,
                           reactives = reactive({
 
 
-                            list(df =  if(!is.null(internalValues$activeSirius)){internalValues$activeSirius$summary_fingerid_expanded[,c("rank", "molecularFormula", "score", "name", "pubchemids", "smiles")]}else{NULL},
+                            list(df =  if(!is.null(internalValues$activeSirius)){internalValues$activeSirius$summary_fingerid_expanded[,c("rank", "molecularFormula", "CSI:FingerIDScore", "name", "pubchemids", "smiles")]}else{NULL},
                                  rowFilters = NULL,
                                  colFilters = NULL)
 
@@ -235,7 +240,7 @@ SiriusModule <- function(input,output, session,
     
     if(!is.null(internalValues$activeSirius)){
       
-      selitem <- internalValues$siriusIndex[internalValues$siriusIndex$splash == internalValues$activeSirius$splash 
+      selitem <- internalValues$siriusIndex[internalValues$siriusIndex$hash == internalValues$activeSirius$hash 
                                             & internalValues$siriusIndex$timestamp == internalValues$activeSirius$timestamp,]
       
       tagList(

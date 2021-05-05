@@ -385,30 +385,64 @@ MS2BrowserModule <- function(input,output, session,
                if(!is.null(splashsource()$stab) 
                   && !is.null(values$GlobalOpts$siriusFolder)){
                  
+                 list(                       sirpath = list.files(values$GlobalOpts$siriusFolder,
+                                                                  pattern = if(Sys.info()['sysname'] == "Windows"){
+                                                                    "^sirius\\.exe"}else{"^sirius$"},
+                                                                  full.names = T,
+                                                                  recursive = T)[1],
+                                             ms2 = splashsource()$AllSpecLists,
+                                             ms1 = list(internalValues$ms1),
+                                             parentmz = mean(splashsource()$stab$parentMz),
+                                             outfolder = file.path(values$GlobalOpts$siriusFolder,"Metaboseek"),
+                                             ion = values$GlobalOpts$SiriusSelIon,
+                                             comments = "",
+                                             rt = mean(splashsource()$stab$rt),
+                                             charge= if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
+                                             fingerid = values$GlobalOpts$SiriusCheckFinger,
+                                             scanindices = saveScanlist(splashsource()$stab),
+                                             moreOpts = "",
+                                             config = list(IsotopeSettings.filter = TRUE,
+                                                           FormulaSearchDB = values$GlobalOpts$SiriusDBselected,
+                                                           Timeout.secondsPerTree = 0, 
+                                                           FormulaSettings.enforced = values$GlobalOpts$SiriusElements, 
+                                                           Timeout.secondsPerInstance = 0, 
+                                                           AdductSettings.detectable = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){"[[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-]"}else{"[[M+K]+,[M+H3N+H]+,[M+Na]+,[M-H4O2+H]+,[M-H2O+H]+,[M+H]+]"} , 
+                                                           UseHeuristic.mzToUseHeuristicOnly = 650, 
+                                                           AlgorithmProfile = values$GlobalOpts$SiriusSelInstrument, #qtof 
+                                                           IsotopeMs2Settings = "IGNORE", 
+                                                           MS2MassDeviation.allowedMassDeviation = '5.0ppm', 
+                                                           NumberOfCandidatesPerIon = 10, 
+                                                           UseHeuristic.mzToUseHeuristic = 300, 
+                                                           FormulaSettings.detectable = ",", 
+                                                           NumberOfCandidates = 20, 
+                                                           StructureSearchDB = values$GlobalOpts$SiriusDBselected,
+                                                           AdductSettings.fallback = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){ "[[M-H]-,[M+Cl]-,[M+Br]-]"}else{"[[M+K]+,[M+Na]+,[M+H]+]"}, 
+                                                           RecomputeResults = TRUE),
+                                             force = T)
 
                  
-                 list(outfolder =  file.path(values$GlobalOpts$siriusFolder,"Metaboseek"),
-                      ms2 = splashsource()$AllSpecLists,
-                      ms1 = list(internalValues$ms1),
-                      instrument = values$GlobalOpts$SiriusSelInstrument,
-                      parentmz = mean(splashsource()$stab$parentMz),
-                      rt = mean(splashsource()$stab$rt),
-                      comments = "",
-                      ion = values$GlobalOpts$SiriusSelIon,
-                      charge= if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
-                      fingerid = values$GlobalOpts$SiriusCheckFinger,
-                      scanindices = saveScanlist(splashsource()$stab),
-                      
-                      sirpath = list.files(values$GlobalOpts$siriusFolder,
-                                           pattern = if(Sys.info()['sysname'] == "Windows"){
-                                             "^sirius\\.exe"}else{"^sirius$"},
-                                           full.names = T,
-                                           recursive = T)[1],
-                      
-                      moreOpts = paste0("-c 50 ",
-                                        if(!is.null(values$GlobalOpts$SiriusCheckFinger) 
-                                            && values$GlobalOpts$SiriusCheckFinger){paste0("--fingerid-db ", values$GlobalOpts$SiriusDBselected," -e ")}else{"-e "},
-                                        values$GlobalOpts$SiriusElements))
+                 # list(#outfolder =  file.path(values$GlobalOpts$siriusFolder,"Metaboseek"),
+                 #      # ms2 = splashsource()$AllSpecLists,
+                 #      # ms1 = list(internalValues$ms1),
+                 #      #instrument = values$GlobalOpts$SiriusSelInstrument,
+                 #      #parentmz = mean(splashsource()$stab$parentMz),
+                 #      # rt = mean(splashsource()$stab$rt),
+                 #      # comments = "",
+                 #      # ion = values$GlobalOpts$SiriusSelIon,
+                 #      charge= if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
+                 #      fingerid = values$GlobalOpts$SiriusCheckFinger,
+                 #      scanindices = saveScanlist(splashsource()$stab),
+                 #      
+                 #      # sirpath = list.files(values$GlobalOpts$siriusFolder,
+                 #      #                      pattern = if(Sys.info()['sysname'] == "Windows"){
+                 #      #                        "^sirius\\.exe"}else{"^sirius$"},
+                 #      #                      full.names = T,
+                 #      #                      recursive = T)[1],
+                 #      
+                 #      moreOpts = paste0("-c 50 ",
+                 #                        if(!is.null(values$GlobalOpts$SiriusCheckFinger) 
+                 #                            && values$GlobalOpts$SiriusCheckFinger){paste0("--fingerid-db ", values$GlobalOpts$SiriusDBselected," -e ")}else{"-e "},
+                 #                        values$GlobalOpts$SiriusElements))
                }else{
                  
                  NULL

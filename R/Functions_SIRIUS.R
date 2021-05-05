@@ -14,7 +14,7 @@
 #' @param rt numeric: retention time in seconds
 #' @param ion ion type (e.g. \eqn{[M+H]+})
 #' @param charge charge (positive or negative integer)
-#' @param splashtag splash tag of the ms2 spectrum
+#' @param hashtag hash tag of the ms2 spectrum
 #' @param scanindices which scans were averaged into this ms2 spectrum
 #' 
 #' @importFrom digest digest
@@ -28,10 +28,10 @@ writeMS <- function(filename,
                     rt = "",
                     ion = NULL,
                     charge = 1,
-                    splashtag = NULL,
+                    hashtag = NULL,
                     scanindices = NULL){
   
-  if(is.null(splashtag)){splashtag <-  digest(ms2, algo = "xxhash64")}
+  if(is.null(hashtag)){hashtag <-  digest(ms2, algo = "xxhash64")}
   
   appending <- file.exists(filename)
   
@@ -39,11 +39,11 @@ writeMS <- function(filename,
     if(appending){"\n"}else{paste0('# Generated with MOSAiC version ',
                                    packageVersion("Metaboseek"),', timestamp: ',
                                    strftime(Sys.time(),"%Y%m%d_%H%M%S"))},
-    paste0(">compound ", splashtag),
+    paste0(">compound ", hashtag),
     paste0(">parentmass ", parentmz),
     if(!is.null(ion)){paste0(">ion ", ion)}else{paste0(">charge ", charge)},
     if(!is.null(scanindices)){paste0(">scans ", scanindices)}else{""},
-    paste0(">splash ", splashtag),
+    paste0(">hash ", hashtag),
     paste0("# Comments: ", comments),
     paste0(">rt ", rt),
     sep =  "\n"),
@@ -119,27 +119,102 @@ writeMS <- function(filename,
 #' @importFrom data.table fread fwrite data.table
 #' @importFrom digest digest
 #' 
+# 
+# ms1 = list(matrix(c(285.253723144531,	3128961.25, 286.256988525391,	469789.125),
+#              dimnames = list(rows = NULL,
+#                              cols = c('mz','intensity')),
+#              ncol = 2,
+#              byrow = TRUE))
+# 
+# ms2 = list(list(collision30 = matrix(c(84.0183,114.09156, 143.117874,443266,165303,516731),
+#                        dimnames = list(rows = NULL,
+#                                        cols = c('mz','intensity')),
+#                        ncol = 2)))
+# 
+# runSirius(                       sirpath = "C:/Runspace/sirius-4.8.2-win64/sirius-gui/sirius",
+#                                  ms2 = ms2,
+#                                  parentmz = 285.253723144531,
+#                                  outfolder = "C:/Runspace/sirius-4.8.2-win64/sirius-gui/Metaboseek",
+#                                  ms1 = ms1,
+#                                  ion = "[M+?]+",
+#                                  comments = "",
+#                                  rt = "",
+#                                  charge= 1,
+#                                  fingerid = T,
+#                                  scanindices = 111111,
+#                                  moreOpts = "",
+#                                  config = list(IsotopeSettings.filter = TRUE,
+#                                                FormulaSearchDB = c('BIO'),
+#                                                Timeout.secondsPerTree = 0,
+#                                                FormulaSettings.enforced = "HCNOP[5]S",
+#                                                Timeout.secondsPerInstance = 0,
+#                                                AdductSettings.detectable = ",",
+#                                                UseHeuristic.mzToUseHeuristicOnly = 650,
+#                                                AlgorithmProfile = list("orbitrap"), #qtof
+#                                                IsotopeMs2Settings = "IGNORE",
+#                                                MS2MassDeviation.allowedMassDeviation = '5.0ppm',
+#                                                NumberOfCandidatesPerIon = 5,
+#                                                UseHeuristic.mzToUseHeuristic = 300,
+#                                                FormulaSettings.detectable = ",",
+#                                                NumberOfCandidates = 10,
+#                                                StructureSearchDB = c('BIO'),
+#                                                AdductSettings.fallback = ",",
+#                                                RecomputeResults = TRUE),
+#                                  force = T)
+
+#' 
+#' 
 #' @export
-runSirius <- function(outfolder,
-                      ms1 = NULL,
-                       ms2,
-                       instrument,
+runSirius <- function(                       sirpath = file.path(.MseekOptions$siriusFolder, "sirius"),
+ms2,
                        parentmz,
-                       comments = "",
+                      outfolder = getwd(),
+                      ms1 = NULL,
+                       ion = "[M+?]+",
+                      comments = "",
                        rt = "",
-                       ion,
                        charge= 1,
                        fingerid = T,
-                       scanindices = NULL,
-                       sirpath,
+                       scanindices = "",
                        moreOpts = "",
+                      config = list(IsotopeSettings.filter = TRUE,
+                                    FormulaSearchDB = c('ALL_BUT_INSILICO','ALL','BIO',
+                                                          'METACYC','CHEBI','COCONUT',
+                                                          'ECOCYCMINE','GNPS','HMDB',
+                                                          'HSDB','KEGG','KEGGMINE',
+                                                          'KNAPSACK','MACONDA','MESH',
+                                                          'NORMAN','UNDP','PLANTCYC',
+                                                          'PUBCHEM','PUBMED','YMDB',
+                                                          'YMDBMINE','ZINCBIO'),
+                                    Timeout.secondsPerTree = 0, 
+                                    FormulaSettings.enforced = "HCNOP[5]S", 
+                                    Timeout.secondsPerInstance = 0, 
+                                    AdductSettings.detectable = "[[M+K]+,[M+H3N+H]+,[M+Na]+,[M-H4O2+H]+,[M-H2O+H]+,[M+H]+]", 
+                                    UseHeuristic.mzToUseHeuristicOnly = 650, 
+                                    AlgorithmProfile = "orbitrap", #qtof 
+                                    IsotopeMs2Settings = "IGNORE", 
+                                    MS2MassDeviation.allowedMassDeviation = '5.0ppm', 
+                                    NumberOfCandidatesPerIon = 1, 
+                                    UseHeuristic.mzToUseHeuristic = 300, 
+                                    FormulaSettings.detectable = ",", 
+                                    NumberOfCandidates = 10, 
+                                    StructureSearchDB = c('ALL_BUT_INSILICO','ALL','BIO',
+                                                            'METACYC','CHEBI','COCONUT',
+                                                            'ECOCYCMINE','GNPS','HMDB',
+                                                            'HSDB','KEGG','KEGGMINE',
+                                                            'KNAPSACK','MACONDA','MESH',
+                                                            'NORMAN','UNDP','PLANTCYC',
+                                                            'PUBCHEM','PUBMED','YMDB',
+                                                            'YMDBMINE','ZINCBIO'),
+                                    AdductSettings.fallback = "[[M+K]+,[M+Na]+,[M+H]+]", 
+                                    RecomputeResults = TRUE),
                       force = T){
 
   
   #write the MS2 data so sirius can read it
   dir.create(outfolder, showWarnings = F)
-  #splashtag <- lapply(ms2, getSplash)
-  splashtag <- lapply(ms2, digest, algo = "xxhash64")
+  #hashtag <- lapply(ms2, gethash)
+  hashtag <- lapply(ms2, digest, algo = "xxhash64")
   
   
   ts <- strftime(Sys.time(),"%y%m%d_%H%M%S")
@@ -148,22 +223,23 @@ runSirius <- function(outfolder,
    newjobs <- data.frame(mz = parentmz,
                          stringsAsFactors = F)
    
-   instrument <- paste0(" -p ",
-                        instrument)
-   
+  
    newjobs$rt = rt
-   newjobs$splash = unlist(splashtag)
+   newjobs$hash = unlist(hashtag)
    newjobs$timestamp = ts
    newjobs$ion = ion
-   newjobs$ms1splash = sapply(ms1, function(x){if(is.null(x)){""}else{digest(x,algo = "xxhash64")}})
+   newjobs$ms1hash = sapply(ms1, function(x){if(is.null(x)){""}else{digest(x,algo = "xxhash64")}})
    newjobs$charge = charge
    newjobs$fingerid = fingerid
-   newjobs$moreOpts = paste0(moreOpts, instrument)
+   newjobs$moreOpts = paste0(moreOpts)
    newjobs$Metaboseek_version = as.character(packageVersion("Metaboseek"))
-   newjobs$Metaboseek_sirius_revision = 2
-   newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1splash", "charge",
+   newjobs$Metaboseek_sirius_revision = 3
+   
+   newjobs <- cbind(newjobs, as.data.frame(lapply(config,function(x){if(length(x) >1){paste(x, collapse = ",")}else{x}}), stringsAsFactors = FALSE))
+   newjobs$settingsHash <- apply(newjobs[,c("ion", "ms1hash", "charge",
                                             "fingerid", "moreOpts",
-                                            "Metaboseek_sirius_revision"),
+                                            "Metaboseek_sirius_revision",
+                                            names(config)),
                                          drop = F], 1, digest,
                                  algo = "xxhash64")
    
@@ -181,10 +257,8 @@ runSirius <- function(outfolder,
     
     checkme <- as.data.frame(rbindlist(list(old = jobindex, 
                                             new = newjobs),
-                                       fill = T))[,c("mz", "splash",
-                                                     "ion", "charge", 
-                                                     "fingerid", "moreOpts",
-                                                     "Metaboseek_sirius_revision")]
+                                       fill = T))[,c("mz", "hash",
+                                                     "settingsHash")]
     
     #To avoid problems with m/z digits possibly not retained when 
     #exporting and reimporting of siriusIndex to/from index.csv
@@ -209,20 +283,40 @@ runSirius <- function(outfolder,
                scanindices = scanindices,
                comments = comments,
                rt = rt,
-               splashtag = splashtag,
+               hashtag = hashtag,
                ion = ion,
                charge = charge)
   
   
-  outfolder <- file.path(outfolder,strftime(Sys.time(),"%y%m%d_%H%M%S"))
+  outfolder <- file.path(outfolder,ts)
   
   
-  instrument <- paste0(" -p ",
-                       instrument)
+ ### config --IsotopeSettings.filter true --FormulaSearchDB --Timeout.secondsPerTree 0 --FormulaSettings.enforced HCNOP[5]S --Timeout.secondsPerInstance 0 --AdductSettings.detectable [[M + K]+, [M + H3N + H]+, [M + Na]+, [M - H4O2 + H]+, [M - H2O + H]+, [M + H]+] --UseHeuristic.mzToUseHeuristicOnly 650 --AlgorithmProfile orbitrap --IsotopeMs2Settings IGNORE --MS2MassDeviation.allowedMassDeviation 5.0ppm --NumberOfCandidatesPerIon 1 --UseHeuristic.mzToUseHeuristic 300 --FormulaSettings.detectable , --NumberOfCandidates 10 --AdductSettings.fallback [[M + K]+, [M + H3N + H]+, [M + Na]+, [M - H4O2 + H]+, [M - H2O + H]+, [M + H]+] --RecomputeResults true formula
+  ## --StructureSearchDB BIO
+  ## --StructureSearchDB PUBCHEM
   
-  finger <- if(fingerid){" --fingerid "}else{" "}
   
-  system(paste0(
+  finger <- if(fingerid){"fingerid"}else{""}
+  
+  configstring <- sapply(names(config),function(n){
+    x <- config[[n]]
+    
+    if(is.logical(x)){
+     x <- tolower(as.character(x))
+    }
+    
+    if(length(x) > 1){
+      x <- paste(x, collapse = ",")
+      
+    }
+
+    paste0("--", n, " ", x)
+    
+    })
+  
+  configstring <- paste0("config ", paste(configstring, collapse = " "))
+  
+  cmd <- paste0(
     sirpath,
     ' -i "',
     filename,
@@ -230,19 +324,65 @@ runSirius <- function(outfolder,
     " -o ",
     '"',
     outfolder,
-    '"',
-    instrument,
-    finger,
+    '" ',
+    configstring,
+    " tree ",
+    finger,    
     moreOpts
-    ),
-    intern = F, wait = F)
+  )
+  
+  cmd2 <-  paste(paste0(sirpath,
+                  ' -i "',
+                  outfolder,
+                  '" ftree-export --all --dot --output ',
+                  file.path(outfolder,paste0(seq_len(length(hashtag))-1,"_",ts,"_",unlist(hashtag)), "trees")),
+                 collapse = "\n")
+  
+  commandfile <- file.path(dirname(outfolder),paste0(ts,".sh"))
+  
+    if(Sys.info()['sysname'] == "Windows"){
+      commandfile <- gsub("\\.sh$",".cmd",commandfile)
+    }
+
+  
+  writeLines(c(cmd,cmd2),
+             commandfile
+             )
+  
+ 
+  if(Sys.info()['sysname'] == "Windows"){
+   # commandfile <- paste0("cmd /c ",'"', commandfile,'"')
+    commandfile <- paste0("powershell start ",'"', commandfile,'"')#,'" -NoNewWindow')
+    #using powershell because otherwise bat/cmd file won't run if wait = FALSE
+    # in system()
+  }
+  
+  print(commandfile)
+  system(commandfile,
+    intern = FALSE,
+    wait = FALSE)
+  
+  # system2("cmd", args = commandfile,
+  #        
+  #        wait = FALSE)
+  # 
+  # shell(commandfile,
+  #        intern = FALSE,
+  #        wait = FALSE,
+  #       translate = FALSE)
+  
   
   if(file.exists(indexfile)){
-    
-  fwrite(newjobs,
+  
+  jobindex <- as.data.frame(data.table::fread(indexfile, na.strings = NULL))
+  
+  #not appending so that if new columns are in newjobs, there are no problems
+  fwrite(rbindlist(list(data.table::fread(indexfile, na.strings = NULL),
+                        newjobs),
+                   fill = TRUE),
          indexfile,
-         append = T, sep = ",", row.names = F,
-         col.names = F, quote = T, eol = "\n")
+         append = F, sep = ",", row.names = F,
+         col.names = T, quote = T, eol = "\n")
   
   }else{
     
@@ -262,18 +402,18 @@ runSirius <- function(outfolder,
 #' get SIRIUS results for a given spectrum
 #' 
 #' @param outfolder folder with SIRIUS results
-#' @param splash splash tag to look for
+#' @param hash hash tag to look for
 #' @param ts timestamp to look for
 #' 
 #' @importFrom data.table fread
 #' 
 #' @return Returns a list with information for a completed SIRIUS job
-#' that matches \code{splash} and \code{ts} in \code{outfolder}
+#' that matches \code{hash} and \code{ts} in \code{outfolder}
 #' 
 #' @details Finds a result folder matching the search terms and reads 
 #' its contents.
 #' \itemize{
-#' \item \code{splash} copy of \code{splash}
+#' \item \code{hash} copy of \code{hash}
 #' \item \code{timestamp} copy of \code{ts}
 #' \item \code{allfiles} character vector with all files in \code{outfolder}
 #' \item \code{summary} path of the \code{summary_sirius.csv} file
@@ -294,14 +434,14 @@ runSirius <- function(outfolder,
 #' }
 #' 
 #' @export
-getSirius <- function(outfolder, splash, ts){
+getSirius <- function(outfolder, hash, ts){
   
   res <- list()
   
-  res[["splash"]] <- splash
+  res[["hash"]] <- hash
   res[["timestamp"]] <- ts
   
-  targetfolder <- grep(paste0(splash),
+  targetfolder <- grep(paste0(hash),
                        list.dirs(grep(paste0(ts),
                                       list.dirs(file.path(outfolder),
                                                 full.names = T, 
@@ -313,7 +453,7 @@ getSirius <- function(outfolder, splash, ts){
   
   res[["allfiles"]] <- list.files(targetfolder, full.names = T, recursive = T)
   
-  res[["summary"]] <-  grep(paste0("summary_sirius.csv"),
+  res[["summary"]] <-  grep(paste0("formula_candidates.tsv"),
                             res[["allfiles"]],
                             value = T)
   
@@ -324,6 +464,8 @@ getSirius <- function(outfolder, splash, ts){
   res[["annotations"]] <-  list.files(file.path(dirname(res[["summary"]]),
                                                 "spectra"),
                                       full.names = T, recursive = T)
+  
+  
   
   res[["trees_dot"]] <-  grep(".dot$",
                               list.files(file.path(dirname(res[["summary"]]),
@@ -337,10 +479,10 @@ getSirius <- function(outfolder, splash, ts){
                                           full.names = T, recursive = T),
                                value = T)
   
-  if(length(grep(paste0("summary_csi_fingerid.csv"),
+  if(length(grep(paste0("structure_candidates.tsv"),
                       res[["allfiles"]],value = T))){
   
-  res[["summary_fingerid"]] <-  grep(paste0("summary_csi_fingerid.csv"),
+  res[["summary_fingerid"]] <-  grep(paste0("structure_candidates.tsv"),
                                      res[["allfiles"]],value = T)
   
   res[["summary_fingerid_expanded"]] <-  as.data.frame(fread(res[["summary_fingerid"]],
@@ -388,7 +530,7 @@ getSiriusTree <- function(paths, formula){
   
   res <- list()
   
-  res[["annotations"]] <-  as.data.frame(fread(grep(paste0("_",formula,"_"),
+  res[["annotations"]] <-  as.data.frame(fread(grep(paste0("",formula,"_"),
                                            paths[["annotations"]],
                                            value = T), stringsAsFactors = F),
                                          stringsAsFactors = F)
@@ -397,7 +539,7 @@ getSiriusTree <- function(paths, formula){
                                                paths[["trees_dot"]],
                                                value = T))
   
-  res[["trees_json"]] <-   jsonlite::read_json(grep(paste0("_",formula,"_"),
+  res[["trees_json"]] <-   jsonlite::read_json(grep(paste0("",formula,"_"),
                                           paths[["trees_json"]],
                                           value = T))
   

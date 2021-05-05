@@ -75,7 +75,7 @@ SiriusOptionsModule <- function(input,output, session, values){
   observeEvent(input$selDB,{
     
     values$GlobalOpts$SiriusDBselected <- input$selDB
-    MseekOptions(SiriusDBselected = input$SiriusDBselected)
+    MseekOptions(SiriusDBselected = input$selDB)
   })
   
   observeEvent(input$useMS1,{
