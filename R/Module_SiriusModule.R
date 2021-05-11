@@ -48,8 +48,18 @@ SiriusModule <- function(input,output, session,
      # print(rfr())
     internalValues$siriusIndex <- tryCatch({
       as.data.frame(rfr(), stringsAsFactors = F)
+      
+      # for all columns that are of type logical and only contain NAs, assume they are mutilated empty character strings
+      # and a victim of type.convert - make them character vectors again
+      # charCols <- sapply(tmp,typeof) == "logical" & sapply(lapply(tmp,is.na),all)
+      # if(any(charCols)){
+      #   tmp[,charCols] <- character(nrow(tmp))
+      # }
+      # return(tmp)
+      # 
       },
                                     error = function(e){
+                                    #  print(e)
                                       return(NULL)
                                       })
 }

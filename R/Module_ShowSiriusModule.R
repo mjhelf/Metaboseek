@@ -27,7 +27,7 @@ ShowSiriusModule <- function(input,output, session,
   #or if the new query is different from the previous selection
   observeEvent(internalValues$query,{# input$getSirius,{#
       if(is.null(internalValues$query)
-         || (!is.null(values$SiriusModule$activeSirius) && internalValues$query$splash != values$SiriusModule$activeSirius$hash)
+         || (!is.null(values$SiriusModule$activeSirius) && internalValues$query$hash != values$SiriusModule$activeSirius$hash)
          ){
           values$SiriusModule$activeSirius<- NULL
           
@@ -36,7 +36,7 @@ ShowSiriusModule <- function(input,output, session,
   
   #
   observeEvent(internalValues$activeSirius,{# input$getSirius,{#
-      if(!is.null(internalValues$activeSirius) && internalValues$query$splash != values$SiriusModule$activeSirius$hash){
+      if(!is.null(internalValues$activeSirius) && internalValues$query$hash != values$SiriusModule$activeSirius$hash){
           values$SiriusModule$activeSirius<- NULL
           
       }
@@ -52,7 +52,7 @@ ShowSiriusModule <- function(input,output, session,
       tryCatch({
         
         values$SiriusModule$activeSirius <- getSirius(file.path(values$GlobalOpts$siriusFolder, "Metaboseek"),
-                                                      hash = internalValues$query$splash, 
+                                                      hash = internalValues$query$hash, 
                                                       ts = internalValues$query$timestamp)
 
       }, error = function(e){
@@ -75,35 +75,40 @@ ShowSiriusModule <- function(input,output, session,
     if(is.null(values$SiriusModule$siriusIndex) 
        || is.null(reactives()$splash) 
        || !reactives()$splash %in% values$SiriusModule$siriusIndex$hash){
-      
+      print('red')
     }else{
-      
+      print('searching')
      
-      searchterm <- apply(data.frame(ion = values$GlobalOpts$SiriusSelIon,
-                                     ms1hash = reactives()$ms1splash,
-                                     charge = values$SiriusModule$selCharge,
-                                     fingerid = values$GlobalOpts$SiriusCheckFinger,
-                                    Metaboseek_sirius_revision =  3,
-                                    moreOpts = "",
-                                    IsotopeSettings.filter = TRUE,
-                                    FormulaSearchDB = values$GlobalOpts$SiriusDBselected,
-                                    Timeout.secondsPerTree = 0, 
-                                    FormulaSettings.enforced = values$GlobalOpts$SiriusElements, 
-                                    Timeout.secondsPerInstance = 0, 
-                                    AdductSettings.detectable = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){"[[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-]"}else{"[[M+K]+,[M+H3N+H]+,[M+Na]+,[M-H4O2+H]+,[M-H2O+H]+,[M+H]+]"} , 
-                                    UseHeuristic.mzToUseHeuristicOnly = 650, 
-                                    AlgorithmProfile = values$GlobalOpts$SiriusSelInstrument, #qtof 
-                                    IsotopeMs2Settings = "IGNORE", 
-                                    MS2MassDeviation.allowedMassDeviation = '5.0ppm', 
-                                    NumberOfCandidatesPerIon = 10, 
-                                    UseHeuristic.mzToUseHeuristic = 300, 
-                                    FormulaSettings.detectable = ",", 
-                                    NumberOfCandidates = 20, 
-                                    StructureSearchDB = values$GlobalOpts$SiriusDBselected,
-                                    AdductSettings.fallback = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){ "[[M-H]-,[M+Cl]-,[M+Br]-]"}else{"[[M+K]+,[M+Na]+,[M+H]+]"}, 
-                                    RecomputeResults = TRUE,
-                                    
-                                     stringsAsFactors = F),1,
+
+      job = data.frame(ion = values$GlobalOpts$SiriusSelIon,
+                        ms1hash = reactives()$ms1splash,
+                        charge = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){-1}else{1},
+                        fingerid = values$GlobalOpts$SiriusCheckFinger,
+                        moreOpts = " ",
+                        Metaboseek_sirius_revision =  3,
+                        stringsAsFactors = FALSE)
+      
+      conf = list(IsotopeSettings.filter = TRUE,
+                  FormulaSearchDB = values$GlobalOpts$SiriusDBselected,
+                  Timeout.secondsPerTree = 0, 
+                  FormulaSettings.enforced = values$GlobalOpts$SiriusElements, 
+                  Timeout.secondsPerInstance = 0, 
+                  AdductSettings.detectable = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){"[[M-H]-,[M+Cl]-,[M+Br]-,[M-H2O-H]-]"}else{"[[M+K]+,[M+H3N+H]+,[M+Na]+,[M-H4O2+H]+,[M-H2O+H]+,[M+H]+]"} , 
+                  UseHeuristic.mzToUseHeuristicOnly = 650, 
+                  AlgorithmProfile = values$GlobalOpts$SiriusSelInstrument, #qtof 
+                  IsotopeMs2Settings = "IGNORE", 
+                  MS2MassDeviation.allowedMassDeviation = '5.0ppm', 
+                  NumberOfCandidatesPerIon = 10, 
+                  UseHeuristic.mzToUseHeuristic = 300, 
+                  FormulaSettings.detectable = ",", 
+                  NumberOfCandidates = 20, 
+                  StructureSearchDB = values$GlobalOpts$SiriusDBselected,
+                  AdductSettings.fallback = if(length(grep("-$",values$GlobalOpts$SiriusSelIon))){ "[[M-H]-,[M+Cl]-,[M+Br]-]"}else{"[[M+K]+,[M+Na]+,[M+H]+]"}, 
+                  RecomputeResults = TRUE)
+      
+      job <- cbind(job, as.data.frame(lapply(conf,function(x){if(length(x) >1){paste(x, collapse = ",")}else{x}}), stringsAsFactors = FALSE))
+      
+      searchterm <- apply(job,1,
                           digest, algo = "xxhash64")
           
         
@@ -112,12 +117,15 @@ ShowSiriusModule <- function(input,output, session,
      
       
      if(length(hits)>0){
+       print('len(hits)>0')
        
        internalValues$query <- values$SiriusModule$siriusIndex[hits[length(hits)],]
        st <- "color: #000000; background-color: #9fe055; border-color: #595959"
        ti <- "SIRIUS results are available for this spectrum with the current SIRIUS settings."
        
      }else{
+       print('len(hits)<=0')
+       
        #retrieve the latest sirius result for the same spectrum regardless of sirius settings
        hits <- which(reactives()$splash == values$SiriusModule$siriusIndex$hash)
        internalValues$query <- values$SiriusModule$siriusIndex[hits[length(hits)],]

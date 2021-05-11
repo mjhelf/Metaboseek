@@ -11,7 +11,7 @@ GetSiriusWidget(
   session,
   reactives = reactive({     list(sirpath = file.path(.MseekOptions$siriusFolder,
     "sirius"), ms2, parentmz, outfolder = getwd(), ms1 = NULL, ion = "[M+?]+", comments =
-    "", rt = "", charge = 1, fingerid = T, scanindices = "", moreOpts = "", config =
+    "", rt = "", charge = 1, fingerid = T, scanindices = "", moreOpts = " ", config =
     list(IsotopeSettings.filter = TRUE, FormulaSearchDB = c("ALL_BUT_INSILICO", "ALL",
     "BIO", "METACYC", "CHEBI", "COCONUT", "ECOCYCMINE", "GNPS", "HMDB", "HSDB", "KEGG",
     "KEGGMINE", "KNAPSACK", "MACONDA", "MESH", "NORMAN", "UNDP", "PLANTCYC", "PUBCHEM",
