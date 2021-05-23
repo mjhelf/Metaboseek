@@ -4,7 +4,13 @@
 \alias{multittest}
 \title{multittest}
 \usage{
-multittest(df, groups, ttest = TRUE, adjmethod = "bonferroni")
+multittest(
+  df,
+  groups,
+  ttest = TRUE,
+  adjmethod = "bonferroni",
+  controlGroup = NULL
+)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
@@ -25,7 +31,7 @@ Calculate per-row t-test between grouped columns of a data.frame.
 columns in the export data.frame. All columns are generated for 
 each group defined in \code{groups},  where GX is replaced by the group name:
 \itemize{
-\item\code{GX__sdev} RELATIVE standard deviation (sd/mean) within the group
+\item\code{GX__CV} Coefficient of variation (relative standard deviation (sd/mean)) within the group
 \item\code{GX__pval} p value between this group and all samples in all other 
 groups, as calculated by \code{\link[stats]{t.test}()}
 \item\code{GX__pval_adj} p values, adjusted by the selected \code{adjmethod}

@@ -116,7 +116,8 @@ setMethod("analyzeFT",
                   object <- FTT.test(object,
                                      intensityCols = param@intensities,
                                      grouping = param@groups,
-                                     adjmethod = "bonferroni"
+                                     adjmethod = param@p.adjust.method,
+                                     controlGroup = param@controlGroup
                   )
                   
               }  
@@ -125,6 +126,7 @@ setMethod("analyzeFT",
                   
                   object <- FTAnova(object,
                                     intensityCols = param@intensities,
+                                    adjmethod = param@p.adjust.method,
                                     grouping = param@groups)
                   
               }  
@@ -1053,7 +1055,8 @@ setMethod("FTMzMatch", c("MseekFT"),
 setMethod("FTT.test", c("MseekFT"),
           function(object, intensityCols = NULL,
                    grouping = NULL,
-                   adjmethod = "bonferroni"){
+                   adjmethod = "bonferroni",
+                   controlGroup = NULL){
               beforeHash <- MseekHash(object)
               
               
@@ -1072,7 +1075,8 @@ setMethod("FTT.test", c("MseekFT"),
                   inp <- multittest(df = object$df[,intensityCols],
                                     groups = grouping,
                                     ttest = T,
-                                    adjmethod = adjmethod)
+                                    adjmethod = adjmethod,
+                                    controlGroup = controlGroup)
                   
                   object <- updateFeatureTable(object, inp)
                   
@@ -1120,7 +1124,8 @@ setMethod("FTT.test", c("MseekFT"),
 #' @export
 setMethod("FTAnova", c("MseekFT"),
           function(object, intensityCols = NULL,
-                   grouping = NULL){
+                   grouping = NULL,
+                   adjmethod = 'bonferroni'){
               beforeHash <- MseekHash(object)
               
               
@@ -1137,7 +1142,8 @@ setMethod("FTAnova", c("MseekFT"),
                   }
                   
                   inp <- MseekAnova(df = object$df[,intensityCols],
-                                    groups = grouping)
+                                    groups = grouping,
+                                    adjmethod = adjmethod)
                   
                   
                   object <- updateFeatureTable(object, inp)

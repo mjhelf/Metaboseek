@@ -113,8 +113,9 @@ MseekOptions <- function(..., defaults = F){
                                                        "layout_with_dh",
                                                        "layout_with_drl",
                                                        "layout_components"),
-                           graph.layouts.selected = "qgraph.layout.fruchtermanreingold"
+                           graph.layouts.selected = "qgraph.layout.fruchtermanreingold",
                            
+                           p.adjust.method = "fdr"
                            )
     
   }

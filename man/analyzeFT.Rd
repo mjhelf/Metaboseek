@@ -110,10 +110,16 @@
   object,
   intensityCols = NULL,
   grouping = NULL,
-  adjmethod = "bonferroni"
+  adjmethod = "bonferroni",
+  controlGroup = NULL
 )
 
-\S4method{FTAnova}{MseekFT}(object, intensityCols = NULL, grouping = NULL)
+\S4method{FTAnova}{MseekFT}(
+  object,
+  intensityCols = NULL,
+  grouping = NULL,
+  adjmethod = "bonferroni"
+)
 
 \S4method{FTCluster}{MseekFT}(object, intensityCols = NULL, numClusters = 100L)
 

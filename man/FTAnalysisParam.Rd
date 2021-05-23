@@ -18,6 +18,7 @@ FTAnalysisParam(
   replaceNAs = 0,
   ppm = 5,
   controlGroup = NULL,
+  p.adjust.method = "fdr",
   numClusters = 2,
   mzMatchParam = list(db = "smid-db_pos.csv", ppm = 5, mzdiff = 0.001),
   workers = 1

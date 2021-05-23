@@ -562,7 +562,7 @@ foldChange <- function(mx,
 #' @details columns in the export data.frame. All columns are generated for 
 #' each group defined in \code{groups},  where GX is replaced by the group name:
 #' \itemize{
-#' \item\code{GX__sdev} RELATIVE standard deviation (sd/mean) within the group
+#' \item\code{GX__CV} Coefficient of variation (relative standard deviation (sd/mean)) within the group
 #' \item\code{GX__pval} p value between this group and all samples in all other 
 #' groups, as calculated by \code{\link[stats]{t.test}()}
 #' \item\code{GX__pval_adj} p values, adjusted by the selected \code{adjmethod}
@@ -573,7 +573,8 @@ foldChange <- function(mx,
 multittest <- function (df,
                     groups,
                     ttest=TRUE,
-                    adjmethod='bonferroni'){
+                    adjmethod='bonferroni',
+                    controlGroup = NULL){
    # withProgress(message = 'Please wait!', detail = "calculating pvalues", value = 0.03,{
 
     out = data.frame(pholder= numeric(nrow(df)))
@@ -582,16 +583,22 @@ multittest <- function (df,
         
         i <- groups[[n]]
         
-        sdev <- apply(df[,i],1,sd)/apply(df[,i],1,mean)
-        sdev[which(is.na(sdev))] <-0 #if all data point in a line are 0, sd returns 0
+        #sdev <- apply(df[,i],1,sd)/apply(df[,i],1,mean)
+        m <- as.matrix(df[,i])
+        rowVars <- rowSums((m - rowMeans(m, na.rm=FALSE))^2, na.rm=FALSE) / (ncol(m) - 1) #https://stackoverflow.com/questions/55327096/r-tidyverse-calculating-standard-deviation-across-rows/61891777#61891777
+        cv <- sqrt(rowVars) / rowMeans(m, na.rm=FALSE)
         
-        
-        
+        cv[which(is.na(cv))] <-0 #if all data point in a line are 0, sd returns 0
+
     
-        if(ttest){
+        if(ttest && (!length(controlGroup) || !names(groups)[n] %in% controlGroup)){
           if(length(groups) >1){
+            if(!length(controlGroup)){
             noni <- unlist(groups[-n])
-         
+            }else{
+            noni <- unlist(groups[which(names(groups) %in% controlGroup)])
+            if(!length(noni)){stop("The specified Control Group does not exist")}
+            }
           
             pval <- apply(df[,c(i,noni)],1,function(x, i , noni){
               tryCatch({
@@ -606,19 +613,21 @@ multittest <- function (df,
               
             }, i = i, noni = noni)
             
-            padj <- p.adjust(pval, method = adjmethod)}
+            padj <- p.adjust(pval, method = adjmethod)
         
         
 
-        out[[paste0(names(groups)[n],"__sdev")]] <- sdev
         
         out[[paste0(names(groups)[n],"__pval")]] <- pval
         out[[paste0(names(groups)[n],"__pval_adj")]] <- padj
         }else{
          simpleError("Did not calculate p-value because only a single sample group is defined") 
         }
+        }
+        
+      out[[paste0(names(groups)[n],"__CV")]] <- cv
+
     }
-    
 
     return(out[,which(colnames(out) !="pholder")])
 }
@@ -657,12 +666,13 @@ MosCluster <- function(method = "clara",
 #' @param df a data.frame with numeric (intensity) values
 #' @param groups named list of intensity columns listed by group 
 #' (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
+#' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
 #' 
 #' @return a data.frame with one column, called \code{ANOVA__pvalue}
 #' 
 #' @importFrom stats oneway.test
 #'  
-MseekAnova <- function(df, groups){
+MseekAnova <- function(df, groups, adjmethod = "bonferroni"){
   
   ints <- df[,unlist(groups)]  
   
@@ -683,7 +693,8 @@ MseekAnova <- function(df, groups){
     
   }, grp)
   
-  return(data.frame(ANOVA_pvalue = pvals))
+  return(data.frame(ANOVA_pvalue = pvals,
+                    ANOVA_pvalue_adj = p.adjust(pvals, method = adjmethod)))
   
 }
 
