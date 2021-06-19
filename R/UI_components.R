@@ -165,7 +165,7 @@ MseekHeader <- function(..., id = NULL){
                      title = "Activate/deactivate full-screen mode"),
                      class = "dropdown"),
                    tags$li(a(
-                     href = 'http://metaboseek.com/doc.html',
+                     href = 'http://metaboseek.com/doc',
                      icon("question-circle fa-lg"),
                      title = "Mseek online help (opens in new window)",
                      target="_blank",
