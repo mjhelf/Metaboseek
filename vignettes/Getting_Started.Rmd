@@ -293,13 +293,15 @@ not be restored (notably, molecular networks are not saved in the session file).
 
 ### Supported File Types {#supportedFiles}
 
-Metaboseek uses the `MSnbase` and `xcms` packages to load MS data files of the following formats:
+Metaboseek uses the `MSnbase` and `xcms` packages to load MS data files of the following formats.:
 
 * .cdf
 * .nc
 * .mzData
 * .mzML
 * .mzXML
+
+**Note:** Data needs to be centroided.
 
 Feature Tables can be loaded in these formats:
 

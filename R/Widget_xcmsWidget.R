@@ -227,11 +227,8 @@ xcmsWidget <- function(input,output, session,
                                             contentType = "application/zip")
   
   
-  #toggle(id ="xcms_loadfolderOffline", condition = (!internalStatic$servermode && Sys.info()['sysname'] == "Windows"))
-  #toggle(id = "xcms_loadfolder", condition = ((internalStatic$servermode) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
-  
+ 
   observe({
-    #toggleState(id = "xcms_loadfolder", condition = ((internalStatic$servermode && internalStatic$activateXCMS) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
     shinyjs::toggleState(id = "xcms_start", condition = length(internalValues$wd)>0 && (!internalStatic$servermode || (internalStatic$servermode && internalStatic$activateXCMS)))
   })
   
@@ -582,19 +579,25 @@ xcmsWidgetUI <-  function(id){
 fluidRow(
       shinydashboard::box(title = "Run XCMS analysis", width = 12, status= "primary",
                           
-                          p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
-                          
-                         # p(strong("Not on by default in Server mode!")," Currently only one xcms job per Metaboseek session (concurrent job monitoring coming later)."),
+                          h3("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the selected file folder with results from the xcms analysis."),
                           fluidRow(
-                            column(6,
-                                   #actionButton(ns('xcms_loadfolderOffline'), "load MS file folder"),
-                                   shinyFiles::shinyDirButton(ns('xcms_loadfolder'), "load MS file folder", title = "select a folder with MS data files"),
+                            column(5,
+                                   h3("Load Data"),
+                                   hr(),
+                                   strong("Data must be centroided. Supported File Formats: .mzXML, .mzML, .cdf, .nc, .mzData"),
+                                   shinyFiles::shinyDirButton(ns('xcms_loadfolder'), "1. Load MS file folder",
+                                                              title = "Select a folder with MS data files.",
+                                                              style="height: 50px; border-color: #C41230; width: 100%;"),
                                    
-                                   
+                                   hr(),
                                    textInput(ns('xcms_name'), "Title of this analysis", "xcms_run"),
-                                   actionButton(ns('xcms_start'),"Start analysis!", style="color: #fff; background-color: #C41230; border-color: #595959")),
-                            
-                            column(6,
+                                   hr(),
+                                   actionButton(ns('xcms_start'),"2. Start analysis!",
+                                                style="color: #fff; background-color: #C41230; border-color: #595959; height: 50px; width: 100%;")),
+                            column(2),
+                            column(5, 
+                                   h3("Load Presets"),
+                                     hr(),
                                    fluidRow(
                                    htmlOutput(ns('defaultSelector'))),
                                    fluidRow(

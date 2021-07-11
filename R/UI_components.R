@@ -225,7 +225,7 @@ MseekSidebar <- function(..., id = NULL){
       
       # menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
       #          menuSubItem("Coming soon", tabName = "workflow1")),
-      menuItem("Update", tabName = "updateTab", icon = icon("upload")),
+      #menuItem("Update", tabName = "updateTab", icon = icon("upload")),
       ...,
       #bookmarkButton(label ="Bookmark this session"),
       #SelectActiveTableModuleUI("selectactivetable"),
