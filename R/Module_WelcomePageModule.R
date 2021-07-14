@@ -79,7 +79,7 @@ WelcomePageModule <- function(input,output, session,
                               fluidPage(
                                 fluidRow(
                                   
-                                  h3("Load your data with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.", style = "text-align:center;"),
+                                  h3("Load your data with the buttons below. You can load a Feature Table, MS data files, or a Project folder.", style = "text-align:center;"),
                                   h4("No Feature Table? Run an ", actionLink(ns("xcms_link"), "XCMS analysis"), style = "text-align:center;"),
                                   
                                   

@@ -617,14 +617,21 @@ fluidRow(
                           id = "xcms_settingsBox", status = "primary",
                           fluidPage(
                             fluidRow(
+                            column(5,
+                             fluidRow(
+                              htmlOutput(ns("outputSelection"))
+                            )      
+                            ),
+                            column(2),
+                            column(5,
+                            fluidRow(
+                              h3("Analysis Settings"),
                               htmlOutput(ns('xcms_selectTab'))
                             ),
                             fluidRow(
                               rhandsontable::rHandsontableOutput(ns('xcms_settingstab'))
-                            ),
-                            fluidRow(
-                              htmlOutput(ns("outputSelection"))
-                            ),
+                            ))),
+                            
                            
                             fluidRow(
                               hr(),

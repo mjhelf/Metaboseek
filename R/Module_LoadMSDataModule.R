@@ -131,6 +131,7 @@ LoadMSDataModuleUI <- function(id){
   
   ns <- NS(id)
   
-  actionButton(ns("loadMSDButton"), "Load MS data", icon = icon("folder-open", lib = "font-awesome"))
+  actionButton(ns("loadMSDButton"), "Load MS data", icon = icon("folder-open", lib = "font-awesome"),
+               width = "100%", style = 'height: 50px;')
   
 }
