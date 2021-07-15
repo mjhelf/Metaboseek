@@ -433,6 +433,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
   output$NormInfoText <- renderPrint({FeatureTable(values)$normalizationFactors})
   
   output$NormalizationInfo <- renderUI({
+    if(!is.null(values$featureTables)){
     tagList(
     fluidRow(
     p('Normalization Factors:')),
@@ -440,6 +441,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
      verbatimTextOutput(ns("NormInfoText")) 
     )
     )
+    }
   })
   
   observe({
