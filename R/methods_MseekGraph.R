@@ -6,6 +6,7 @@
 #' 
 #' @description \code{setLayout():} change the graph layout of an existing MseekGraph object.
 #' 
+#' @param object an \code{MseekGraph} object (\code{MseekFT} for \code{buildMseekGraph()})
 #' @param layoutFunction function to use for layout of the resulting graph
 #' 
 #' @export

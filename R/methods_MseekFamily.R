@@ -32,11 +32,11 @@ setMethod("addProcessHistory", c("MseekFamily", "ProcessHistory"), function(obje
         return(object)
 })
 
-#' @rdname MseekFamily
 #' @aliases processHistory
 #' @description \code{processHistory}: extract a list of \code{ProcessHistory} objects from an object,
 #'  representing changes made to the object.
 #' 
+#' @rdname MseekFamily
 #' @export
 setMethod("processHistory", "MseekFamily", function(object) {
     if(!length(object$.processHistory)){

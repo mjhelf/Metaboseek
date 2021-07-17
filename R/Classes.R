@@ -124,6 +124,10 @@ setClassUnion("ParamOrNULL", c("Param", "NULL"))
 #' @slot numClusters number of clusters for clara_clusters analysis
 #' @slot mzMatchParam list of parameters passed to mass
 #' @slot workers number of workers to use for multithreaded analyses
+#' @slot normalizationFactors normalizationFactors vector with factors to apply to each column for normalization.
+#' @slot zeroReplacement value to replace zeros with
+#' @slot replaceNAs Numeric value to replace NA values with
+#' @slot p.adjust.method method to adjust p-values (see \code{\link[stats]{p.adjust}()})
 #' 
 #' @rdname FTAnalysisParam-class
 setClass("FTAnalysisParam",
@@ -644,6 +648,10 @@ FunParam <- function(fun = character(), args = list(), longArgs = list()){
 #' @param numClusters number of clusters for clara_clusters analysis
 #' @param mzMatchParam list of parameters passed to mass
 #' @param workers number of workers to use for multithreaded analyses
+#' @param normalizationFactors normalizationFactors vector with factors to apply to each column for normalization.
+#' @param zeroReplacement value to replace zeros with
+#' @param replaceNAs Numeric value to replace NA values with
+#' @param p.adjust.method method to adjust p-values (see \code{\link[stats]{p.adjust}()})
 #' 
 #' @return a \code{\link{FTAnalysisParam-class}} object
 #'

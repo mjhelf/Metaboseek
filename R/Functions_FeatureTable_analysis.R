@@ -339,6 +339,7 @@ featureTableNormalize <- function (mx,
 #' @param intensityCols selected columns (with intensity values)
 #' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
 #' @rdname featureTableNormalize
+#' @param object a data.frame
 #' @export
 setMethod("FTNormalize", "data.frame",
           function(object, intensityCols, logNormalized = FALSE){

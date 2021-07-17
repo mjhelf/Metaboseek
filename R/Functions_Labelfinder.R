@@ -193,6 +193,16 @@ findLabeledPeaks <- function (df,
 #' find labeled compounds in \code{complist} which correspond to unlabeled compounds in \code{reflist}
 #'
 #' @inheritParams featlistCompare
+#' @param ref_intensityCols intensity column names in reflist
+#' @param comp_intensityCols intensity column names in complist
+#' @param labelmz expected m/z difference between reference and labeled compounds
+#' @param pktolerance maximum fold difference in retention time peak width between matched peaks
+#' @param ppm_compare ppm m/z tolerance for feature list comparison
+#' @param ifoldS1 min. fold Iso1/Iso2 in unlabeled
+#' @param ifoldS2 max. fold Iso1/Iso2 in labeled
+#' @param rawdata list of xcmsRaw objects. Item names must be contained in column names
+#' @param ppm_extract ppm m/z tolerance for EIC extraction
+#' @param rtw_extract retention time window for EIC extraction (seconds, will be applied +/- the expected rt)
 #' 
 #' @examples
 #' MseekExamplePreload(data = T, tables = T)

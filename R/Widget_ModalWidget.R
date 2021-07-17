@@ -8,6 +8,7 @@
 #'  \code{fp}, see details
 #' @param useActionLink if TRUE, will use an \code{actionLink} instead 
 #' of an \code{actionButton} to open the modal Dialog
+#' @param style style settings to apply to the modal button
 #'  
 #' @details Because the UI elements of the modal dialog are passed in as 
 #' \code{reactives()$fp}, they can be namespaced and easily accessed in the 

@@ -556,7 +556,7 @@ fluidRow(
                                    fluidRow(
                                     # hr(),
                                      h3("Automatic post-processing of MS data"),
-                                     p("Basic analysis and p-value calculation require more than one group set in File Grouping.")),
+                                     p("Basic analysis and p-value calculation require more than one group set in File Grouping (in Analysis Settings).")),
                                    fluidRow(
                                      column(3,htmlOutput(ns("noRtCorrCheck"))),
                                      column(3, htmlOutput(ns("rtCorrCheck")))

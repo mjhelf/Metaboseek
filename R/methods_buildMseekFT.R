@@ -74,6 +74,11 @@ setMethod("buildMseekFT",
           })
 
 #' @rdname buildMseekFT
+#' @param anagrouptable Analysis grouping table: a data.frame with columns 
+#' "Column" (containing column names from df with intensity values) and "Group" 
+#' (defining a group for each entry in "Column") 
+#' @param from input format. If auto, will run \code{.getFTFormat} to determine
+#' the format.
 #' @export
 setMethod("buildMseekFT", 
           signature(object = "data.frame"),

@@ -342,15 +342,16 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                        reactives = reactive({  
                          list(fp = fluidPage(
                            fluidRow(
+                             h3("Imputation"),
                              column(4,
                                     htmlOutput(ns("replaceNAsCheck"))
                              ),
                              column(4,
                                     htmlOutput(ns("zeroReplacementCheck"))
                                     )),
-                           
+                           hr(),
                              fluidRow(
-                               
+                               h3("Normalization"),
                                column(4,
                                       htmlOutput(ns('normDataCheck'))
                                ),
