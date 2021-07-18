@@ -366,16 +366,16 @@ xcmsWidget <- function(input,output, session,
     }
   })
   
-  
+  rfr <- reactive({reactiveFileReader(1500,
+                            NULL,
+                            file.path(internalValues$jobs[1],"status.csv"),
+                            read.csv,
+                            stringsAsFactors = F, 
+                            row.names = 1)() })
   
   output$xcms_statustab <- rhandsontable::renderRHandsontable({if(!is.null(internalValues$jobs)){
     
-    rhandsontable::rhandsontable(reactiveFileReader(1500,
-                                                    NULL,
-                                                    file.path(internalValues$jobs[1],"status.csv"),
-                                                    read.csv,
-                                                    stringsAsFactors = F, 
-                                                    row.names = 1)(),
+    rhandsontable::rhandsontable(rfr(),
                                  readOnly = T,
                                  contextMenu = F,
                                  selectCallback = TRUE,

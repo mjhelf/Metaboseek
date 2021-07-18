@@ -91,9 +91,11 @@ setClassUnion("MseekFamily", c("MseekFT", "MseekGraph"))
 
 #' @noRd
 #' @author Johannes Rainer
-setClass("Param",
-         representation = representation("VIRTUAL"),
-         contains = c("Versioned"))
+# setClass("Param",
+#          representation = representation("VIRTUAL"),
+#          contains = c("Versioned"))
+setClass("Param", contains = "VIRTUAL")
+
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
 #' FTAnalysisParam
@@ -288,17 +290,17 @@ setClass("FTProcessHistory",
 
 
 setMethod("initialize", "FTAnalysisParam", function(.Object, ...) {
-    Biobase::classVersion(.Object)["FTAnalysisParam"] <- "0.0.1"
+    #Biobase::classVersion(.Object)["FTAnalysisParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
 setMethod("initialize", "FTProcessHistory", function(.Object, ...) {
-    Biobase::classVersion(.Object)["FTProcessHistory"] <- "0.0.1"
+    #Biobase::classVersion(.Object)["FTProcessHistory"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
 setMethod("initialize", "FunParam", function(.Object, ...) {
-    Biobase::classVersion(.Object)["FunParam"] <- "0.0.1"
+   # Biobase::classVersion(.Object)["FunParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
@@ -595,7 +597,7 @@ FTProcessHistory <- function(error = list(),
     obj@sessionInfo <- sessionInfo
     obj@fileNames <- fileNames
     obj@processingTime <- processingTime
-    Biobase::classVersion(obj)["FTProcessHistory"] <- "0.0.1"
+    #Biobase::classVersion(obj)["FTProcessHistory"] <- "0.0.1"
     OK <- validObject(obj)
     if (is.character(OK))
         stop(OK)

@@ -42,7 +42,7 @@ LoadMSDataModule <- function(input,output, session,
       fluidPage(
         fluidRow(
           h4("Supported File Formats: .mzXML, .mzML, .cdf, .nc, .mzData"),
-          h3("Note: Only centroided data supported.")
+          strong("Note: Only centroided data supported.")
         ),
         fluidRow(
           column(6,
