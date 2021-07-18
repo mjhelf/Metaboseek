@@ -4,7 +4,7 @@
 
 #' @title analyzeFT
 #' @aliases analyzeFT
-#' @name analyzeFT
+#' @rdname analyzeFT
 #' 
 #' @description \code{analyzeFT()}: wrapper function for the methods described here. 
 #' Analyze MseekFT objects, recording a processing history .
@@ -1912,10 +1912,11 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
 #' 
 #' @description \code{LabelFinder}: Find labeled features, see \code{\link{findLabels}()}
 #' @param newName name for the LabelFinder result object
-#' @param object Feature Table to compare to (with targets expected to carry a label)
+#' @param object2 Feature Table to compare to (with targets expected to carry a label)
 #' 
 #' @examples 
-#' MseekExamplePreload(data = T, tables = T)
+#' \dontrun{
+#' MseekExamplePreload(data = TRUE, tables = TRUE)
 #' LabelFinderResults <- LabelFinder(object = tab2, #remove intensity columns to have them replaced with new ones from rawdata
 #'                                 object2 = tab2,
 #'                                 newName = "Test",
@@ -1925,7 +1926,8 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
 #'                                 labelmz = 2*1.00335,
 #'                                 ifoldS1 = 10,
 #'                                 ifoldS2 = 10000)
-#'
+#' }
+#' 
 #' @rdname analyzeFT
 #' @export
 setMethod("LabelFinder", signature(object = "MseekFamily"),
@@ -1986,7 +1988,8 @@ setMethod("LabelFinder", signature(object = "MseekFamily"),
 #' @param noise remove peaks below this relative intensity when merging spectra (relative to highest peak, not percent)
 #' 
 #' @examples 
-#' MseekExamplePreload(data = T, tables = T)
+#' \dontrun{
+#' MseekExamplePreload(data = TRUE, tables = TRUE)
 #' tab1 <- FTMS2scans(tab1, MSD$data)
 #' LabelFinderResults <- PatternFinder(object = tab1, #needs to have an MS2
 #'                                 MSData = MSD$data,
@@ -1994,6 +1997,7 @@ setMethod("LabelFinder", signature(object = "MseekFamily"),
 #'                                 losses = list(testloss = 18.010788))
 #' LabelFinderResults$df$matched_losses
 #' LabelFinderResults$df$matched_patterns
+#' }
 #' 
 #' @rdname analyzeFT
 #' @export

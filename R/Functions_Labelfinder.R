@@ -16,8 +16,8 @@
 #' @return a list of data.frames
 #'
 #' @examples
-#' 
-#'  MseekExamplePreload(data = T, tables = T)
+#' \dontrun{
+#'  MseekExamplePreload(data = TRUE, tables = TRUE)
 #' demo_reflist = data.frame(mz = 101:200,
 #'                      rt = 201:300,
 #'                      rtmin = 198:297,
@@ -34,9 +34,11 @@
 #' 
 #' compareResults <- featlistCompare(reflist = demo_reflist, complist = demo_complist)
 #' 
-#'   MseekExamplePreload(data = F, tables = T)
+#'   MseekExamplePreload(data = FALSE, tables = TRUE)
 #' compareResultsBig <- featlistCompare(reflist = tab2$df, complist = tab2$df)
 #'
+#' }
+#' 
 #' @export
 featlistCompare <- function(reflist=reflist,
                             complist=complist,
@@ -205,7 +207,8 @@ findLabeledPeaks <- function (df,
 #' @param rtw_extract retention time window for EIC extraction (seconds, will be applied +/- the expected rt)
 #' 
 #' @examples
-#' MseekExamplePreload(data = T, tables = T)
+#' \dontrun{
+#' MseekExamplePreload(data = TRUE, tables = TRUE)
 #' findLabelsResults <- findLabels(reflist = tab2$df[,!colnames(tab2$df) %in% c(tab2$intensities, paste0(tab2$intensities,"__norm"))], #remove intensity columns to have them replaced with new ones from rawdata
 #'                                 complist = tab2$df[,!colnames(tab2$df) %in% c(tab2$intensities, paste0(tab2$intensities,"__norm"))],
 #'                                 ref_intensityCols = tab2$intensities[1:3],
@@ -214,6 +217,7 @@ findLabeledPeaks <- function (df,
 #'                                 ifoldS1 = 10,
 #'                                 ifoldS2 = 10000,
 #'                                 rawdata = MSD$data)
+#'  }
 #'  
 #' @return a data.frame based on reflist, filtered for features with matches in complist
 #' and information on a single match (best rt match).

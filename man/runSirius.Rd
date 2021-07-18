@@ -61,9 +61,9 @@ runSirius(
 
 \item{moreOpts}{character with additional options to be passed to SIRIUS}
 
-\item{force}{force calculation, even if same results should exist according to indexfile}
+\item{config}{list containing sirius configuration}
 
-\item{instrument}{specify instrument, can be \code{"orbitrap", "qtof" or "fticr"}}
+\item{force}{force calculation, even if same results should exist according to indexfile}
 }
 \value{
 Will cause SIRIUS to run a job and save its results in

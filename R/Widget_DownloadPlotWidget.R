@@ -4,8 +4,6 @@
 #' 
 #' @inherit MseekWidgets
 #' 
-#' @param reactives a \code{reactive({})} returning a list with one element,
-#'  \code{fp}, see details
 #' @param R.filename File name, without extension.
 #' @param R.plot The plot object (will be evaluated in plotting device of download handler)
 #' @param static passed on to \code{ModalWidget}

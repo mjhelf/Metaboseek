@@ -15,11 +15,16 @@ multittest(
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied by
+\code{$anagroupnames} or \code{$anagroupnames_norm} of \code{MseekFT} 
+objects)}
 
 \item{ttest}{if TRUE, ttest will be calculated}
 
 \item{adjmethod}{method to adjust p values (passed on to stats::p.adjust)}
+
+\item{controlGroup}{name of the control group in \code{groups}. If NULL, all
+groups will be compared against all samples outside the group.}
 }
 \value{
 a data.frame with same number of rows as df, with coluns as described in \code{details}

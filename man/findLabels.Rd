@@ -55,7 +55,8 @@ and information on a single match (best rt match).
 find labeled compounds in \code{complist} which correspond to unlabeled compounds in \code{reflist}
 }
 \examples{
-MseekExamplePreload(data = T, tables = T)
+\dontrun{
+MseekExamplePreload(data = TRUE, tables = TRUE)
 findLabelsResults <- findLabels(reflist = tab2$df[,!colnames(tab2$df) \%in\% c(tab2$intensities, paste0(tab2$intensities,"__norm"))], #remove intensity columns to have them replaced with new ones from rawdata
                                 complist = tab2$df[,!colnames(tab2$df) \%in\% c(tab2$intensities, paste0(tab2$intensities,"__norm"))],
                                 ref_intensityCols = tab2$intensities[1:3],
@@ -64,5 +65,6 @@ findLabelsResults <- findLabels(reflist = tab2$df[,!colnames(tab2$df) \%in\% c(t
                                 ifoldS1 = 10,
                                 ifoldS2 = 10000,
                                 rawdata = MSD$data)
+ }
  
 }

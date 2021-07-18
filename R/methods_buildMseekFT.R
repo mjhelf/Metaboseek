@@ -2,7 +2,7 @@
 
 #' @title buildMseekFT
 #' @aliases buildMseekFT
-#' @name buildMseekFT
+#' @rdname buildMseekFT
 #' 
 #' @description Methods to build an \code{MseekFT} object from an xsAnnotate,
 #'  xcmsSet or data.frame object, and to load or save \code{MseekFT} objects

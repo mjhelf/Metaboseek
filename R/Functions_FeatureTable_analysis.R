@@ -552,9 +552,13 @@ foldChange <- function(mx,
 #' 
 #' 
 #' @param df a data.frame with numeric (intensity) values
-#' @param groups named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
+#' @param groups named list of intensity columns listed by group (as supplied by
+#'  \code{$anagroupnames} or \code{$anagroupnames_norm} of \code{MseekFT} 
+#'  objects)
 #' @param ttest if TRUE, ttest will be calculated
 #' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
+#' @param controlGroup name of the control group in \code{groups}. If NULL, all
+#' groups will be compared against all samples outside the group.
 #'  
 #' @importFrom stats p.adjust t.test
 #' 

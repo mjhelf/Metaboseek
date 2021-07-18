@@ -2,8 +2,9 @@
 
 ### Methods with  work on all members of the MseekFamily of S3 classes:
 #' @title MseekFamily
+#' 
 #' @aliases addProcessHistory
-#' @name MseekFamily
+#' @rdname MseekFamily
 #' 
 #' @description The MseekFamily of classes includes the \code{MseekFT} and 
 #' \code{MseekGraph} S3 classes. Many methods described here will work on both classes
@@ -265,7 +266,7 @@ setMethod("FTFilter", c("data.frame"),
                               }
                           }
                           
-                          if(!length(i$excludeNAs) | i$excludeNAs){
+                          if(!length(i$excludeNAs) || i$excludeNAs){
                               #working under the assumption that NA values from the column in numeric, and in some cases (is, is not) in character,
                               #are passed into the logical() 
                               sel[is.na(sel)] <- FALSE

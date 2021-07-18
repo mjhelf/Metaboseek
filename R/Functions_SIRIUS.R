@@ -95,7 +95,6 @@ writeMS <- function(filename,
 #' @param parentmz numeric: parent ion m/z value
 #' @param comments character: comments
 #' @param rt numeric: retention time in seconds
-#' @param instrument specify instrument, can be \code{"orbitrap", "qtof" or "fticr"}
 #' @param fingerid if TRUE, will try to predict structures with CSI:FingerID
 #' @param ion ion type (e.g. \eqn{[M+H]+})
 #' @param charge charge (positive or negative integer)
@@ -103,6 +102,7 @@ writeMS <- function(filename,
 #' @param sirpath path to SIRIUS executable
 #' @param moreOpts character with additional options to be passed to SIRIUS
 #' @param force force calculation, even if same results should exist according to indexfile
+#' @param config list containing sirius configuration
 #' 
 #' @return Will cause SIRIUS to run a job and save its results in
 #'  a timestamped subfolder of  \code{outfolder}, and will register the job in

@@ -37,9 +37,6 @@ DownloadPlotWidgetUI(id)
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()}
 (must match \code{id} in \code{\link[shiny]{callModule}} 
 for the server Module)}
-
-\item{reactives}{a \code{reactive({})} returning a list with one element,
-\code{fp}, see details}
 }
 \value{
 returns its internalValues
