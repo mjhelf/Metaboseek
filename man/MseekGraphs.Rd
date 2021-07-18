@@ -45,6 +45,8 @@
 )
 }
 \arguments{
+\item{object}{an \code{MseekGraph} object (\code{MseekFT} for \code{buildMseekGraph()})}
+
 \item{layoutFunction}{function to use for layout of the resulting graph}
 
 \item{cosineThreshold}{if length > 0, will remove all edges with a cosine value below this}

@@ -35,6 +35,13 @@ will override the processHistory list that may be supplied by \code{object}}
 
 \item{...}{additional arguments passed to \code{\link{constructFeatureTable}}}
 
+\item{anagrouptable}{Analysis grouping table: a data.frame with columns 
+"Column" (containing column names from df with intensity values) and "Group" 
+(defining a group for each entry in "Column")}
+
+\item{from}{input format. If auto, will run \code{.getFTFormat} to determine
+the format.}
+
 \item{file}{file path to write to}
 
 \item{writeCSV}{write object to a .csv file (data frame only)}

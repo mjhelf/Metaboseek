@@ -46,10 +46,18 @@ intensity columns}
 
 \item{logNormalized}{if TRUE, applies a log10 to intensity values after normalization}
 
+\item{normalizationFactors}{normalizationFactors vector with factors to apply to each column for normalization.}
+
+\item{zeroReplacement}{value to replace zeros with}
+
+\item{replaceNAs}{Numeric value to replace NA values with}
+
 \item{ppm}{ppm range for peak shape analysis}
 
 \item{controlGroup}{control group for foldChange (part of Basic analysis) 
 analysis (optional)}
+
+\item{p.adjust.method}{method to adjust p-values (see \code{\link[stats]{p.adjust}()})}
 
 \item{numClusters}{number of clusters for clara_clusters analysis}
 

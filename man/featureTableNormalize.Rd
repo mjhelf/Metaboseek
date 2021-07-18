@@ -37,6 +37,8 @@ column averages}
 \item{thresholdMethod}{if not NULL, removes all rows in mx in which 
 no value is above threshold}
 
+\item{object}{a data.frame}
+
 \item{intensityCols}{selected columns (with intensity values)}
 
 \item{logNormalized}{if TRUE, applies a log10 to intensity values after normalization}
