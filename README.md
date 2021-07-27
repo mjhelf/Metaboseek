@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mjhelf/Metaboseek.svg?branch=master)](https://travis-ci.org/mjhelf/Metaboseek)
+[![Windows Build Status](https://github.com/mjhelf/Metaboseek/workflows/windows-build/badge.svg)](https://github.com/mjhelf/Metaboseek/actions/workflows/windows-build.yml)
 
 
 # Metaboseek

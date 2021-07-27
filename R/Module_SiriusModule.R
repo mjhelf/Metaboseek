@@ -44,7 +44,6 @@ SiriusModule <- function(input,output, session,
   
   observe({
     if(!is.null(values$GlobalOpts$siriusFolder)){
-      cat('rF')
      # print(rfr())
     internalValues$siriusIndex <- tryCatch({
       as.data.frame(rfr(), stringsAsFactors = F)
