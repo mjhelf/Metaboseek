@@ -38,8 +38,8 @@ Will first find matches in \code{complist} and then go back and find the shifted
 mz in \code{reflist} as well as the unshifted mass in \code{complist}.
 }
 \examples{
-
- MseekExamplePreload(data = T, tables = T)
+\dontrun{
+ MseekExamplePreload(data = TRUE, tables = TRUE)
 demo_reflist = data.frame(mz = 101:200,
                      rt = 201:300,
                      rtmin = 198:297,
@@ -56,7 +56,9 @@ demo_complist$mz[101:150] <- demo_complist$mz[101:150] + 1e-10
 
 compareResults <- featlistCompare(reflist = demo_reflist, complist = demo_complist)
 
-  MseekExamplePreload(data = F, tables = T)
+  MseekExamplePreload(data = FALSE, tables = TRUE)
 compareResultsBig <- featlistCompare(reflist = tab2$df, complist = tab2$df)
+
+}
 
 }

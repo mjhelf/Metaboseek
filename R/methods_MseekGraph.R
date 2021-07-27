@@ -6,6 +6,7 @@
 #' 
 #' @description \code{setLayout():} change the graph layout of an existing MseekGraph object.
 #' 
+#' @param object an \code{MseekGraph} object (\code{MseekFT} for \code{buildMseekGraph()})
 #' @param layoutFunction function to use for layout of the resulting graph
 #' 
 #' @export
@@ -292,10 +293,10 @@ setMethod("loadMseekGraph",
 
 
 #' @rdname MseekGraphs
-#' @description \code{simplify}: simplify an MseekGraph object, reducting the number of edges 
+#' @description \code{simplify}: simplify an MseekGraph object, reducing the number of edges 
 #' using additional filters.
 #' 
-#' @param maxK if length > 0, will only alllow at most this many edges from each node
+#' @param maxK if length > 0, will only allow at most this many edges from each node
 #' @param rankBy if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges
 #' @param cosineThreshold if length > 0, will remove all edges with a cosine value below this
 #' @param layoutFunction function to use for layout of the resulting graph
@@ -438,7 +439,129 @@ setMethod("simplify", c("MseekGraph"),
                                                              param = FunParam(fun = "Metaboseek::simplify",
                                                                               args = list(rankBy = rankBy,
                                                                                           maxK = maxK,
-                                                                                          cosineThreshold = cosineThreshold),
+                                                                                          cosineThreshold = cosineThreshold,
+                                                                                          layoutFunction = layoutFunction),
+                                                                              longArgs = list())
+                                            ))
+              })
+            
+            return(object)
+            
+          })
+
+#' @rdname MseekGraphs
+#' @description \code{limitComponents}: simplify an MseekGraph object, reducing the number of edges 
+#' for any subgraph with more than n components.
+#' 
+#' @param n maximum number of nodes connected in a cluster
+#' @param rankBy if length > 0, will use this edge attribute to iteratively remove the lowest scoring edges from the large clusters until
+#' 
+#' @param layoutFunction function to use for layout of the resulting graph
+#' @param percentile remove edges in percentile steps
+#' @export
+setMethod("limitComponents", c("MseekGraph"),
+          function(object, rankBy = "cosine",
+                   n = Inf,
+                   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold",
+                   percentile = TRUE
+          ) {
+            beforeHash <- MseekHash(object)
+            
+            p1 <- proc.time()
+            err <- list()
+            
+            tryCatch({
+              g <- object$graph
+              allClusters <- clusters(g, mode="weak")
+              maxClusSize <- max(allClusters$csize)
+              print(paste0("Largest cluster size: ", max(allClusters$csize), ". Increasing cosine threshold for large clusters..."))
+              
+              
+              while(any(allClusters$csize > n)){
+                if(maxClusSize > max(allClusters$csize)){
+              print(paste0("Largest cluster size: ", max(allClusters$csize), ". Increasing cosine threshold for large clusters..."))
+                  maxClusSize <- max(allClusters$csize)
+                }
+                  
+              largeClusterNodes <- which(allClusters$membership %in% which(allClusters$csize > n))
+              
+              tables <- list(nodes = type.convert(as_data_frame(g, "vertices"), as.is = T),
+                             edges =  type.convert(as_data_frame(g, "edges"), as.is = T))
+              
+              if(percentile){
+              tables$edges <- tables$edges[-which(tables$edges$from %in% largeClusterNodes
+                                           & tables$edges[[rankBy]] <= quantile(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes], 0.01)#1.01*min(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes])
+                                           ),]
+              }else{
+              tables$edges <- tables$edges[-which(tables$edges$from %in% largeClusterNodes
+                                                  & tables$edges[[rankBy]] < 1.01*min(tables$edges[[rankBy]][tables$edges$from %in% largeClusterNodes])
+              ),]
+              }
+             # ie <- incident_edges(g, v = largeClusterNodes, mode = c("all"))
+              
+              g <- graph_from_data_frame(d=tables$edges, vertices=tables$nodes, directed=F) 
+              
+              allClusters <- clusters(g, mode="weak")
+              }
+              print(paste0("Success: Cluster sizes reduced. Largest cluster size: ", max(allClusters$csize)))
+              
+              
+              nedgesBefore <- nrow(object$edges)
+              
+              object$edges <- type.convert(as_data_frame(g, "edges"), as.is = T)
+              
+              
+              #V(g)$label <- V(g)$parent.mass
+              V(g)$id <- seq(vcount(g))
+              
+              # Removing loops from the graph:
+              g <- igraph::simplify(g, remove.multiple = F, remove.loops = T) 
+              
+              #important for overview mode!
+              V(g)$subcl <-  clusters(g)$membership
+              
+              object$graph <- g
+              
+              if(nedgesBefore != nrow(object$edges)){
+                
+                object <- setLayout(object, layoutFunction)
+                # 
+                # layo <- layout_components_qgraph(g1, eval(parse(text =  layoutFunction))) #qgraph::qgraph.layout.fruchtermanreingold)
+                # 
+                # V(g1)$x__coord <- layo$layout[,1]
+                # V(g1)$y__coord <- layo$layout[,2]
+                
+              }
+              
+              
+              
+              
+            },
+            error = function(e){
+              #this assigns to object err in function environment,
+              #but err has to exist in the environment, otherwise
+              #will move through scopes up to global environment..
+              err$simplify <<- paste(e)
+              
+            },
+            finally = 
+              {
+                p1 <- (proc.time() - p1)["elapsed"]
+                afterHash <- MseekHash(object)
+                
+                object <- addProcessHistory(object,
+                                            FTProcessHistory(changes = afterHash != beforeHash,
+                                                             inputHash = beforeHash,
+                                                             outputHash = afterHash,
+                                                             # fileNames = names(rawdata),
+                                                             error = err,
+                                                             sessionInfo = NULL,
+                                                             processingTime = p1,
+                                                             info = paste0("Simplified network by limiting number of components"),
+                                                             param = FunParam(fun = "Metaboseek::limitComponents",
+                                                                              args = list(rankBy = rankBy,
+                                                                                          n = n,
+                                                                                          layoutFunction = layoutFunction),
                                                                               longArgs = list())
                                             ))
               })

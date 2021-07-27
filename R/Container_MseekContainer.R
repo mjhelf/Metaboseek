@@ -45,6 +45,12 @@ MseekContainer <- function(input,output, session){
 
  })
  
+ observeEvent(StartPage$xcms_link, {
+   if(StartPage$xcms_link){ #start value is 0 (FALSE)
+     updateTabsetPanel(session, "MseekSB", "XCMSrunpanel")
+   }
+     })
+ 
  HeaderDataLoad <- callModule(LoadDataModule, "modaldataload",
                              values = values
  )
@@ -86,7 +92,7 @@ MseekContainer <- function(input,output, session){
    
  })
  
- 
+
   
 }
 
@@ -119,9 +125,9 @@ MseekContainerUI <- function(id){
                       tabItem(tabName = "start",
                               WelcomePageModuleUI(ns("startpage"))
                               ),
-                      tabItem(tabName = "updateTab",
-                              updaterModuleUI(ns('update'))
-                      ),
+                      # tabItem(tabName = "updateTab",
+                      #         updaterModuleUI(ns('update'))
+                      # ),
                       
                       tabItem(tabName = "XCMSrunpanel",
                               xcmsWidgetUI(ns("xcmsMod"))

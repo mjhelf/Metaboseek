@@ -279,6 +279,7 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 #' @param log if not NULL, log10 will be applied to values in mx
 #' @param normalize if not NULL, column values will be normalized by 
 #' column averages
+#' @param normalizationFactors vector of length(ncol(mx)) with factors to apply to each column for normalization.
 #' @param threshold numeric(1). 
 #' @param thresholdMethod if not NULL, removes all rows in mx in which 
 #' no value is above threshold
@@ -294,7 +295,8 @@ error = function(e){out$errMsg[["PCA samples"]] <- paste(e)})
 featureTableNormalize <- function (mx,
                       raiseZeros = NULL,#"min",
                       log = NULL,#"log10",
-                      normalize = NULL,#"columnMean",
+                      normalize = FALSE,#"columnMean",
+                      normalizationFactors = NULL,
                       threshold = NULL,#0.1,
                       thresholdMethod = NULL#"rowMax"
                       ){
@@ -310,13 +312,20 @@ featureTableNormalize <- function (mx,
         mx <- log10(mx)
     }
     
-    if(!is.null(normalize)){
+    if(!is.null(normalize) && normalize){
+      if(length(normalizationFactors)){
+        if(length(normalizationFactors) != ncol(mx)){stop("Length of normalizationFactors does not match number of intensity columns!")}
+        
+        mx <- t(t(mx) * normalizationFactors)
+        
+      }else{
         #calculate correction factor for each column
         mxmeans <- colMeans(mx)
         mxmeans <- mxmeans/mean(mxmeans)
         #apply it
         for (i in 1:ncol(mx)){
-        mx[,i] <- mx[,i]/mxmeans[i]} 
+        mx[,i] <- mx[,i]/mxmeans[i]}
+      }
     }
     
     if(!is.null(threshold) & !is.null(thresholdMethod)){
@@ -330,6 +339,7 @@ featureTableNormalize <- function (mx,
 #' @param intensityCols selected columns (with intensity values)
 #' @param logNormalized if TRUE, applies a log10 to intensity values after normalization
 #' @rdname featureTableNormalize
+#' @param object a data.frame
 #' @export
 setMethod("FTNormalize", "data.frame",
           function(object, intensityCols, logNormalized = FALSE){
@@ -542,9 +552,13 @@ foldChange <- function(mx,
 #' 
 #' 
 #' @param df a data.frame with numeric (intensity) values
-#' @param groups named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
+#' @param groups named list of intensity columns listed by group (as supplied by
+#'  \code{$anagroupnames} or \code{$anagroupnames_norm} of \code{MseekFT} 
+#'  objects)
 #' @param ttest if TRUE, ttest will be calculated
 #' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
+#' @param controlGroup name of the control group in \code{groups}. If NULL, all
+#' groups will be compared against all samples outside the group.
 #'  
 #' @importFrom stats p.adjust t.test
 #' 
@@ -553,7 +567,7 @@ foldChange <- function(mx,
 #' @details columns in the export data.frame. All columns are generated for 
 #' each group defined in \code{groups},  where GX is replaced by the group name:
 #' \itemize{
-#' \item\code{GX__sdev} RELATIVE standard deviation (sd/mean) within the group
+#' \item\code{GX__CV} Coefficient of variation (relative standard deviation (sd/mean)) within the group
 #' \item\code{GX__pval} p value between this group and all samples in all other 
 #' groups, as calculated by \code{\link[stats]{t.test}()}
 #' \item\code{GX__pval_adj} p values, adjusted by the selected \code{adjmethod}
@@ -564,7 +578,8 @@ foldChange <- function(mx,
 multittest <- function (df,
                     groups,
                     ttest=TRUE,
-                    adjmethod='bonferroni'){
+                    adjmethod='bonferroni',
+                    controlGroup = NULL){
    # withProgress(message = 'Please wait!', detail = "calculating pvalues", value = 0.03,{
 
     out = data.frame(pholder= numeric(nrow(df)))
@@ -573,16 +588,22 @@ multittest <- function (df,
         
         i <- groups[[n]]
         
-        sdev <- apply(df[,i],1,sd)/apply(df[,i],1,mean)
-        sdev[which(is.na(sdev))] <-0 #if all data point in a line are 0, sd returns 0
+        #sdev <- apply(df[,i],1,sd)/apply(df[,i],1,mean)
+        m <- as.matrix(df[,i])
+        rowVars <- rowSums((m - rowMeans(m, na.rm=FALSE))^2, na.rm=FALSE) / (ncol(m) - 1) #https://stackoverflow.com/questions/55327096/r-tidyverse-calculating-standard-deviation-across-rows/61891777#61891777
+        cv <- sqrt(rowVars) / rowMeans(m, na.rm=FALSE)
         
-        
-        
+        cv[which(is.na(cv))] <-0 #if all data point in a line are 0, sd returns 0
+
     
-        if(ttest){
+        if(ttest && (!length(controlGroup) || !names(groups)[n] %in% controlGroup)){
           if(length(groups) >1){
+            if(!length(controlGroup)){
             noni <- unlist(groups[-n])
-         
+            }else{
+            noni <- unlist(groups[which(names(groups) %in% controlGroup)])
+            if(!length(noni)){stop("The specified Control Group does not exist")}
+            }
           
             pval <- apply(df[,c(i,noni)],1,function(x, i , noni){
               tryCatch({
@@ -597,19 +618,21 @@ multittest <- function (df,
               
             }, i = i, noni = noni)
             
-            padj <- p.adjust(pval, method = adjmethod)}
+            padj <- p.adjust(pval, method = adjmethod)
         
         
 
-        out[[paste0(names(groups)[n],"__sdev")]] <- sdev
         
         out[[paste0(names(groups)[n],"__pval")]] <- pval
         out[[paste0(names(groups)[n],"__pval_adj")]] <- padj
         }else{
          simpleError("Did not calculate p-value because only a single sample group is defined") 
         }
+        }
+        
+      out[[paste0(names(groups)[n],"__CV")]] <- cv
+
     }
-    
 
     return(out[,which(colnames(out) !="pholder")])
 }
@@ -648,12 +671,13 @@ MosCluster <- function(method = "clara",
 #' @param df a data.frame with numeric (intensity) values
 #' @param groups named list of intensity columns listed by group 
 #' (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)
+#' @param adjmethod method to adjust p values (passed on to stats::p.adjust)
 #' 
 #' @return a data.frame with one column, called \code{ANOVA__pvalue}
 #' 
 #' @importFrom stats oneway.test
 #'  
-MseekAnova <- function(df, groups){
+MseekAnova <- function(df, groups, adjmethod = "bonferroni"){
   
   ints <- df[,unlist(groups)]  
   
@@ -674,7 +698,8 @@ MseekAnova <- function(df, groups){
     
   }, grp)
   
-  return(data.frame(ANOVA_pvalue = pvals))
+  return(data.frame(ANOVA_pvalue = pvals,
+                    ANOVA_pvalue_adj = p.adjust(pvals, method = adjmethod)))
   
 }
 
@@ -766,3 +791,34 @@ mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){
   return(resdf)  
   
 }
+
+
+#' .calculateM
+#'
+#' Calculates M value as detailed by Vandesompele et al. (2002) 
+#' 
+#' 
+#' @author Aiden Kolodziej, Maximilian Helf
+#' @param x a matrix which is expected to contain imputed, log2-transformed intensity values only
+#' @param na.rm remove NA values for sd calculation?
+#' @param ... Arguments passed to \code{bplapply()}
+#' 
+#' @references 
+#' \enumerate{
+#' \item Vandesompele J. et al (2002) Accurate normalization of real-time 
+#' quantitative RT-PCR data by geometric averaging of multiple internal control genes.
+#'  Genome Biol. 3(7):research0034.1, doi: \href{https://dx.doi.org/10.1186%2Fgb-2002-3-7-research0034}{10.1186/gb-2002-3-7-research0034}
+#' }
+#'
+.calculateM <- function(x, na.rm = FALSE, ...){
+  
+  unlist(bplapply(seq_len(nrow(x)), function(i, m = x, rm.na = na.rm){ #assignment changes to avoid recursive default argument reference error in bplapply
+    
+    m <- t(t(m) - m[i,])
+    rowVars <- rowSums((m - rowMeans(m, na.rm=rm.na))^2, na.rm=rm.na) / (ncol(m) - 1) #https://stackoverflow.com/questions/55327096/r-tidyverse-calculating-standard-deviation-across-rows/61891777#61891777
+    sum(sqrt(rowVars))/ (nrow(m)-1)
+    
+  }, ...))
+}
+
+

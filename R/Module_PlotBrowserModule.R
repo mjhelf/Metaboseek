@@ -32,7 +32,8 @@ PlotBrowserModule <- function(input,output, session,
                                    shape = NULL,
                                    text = NULL,
                                    textChoices = NULL,
-                                   volcano = F)
+                                   volcano = F,
+                                   logCheck = TRUE)
   
 
   
@@ -89,38 +90,93 @@ PlotBrowserModule <- function(input,output, session,
          && internalValues$x != ""
          && internalValues$y != ""){
        
-        txtmake <- "data"
-        if(internalValues$interactive 
-           && !is.null(internalValues$text) 
-           && internalValues$text != ""){
-          txtmake <- plotlyTextFormatter(reactives()$PCAtable,
-                                         internalValues$text)
-        }
+        
         colvec <- reactives()$PCAtable[[internalValues$color]]
         try({
-          suppressWarnings({
-          p <- ggplot(reactives()$PCAtable,
-                                        aes_string(x=internalValues$x,
-                                                   y=internalValues$y)) + 
-            geom_point(aes_string(col = internalValues$color,
-                                  #shape = 1,
-                                  text = as.factor(txtmake) 
-            )) +
-            if(is.factor(colvec) || is.character(colvec)){
-              scale_color_hue()
+            suppressWarnings({
+          
+          if(internalValues$interactive){
+            txtmake <- ""
+            if(length(internalValues$text) 
+               && internalValues$text != ""
+               && !all(internalValues$text %in% c(internalValues$x, internalValues$y, internalValues$color))){
+              txtmake <- plotlyTextFormatter(reactives()$PCAtable,
+                                             internalValues$text[!internalValues$text %in% c(internalValues$x, internalValues$y, internalValues$color)])
             }
-          else{
-            scale_color_gradientn(colours=rainbow(4))}
-          
-          
-            if(internalValues$volcano){
+            
+            #this is to avoid code exposure in hovers with renderPlotly 
+            #(where unlike in ggplotly() tooltip cannot be restricted to text only)
+            datacopy <- reactives()$PCAtable[,unique(c(internalValues$text,internalValues$x,internalValues$y,internalValues$color))]
+            
+            if(internalValues$logCheck){
+              datacopy[[internalValues$color]] <- safelog(datacopy[[internalValues$color]])
+            }
               
-              p <- p + scale_y_continuous(trans=reverselog_trans(10))  + scale_x_continuous(trans = "log2") + geom_hline(yintercept=0.05, color = "red")
+            p <- ggplot(reactives()$PCAtable,
+                        aes(x=!!rlang::sym(internalValues$x),
+                            y=!!rlang::sym(internalValues$y))) + 
+              theme_light() +
+              geom_point(
+                aes(color= !!rlang::sym(internalValues$color),
+                text= txtmake
+                ),
+                # size = 1,
+                alpha = 0.8
+              )
+            if(is.factor(colvec) || is.character(colvec)){
+              p <- p +  scale_color_hue()
+            }else{
+              p <- p + scale_color_gradient2(low = "blue",
+                                             mid = "gray",
+                                             high = "red",
+                                             midpoint = if(internalValues$logCheck){0}else{mean(c(min(reactives()$PCAtable[[internalValues$color]], na.rm = TRUE),
+                                                                                                  max(reactives()$PCAtable[[internalValues$color]], na.rm = TRUE)),
+                                                                                                  na.rm = TRUE)},
+                                             na.value = "white") + 
+                labs(color=if(internalValues$logCheck){paste0('log10(',internalValues$color,')')}else{paste0(internalValues$color)})
             }
+            
+            
+          }else{
+            
+            p <- ggplot(reactives()$PCAtable,
+                        aes(x=!!rlang::sym(internalValues$x),
+                            y=!!rlang::sym(internalValues$y))) + 
+              theme_light() +
+              geom_point(
+                aes(color=if(internalValues$logCheck){
+                  safelog(!!rlang::sym(internalValues$color))
+                }else{
+                  !!rlang::sym(internalValues$color)}),
+                size = 2.5,
+               # stroke = 1,
+               # shape = 21,
+                alpha = 0.8,
+               # color = "black"
+               ) 
+            if(is.factor(colvec) || is.character(colvec)){
+              p <- p +  scale_color_hue()
+            }else{
+              p <- p + scale_color_gradient2(low = "blue",
+                                            mid = "gray",
+                                            high = "red",
+                                            midpoint = if(internalValues$logCheck){0}else{mean(c(min(reactives()$PCAtable[[internalValues$color]], na.rm = TRUE),
+                                                                                                 max(reactives()$PCAtable[[internalValues$color]], na.rm = TRUE)),
+                                                                                               na.rm = TRUE)},
+                                            na.value = "white") + 
+                labs(fill=if(internalValues$logCheck){paste0('log10(',internalValues$color,')')}else{paste0(internalValues$color)})
+            }
+            
+          }
+          
+          if(internalValues$volcano){
+            
+            p <- p + scale_y_continuous(trans=reverselog_trans(10))  + scale_x_continuous(trans = "log2") + geom_hline(yintercept=0.05, color = "red")
+          }
           
           internalValues$plot <- p
-          })
-       }, silent = T)
+           })
+        }, silent = F)
         
       }else{
         internalValues$plot <- NULL
@@ -140,6 +196,16 @@ PlotBrowserModule <- function(input,output, session,
   
   observeEvent(input$interactivecheck,{
     internalValues$interactive <- input$interactivecheck
+  })
+  
+  output$logCheck <- renderUI({
+    div(title= "Use log10-scaled color range for numeric values.",
+        checkboxInput(ns('logcheck'), 'log', 
+                      value = internalValues$logCheck))
+  })
+  
+  observeEvent(input$logcheck,{
+    internalValues$logCheck <- input$logcheck
   })
   
   output$volcanoCheck <- renderUI({
@@ -212,8 +278,11 @@ PlotBrowserModule <- function(input,output, session,
     
     fluidPage(
       fluidRow(
-        column(2,
+        column(1,
                htmlOutput(ns('interactiveCheck'))
+        ),
+        column(1,
+               htmlOutput(ns('logCheck'))
         ),
         column(2,
                htmlOutput(ns('volcanoCheck'))

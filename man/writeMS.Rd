@@ -13,7 +13,7 @@ writeMS(
   rt = "",
   ion = NULL,
   charge = 1,
-  splashtag = NULL,
+  hashtag = NULL,
   scanindices = NULL
 )
 }
@@ -35,7 +35,7 @@ in the same format}
 
 \item{charge}{charge (positive or negative integer)}
 
-\item{splashtag}{splash tag of the ms2 spectrum}
+\item{hashtag}{hash tag of the ms2 spectrum}
 
 \item{scanindices}{which scans were averaged into this ms2 spectrum}
 }

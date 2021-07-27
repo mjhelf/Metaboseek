@@ -9,7 +9,7 @@ FTAnalysisParam(
   groups = list(),
   .files = character(),
   analyze = c("Basic analysis", "clara_cluster", "t-test", "Peak shapes",
-    "Fast peak shapes", "PCA features", "PCA samples", "mzMatch"),
+    "Fast peak shapes", "PCA features", "PCA samples", "mzMatch", "Calculate M"),
   normalize = T,
   useNormalized = T,
   logNormalized = F,
@@ -18,6 +18,7 @@ FTAnalysisParam(
   replaceNAs = 0,
   ppm = 5,
   controlGroup = NULL,
+  p.adjust.method = "fdr",
   numClusters = 2,
   mzMatchParam = list(db = "smid-db_pos.csv", ppm = 5, mzdiff = 0.001),
   workers = 1
@@ -45,10 +46,18 @@ intensity columns}
 
 \item{logNormalized}{if TRUE, applies a log10 to intensity values after normalization}
 
+\item{normalizationFactors}{normalizationFactors vector with factors to apply to each column for normalization.}
+
+\item{zeroReplacement}{value to replace zeros with}
+
+\item{replaceNAs}{Numeric value to replace NA values with}
+
 \item{ppm}{ppm range for peak shape analysis}
 
 \item{controlGroup}{control group for foldChange (part of Basic analysis) 
 analysis (optional)}
+
+\item{p.adjust.method}{method to adjust p-values (see \code{\link[stats]{p.adjust}()})}
 
 \item{numClusters}{number of clusters for clara_clusters analysis}
 

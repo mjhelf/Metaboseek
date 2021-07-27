@@ -2,8 +2,9 @@
 
 ### Methods with  work on all members of the MseekFamily of S3 classes:
 #' @title MseekFamily
+#' 
 #' @aliases addProcessHistory
-#' @name MseekFamily
+#' @rdname MseekFamily
 #' 
 #' @description The MseekFamily of classes includes the \code{MseekFT} and 
 #' \code{MseekGraph} S3 classes. Many methods described here will work on both classes
@@ -32,11 +33,11 @@ setMethod("addProcessHistory", c("MseekFamily", "ProcessHistory"), function(obje
         return(object)
 })
 
-#' @rdname MseekFamily
 #' @aliases processHistory
 #' @description \code{processHistory}: extract a list of \code{ProcessHistory} objects from an object,
 #'  representing changes made to the object.
 #' 
+#' @rdname MseekFamily
 #' @export
 setMethod("processHistory", "MseekFamily", function(object) {
     if(!length(object$.processHistory)){
@@ -237,7 +238,7 @@ setMethod("FTFilter", c("data.frame"),
                       names(i) <- gsub("Init$","",names(i))
                       
                       if(length(i$colSelected) == 0 || !i$colSelected %in% colnames(object)){
-                          i$active <- F
+                          i$active <- FALSE
                       }
                       
                       if(length(i$active) && i$active){
@@ -250,11 +251,11 @@ setMethod("FTFilter", c("data.frame"),
                               if(!is.null(i$modeSel) && i$modeSel=="contains"){
                                   sel <- sel &  grepl(i$txtSel,
                                                       as.character(object[,i$colSelected]),
-                                                      fixed = T)
+                                                      fixed = TRUE)
                               }else if(!is.null(i$modeSel) && i$modeSel=="does not contain"){
                                   sel <- sel & !grepl(i$txtSel,
                                                       as.character(object[,i$colSelected]),
-                                                      fixed = T)
+                                                      fixed = TRUE)
                               }else if(!is.null(i$modeSel) && i$modeSel=="is not"){
                                   sel <- sel &  ! (as.character(object[,i$colSelected]) == i$txtSel)
                                   
@@ -263,6 +264,14 @@ setMethod("FTFilter", c("data.frame"),
                               else{
                                   sel <- sel &  as.character(object[,i$colSelected]) == i$txtSel
                               }
+                          }
+                          
+                          if(!length(i$excludeNAs) || i$excludeNAs){
+                              #working under the assumption that NA values from the column in numeric, and in some cases (is, is not) in character,
+                              #are passed into the logical() 
+                              sel[is.na(sel)] <- FALSE
+                          }else{
+                              sel[is.na(sel)] <- TRUE
                           }
                           
                       }

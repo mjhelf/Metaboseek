@@ -139,6 +139,150 @@ updateDF <- function(a, b){
         return(b)
     }
     
+#' .getFTFormat
+#' 
+#' Tries to identify the format of a feature table input data frame
+#' 
+#' @param df data.frame
+#' 
+#' @return Returns the format of the df object. Can be either of these:
+#' \itemize{
+#'  \item "xcms PeakTable with Metaboseek Intensities"
+#'  \item "xcms Peak Table"
+#'  \item "mzMINE Aligned Peak List"
+#'  \item "unknown"
+#' }
+#' 
+#' 
+.getFTFormat <- function(df){
+  
+  try({
+    if(all(c("rt", "mz") %in% colnames(df))
+       & any(grepl("\\.[Cc][Dd][Ff]__XIC$|\\.[Nn][Cc]__XIC$|\\.([Mm][Zz])?[Xx][Mm][Ll]__XIC$|\\.[Mm][Zz][Dd][Aa][Tt][Aa]__XIC$|\\.[Mm][Zz][Mm][Ll]__XIC$",
+                   colnames(df)))){
+      
+      return("xcms PeakTable with Metaboseek Intensities")
+      
+    }
+  }, silent = TRUE)
+  
+  try({
+    if(all(c("rt", "mz") %in% colnames(df))
+       & any(grepl("\\.[Cc][Dd][Ff]$|\\.[Nn][Cc]$|\\.([Mm][Zz])?[Xx][Mm][Ll]$|\\.[Mm][Zz][Dd][Aa][Tt][Aa]$|\\.[Mm][Zz][Mm][Ll]$",
+                   colnames(df)))){
+      
+      return("xcms Peak Table")
+      
+    }
+  }, silent = TRUE)
+  
+  try({
+    if(all(c("row m/z", "row retention time") %in% colnames(df))
+       & any(grepl("Peak area$",
+                   colnames(df)))){
+      
+      return("mzMINE Aligned Peak List")
+      
+    }
+  }, silent = TRUE)
+  
+  try({
+    if(all(c("Sample") %in% colnames(df))
+       && all(is.character(unlist(df[1,])) | is.factor(unlist(df[1,])))
+       && all(grepl("\\/",
+                    df[-1,1]))
+       && all(sapply(df[-1,which(!is.na(unlist(df[1,])))[-1]], function(x){is.numeric(type.convert(x))}))
+    ){
+      
+      return("MetaboAnalyst Peak Intensity Table")
+      
+    }
+  }, silent = TRUE)
+  
+  return("unknown")
+  
+}
+
+#' .reformatFeatureTable
+#' 
+#' Tries to identify the format of a feature table input data frame and 
+#' reformats it for compatibility with \code{constructFeatureTable}
+#' 
+#' @param df data.frame
+#' @param from input format. If auto, will run \code{.getFTFormat} to determine
+#' the format.
+#' 
+#' @return a list
+#' \itemize{
+#'  \item df: reformatted input data.frame
+#'  \item grouping: anagrouptable format (if grouping information can be 
+#'  extracted from input) or NULL
+#'  \item from: which input format was used
+#' }
+#' 
+#' 
+.reformatFeatureTable <- function(df,
+                                  from = c("auto",
+                                           "unknown", 
+                                           "mzMINE Aligned Peak List",
+                                           "MetaboAnalyst Peak Intensity Table")){
+  
+  from <- from[1]
+  
+  if(from == "auto"){from <- .getFTFormat(df)}
+  
+  res <- list(df = df,
+              grouping = NULL,
+              from = from)
+  rm(df) # to save memory
+  
+  switch(from,
+         "unknown" = {},
+         
+         "mzMINE Aligned Peak List" = {
+           
+           res$grouping = data.frame(Column = grep("Peak area$",
+                                                   colnames(res$df),
+                                                   value = TRUE),
+                                     Group = "G1",
+                                     stringsAsFactors = FALSE)
+
+           res$df$mz <- res$df[["row m/z"]]
+           res$df$rt <- res$df[["row retention time"]]*60
+           
+          #moving all intensity columns to the end
+           res$df <- res$df[,c(colnames(res$df)[!grepl("Peak area$",
+                                                         colnames(res$df))],
+                                 colnames(res$df)[grepl("Peak area$",
+                                                         colnames(res$df))])]
+                                          
+           
+           
+          
+         },
+         
+         "MetaboAnalyst Peak Intensity Table" = {
+           
+           res$grouping = data.frame(Column = colnames(res$df)[-1],
+                                     Group = unlist(res$df[1,])[-1],
+                                     stringsAsFactors = FALSE)
+           
+           res$df <- data.frame(lapply(res$df[-1,], type.convert, as.is = TRUE),
+                                stringsAsFactors = FALSE,
+                                check.names = FALSE)
+           
+           sp <- strsplit(as.character(res$df[,1]), split = '\\/')
+           
+           res$df$mz <- as.numeric(sapply(sp,'[',1))
+           res$df$rt <- as.numeric(sapply(sp,'[',2))
+           
+         }
+         )
+  
+  return(res)
+  
+}
+
 
 #' updateFeatureTable
 #' 

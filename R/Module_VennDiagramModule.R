@@ -1,6 +1,6 @@
-#' VennDiagramModule
+#' @title VennDiagramModule
 #' 
-#' server module for Venn diagrams in Metaboseek
+#' @description server module for Venn diagrams in Metaboseek
 #' 
 #' @inherit MseekModules
 #' @describeIn VennDiagramModule Server logic

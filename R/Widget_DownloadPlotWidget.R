@@ -4,11 +4,10 @@
 #' 
 #' @inherit MseekWidgets
 #' 
-#' @param reactives a \code{reactive({})} returning a list with one element,
-#'  \code{fp}, see details
 #' @param R.filename File name, without extension.
 #' @param R.plot The plot object (will be evaluated in plotting device of download handler)
 #' @param static passed on to \code{ModalWidget}
+#' 
 #'  
 #' @details Because the UI elements of the modal dialog are passed in as 
 #' \code{reactives()$fp}, they can be namespaced and easily accessed in the 
@@ -38,7 +37,7 @@
 #' shinyApp(ui, server)
 #' }
 #' 
-#' @describeIn ModalWidget Server logic
+#' @describeIn DownloadPlotWidget Server logic
 #' 
 #' @export 
 DownloadPlotWidget <- function(input,output, session,

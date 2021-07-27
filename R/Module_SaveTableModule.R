@@ -107,7 +107,7 @@ SaveTableModule <- function(input,output, session,
           hr(),
           fluidRow(
             textInput(ns("tabname"), "File name:",
-                      value = paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),
+                      value = paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"), "_",
                                      basename(reactives()$filename)))
           ),
           fluidRow(
@@ -124,9 +124,9 @@ SaveTableModule <- function(input,output, session,
             }
           ),
           fluidRow(
-            column(6, div(title = "Download table through Browser",
+            column(4, div(title = "Download table through Browser",
                           downloadButton(ns("modalDownload"),"Download"))),
-            column(6,
+            column(4,
                    fluidRow(
                    div( title = "Save directly to current projectFolder (only works if you are working in a project folder)",
                            actionButton(ns("modalProjectFolder"),
@@ -138,7 +138,12 @@ SaveTableModule <- function(input,output, session,
                                  .mskFT files retain process history and grouping information.",
                         checkboxInput(ns("alwaysMskFT"),
                                      "also save as mskFT", value = TRUE))}
-                           ))
+                           )),
+            column(4,
+                   fluidRow(
+                     div( title = "Apply currently active Filters and generate a new copy of the active Feature Table under a new name.",
+                          actionButton(ns("modalSaveInSession"),
+                                       "Save in Session"))))
           )),
         title = "Save table",
         easyClose = T,
@@ -318,7 +323,57 @@ SaveTableModule <- function(input,output, session,
         })
   })
   
-  
+  observeEvent(input$modalSaveInSession,{
+    tryCatch({
+      if(!input$tabname %in% sapply(values$featureTables$tables, "[[", "tablename")){
+        
+        
+        if(!is.null(values$featureTables)){
+          updateFT(values)
+        }
+        
+        if(length(values$featureTables$Maintable$sortCheck) 
+           && values$featureTables$Maintable$sortCheck){
+          srt <-  values$featureTables$Maintable$sortBy
+        }else{
+          srt <- character()
+        }
+        
+        if(length(srt) 
+           && length(values$featureTables$Maintable$decreasing)){
+          dec <-  values$featureTables$Maintable$decreasing
+        }else{
+          dec <-  TRUE
+        }
+        
+          newFT <- FTFilter(FeatureTable(values),
+                          filters = getFilters(values),
+                          sortBy = srt,
+                          decreasing = dec)
+          
+          newFT <- rename(newFT, input$tabname)
+          
+          FeatureTable(values, tableID = paste0("table",length(values$featureTables$tables))) <- newFT #this adds the FeatureTable and handles updating the FTIndex
+          
+          showNotification(paste("Added filtered table to session: ", 
+                                 input$tabname),
+                           #paste0(strftime(Sys.time(),"%Y%m%d_%H%M%S"),basename(reactives()$filename))),
+                           duration = 10)
+        
+         # values$featureTables$active <- tabid
+        removeModal()
+        
+      }
+      else{
+        showNotification(paste("Make sure the name of the new table is not the same as that of any other Feature Table currently loaded into this Session"), type = "error", duration = 10)
+      }
+      
+    },
+    error = function(e){
+      showNotification(paste("ERROR: Table was NOT saved: ",e), type = "error", duration = NULL)
+      
+    })
+  })
   
 }
 

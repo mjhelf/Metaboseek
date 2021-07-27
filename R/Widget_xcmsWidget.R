@@ -227,11 +227,8 @@ xcmsWidget <- function(input,output, session,
                                             contentType = "application/zip")
   
   
-  #toggle(id ="xcms_loadfolderOffline", condition = (!internalStatic$servermode && Sys.info()['sysname'] == "Windows"))
-  #toggle(id = "xcms_loadfolder", condition = ((internalStatic$servermode) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
-  
+ 
   observe({
-    #toggleState(id = "xcms_loadfolder", condition = ((internalStatic$servermode && internalStatic$activateXCMS) || (!internalStatic$servermode && Sys.info()['sysname'] != "Windows")))
     shinyjs::toggleState(id = "xcms_start", condition = length(internalValues$wd)>0 && (!internalStatic$servermode || (internalStatic$servermode && internalStatic$activateXCMS)))
   })
   
@@ -369,16 +366,16 @@ xcmsWidget <- function(input,output, session,
     }
   })
   
-  
+  rfr <- reactive({reactiveFileReader(1500,
+                            NULL,
+                            file.path(internalValues$jobs[1],"status.csv"),
+                            read.csv,
+                            stringsAsFactors = F, 
+                            row.names = 1)() })
   
   output$xcms_statustab <- rhandsontable::renderRHandsontable({if(!is.null(internalValues$jobs)){
     
-    rhandsontable::rhandsontable(reactiveFileReader(1500,
-                                                    NULL,
-                                                    file.path(internalValues$jobs[1],"status.csv"),
-                                                    read.csv,
-                                                    stringsAsFactors = F, 
-                                                    row.names = 1)(),
+    rhandsontable::rhandsontable(rfr(),
                                  readOnly = T,
                                  contextMenu = F,
                                  selectCallback = TRUE,
@@ -409,142 +406,73 @@ xcmsWidget <- function(input,output, session,
     tagList(
       div(title= "Which output files should be generated?",
           hr(),
-          h3("Output selection")),
+          strong("Output selection")),
       fluidRow(
+        column(3,
         div(title= "Perform retention time correction", style = "display:inline-block",
             checkboxInput(ns('runrtcorrcheck'),
                           'RT correction',
-                          value = internalValues$params$outputs["peaktable_grouped_Rtcorr","Value"] )),
-        
+                          value = internalValues$params$outputs["peaktable_grouped_Rtcorr","Value"] ))),
+        column(3,
         div(title= "Get intensities using Metaboseek intensity function (faster than xcms peak 
             filling but less accurate realtive quantification for broader peaks). Results will be in
             columns with suffix '__XIC'.",
             style = "display:inline-block",
-            selectizeInput(ns('intensityselect'),
-                           'Get Metaboseek intensities...',
-                           choices = c("never", "before RT correction",
-                                       "after RT correction", "always"),
-                           selected = internalValues$intensitySel)),
- 
+            checkboxInput(ns('intensityselect'),
+                           'Get Metaboseek intensities',
+                           value = internalValues$params$outputs[c("peaktable_grouped"), "MOSAIC_intensities"]))),
+        column(3,
         div(title= "Fill intensities for features for which initial peak detection failed across all files
             (default xcms method, slower than Metaboseek intensities, but more accurate 
             realtive quantification for broader peaks).",
             style = "display:inline-block",
-            selectizeInput(ns('fillpeaksselect'),
-                           'Fill peaks with xcms...',
-                           choices = c("never", "before RT correction",
-                                       "after RT correction", "always"),
-                           selected = internalValues$fillpeaksSel)),    
+            checkboxInput(ns('fillpeaksselect'),
+                           'Fill peaks with xcms',
+                           value = internalValues$params$outputs[c("peaktable_grouped"), "xcms_peakfilling"]))),    
+        column(3,
         div(title= "Detect adducts and isotope peaks using the CAMERA package",
             style = "display:inline-block",
-            selectizeInput(ns('cameraselect'),
-                           'Run CAMERA analysis...',
-                           choices = c("never", "before RT correction",
-                                       "after RT correction", "always"),
-                           selected = internalValues$cameraSel)),    
-        
-        
-        div(title= "Export the result of file-by-file feature detection before feature grouping across files",
-            style = "display:inline-block",
-            checkboxInput(ns('peaktableallcheck'),
-                          'Get ungrouped peak table',
-                          value = internalValues$params$outputs["peaktable_all","Value"] ))
+            checkboxInput(ns('cameraselect'),
+                           'Run CAMERA analysis',
+                           value = internalValues$params$outputs[c("peaktable_grouped"), "CAMERA_analysis"])))#,    
+        # 
+        # 
+        # div(title= "Export the result of file-by-file feature detection before feature grouping across files",
+        #     style = "display:inline-block",
+        #     checkboxInput(ns('peaktableallcheck'),
+        #                   'Get ungrouped peak table',
+        #                   value = internalValues$params$outputs["peaktable_all","Value"] ))
       ))
   })
   
-  #observing output file settings
-  observeEvent(internalValues$params$outputs,{
-    setvalues <- internalValues$params$outputs[c("peaktable_grouped",
-                                                 "peaktable_grouped_Rtcorr"),
-                                               "MOSAIC_intensities"]
-    if(all(setvalues)){
-      internalValues$intensitySel <-  "always"
-    }else if(setvalues[1]){
-      internalValues$intensitySel <-  "before RT correction"
-    }else if(setvalues[2]){
-      internalValues$intensitySel <-  "after RT correction"
-    }else{
-      internalValues$intensitySel <-  "never"
-    }
-    
-    setvalues <- internalValues$params$outputs[c("peaktable_grouped",
-                                                 "peaktable_grouped_Rtcorr"),
-                                               "xcms_peakfilling"]
-    if(all(setvalues)){
-      internalValues$fillpeaksSel <-  "always"
-    }else if(setvalues[1]){
-      internalValues$fillpeaksSel <-  "before RT correction"
-    }else if(setvalues[2]){
-      internalValues$fillpeaksSel <-  "after RT correction"
-    }else{
-      internalValues$fillpeaksSel <-  "never"
-    }
-    
-    setvalues <- internalValues$params$outputs[c("peaktable_grouped",
-                                                 "peaktable_grouped_Rtcorr"),
-                                               "CAMERA_analysis"]
-    if(all(setvalues)){
-      internalValues$cameraSel <-  "always"
-    }else if(setvalues[1]){
-      internalValues$cameraSel <-  "before RT correction"
-    }else if(setvalues[2]){
-      internalValues$cameraSel <-  "after RT correction"
-    }else{
-      internalValues$cameraSel <-  "never"
-    }
-  })
+ 
   
   ###Metaboseek intensities
   observeEvent(input$intensityselect,{
-    if(input$intensityselect ==  "always"){
-      internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"MOSAIC_intensities"] <- TRUE
-    }else if(input$intensityselect ==  "before RT correction"){
-      internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"MOSAIC_intensities"] <- c(TRUE, FALSE)
-    }else if(input$intensityselect ==  "after RT correction"){
-      internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"MOSAIC_intensities"] <- c(FALSE, TRUE)
-    }else{
-      internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"MOSAIC_intensities"] <- FALSE
-    }  })
+      internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"MOSAIC_intensities"] <- input$intensityselect
+        })
   
   ###XCMS intensities
   observeEvent(input$fillpeaksselect,{
-    if(input$fillpeaksselect ==  "always"){
-      setnew <- TRUE
-    }else if(input$fillpeaksselect ==  "before RT correction"){
-      setnew <- c(TRUE, FALSE)
-    }else if(input$fillpeaksselect ==  "after RT correction"){
-      setnew <- c(FALSE, TRUE)
-    }else{
-      setnew <- FALSE
-    }
-    internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"xcms_peakfilling"] <- setnew
+       internalValues$params$outputs[c("peaktable_grouped","peaktable_grouped_Rtcorr"),"xcms_peakfilling"] <- input$fillpeaksselect
     })
   
  
   
   ##CAMERA analysis
   observeEvent(input$cameraselect,{
-    if(input$cameraselect ==  "always"){
-      setnew <- TRUE
-    }else if(input$cameraselect ==  "before RT correction"){
-      setnew <- c(TRUE, FALSE)
-    }else if(input$cameraselect ==  "after RT correction"){
-      setnew <- c(FALSE, TRUE)
-    }else{
-      setnew <- FALSE
-    }
-    internalValues$params$outputs[c("peaktable_grouped",
+       internalValues$params$outputs[c("peaktable_grouped",
                                     "peaktable_grouped_Rtcorr"),
-                                  "CAMERA_analysis"] <- setnew
+                                  "CAMERA_analysis"] <- input$cameraselect
   })
   
   observeEvent(input$runrtcorrcheck,{
     internalValues$params$outputs["peaktable_grouped_Rtcorr","Value"] <- input$runrtcorrcheck
   })
   
-  observeEvent(input$peaktableallcheck,{
-    internalValues$params$outputs["peaktable_all","Value"] <- input$peaktableallcheck
-  })
+  # observeEvent(input$peaktableallcheck,{
+  #   internalValues$params$outputs["peaktable_all","Value"] <- input$peaktableallcheck
+  # })
   
   output$rtCorrCheck <- renderUI({
     div(title= "Activate post-processing for retention time corrected data.",
@@ -582,19 +510,28 @@ xcmsWidgetUI <-  function(id){
 fluidRow(
       shinydashboard::box(title = "Run XCMS analysis", width = 12, status= "primary",
                           
-                          p("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the mzXML file folder with results from the xcms analysis."),
-                          
-                         # p(strong("Not on by default in Server mode!")," Currently only one xcms job per Metaboseek session (concurrent job monitoring coming later)."),
+                          h3("This module runs and observes an XCMS analysis with customizable settings and generates a new folder inside the selected file folder with results from the xcms analysis."),
                           fluidRow(
-                            column(6,
-                                   #actionButton(ns('xcms_loadfolderOffline'), "load MS file folder"),
-                                   shinyFiles::shinyDirButton(ns('xcms_loadfolder'), "load MS file folder", title = "select a folder with MS data files"),
+                            column(5,
+                                   h3("Load Data"),
+                                   hr(),
+                                   strong("Data must be centroided. Supported File Formats: .mzXML, .mzML, .cdf, .nc, .mzData"),
+                                   shinyFiles::shinyDirButton(ns('xcms_loadfolder'), "1. Load MS file folder",
+                                                              title = "Select a folder with MS data files.",
+                                                              style="height: 50px; border-color: #C41230; width: 100%;"),
                                    
-                                   
+                                   hr(),
                                    textInput(ns('xcms_name'), "Title of this analysis", "xcms_run"),
-                                   actionButton(ns('xcms_start'),"Start analysis!", style="color: #fff; background-color: #C41230; border-color: #595959")),
-                            
-                            column(6,
+                                   #fluidRow(
+                                     htmlOutput(ns("outputSelection")),
+                                   #),
+                                   hr(),
+                                   actionButton(ns('xcms_start'),"2. Start analysis!",
+                                                style="color: #fff; background-color: #C41230; border-color: #595959; height: 50px; width: 100%;")),
+                            column(2),
+                            column(5, 
+                                   h3("Load Presets"),
+                                     hr(),
                                    fluidRow(
                                    htmlOutput(ns('defaultSelector'))),
                                    fluidRow(
@@ -613,27 +550,34 @@ fluidRow(
       shinydashboard::box(title = "XCMS Settings", width = 12,
                           id = "xcms_settingsBox", status = "primary",
                           fluidPage(
-                            fluidRow(
-                              htmlOutput(ns('xcms_selectTab'))
+                           # fluidRow(
+                            column(7,
+                                   
+                                   fluidRow(
+                                    # hr(),
+                                     h3("Automatic post-processing of MS data"),
+                                     p("Basic analysis and p-value calculation require more than one group set in File Grouping (in Analysis Settings).")),
+                                   fluidRow(
+                                     column(3,htmlOutput(ns("noRtCorrCheck"))),
+                                     column(3, htmlOutput(ns("rtCorrCheck")))
+                                   ),
+                                   fluidRow(
+                                     TableAnalysisModuleUI(ns("TabAnalysisXcms"))
+                                   )
                             ),
-                            fluidRow(
+                            #column(2),
+                            column(5,
+                                   fluidRow(
+                                     h3("Analysis Settings"),
+                                     htmlOutput(ns('xcms_selectTab'))
+                                   ), 
+                              fluidRow(
                               rhandsontable::rHandsontableOutput(ns('xcms_settingstab'))
-                            ),
-                            fluidRow(
-                              htmlOutput(ns("outputSelection"))
-                            ),
+                            ))
+                            #)
+                            ,
+                            
                            
-                            fluidRow(
-                              hr(),
-                              h3("Automatic post-processing of MS data"),
-                              p("Basic analysis and p-value calculation require more than one group set in File Grouping.")),
-                            fluidRow(
-                              column(3,htmlOutput(ns("noRtCorrCheck"))),
-                              column(3, htmlOutput(ns("rtCorrCheck")))
-                            ),
-                            fluidRow(
-                              TableAnalysisModuleUI(ns("TabAnalysisXcms"))
-                            )
                             
                           ))
     ),

@@ -38,6 +38,8 @@ PlotModule <- function(input,output, session,
   #   toggle(id = 'iplot', condition = !is.null(reactives()$plot) && reactives()$interactive)
   #   
   # }, ignoreNULL = F)
+ 
+# observeEvent(reactives()$plot,{hideElement(id = 'iplot');hideElement(id = 'fplot')}, ignoreNULL = FALSE, ignoreInit = FALSE, once = TRUE)
   
   output$fplot <- renderPlot({
     

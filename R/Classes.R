@@ -8,6 +8,9 @@ setGeneric("error", function(object) standardGeneric("error"))
 setGeneric("FTAnova", function(object, ...) standardGeneric("FTAnova"))
 
 setGeneric("FTBasicAnalysis", function(object, ...) standardGeneric("FTBasicAnalysis"))
+
+setGeneric("FTcalculateM", function(object, ...) standardGeneric("FTcalculateM"))
+
 setGeneric("FTCluster", function(object, ...) standardGeneric("FTCluster"))
 setGeneric("FTedges", function(object, ...) standardGeneric("FTedges"))
 
@@ -18,6 +21,9 @@ setGeneric("FTMS2scans", function(object, rawdata, ...) standardGeneric("FTMS2sc
 setGeneric("FTMzMatch", function(object, ...) standardGeneric("FTMzMatch"))
 
 setGeneric("FTNormalize", function(object, fun, ...) standardGeneric("FTNormalize"))
+setGeneric("FTNormalizationFactors", function(object, ...) standardGeneric("FTNormalizationFactors"))
+
+
 setGeneric("FTOldPeakShapes", function(object, rawdata, ...) standardGeneric("FTOldPeakShapes"))
 setGeneric("FTPCA", function(object, ...) standardGeneric("FTPCA"))
 
@@ -35,6 +41,8 @@ setGeneric("hasError", function(object) standardGeneric("hasError"))
 setGeneric("intensityCols", function(object) standardGeneric("intensityCols"))
 setGeneric("intensityCols<-", function(object, value) standardGeneric("intensityCols<-"))
 
+
+setGeneric("limitComponents", function(object, ...) standardGeneric("limitComponents"))
 setGeneric("loadMseekFT", function(object) standardGeneric("loadMseekFT"))
 setGeneric("loadMseekGraph", function(object, ...) standardGeneric("loadMseekGraph"))
 
@@ -71,6 +79,7 @@ setGeneric("LabelFinder", function(object, ...) standardGeneric("LabelFinder"))
 setOldClass("MseekFT")
 setOldClass("sessionInfo")
 setOldClass("MseekGraph")
+setOldClass("FilterList")
 
 ## Class unions
 setClassUnion("listOrNULL", c("list", "NULL"))
@@ -82,9 +91,11 @@ setClassUnion("MseekFamily", c("MseekFT", "MseekGraph"))
 
 #' @noRd
 #' @author Johannes Rainer
-setClass("Param",
-         representation = representation("VIRTUAL"),
-         contains = c("Versioned"))
+# setClass("Param",
+#          representation = representation("VIRTUAL"),
+#          contains = c("Versioned"))
+setClass("Param", contains = "VIRTUAL")
+
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
 #' FTAnalysisParam
@@ -115,6 +126,10 @@ setClassUnion("ParamOrNULL", c("Param", "NULL"))
 #' @slot numClusters number of clusters for clara_clusters analysis
 #' @slot mzMatchParam list of parameters passed to mass
 #' @slot workers number of workers to use for multithreaded analyses
+#' @slot normalizationFactors normalizationFactors vector with factors to apply to each column for normalization.
+#' @slot zeroReplacement value to replace zeros with
+#' @slot replaceNAs Numeric value to replace NA values with
+#' @slot p.adjust.method method to adjust p-values (see \code{\link[stats]{p.adjust}()})
 #' 
 #' @rdname FTAnalysisParam-class
 setClass("FTAnalysisParam",
@@ -130,6 +145,7 @@ setClass("FTAnalysisParam",
                    replaceNAs = "numericOrNULL",
                    ppm = "numeric",
                    controlGroup = "characterOrNULL",
+                   p.adjust.method = "character",
                    numClusters = "numeric",
                    mzMatchParam = "list",
                    workers = "numeric"),
@@ -152,6 +168,7 @@ setClass("FTAnalysisParam",
              #MSData = NULL,
              ppm = 5,
              controlGroup = NULL,
+             p.adjust.method = 'fdr',
              numClusters = 2,
              mzMatchParam = list(db = "smid-db_pos.csv",
                                  ppm = 5,
@@ -273,17 +290,17 @@ setClass("FTProcessHistory",
 
 
 setMethod("initialize", "FTAnalysisParam", function(.Object, ...) {
-    Biobase::classVersion(.Object)["FTAnalysisParam"] <- "0.0.1"
+    #Biobase::classVersion(.Object)["FTAnalysisParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
 setMethod("initialize", "FTProcessHistory", function(.Object, ...) {
-    Biobase::classVersion(.Object)["FTProcessHistory"] <- "0.0.1"
+    #Biobase::classVersion(.Object)["FTProcessHistory"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
 setMethod("initialize", "FunParam", function(.Object, ...) {
-    Biobase::classVersion(.Object)["FunParam"] <- "0.0.1"
+   # Biobase::classVersion(.Object)["FunParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
@@ -580,7 +597,7 @@ FTProcessHistory <- function(error = list(),
     obj@sessionInfo <- sessionInfo
     obj@fileNames <- fileNames
     obj@processingTime <- processingTime
-    Biobase::classVersion(obj)["FTProcessHistory"] <- "0.0.1"
+    #Biobase::classVersion(obj)["FTProcessHistory"] <- "0.0.1"
     OK <- validObject(obj)
     if (is.character(OK))
         stop(OK)
@@ -633,6 +650,10 @@ FunParam <- function(fun = character(), args = list(), longArgs = list()){
 #' @param numClusters number of clusters for clara_clusters analysis
 #' @param mzMatchParam list of parameters passed to mass
 #' @param workers number of workers to use for multithreaded analyses
+#' @param normalizationFactors normalizationFactors vector with factors to apply to each column for normalization.
+#' @param zeroReplacement value to replace zeros with
+#' @param replaceNAs Numeric value to replace NA values with
+#' @param p.adjust.method method to adjust p-values (see \code{\link[stats]{p.adjust}()})
 #' 
 #' @return a \code{\link{FTAnalysisParam-class}} object
 #'
@@ -644,7 +665,7 @@ FTAnalysisParam <- function(intensities = character(),
                             analyze = c("Basic analysis", "clara_cluster",
                                         "t-test", "Peak shapes",
                                         "Fast peak shapes", "PCA features",
-                                        "PCA samples", "mzMatch"), 
+                                        "PCA samples", "mzMatch", "Calculate M"), 
                             normalize = T,
                             useNormalized = T,
                             logNormalized = F,
@@ -653,6 +674,7 @@ FTAnalysisParam <- function(intensities = character(),
                             replaceNAs = 0,
                             ppm = 5,
                             controlGroup = NULL,
+                            p.adjust.method = 'fdr',
                             numClusters = 2,
                             mzMatchParam = list(db ="smid-db_pos.csv",
                                                 ppm = 5,
@@ -673,6 +695,7 @@ FTAnalysisParam <- function(intensities = character(),
                #MSData = NULL,
                ppm = ppm,
                controlGroup = controlGroup,
+               p.adjust.method = p.adjust.method,
                numClusters = numClusters,
                mzMatchParam = mzMatchParam,
                workers = workers))}

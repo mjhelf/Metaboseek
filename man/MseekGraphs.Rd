@@ -10,6 +10,7 @@
 \alias{loadMseekGraph,character-method}
 \alias{loadMseekGraph}
 \alias{simplify,MseekGraph-method}
+\alias{limitComponents,MseekGraph-method}
 \title{MseekGraphs}
 \usage{
 \S4method{setLayout}{MseekGraph}(object, layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold")
@@ -34,8 +35,18 @@
   cosineThreshold = NULL,
   layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold"
 )
+
+\S4method{limitComponents}{MseekGraph}(
+  object,
+  rankBy = "cosine",
+  n = Inf,
+  layoutFunction = "qgraph::qgraph.layout.fruchtermanreingold",
+  percentile = TRUE
+)
 }
 \arguments{
+\item{object}{an \code{MseekGraph} object (\code{MseekFT} for \code{buildMseekGraph()})}
+
 \item{layoutFunction}{function to use for layout of the resulting graph}
 
 \item{cosineThreshold}{if length > 0, will remove all edges with a cosine value below this}
@@ -46,9 +57,13 @@
 
 \item{writeRDS}{write object to an .mskg (RDS) file; saves the entire object}
 
-\item{rankBy}{if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges}
+\item{rankBy}{if length > 0, will use this edge attribute to iteratively remove the lowest scoring edges from the large clusters until}
 
-\item{maxK}{if length > 0, will only alllow at most this many edges from each node}
+\item{maxK}{if length > 0, will only allow at most this many edges from each node}
+
+\item{n}{maximum number of nodes connected in a cluster}
+
+\item{percentile}{remove edges in percentile steps}
 }
 \value{
 the \code{MseekFT} object, with saving event added to processHistory
@@ -68,6 +83,9 @@ a \code{data.frame}. These objects are read and displayed by the
 \code{loadMseekGraph}: load a \code{MseekGraph} object from an 
 .mskg or .graphml file (file extensions inform how file is loaded in)
 
-\code{simplify}: simplify an MseekGraph object, reducting the number of edges 
+\code{simplify}: simplify an MseekGraph object, reducing the number of edges 
 using additional filters.
+
+\code{limitComponents}: simplify an MseekGraph object, reducing the number of edges 
+for any subgraph with more than n components.
 }

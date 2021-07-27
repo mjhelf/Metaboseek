@@ -5,39 +5,53 @@
 \title{runSirius}
 \usage{
 runSirius(
-  outfolder,
-  ms1 = NULL,
+  sirpath = file.path(.MseekOptions$siriusFolder, "sirius"),
   ms2,
-  instrument,
   parentmz,
+  outfolder = getwd(),
+  ms1 = NULL,
+  ion = "[M+?]+",
   comments = "",
   rt = "",
-  ion,
   charge = 1,
   fingerid = T,
-  scanindices = NULL,
-  sirpath,
+  scanindices = "",
   moreOpts = "",
+  config = list(IsotopeSettings.filter = TRUE, FormulaSearchDB = c("ALL_BUT_INSILICO",
+    "ALL", "BIO", "METACYC", "CHEBI", "COCONUT", "ECOCYCMINE", "GNPS", "HMDB", "HSDB",
+    "KEGG", "KEGGMINE", "KNAPSACK", "MACONDA", "MESH", "NORMAN", "UNDP", "PLANTCYC",
+    "PUBCHEM", "PUBMED", "YMDB", "YMDBMINE", "ZINCBIO"), Timeout.secondsPerTree = 0,
+    FormulaSettings.enforced = "HCNOP[5]S", Timeout.secondsPerInstance = 0,
+    AdductSettings.detectable =
+    "[[M+K]+,[M+H3N+H]+,[M+Na]+,[M-H4O2+H]+,[M-H2O+H]+,[M+H]+]",
+    UseHeuristic.mzToUseHeuristicOnly = 650,      AlgorithmProfile = "orbitrap",
+    IsotopeMs2Settings = "IGNORE", MS2MassDeviation.allowedMassDeviation = "5.0ppm",
+    NumberOfCandidatesPerIon = 1, UseHeuristic.mzToUseHeuristic = 300,
+    FormulaSettings.detectable = ",", NumberOfCandidates = 10, StructureSearchDB =
+    c("ALL_BUT_INSILICO", "ALL", "BIO", "METACYC", "CHEBI", "COCONUT", "ECOCYCMINE",
+    "GNPS", "HMDB", "HSDB", "KEGG", "KEGGMINE", "KNAPSACK", "MACONDA", "MESH", "NORMAN",
+    "UNDP", "PLANTCYC", "PUBCHEM", "PUBMED", "YMDB", "YMDBMINE", "ZINCBIO"),     
+    AdductSettings.fallback = "[[M+K]+,[M+Na]+,[M+H]+]", RecomputeResults = TRUE),
   force = T
 )
 }
 \arguments{
-\item{outfolder}{output folder for the SIRIUS results}
-
-\item{ms1}{if not NULL, a list of MS1 spectra}
+\item{sirpath}{path to SIRIUS executable}
 
 \item{ms2}{a list (or list of lists) of ms2 spectra 
 (matrices with columns mz and intensity), see \code{Details}}
 
-\item{instrument}{specify instrument, can be \code{"orbitrap", "qtof" or "fticr"}}
-
 \item{parentmz}{numeric: parent ion m/z value}
+
+\item{outfolder}{output folder for the SIRIUS results}
+
+\item{ms1}{if not NULL, a list of MS1 spectra}
+
+\item{ion}{ion type (e.g. \eqn{[M+H]+})}
 
 \item{comments}{character: comments}
 
 \item{rt}{numeric: retention time in seconds}
-
-\item{ion}{ion type (e.g. \eqn{[M+H]+})}
 
 \item{charge}{charge (positive or negative integer)}
 
@@ -45,9 +59,9 @@ runSirius(
 
 \item{scanindices}{which scans were averaged into this ms2 spectrum}
 
-\item{sirpath}{path to SIRIUS executable}
-
 \item{moreOpts}{character with additional options to be passed to SIRIUS}
+
+\item{config}{list containing sirius configuration}
 
 \item{force}{force calculation, even if same results should exist according to indexfile}
 }

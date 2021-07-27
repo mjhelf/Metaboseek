@@ -4,13 +4,15 @@
 \alias{MseekAnova}
 \title{MseekAnova}
 \usage{
-MseekAnova(df, groups)
+MseekAnova(df, groups, adjmethod = "bonferroni")
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
 
 \item{groups}{named list of intensity columns listed by group 
 (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+
+\item{adjmethod}{method to adjust p values (passed on to stats::p.adjust)}
 }
 \value{
 a data.frame with one column, called \code{ANOVA__pvalue}

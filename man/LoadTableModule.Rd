@@ -11,10 +11,11 @@ LoadTableModule(
   session,
   values = reactiveValues(projectData = NULL, featureTables = NULL),
   static = list(tooltip = "Load", label = "Load", format = list(header = T, sep =
-    "\\t", quote = "\\"", stringsAsFactors = F), pattern = "\\\\.tGrouping$")
+    "\\t", quote = "\\"", stringsAsFactors = F), pattern = "\\\\.tGrouping$"),
+  ...
 )
 
-LoadTableModuleUI(id)
+LoadTableModuleUI(id, ...)
 }
 \arguments{
 \item{input}{arguments necessary for use with 
@@ -30,6 +31,8 @@ LoadTableModuleUI(id)
 gives read and write access to external objects}
 
 \item{static}{see \code{Details}}
+
+\item{...}{arguments passed to UI elements for the "Load" button.}
 
 \item{id}{id to be used to define a namespace via  \code{\link[shiny]{NS}()} 
 (must match \code{id} in \code{\link[shiny]{callModule}} 

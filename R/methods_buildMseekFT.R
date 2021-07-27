@@ -2,7 +2,7 @@
 
 #' @title buildMseekFT
 #' @aliases buildMseekFT
-#' @name buildMseekFT
+#' @rdname buildMseekFT
 #' 
 #' @description Methods to build an \code{MseekFT} object from an xsAnnotate,
 #'  xcmsSet or data.frame object, and to load or save \code{MseekFT} objects
@@ -74,16 +74,31 @@ setMethod("buildMseekFT",
           })
 
 #' @rdname buildMseekFT
+#' @param anagrouptable Analysis grouping table: a data.frame with columns 
+#' "Column" (containing column names from df with intensity values) and "Group" 
+#' (defining a group for each entry in "Column") 
+#' @param from input format. If auto, will run \code{.getFTFormat} to determine
+#' the format.
 #' @export
 setMethod("buildMseekFT", 
           signature(object = "data.frame"),
-          function(object, processHistory = list(), ...){
+          function(object,
+                   processHistory = list(),
+                   anagrouptable = NULL,
+                   from = "auto",
+                   ...){
               
-              res <- constructFeatureTable(df = object,
+            rf <- .reformatFeatureTable(object, from = from)
+            
+            if(!length(anagrouptable)){anagrouptable = rf$grouping}
+            
+              res <- constructFeatureTable(df = rf$df,
                                            processHistory = processHistory,
+                                           anagrouptable = anagrouptable,
                                            ...)
               
-              res <- addProcessHistory(res, FTProcessHistory(info = "Built MseekFT object from a data.frame.",
+              res <- addProcessHistory(res, FTProcessHistory(info = paste0("Built MseekFT object from a data.frame (",
+                                                                           rf$from, ")."),
                                                              sessionInfo = sessionInfo(),
                                                              outputHash = MseekHash(res),
                                                              param = FunParam(fun = "Metaboseek::buildMseekFT",

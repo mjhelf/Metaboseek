@@ -186,7 +186,20 @@ SimplifyNetworkModule <- function(input,output, session,
               column(3, div( title = "", 
                              numericInput(ns("maxK"), "Maximum number of edges per node (k)", value = 10)))
               
-              ),hr(),
+              ), hr(),
+            
+            fluidRow(
+              
+              column(3, div(title = "Remove edges from large clusters until they collapse in size",
+                            checkboxInput(ns("maxConnectionsCheck"),"Restrict nodes per cluster", value = F))),
+              column(4, 
+                     numericInput(ns('maxConnections'), "Maximum Cluster size",
+                                    value = 100)
+              ),
+              column(3, div(title = "Remove 1% lowest value edges from large cluster each iteration (slower, but less chance of breaking up edges unnecessarily).",
+                            checkboxInput(ns("percentileCheck"),"Remove by percentile", value = TRUE)))
+              ),
+              hr(),
             fluidRow(
               div( title = "Name of the simplified network:", 
                    textInput(ns('NetName2'), "Network name", value = paste0("simplified_", reactives()$activeNetwork )))
@@ -216,31 +229,57 @@ SimplifyNetworkModule <- function(input,output, session,
   
   
   observeEvent(input$simplifyNow,{
-    if(input$maxKcheck || input$cosThreshCheck){
+    if(input$maxKcheck || input$cosThreshCheck || input$maxConnectionsCheck){
         tryCatch({  
-          
-            tempgraph <- simplify(values$Networks[[reactives()$activeNetwork]],
+          withProgress(message = 'Please wait!', detail = "Simplifying Network", value = 0.5, {
+            
+          tempgraph <- values$Networks[[reactives()$activeNetwork]]
+          if(input$maxKcheck || input$cosThreshCheck){
+            tempgraph <- simplify(tempgraph,
                                                                      rankBy = if(input$maxKcheck){input$maxKcol}else{NULL},
                                                                      maxK = input$maxK,
                                                                      cosineThreshold = if(input$cosThreshCheck){input$cosThresh}else{NULL},
                                   layoutFunction = values$GlobalOpts$graph.layouts.selected
                                   )
-             if(hasError(previousStep(tempgraph))){
-          showNotification(paste("An error occured: ",
-                                 unlist(error(previousStep(tempgraph)))),
-                           duration = 0, type = "error")
+            if(hasError(previousStep(tempgraph))){
+              showNotification(paste("An error occured: ",
+                                     unlist(error(previousStep(tempgraph)))),
+                               duration = 0, type = "error")
+            }else{
+              
+              values$Networks[[gsub("\\.[^.]*$","",input$NetName2)]] <- tempgraph
+              removeModal()
+              values$Networks$numNetworks <- values$Networks$numNetworks + 1
+              showNotification(paste("Simplified Network"), duration = 10)
+              
+            }
+}
           
-      }else{
-          
-           values$Networks[[gsub("\\.[^.]*$","",input$NetName2)]] <- tempgraph
-                removeModal()
-      values$Networks$numNetworks <- values$Networks$numNetworks + 1
-          showNotification(paste("Simplified Network"), duration = 10)
-
-      }
+             
+          if(input$maxConnectionsCheck){
+            tempgraph <- limitComponents(tempgraph,
+                                  rankBy = "cosine",
+                                  n = input$maxConnections,
+                                  layoutFunction = values$GlobalOpts$graph.layouts.selected,
+                                  percentile = input$percentileCheck
+            )
             
-      
-     
+            if(hasError(previousStep(tempgraph))){
+              showNotification(paste("An error occured: ",
+                                     unlist(error(previousStep(tempgraph)))),
+                               duration = 0, type = "error")
+            }else{
+              
+              values$Networks[[gsub("\\.[^.]*$","",input$NetName2)]] <- tempgraph
+              removeModal()
+              values$Networks$numNetworks <- values$Networks$numNetworks + 1
+              showNotification(paste("Simplified Network"), duration = 10)
+              
+            }
+          }
+          })
+          showNotification(paste("Network simplified!"), duration = 10)
+          
     },
     error = function(e){
       #print("graph not loaded")
@@ -256,7 +295,9 @@ SimplifyNetworkModule <- function(input,output, session,
       )
     }
     
-        )}
+        )
+      
+      }
       else{
           showNotification(paste("You have to select a simplificatioin method to continue"), 
                            type = "warning", duration = 10)
