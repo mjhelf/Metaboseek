@@ -25,7 +25,27 @@ findLabels(
 
 \item{complist}{data.frame with molecular features and columns \code{mz, rt, rtmin, rtmax}}
 
+\item{ref_intensityCols}{intensity column names in reflist}
+
+\item{comp_intensityCols}{intensity column names in complist}
+
+\item{labelmz}{expected m/z difference between reference and labeled compounds}
+
+\item{pktolerance}{maximum fold difference in retention time peak width between matched peaks}
+
 \item{rtdiff}{maximum retention time difference (same unit as \code{rt} columns in \code{reflist} and \code{complist}, typically seconds)}
+
+\item{ppm_compare}{ppm m/z tolerance for feature list comparison}
+
+\item{ifoldS1}{min. fold Iso1/Iso2 in unlabeled}
+
+\item{ifoldS2}{max. fold Iso1/Iso2 in labeled}
+
+\item{rawdata}{list of xcmsRaw objects. Item names must be contained in column names}
+
+\item{ppm_extract}{ppm m/z tolerance for EIC extraction}
+
+\item{rtw_extract}{retention time window for EIC extraction (seconds, will be applied +/- the expected rt)}
 }
 \value{
 a data.frame based on reflist, filtered for features with matches in complist
@@ -35,7 +55,8 @@ and information on a single match (best rt match).
 find labeled compounds in \code{complist} which correspond to unlabeled compounds in \code{reflist}
 }
 \examples{
-MseekExamplePreload(data = T, tables = T)
+\dontrun{
+MseekExamplePreload(data = TRUE, tables = TRUE)
 findLabelsResults <- findLabels(reflist = tab2$df[,!colnames(tab2$df) \%in\% c(tab2$intensities, paste0(tab2$intensities,"__norm"))], #remove intensity columns to have them replaced with new ones from rawdata
                                 complist = tab2$df[,!colnames(tab2$df) \%in\% c(tab2$intensities, paste0(tab2$intensities,"__norm"))],
                                 ref_intensityCols = tab2$intensities[1:3],
@@ -44,5 +65,6 @@ findLabelsResults <- findLabels(reflist = tab2$df[,!colnames(tab2$df) \%in\% c(t
                                 ifoldS1 = 10,
                                 ifoldS2 = 10000,
                                 rawdata = MSD$data)
+ }
  
 }

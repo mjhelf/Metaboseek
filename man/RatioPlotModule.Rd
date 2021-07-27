@@ -80,10 +80,6 @@ server <- function(input, output) {
 shinyApp(ui, server)
 }
 
-VennDiagramModule
-
-server module for Venn diagrams in Metaboseek
-
 }
 \seealso{
 \code{\link{values}} for a description of the \code{values} object

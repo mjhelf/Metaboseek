@@ -78,8 +78,15 @@ MseekOptions <- function(..., defaults = F){
                            SiriusSelInstrument = "orbitrap",
                            SiriusElements = "CHNOP[5]S[5]",
                            SiriusUseMS1 = T,
-                           SiriusDBoptions = c("bio", "PubChem", "hmdb", "kegg", "knapsack", "biocyc"),
-                           SiriusDBselected = "bio",
+                           SiriusDBoptions = c('ALL_BUT_INSILICO','ALL','BIO',
+                                               'METACYC','CHEBI','COCONUT',
+                                               'ECOCYCMINE','GNPS','HMDB',
+                                               'HSDB','KEGG','KEGGMINE',
+                                               'KNAPSACK','MACONDA','MESH',
+                                               'NORMAN','UNDP','PLANTCYC',
+                                               'PUBCHEM','PUBMED','YMDB',
+                                               'YMDBMINE','ZINCBIO'),
+                           SiriusDBselected = "BIO",
                            testMode = F,
                            
                            mzquery.elements = c("C","H","N","O","P","S"),
@@ -106,8 +113,9 @@ MseekOptions <- function(..., defaults = F){
                                                        "layout_with_dh",
                                                        "layout_with_drl",
                                                        "layout_components"),
-                           graph.layouts.selected = "qgraph.layout.fruchtermanreingold"
+                           graph.layouts.selected = "qgraph.layout.fruchtermanreingold",
                            
+                           p.adjust.method = "fdr"
                            )
     
   }

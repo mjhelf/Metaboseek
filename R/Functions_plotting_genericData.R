@@ -75,15 +75,15 @@ groupedplot <- function(...,
     
     switch(main,
            boxplot = {p <- p + ggplot2::geom_boxplot()},
-           barplot = {p <- p + ggplot2::geom_bar(stat = "summary", fun.y = "mean")},
+           barplot = {p <- p + ggplot2::stat_summary(fun = mean, geom = "bar")},#  ggplot2::geom_bar(stat = "summary", fun.y = "mean")},
            violinplot = {p <- p + ggplot2::geom_violin(trim = F)})
     
     if(dotplot){#p <- p + ggplot2::geom_dotplot(binaxis='y', stackdir='center', binwidth = 1, dotsize = dsize)
         p <- p + ggplot2::geom_point()}
     
     switch(mark,
-           mean = {p <- p + ggplot2::stat_summary(fun.y = mean, geom = "point", shape = 17, size = 3, color = "red")},
-           median = {p <- p + ggplot2::stat_summary(fun.y = median, geom = "point", shape = 17, size = 3, color = "red")}
+           mean = {p <- p + ggplot2::stat_summary(fun = mean, geom = "point", shape = 17, size = 3, color = "red")},
+           median = {p <- p + ggplot2::stat_summary(fun = median, geom = "point", shape = 17, size = 3, color = "red")}
     )
     
     

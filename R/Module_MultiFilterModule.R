@@ -44,6 +44,7 @@ MultiFilterModule <- function(input,output, session, values,
     updateFT(values)
     
     logilist <- list()
+    logiresult <- TRUE
     
     for(i in grep(static$lab, names(internalValues), value = T)){
       
@@ -56,34 +57,51 @@ MultiFilterModule <- function(input,output, session, values,
           
           
           
-          internalValues[[i]]$filter <- (values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected] >= as.numeric(internalValues[[i]]$minSel)
-                                         & values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected] <= as.numeric(internalValues[[i]]$maxSel))
+          internalValues[[i]]$filter <- (FeatureTable(values)$df[,internalValues[[i]]$colSelected] >= as.numeric(internalValues[[i]]$minSel)
+                                         & FeatureTable(values)$df[,internalValues[[i]]$colSelected] <= as.numeric(internalValues[[i]]$maxSel))
         }else{
           
           
           if(!is.null(internalValues[[i]]$modeSel) && internalValues[[i]]$modeSel=="contains"){
             internalValues[[i]]$filter <- grepl(internalValues[[i]]$txtSel,
-                                                as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]),
+                                                as.character(FeatureTable(values)$df[,internalValues[[i]]$colSelected]),
                                                 fixed = T)
           }else if(!is.null(internalValues[[i]]$modeSel) && internalValues[[i]]$modeSel=="does not contain"){
             internalValues[[i]]$filter <- !grepl(internalValues[[i]]$txtSel,
-                                                 as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]),
+                                                 as.character(FeatureTable(values)$df[,internalValues[[i]]$colSelected]),
                                                  fixed = T)
           }else if(!is.null(internalValues[[i]]$modeSel) && internalValues[[i]]$modeSel=="is not"){
-            internalValues[[i]]$filter <- ! (as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]) == internalValues[[i]]$txtSel)
+            internalValues[[i]]$filter <- ! (as.character(FeatureTable(values)$df[,internalValues[[i]]$colSelected]) == internalValues[[i]]$txtSel)
             
           }
           #if(input$modeSel=="is"){
           else{
-            internalValues[[i]]$filter <- as.character(values$featureTables$tables[[values$featureTables$active]]$df[,internalValues[[i]]$colSelected]) == internalValues[[i]]$txtSel
+            internalValues[[i]]$filter <- as.character(FeatureTable(values)$df[,internalValues[[i]]$colSelected]) == internalValues[[i]]$txtSel
           }
         }
+        
+        if(internalValues[[i]]$excludeNAs){
+          #working under the assumption that NA values from the column in numeric, and in some cases (is, is not) in character,
+          #are passed into the logical() 
+        internalValues[[i]]$filter[is.na(internalValues[[i]]$filter)] <- FALSE
+        }else{
+        internalValues[[i]]$filter[is.na(internalValues[[i]]$filter)] <- TRUE
+        }
+        
       }else{
         internalValues[[i]]$filter <- T
       }
       
       #looping function not really necessary anymore
       logilist[[i]] <- internalValues[[i]]$filter
+
+      #TODO: build this, probably need logilist again to group filters together      
+      # if(!length(internalValues[[i]]$operator) || internalValues[[i]]$operator == "AND"){
+      # logiresult <- logiresult & internalValues[[i]]$filter
+      # }else{
+      #   logiresult <- logiresult | internalValues[[i]]$filter
+      # }
+      
       
     }
     
@@ -104,7 +122,8 @@ MultiFilterModule <- function(input,output, session, values,
                                                             colSelected = internalValues[[i]]$colSelected,
                                                             numeric = internalValues[[i]]$numeric,
                                                             minSelInit = internalValues[[i]]$minSel,
-                                                            maxSelInit = internalValues[[i]]$maxSel)
+                                                            maxSelInit = internalValues[[i]]$maxSel,
+                                                            excludeNAs = internalValues[[i]]$excludeNAs)
         
       }
       else{
@@ -112,7 +131,8 @@ MultiFilterModule <- function(input,output, session, values,
                                                             colSelected = internalValues[[i]]$colSelected,
                                                             numeric = internalValues[[i]]$numeric,
                                                             txtSelInit = internalValues[[i]]$txtSel,
-                                                            modeSelInit = internalValues[[i]]$modeSel)
+                                                            modeSelInit = internalValues[[i]]$modeSel,
+                                                            excludeNAs = internalValues[[i]]$excludeNAs)
       }
     }
     values$featureTables$Filters$filteredTable <- values$featureTables$active
@@ -182,7 +202,7 @@ MultiFilterModule <- function(input,output, session, values,
   
   observeEvent(FeatureTable(values)$df,{
     internalValues$outdated <- T
-    internalValues$colnames <- colnames(values$featureTables$tables[[values$featureTables$active]]$df)
+    internalValues$colnames <- colnames(FeatureTable(values)$df)
     values$featureTables$Filters$filterSet <- list()
     values$featureTables$Filters$filteredTable <- values$featureTables$active
   })

@@ -41,6 +41,10 @@ LoadMSDataModule <- function(input,output, session,
     showModal(modalDialog(
       fluidPage(
         fluidRow(
+          h4("Supported File Formats: .mzXML, .mzML, .cdf, .nc, .mzData"),
+          strong("Note: Only centroided data supported.")
+        ),
+        fluidRow(
           column(6,
                  FilePathModuleUI(ns("loadfiles"))),
           column(6,
@@ -127,6 +131,7 @@ LoadMSDataModuleUI <- function(id){
   
   ns <- NS(id)
   
-  actionButton(ns("loadMSDButton"), "Load MS data", icon = icon("folder-open", lib = "font-awesome"))
+  actionButton(ns("loadMSDButton"), "Load MS data", icon = icon("folder-open", lib = "font-awesome"),
+               width = "100%", style = 'height: 50px;')
   
 }

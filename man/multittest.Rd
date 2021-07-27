@@ -4,16 +4,27 @@
 \alias{multittest}
 \title{multittest}
 \usage{
-multittest(df, groups, ttest = TRUE, adjmethod = "bonferroni")
+multittest(
+  df,
+  groups,
+  ttest = TRUE,
+  adjmethod = "bonferroni",
+  controlGroup = NULL
+)
 }
 \arguments{
 \item{df}{a data.frame with numeric (intensity) values}
 
-\item{groups}{named list of intensity columns listed by group (as supplied by $anagroupnames or $anagroupnames_norm of MseekFT objects)}
+\item{groups}{named list of intensity columns listed by group (as supplied by
+\code{$anagroupnames} or \code{$anagroupnames_norm} of \code{MseekFT} 
+objects)}
 
 \item{ttest}{if TRUE, ttest will be calculated}
 
 \item{adjmethod}{method to adjust p values (passed on to stats::p.adjust)}
+
+\item{controlGroup}{name of the control group in \code{groups}. If NULL, all
+groups will be compared against all samples outside the group.}
 }
 \value{
 a data.frame with same number of rows as df, with coluns as described in \code{details}
@@ -25,7 +36,7 @@ Calculate per-row t-test between grouped columns of a data.frame.
 columns in the export data.frame. All columns are generated for 
 each group defined in \code{groups},  where GX is replaced by the group name:
 \itemize{
-\item\code{GX__sdev} RELATIVE standard deviation (sd/mean) within the group
+\item\code{GX__CV} Coefficient of variation (relative standard deviation (sd/mean)) within the group
 \item\code{GX__pval} p value between this group and all samples in all other 
 groups, as calculated by \code{\link[stats]{t.test}()}
 \item\code{GX__pval_adj} p values, adjusted by the selected \code{adjmethod}

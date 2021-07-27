@@ -45,5 +45,13 @@ analysis (optional)}
 \item{\code{mzMatchParam}}{list of parameters passed to mass}
 
 \item{\code{workers}}{number of workers to use for multithreaded analyses}
+
+\item{\code{normalizationFactors}}{normalizationFactors vector with factors to apply to each column for normalization.}
+
+\item{\code{zeroReplacement}}{value to replace zeros with}
+
+\item{\code{replaceNAs}}{Numeric value to replace NA values with}
+
+\item{\code{p.adjust.method}}{method to adjust p-values (see \code{\link[stats]{p.adjust}()})}
 }}
 

@@ -45,6 +45,7 @@ WelcomePageModule <- function(input,output, session,
   )
   
   internalValues <- reactiveValues(explore = F,
+                                   xcms_link = 0,
                                    StartDataLoad = StartDataLoad)
   
   observeEvent(c(values$MSData$data, values$featureTables$tables),{
@@ -53,6 +54,10 @@ WelcomePageModule <- function(input,output, session,
       
       internalValues$explore <- T
     }
+  })
+  
+  observeEvent(input$xcms_link, {
+    internalValues$xcms_link <-   internalValues$xcms_link + 1
   })
   
   output$web <- renderUI({
@@ -74,8 +79,11 @@ WelcomePageModule <- function(input,output, session,
                               fluidPage(
                                 fluidRow(
                                   
-                                  p("Load your data below with the buttons below. You can load a Feature Table, any number of compatible MS data files, or a Project folder.", style = "text-align:center;"),
-                                hr()
+                                  h3("Load your data with the buttons below. You can load a Feature Table, MS data files, or a Project folder.", style = "text-align:center;"),
+                                  h4("No Feature Table? Run an ", actionLink(ns("xcms_link"), "XCMS analysis"), style = "text-align:center;"),
+                                  
+                                  
+                                  hr()
                                   ),
                                 fluidRow(
                                  

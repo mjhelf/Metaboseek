@@ -6,7 +6,7 @@ Column,Description,calculated by,method
 {Group}__minFoldMean,Fold change of the mean intensity of G1 over the highest intensity sample of all other samples outside of G1,Basic analysis,FTBasicAnalysis
 {Group}__pval,"p value between this group and all samples in all other groups, as calculated by stats::t.test()",t-test,FTT.test
 {Group}__pval_adj,"p values, adjusted by the ""bonferroni"" method using stats::p.adjust()",t-test,FTT.test
-{Group}__sdev,coefficient of variatioin (relative standard deviation = sd/mean) within the group,t-test,FTT.test
+{Group}__CV,coefficient of variation (relative standard deviation = sd/mean) within the group,t-test,FTT.test
 {IntensityColumn}__norm,"Normalized intensity values for an intensity column, typically named {Sample}__norm or {Sample}__XIC__norm; by default : (1) replaces zeros by lowest value in entire intensity dataset (assuming it represents the detection limit), (2) intensity values of each column are adjusted so that each column has the mean intensity equal to the mean intensity of the entire dataset.",Normalize data,FTNormalize
 {Sample},Columns with intensities as reported by xcms,xcms script,xcms::groupChromPeaks
 {Sample}__XIC,"Columns with intensities as calculated by Metaboseek, can have a suffix other than ""_XIC"" if generated with the ""Get intensities"" button.","Get Intensities, xcms script, ",

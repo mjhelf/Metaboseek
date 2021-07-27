@@ -45,10 +45,6 @@
 #' shinyApp(ui, server)
 #' }
 #' 
-#' VennDiagramModule
-#' 
-#' server module for Venn diagrams in Metaboseek
-#' 
 #' @inherit MseekModules
 #' @describeIn RatioPlotModule Server logic
 #' 

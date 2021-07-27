@@ -16,8 +16,8 @@
 #' @return a list of data.frames
 #'
 #' @examples
-#' 
-#'  MseekExamplePreload(data = T, tables = T)
+#' \dontrun{
+#'  MseekExamplePreload(data = TRUE, tables = TRUE)
 #' demo_reflist = data.frame(mz = 101:200,
 #'                      rt = 201:300,
 #'                      rtmin = 198:297,
@@ -34,9 +34,11 @@
 #' 
 #' compareResults <- featlistCompare(reflist = demo_reflist, complist = demo_complist)
 #' 
-#'   MseekExamplePreload(data = F, tables = T)
+#'   MseekExamplePreload(data = FALSE, tables = TRUE)
 #' compareResultsBig <- featlistCompare(reflist = tab2$df, complist = tab2$df)
 #'
+#' }
+#' 
 #' @export
 featlistCompare <- function(reflist=reflist,
                             complist=complist,
@@ -193,9 +195,20 @@ findLabeledPeaks <- function (df,
 #' find labeled compounds in \code{complist} which correspond to unlabeled compounds in \code{reflist}
 #'
 #' @inheritParams featlistCompare
+#' @param ref_intensityCols intensity column names in reflist
+#' @param comp_intensityCols intensity column names in complist
+#' @param labelmz expected m/z difference between reference and labeled compounds
+#' @param pktolerance maximum fold difference in retention time peak width between matched peaks
+#' @param ppm_compare ppm m/z tolerance for feature list comparison
+#' @param ifoldS1 min. fold Iso1/Iso2 in unlabeled
+#' @param ifoldS2 max. fold Iso1/Iso2 in labeled
+#' @param rawdata list of xcmsRaw objects. Item names must be contained in column names
+#' @param ppm_extract ppm m/z tolerance for EIC extraction
+#' @param rtw_extract retention time window for EIC extraction (seconds, will be applied +/- the expected rt)
 #' 
 #' @examples
-#' MseekExamplePreload(data = T, tables = T)
+#' \dontrun{
+#' MseekExamplePreload(data = TRUE, tables = TRUE)
 #' findLabelsResults <- findLabels(reflist = tab2$df[,!colnames(tab2$df) %in% c(tab2$intensities, paste0(tab2$intensities,"__norm"))], #remove intensity columns to have them replaced with new ones from rawdata
 #'                                 complist = tab2$df[,!colnames(tab2$df) %in% c(tab2$intensities, paste0(tab2$intensities,"__norm"))],
 #'                                 ref_intensityCols = tab2$intensities[1:3],
@@ -204,6 +217,7 @@ findLabeledPeaks <- function (df,
 #'                                 ifoldS1 = 10,
 #'                                 ifoldS2 = 10000,
 #'                                 rawdata = MSD$data)
+#'  }
 #'  
 #' @return a data.frame based on reflist, filtered for features with matches in complist
 #' and information on a single match (best rt match).

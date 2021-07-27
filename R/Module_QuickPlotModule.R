@@ -66,6 +66,7 @@ QuickPlotsModule <- function(input, output, session, values){
                      errorbar = input$errorbar,
                      rotate = input$rot)
     p <- p + 
+      theme_light() +
       ggplot2::ggtitle(if(input$multidata){paste0("Showing data for ",
                                                   nrow(FeatureTable(values)$df[values$featureTables$row_filters,]),
                                                   " features")}

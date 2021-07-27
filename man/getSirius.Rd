@@ -4,18 +4,18 @@
 \alias{getSirius}
 \title{getSirius}
 \usage{
-getSirius(outfolder, splash, ts)
+getSirius(outfolder, hash, ts)
 }
 \arguments{
 \item{outfolder}{folder with SIRIUS results}
 
-\item{splash}{splash tag to look for}
+\item{hash}{hash tag to look for}
 
 \item{ts}{timestamp to look for}
 }
 \value{
 Returns a list with information for a completed SIRIUS job
-that matches \code{splash} and \code{ts} in \code{outfolder}
+that matches \code{hash} and \code{ts} in \code{outfolder}
 }
 \description{
 get SIRIUS results for a given spectrum
@@ -24,7 +24,7 @@ get SIRIUS results for a given spectrum
 Finds a result folder matching the search terms and reads 
 its contents.
 \itemize{
-\item \code{splash} copy of \code{splash}
+\item \code{hash} copy of \code{hash}
 \item \code{timestamp} copy of \code{ts}
 \item \code{allfiles} character vector with all files in \code{outfolder}
 \item \code{summary} path of the \code{summary_sirius.csv} file

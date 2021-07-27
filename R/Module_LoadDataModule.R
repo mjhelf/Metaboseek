@@ -47,7 +47,8 @@ LoadDataModule <- function(input,output, session,
                                                        sep = NULL,
                                                        quote = '"',
                                                        stringsAsFactors = F),
-                                         pattern = "\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$")
+                                         pattern = "\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$"),
+                      width = "100%", style = "height: 50px;"
   )
   
   Projectfolder <- callModule(SelectProjectFolderModule, "projectfolder",
@@ -56,8 +57,7 @@ LoadDataModule <- function(input,output, session,
                                                 MSData = values$MSData,
                                                 GlobalOpts = values$GlobalOpts)
   )
-  
- 
+
   Msdata <- callModule(LoadMSDataModule, "msdata",
                              values = reactiveValues(projectData = values$projectData,
                                                      featureTables = values$featureTables,
@@ -91,18 +91,30 @@ LoadDataModuleUI <- function(id){
   ns <- NS(id)
   fluidPage(
     fluidRow(
-      column(12, style = "text-align:center;", htmlOutput(ns("showfolder"))
-      )),
-    fluidRow(
-      column(2, style = "justify-content:center;display:flex", LoadTableModuleUI(ns("table"))
-             ),
-      column(2, style = "justify-content:center;display:flex", LoadMSDataModuleUI(ns("msdata"))
-             ),
-      column(4, style = "justify-content:center;display:flex", SelectProjectFolderModuleUI(ns("projectfolder"))
-             ),
-      column(4, style = "justify-content:center;display:flex", LoadSessionModuleUI(ns("loadsession"))
+      shinydashboard::box(title = "Load Data",
+                          width = 6,
+                          height = '200px',
+                          fluidRow(
+                            column(6, style = "justify-content:center;display:flex", LoadTableModuleUI(ns("table"), style = "width: 100%;")
+                            ),
+                            column(6, style = "justify-content:center;display:flex", LoadMSDataModuleUI(ns("msdata"))
+                            ))),
+      shinydashboard::box(title = "Load Metaboseek Project",
+                          width = 6,
+                          height = '200px',
+                          fluidRow(
+                            column(1,
+                                   div(h3(icon("question-circle-o")),
+                                       style = "text-align: center;",
+                                       title = "Generate a Project Folder by running XCMS with Metaboseek. MS Data associated with a Project Folder will be loaded along with a selected Feature Table. Filtered Feature Tables can be easily saved in the Project Folder.")
+                            ),
+                            column(8, style = "justify-content:center;",#display:flex",
+                                   fluidRow(SelectProjectFolderModuleUI(ns("projectfolder"))),
+                                   fluidRow(style = "text-align:center;", htmlOutput(ns("showfolder")))
+                            ),
+                            column(3, style = "justify-content:center;display:flex",
+                                   LoadSessionModuleUI(ns("loadsession"))
+                            ))
       )
-    )
-      
-  )
+    ))
 }

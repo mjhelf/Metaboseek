@@ -36,7 +36,7 @@ TableAnalysisModule <- function(input,output, session, values,
                                    zeroReplacement = NULL,
                                    replaceNAs = 0,
                                    
-                                   analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test"),
+                                   analysesAvailable = list("Grouping required" = c("Basic analysis", "clara_cluster", "anova","t-test", "Calculate M"),
                                                             "No grouping required" = c("PCA features", "PCA samples"),
                                                             "No intensities required" = list("mzMatch" = "mzMatch")),
                                    
@@ -45,7 +45,8 @@ TableAnalysisModule <- function(input,output, session, values,
                                    analysesSelected = "Basic analysis",
                                    analysesSelected = NULL,
                                    numClusters = 2,
-                                   dbselected = system.file("db", "smid-db_pos.csv", package = "Metaboseek")
+                                   dbselected = system.file("db", "smid-db_pos.csv", package = "Metaboseek"),
+                                   normalizationMethod = "mean"
   )
   
   tempValues <- reactiveValues(zeroReplacementIntermediate = "lowest intensity value") #keep this one separate because it is not an FTAnalysisParam slot
@@ -184,6 +185,35 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     internalValues$analysesSelected2 <- input$selAna2
   })
   
+  output$normMethod <- renderUI({
+    
+  selectizeInput(ns("normalizationMethod"), "Normalization Method", 
+                 choices = c("Column Means" = "mean",
+                             "Geometric Column Means" = "gm_mean"),
+                 selected = internalValues$normalizationMethod
+                 )
+  })
+  
+  observeEvent(input$normalizationMethod,{
+    internalValues$normalizationMethod <- input$normalizationMethod
+  })
+  
+  output$normSource <- renderUI({
+    tempitem <- 'filteredTable'
+    names(tempitem) <- paste0(names(values$featureTables$index)[values$featureTables$index == activeFT(values)], " (Filters applied)")
+    
+  div(title = "Use intensity columns from this table for normalization.\nWill use the NON-normalized columns to calculate normalization factors and ignore 0 and NA values.\nNeeds to have the same intensity column names as the currently active Feature Table.",
+      selectizeInput(ns("normalizationSource"), "Normalization Source Table",
+                     choices = c(tempitem, values$featureTables$index),
+                     selected = activeFT(values))
+  )
+  })
+  
+  observeEvent(input$normalizationSource,{
+    internalValues$normalizationSource <- input$normalizationSource
+  })
+  
+  
   output$claraClusters <- renderUI({ 
     #if("clara_cluster" %in% internalValues$analysesSelected){
     div(title = "Number of clusters in which to group features based on their intensities across samples by k-medoids (clara).",
@@ -207,7 +237,31 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
           
       #  }
           stepsbefore <- length(processHistory(FeatureTable(values)))
+          
         
+          
+          if(!length(internalValues$normalizationSource) 
+             || internalValues$normalizationSource == activeFT(values)){
+            nfrom <- NULL
+          }else if(internalValues$normalizationSource %in% values$featureTables$index){
+          nfrom <- FeatureTable(values,
+                                tableID = internalValues$normalizationSource)
+          }else if(internalValues$normalizationSource == "filteredTable"){
+            nfrom <- getFilters(values)
+          }else{
+            nfrom <- NULL
+          }
+          
+          if(internalValues$replaceNAs){
+            FeatureTable(values) <- removeNAs(object = FeatureTable(values),
+                                              replacement = 0)
+          }
+          
+          FeatureTable(values) <- FTNormalizationFactors(object = FeatureTable(values),
+                   normalizeFrom = nfrom,
+                   normalizationMethod = internalValues$normalizationMethod,
+                   zeroReplacement = internalValues$zeroReplacement,
+                   transformation = if(internalValues$logNormalized){"log10"}else{NULL})
        
         FeatureTable(values) <- analyzeFT(object = FeatureTable(values),
                                           MSData = values$MSData$data,
@@ -216,7 +270,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                                   useNormalized = internalValues$useNormalized,
                                                                   logNormalized = internalValues$logNormalized,
                                                                   
-                                                                  normalizationFactors = internalValues$normalizationFactors,
+                                                                  normalizationFactors = FeatureTable(values)$normalizationFactors,
                                                                   zeroReplacement = internalValues$zeroReplacement,
                                                                   replaceNAs = internalValues$replaceNAs,
                                                                   
@@ -227,6 +281,7 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                                                           },
                                                                   ppm = if(!is.null(values$MSData$data)){values$MSData$layouts[[values$MSData$active]]$settings$ppm}else{5},
                                                                   controlGroup = internalValues$controlGroups,
+                                                                  p.adjust.method = values$GlobalOpts$p.adjust.method,
                                                                   numClusters = internalValues$numClusters,
                                                                   mzMatchParam = list(db = internalValues$dbselected,
                                                                                       ppm = 5,
@@ -287,15 +342,16 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                        reactives = reactive({  
                          list(fp = fluidPage(
                            fluidRow(
+                             h3("Imputation"),
                              column(4,
                                     htmlOutput(ns("replaceNAsCheck"))
                              ),
                              column(4,
                                     htmlOutput(ns("zeroReplacementCheck"))
                                     )),
-                           
+                           hr(),
                              fluidRow(
-                               
+                               h3("Normalization"),
                                column(4,
                                       htmlOutput(ns('normDataCheck'))
                                ),
@@ -303,10 +359,13 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
                                       htmlOutput(ns('logDataUseCheck'))
                                ),
                                column(4,
-                                             selectizeInput(ns("normalizationMethod"), "Normalization Method", 
-                                                            choices = c("Equalize mean between columns"
-                                                            )))
-                               
+                                      htmlOutput(ns('normMethod'))       
+                                      )),
+                               fluidRow(
+                                 column(6,
+                                        htmlOutput(ns('normSource'))       
+                                        
+                                        )
                                
                                )
                              
@@ -371,7 +430,20 @@ selectizeInput(ns('selAna2'), 'Select MS-data dependent analyses',
     internalValues$dbselected <- input$selDB
   })
   
-
+  
+  output$NormInfoText <- renderPrint({FeatureTable(values)$normalizationFactors})
+  
+  output$NormalizationInfo <- renderUI({
+    if(!is.null(values$featureTables)){
+    tagList(
+    fluidRow(
+    p('Normalization Factors:')),
+    fluidRow(
+     verbatimTextOutput(ns("NormInfoText")) 
+    )
+    )
+    }
+  })
   
   observe({
     toggle(id = 'seldbs', condition = "mzMatch" %in% internalValues$analysesSelected)
@@ -411,15 +483,15 @@ TableAnalysisModuleUI <- function(id){
       column(4,
              div(style="display:inline-block",
                  htmlOutput(ns('normDataUseCheck')),
-                 ModalWidgetUI(ns('normSettings'))
+                 ModalWidgetUI(ns('normSettings')),
              )
       ),
-      # column(3,
-      #        htmlOutput(ns('normDataUseCheck'))
-      # ),
       column(3,
              htmlOutput(ns('ctrlSelect'))
-      )
+      ),
+       column(5,
+        htmlOutput(ns('NormalizationInfo'))
+       )
       ),
     fluidRow(
       h4("Basic analysis"),

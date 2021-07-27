@@ -9,6 +9,7 @@
 #' of the loaded table file
 #' 
 #' @param static see \code{Details}
+#' @param ... arguments passed to UI elements for the "Load" button.
 #' 
 #' @details elements in \code{static} that can be set:
 #' \itemize{
@@ -31,7 +32,8 @@ LoadTableModule <- function(input,output, session,
                                                         sep = "\t",
                                                         quote = '"',
                                                         stringsAsFactors = F),
-                                          pattern = "\\.tGrouping$")
+                                          pattern = "\\.tGrouping$"),
+                            ...
 ){
   ns <- NS(session$ns(NULL))
   
@@ -39,7 +41,7 @@ LoadTableModule <- function(input,output, session,
                                     filename = NULL)
   
   output$loadTableButton <- renderUI({
-    actionButton(ns("loadtable"), static$label, icon = icon("folder-open", lib = "font-awesome"))
+    actionButton(ns("loadtable"), static$label, icon = icon("folder-open", lib = "font-awesome"), ...)
   })
   
   Uploader <- callModule(UploadTableModule, "modalUpload",
@@ -230,10 +232,10 @@ LoadTableModule <- function(input,output, session,
 
 #' @describeIn LoadTableModule UI elements
 #' @export
-LoadTableModuleUI <- function(id)
+LoadTableModuleUI <- function(id, ...)
 {
   ns <- NS(id)
   
-  htmlOutput(ns("loadTableButton"))
+  htmlOutput(ns("loadTableButton"), ...)
   
 }

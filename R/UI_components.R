@@ -165,7 +165,7 @@ MseekHeader <- function(..., id = NULL){
                      title = "Activate/deactivate full-screen mode"),
                      class = "dropdown"),
                    tags$li(a(
-                     href = 'http://metaboseek.com/doc.html',
+                     href = 'http://metaboseek.com/doc',
                      icon("question-circle fa-lg"),
                      title = "Mseek online help (opens in new window)",
                      target="_blank",
@@ -225,7 +225,7 @@ MseekSidebar <- function(..., id = NULL){
       
       # menuItem("Workflows", tabName = "processdata", icon = icon("desktop"),
       #          menuSubItem("Coming soon", tabName = "workflow1")),
-      menuItem("Update", tabName = "updateTab", icon = icon("upload")),
+      #menuItem("Update", tabName = "updateTab", icon = icon("upload")),
       ...,
       #bookmarkButton(label ="Bookmark this session"),
       #SelectActiveTableModuleUI("selectactivetable"),

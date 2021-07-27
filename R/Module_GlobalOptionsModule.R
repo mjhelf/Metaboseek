@@ -27,6 +27,18 @@ GlobalOptionsModule <- function(input,output, session, values){
      )
    })
    
+   output$pAdjustMethod <- renderUI({
+      
+      div(id = ns("pAdjustMethodDiv"), title= "How to adjust p-values from ANOVA and T-test analyses. Choices are from R's p.adjust.methods",
+          selectizeInput(ns('padjustmethod'), 'P-value adjustment Method',
+                       choices = c("fdr", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY"),
+                         selected = values$GlobalOpts$p.adjust.method,
+                       
+                       )
+          
+      )
+   })
+   
    output$perPage <- renderUI({
      
      div(id = ns("perPageDiv"), 
@@ -50,6 +62,11 @@ GlobalOptionsModule <- function(input,output, session, values){
      values$GlobalOpts$enabledCores <- input$EnabledCores
      MseekOptions(enabledCores = input$EnabledCores)
    })
+    
+    observeEvent(input$padjustmethod,{
+       values$GlobalOpts$p.adjust.method <- input$padjustmethod
+       MseekOptions(p.adjust.method = input$padjustmethod)
+    })
    
    observeEvent(input$perPage,{
      values$GlobalOpts$perPage <- input$perPage
@@ -77,12 +94,16 @@ GlobalOptionsModuleUI <- function(id){
   fluidPage(
     title = "Global Options Module",
   fluidRow(
-    column(6,
+    column(3,
           htmlOutput(ns("EnabledCores"))
     ),
-    column(6,
+    column(3,
           htmlOutput(ns("perPage"))
-    )),
+    ),
+    column(6,
+           htmlOutput(ns("pAdjustMethod"))
+    )
+    ),
     fluidRow(
       column(6,
            FilePathModuleUI(ns("msFolder"))

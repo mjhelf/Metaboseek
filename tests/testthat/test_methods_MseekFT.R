@@ -6,7 +6,7 @@ MseekExamplePreload() #loads objects tab1, tab2 and MSData into session!
 wtfiles <-  list.files(system.file("extdata", "examples", "ms1", "wt", package = "Metaboseek"), full.names = T, pattern = ".mzXML")
 
 fileaccess <- MSnbase::readMSData(wtfiles[1:2],
-                                  pdata = NULL, verbose = isMSnbaseVerbose(),
+                                  pdata = NULL, verbose = MSnbase::isMSnbaseVerbose(),
                                   msLevel. = 1,
                                   centroided. = T,
                                   smoothed. = NA,
@@ -17,9 +17,11 @@ xset_detection <- xcms::findChromPeaks(fileaccess, xcms::CentWaveParam(),
 
 xset_grouped <- xcms::groupChromPeaks(xset_detection,xcms::PeakDensityParam(sampleGroups = 1:2))
 
-CAMERA_res <- do.call(cameraWrapper, c(list(xset = xset_grouped, workers = 2, polarity = "positive")))
+test_that("CAMERA can be run", {
+CAMERA_res <<- do.call(cameraWrapper, c(list(xset = xset_grouped, workers = 2, polarity = "positive")))
+})
 
-xset_rtcorr <- xcms::adjustRtime(xset_detection,param = ObiwarpParam())
+xset_rtcorr <- xcms::adjustRtime(xset_detection,param = xcms::ObiwarpParam())
 
 xset_rtcorr_grouped <- xcms::groupChromPeaks(xset_rtcorr,xcms::PeakDensityParam(sampleGroups = 1:2))
 

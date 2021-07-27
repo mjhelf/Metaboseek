@@ -4,6 +4,7 @@
 #' Module for loading MS2 molecular networks (graphs)
 #' 
 #' @inherit MseekModules
+#' @param layoutFunction reactive, returning the function to use for layout of the resulting graph
 #' 
 #' @describeIn LoadNetworkModule server logic
 #' @export 
