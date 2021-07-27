@@ -23,6 +23,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: install pandoc
+        run:
+          choco install pandoc
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@ffe45a39586f073cc2e9af79c4ba563b657dc6e3
         env:
@@ -42,5 +45,4 @@ jobs:
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
           _R_CHECK_FORCE_SUGGESTS_: 'false'
-          
         shell: Rscript {0}
