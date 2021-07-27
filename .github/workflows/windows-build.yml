@@ -6,7 +6,7 @@
 # See https://github.com/r-lib/actions/tree/master/examples#readme for
 # additional example workflows available for the R community.
 
-name: R
+name: windows-build
 
 on:
   push:
@@ -38,8 +38,9 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         shell: Rscript {0}
       - name: Check
-        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-build-vignettes"), error_on = "error")
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+          _R_CHECK_FORCE_SUGGESTS_: 'false'
           
         shell: Rscript {0}
