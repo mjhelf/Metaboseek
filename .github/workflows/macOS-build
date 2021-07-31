@@ -1,0 +1,48 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: windows-build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    strategy:
+      matrix:
+        r-version: [4.1]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: install pandoc
+        run:
+          choco install pandoc
+      - name: Set up R ${{ matrix.r-version }}
+        uses: r-lib/actions/setup-r@ffe45a39586f073cc2e9af79c4ba563b657dc6e3
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+        with:
+          r-version: ${{ matrix.r-version }}
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck"))
+          remotes::install_github("mjhelf/MassTools")
+          remotes::install_deps(dependencies = TRUE)
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+        shell: Rscript {0}
+      - name: Check
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--no-build-vignettes"), error_on = "error")
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+          _R_CHECK_FORCE_SUGGESTS_: 'false'
+        shell: Rscript {0}
