@@ -7,7 +7,7 @@
 .reformatFeatureTable(
   df,
   from = c("auto", "unknown", "mzMINE Aligned Peak List",
-    "MetaboAnalyst Peak Intensity Table")
+    "MetaboAnalyst Peak Intensity Table", "MS-DIAL Alignment Result")
 )
 }
 \arguments{
