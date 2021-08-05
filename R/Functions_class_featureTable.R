@@ -199,6 +199,20 @@ updateDF <- function(a, b){
     }
   }, silent = TRUE)
   
+  try({
+    if(c("Alignment ID") %in% df[,1]
+       && c("Average Rt(min)") %in% df[,2]
+       && c("Average Mz") %in% df[,3]
+       && ("Class" %in% unlist(df[1,]) || "Class" %in% colnames(df))
+       && all(is.character(unlist(df[1,])) | is.factor(unlist(df[1,])))
+       ){
+      
+      return("MS-DIAL Alignment Result")
+      
+    }
+  }, silent = TRUE)
+  
+  
   return("unknown")
   
 }
@@ -225,7 +239,8 @@ updateDF <- function(a, b){
                                   from = c("auto",
                                            "unknown", 
                                            "mzMINE Aligned Peak List",
-                                           "MetaboAnalyst Peak Intensity Table")){
+                                           "MetaboAnalyst Peak Intensity Table",
+                                           "MS-DIAL Alignment Result")){
   
   from <- from[1]
   
@@ -275,6 +290,32 @@ updateDF <- function(a, b){
            
            res$df$mz <- as.numeric(sapply(sp,'[',1))
            res$df$rt <- as.numeric(sapply(sp,'[',2))
+           
+         },
+         "MS-DIAL Alignment Result" = {
+           
+           if("Class" %in% unlist(res$df[1,])){
+           groups <- unlist(res$df[1, unlist(res$df[1,]) != ""])[-1]
+           }else{
+           groups <- colnames(res$df)[seq(which(colnames(res$df) == 'Class') + 1, ncol(res$df))]
+           }
+           
+           colnames(res$df) <- unlist(res$df[which(res$df[[1]] == "Alignment ID"),])
+           
+           res$df <- res$df[-seq_len(which(res$df[[1]] == "Alignment ID")+1),]
+           
+           res$df <- data.frame(lapply(res$df, type.convert, as.is = TRUE),
+                                stringsAsFactors = FALSE,
+                                check.names = FALSE)
+           
+           
+           res$grouping = data.frame(Column = colnames(res$df)[seq(ncol(res$df) - length(groups) + 1, ncol(res$df))],
+                                     Group = groups,
+                                     stringsAsFactors = FALSE)
+           
+           res$df[['mz']] <- res$df$`Average Mz`
+           res$df[['rt']] <- res$df$`Average Rt(min)`*60
+           
            
          }
          )
