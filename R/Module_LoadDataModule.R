@@ -43,10 +43,10 @@ LoadDataModule <- function(input,output, session,
                                                    featureTables = values$featureTables),
                            static = list(tooltip = "Load a Feature Table",
                                          label = "Load Feature Table",
-                                         format = list(header = T,
+                                         format = list(header = TRUE,
                                                        sep = NULL,
                                                        quote = '"',
-                                                       stringsAsFactors = F),
+                                                       stringsAsFactors = FALSE),
                                          pattern = "\\.csv$|\\.[Mm][Ss][Kk][Ff][Tt]$"),
                       width = "100%", style = "height: 50px;"
   )
