@@ -34,8 +34,8 @@ setMethod("analyzeFT",
               
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
-
               
+             
               if(!is.null(param@replaceNAs)){
                 object <- removeNAs(object,
                                     replacement = param@replaceNAs)
