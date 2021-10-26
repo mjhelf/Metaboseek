@@ -746,7 +746,7 @@ fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
                                               BPPARAM = bpparam()# SnowParam(workers = if(length(mz) > 10000){workers}else{1})
         ),
         unlist))},
-        message = function(m){ if(isRunning()){incProgress(amount = as.numeric(m$message)/length(rawdata))} })
+        message = function(m){ if(isRunning()){incProgress(amount = sum(as.numeric(unlist(strsplit(as.character(m$message), split = "\n"))))/length(rawdata))} })
     
     maxind <- apply(ints,1,which.max)
    

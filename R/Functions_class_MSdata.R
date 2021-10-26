@@ -128,7 +128,8 @@ updateRawLayout <- function(MSD, new.stem=NULL){
 #' @param filelist a list of mzXML or mzML files (character vector)
 #' @param MSn should MSn data be read in? defaults to TRUE
 #' @param workers How many cores to use (cf. BiocParallel and SnowParam,
-#' argument only used if more than 10 files are loaded).
+#' argument only used if more than 10 files are loaded). NOTE:
+#' this argument is now ignored (calls bpparam() internally)
 #' @param rnames names of the xcmsRaw objects in the list returned,
 #'  defaults to the filepaths of the source files.
 #' 
@@ -138,12 +139,28 @@ updateRawLayout <- function(MSD, new.stem=NULL){
 #' @export
 loadRawM <- function (filelist, MSn = T, workers=1, rnames = filelist){
 
-    if (length(filelist)<=10){workers<-1}
-    param <- SnowParam(workers = workers)
-    suppressWarnings({
-    rawcoll <- bplapply(filelist,xcmsRaw,  profstep=0,
-                        includeMSn = MSn, BPPARAM= param)
-    })
+   # if (length(filelist)<=10){workers<-1}
+  #  param <- SnowParam(workers = workers)
+  suppressWarnings({
+    if(isRunning()){
+      try({
+        setProgress(value = 0, message = 'Loading MS data files...')
+      })
+    }
+    
+    withCallingHandlers({  
+      rawcoll <- bplapply(filelist, function(rfile, MSnSetting){
+                          res <- xcms::xcmsRaw(rfile,  profstep=0,
+                          includeMSn = MSnSetting)
+                          
+                          message("Raw file loaded") #this is necessary because xcmsRaw warnings are also caught as messages
+                          return(res)
+                          
+                          }, MSnSetting = MSn,
+                          BPPARAM = if(isRunning()){SnowParam(workers = 1)}else{bpparam()} )# avoiding performance issues in shiny app #TODO maybe related to sending large amounts of data to workers (performance good outside shiny)
+    },
+    message = function(m){ if(isRunning()){incProgress(amount = sum(unlist(strsplit(as.character(m$message), split = "\n")) == "Raw file loaded")/length(filelist))} })
+  })
     names(rawcoll)<- rnames
     
     return(rawcoll)}

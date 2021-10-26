@@ -266,7 +266,9 @@ setMethod("FTcalculateM", "MseekFT",
               
               ints <- log2(ints)
               
+              
               res$M_Value[invalidCounts <= maxInvalid] <- .calculateM(ints[invalidCounts <= maxInvalid,], na.rm = FALSE, ...)
+              
               
               object <- updateFeatureTable(object, res)
             },
