@@ -729,8 +729,6 @@ subsetEICs <- function(EIClist,
 #' @export
 fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
     
-    print(bpparam())
-    
     if(isRunning()){
         try({
             setProgress(value = 0, message = 'Preparing Peak Shape Analysis...')
