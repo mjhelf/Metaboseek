@@ -14,17 +14,19 @@ It is built on functions from the <a href = "https://github.com/sneumann/xcms">x
 
 Metaboseek is currently under development, and new features are constantly added. Visit the [download page](http://metaboseek.com/download) to see the full change log.
 
+## Citation
 
+If you use Metaboseek for your research, please cite <a href = "https://doi.org/10.1101/2021.09.07.459292"> our manuscript</a>! 
 
 ## Some background
 
 In Liquid Chromatography/Mass Spectrometry (LC/MS), so called mass spectra are acquired in rapid succession. Each spectrum can contain the mass-to-charge ratios (m/z) of thousands of charged molecules (ions) and their intensity (=relative abundance) at one time point. The molecules are separated through chromatography before entering the mass spectrometer, so that ions are separated in an additional dimension, the retention time (rt). This is particularly important to get separate signals for molecules with the same or very similar m/z value, but different structures (this happens a lot). 
 
-The combination of m/z value and retention time can be defined as a `molecular feature`. Although these `molecular features` typically don't allow unambigous identification of specific compounds, their abundance can be compared between different biological samples. This can be very useful, because a molecular feature might be up- or downregulated in one sample group compared to another. For instance, some molecular features might only be found in a mutant strain of bacteria, but not in the wild-type control. In the approach to metabolomics presented here, we can select such molecular features of interest and then try to get more information about the molecular structure by tandem-MS, a method that breaks molecules into pieces and then reports the m/z of the resulting fragments.
+The combination of m/z value and retention time can be defined as a `molecular feature`. Although these `molecular features` typically don't allow unambiguous identification of specific compounds, their abundance can be compared between different biological samples. This can be very useful, because a molecular feature might be enriched in one sample group compared to another. For instance, some molecular features might only be found in a mutant strain of bacteria, but not in the wild-type control. In the approach to metabolomics presented here, we can select such molecular features of interest and then try to get more information about the molecular structure by tandem-MS, a method that breaks molecules into pieces and then reports the m/z of the resulting fragments.
 
 ## Features
 
-So what can you do with this app? I would like to highlight some of the things it can do, and invite you to check out the example data that is loaded in the online version (and is also included in the Metaboseek R package). Documentation on how to use the app is available at https://metaboseek.com/doc.
+So what can you do with this app? I would like to highlight some of the key software features, and invite you to check out the example data that is loaded in the online version (and is also included in the Metaboseek R package). Documentation on how to use the app is available at https://metaboseek.com/doc.
 
 Metaboseek offers a graphical user interface to set up data analysis with the `xcms` package to detect and align molecular features from LC/MS data across multiple samples. You can then load xcms results into the app as a "Feature Table" (using `xcms` and [`MSnbase`](https://bioconductor.org/packages/release/bioc/html/MSnbase.html) packages, [`mzR`](https://bioconductor.org/packages/release/bioc/html/mzR.html)-based) and run statistical analyses to identify molecular features of interest.
 
