@@ -138,7 +138,13 @@
   mzThreshold = NULL
 )
 
-\S4method{FTedges}{MseekFT}(object, useParentMZs = TRUE, minpeaks = 6, mzdiff = 0.0005)
+\S4method{FTedges}{MseekFT}(
+  object,
+  useParentMZs = TRUE,
+  minpeaks = 6,
+  mzdiff = 0.0005,
+  method = "cosine"
+)
 
 \S4method{matchReference}{MseekFT,MseekFT}(
   object,
@@ -168,7 +174,15 @@
   ...
 )
 
-\S4method{LabelFinder}{MseekFamily}(object, object2, MSData, newName, ...)
+\S4method{LabelFinder}{MseekFamily}(
+  object,
+  object2,
+  MSData,
+  newName,
+  ref_intensityCols,
+  comp_intensityCols,
+  ...
+)
 
 \S4method{PatternFinder}{MseekFamily}(
   object,
@@ -265,8 +279,11 @@ across samples. If FALSE, will cluster samples by intensities across features}
 
 \item{useParentMZs}{if TRUE, will also match neutral losses between spectra}
 
-\item{minpeaks}{minimum number of peaks that have to match between two spectr
+\item{minpeaks}{minimum number of peaks that have to match between two spectra
 to allow calculation of a score}
+
+\item{method}{method for similarity calculation, passed to 
+\code{MassTools::\link[MassTools]{makeEdges}()}}
 
 \item{query}{an object that contains molecular features that will be matched to
 \code{object}, by a customizable combination of retention time, m/z and MS2 similarity matching}

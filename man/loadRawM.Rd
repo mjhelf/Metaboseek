@@ -12,7 +12,8 @@ loadRawM(filelist, MSn = T, workers = 1, rnames = filelist)
 \item{MSn}{should MSn data be read in? defaults to TRUE}
 
 \item{workers}{How many cores to use (cf. BiocParallel and SnowParam,
-argument only used if more than 10 files are loaded).}
+argument only used if more than 10 files are loaded). NOTE:
+this argument is now ignored (calls bpparam() internally)}
 
 \item{rnames}{names of the xcmsRaw objects in the list returned,
 defaults to the filepaths of the source files.}

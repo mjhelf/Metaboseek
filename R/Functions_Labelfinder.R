@@ -87,7 +87,7 @@ featlistCompare <- function(reflist=reflist,
             collectlist$I1S2[[length(collectlist$I1S1)]] <- selection3[order(abs(selection1$rt-reflist$rt[i])),]
             
         }
-        if(i %% 200==0){cat(i, " ")}}
+        if(!i %% 500){message(i, " ")}}
     return(collectlist)}
 
 
@@ -271,13 +271,14 @@ findLabels <- function(reflist,
                                                                        rtw= data.frame(combinat$rtmin-rtw_extract,combinat$rtmax+rtw_extract),
                                                                        ppm = ppm_extract,
                                                                        areaMode = TRUE)
+            message(paste("Unlabeled intensities extracted for unlabeled sample", s))
             
             combinat[[paste0("I2S1.",s)]] <- Metaboseek::exIntensities(thisfile,
                                                                        mz = combinat$I2S2.mz,
                                                                        rtw= data.frame(combinat$rtmin-rtw_extract,combinat$rtmax+rtw_extract), #changed these to use I1S1 rts instead of I2S2.rt to guess I2S1 rt 
                                                                        ppm = ppm_extract,
                                                                        areaMode = TRUE)
-            
+            message(paste("Labeled intensities extracted for unlabeled sample", s))
         }
         
         for(s in comp_intensityCols){
@@ -291,11 +292,16 @@ findLabels <- function(reflist,
                                                                        ppm = ppm_extract,
                                                                        areaMode = TRUE)
             
+            message(paste("Unlabeled intensities extracted for labeled sample", s))
+            
+            
             combinat[[paste0("I2S2.",s)]] <- Metaboseek::exIntensities(thisfile,
                                                                        mz = combinat$I2S2.mz,
                                                                        rtw= data.frame(combinat$I2S2.rtmin-rtw_extract,combinat$I2S2.rtmax+rtw_extract), 
                                                                        ppm = ppm_extract,
                                                                        areaMode = TRUE)
+            
+            message(paste("Labeled intensities extracted for labeled sample", s))
             
         }
         
