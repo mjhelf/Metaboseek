@@ -34,8 +34,8 @@ setMethod("analyzeFT",
               
               param@intensities <- object$intensities
               param@groups <- object$anagroupnames
-
               
+             
               if(!is.null(param@replaceNAs)){
                 object <- removeNAs(object,
                                     replacement = param@replaceNAs)
@@ -266,7 +266,9 @@ setMethod("FTcalculateM", "MseekFT",
               
               ints <- log2(ints)
               
+              
               res$M_Value[invalidCounts <= maxInvalid] <- .calculateM(ints[invalidCounts <= maxInvalid,], na.rm = FALSE, ...)
+              
               
               object <- updateFeatureTable(object, res)
             },
@@ -1537,13 +1539,18 @@ setMethod("getSpecList", c("MseekFT","listOrNULL"),
 #' MS2 spectra available inside the object and generating similarity scores.
 #' 
 #' @param useParentMZs if TRUE, will also match neutral losses between spectra
-#' @param minpeaks minimum number of peaks that have to match between two spectr
+#' @param minpeaks minimum number of peaks that have to match between two spectra
 #' to allow calculation of a score
 #' @param mzdiff mz tolerance in fragment ion matching
+#' @param method method for similarity calculation, passed to 
+#' \code{MassTools::\link[MassTools]{makeEdges}()}
 #' 
 #' @export
 setMethod("FTedges", c("MseekFT"),
-          function(object, useParentMZs = TRUE, minpeaks = 6, mzdiff = 0.0005){
+          function(object, useParentMZs = TRUE,
+                   minpeaks = 6,
+                   mzdiff = 0.0005,
+                   method = 'cosine'){
               beforeHash <- MseekHash(object)
               
               p1 <- proc.time()
@@ -1559,11 +1566,20 @@ setMethod("FTedges", c("MseekFT"),
                   #this will be in sync with the edge indices and is used by the NetworkingModule for node ID
                   object <- updateFeatureTable(object,data.frame(fixed__id = seq(nrow(object$df))))
                   
-                  
+                  if(isRunning()){
+                    try({
+                      setProgress(value = 0, message = 'Generating Network...')
+                    })
+                  }
+                  withCallingHandlers({  
                   object$edges <- MassTools::makeEdges(speclist = object$df$specList,
                                                        parentmasses = if(useParentMZs){object$df$mz}else{NULL},
                                                        minpeaks = minpeaks,
                                                        mztol = mzdiff)
+                  
+                  },
+                  message = function(m){ if(isRunning() & any(grepl('done', m$message))){incProgress(amount = 0.05, detail = m$message)} })
+              
                   
                   object$edges <- object$edges[object$edges$cosine > 0.001,, drop = FALSE]
                   
@@ -1931,7 +1947,9 @@ setMethod("matchReference", c("MseekGraph","MseekFT"),
 #' @rdname analyzeFT
 #' @export
 setMethod("LabelFinder", signature(object = "MseekFamily"),
-          function(object, object2, MSData, newName, ...){
+          function(object, object2, MSData, newName, 
+                   ref_intensityCols,
+                   comp_intensityCols,...){
               beforeHash <- MseekHash(object)
               p1 <- proc.time()
               err <- list()
@@ -1942,10 +1960,30 @@ setMethod("LabelFinder", signature(object = "MseekFamily"),
                   object2$df <- object2$df[,colnames(object2$df) %in% c("rt", "mz", "rtmin","rtmax", "comments")]
                   
                   
-                  object <- buildMseekFT(findLabels(reflist = object$df,
-                                                    complist = object2$df,
-                                                    rawdata = MSData,
-                                                    ...),
+                  if(isRunning()){
+                    try({
+                      setProgress(value = 0, message = 'Finding Labeled Features...')
+                    })
+                  }
+                  withCallingHandlers({  
+                    labres <- findLabels(reflist = object$df,
+                                         complist = object2$df,
+                                         rawdata = MSData,
+                                         ref_intensityCols = ref_intensityCols,
+                                         comp_intensityCols = comp_intensityCols,
+                                         ...)
+                    
+                  },
+                  message = function(m){ if(isRunning() & any(grepl('extracted', m$message))){
+                    incProgress(amount = 0.5/(2*(length(ref_intensityCols)+length(comp_intensityCols))), detail = m$message)
+                  }else if(isRunning() && !is.na(as.numeric(m$message)) && as.numeric(m$message) > 1 ){ #avoiding the '1' messages from exIntensities
+                    incProgress(amount = 0.5/(nrow(object$df)/500), detail = paste('Comparing features...', m$message, "/", nrow(object$df)))
+                    }
+                    
+                    })
+                  
+                  
+                  object <- buildMseekFT(labres,
                                          processHistory = object$.processHistory,
                                          tablename = newName,
                                          editable = FALSE)
@@ -1970,7 +2008,9 @@ setMethod("LabelFinder", signature(object = "MseekFamily"),
                                                                        param = FunParam(fun = "Metaboseek::LabelFinder",
                                                                                         args = c(list(...),
                                                                                                  list(
-                                                                                                     newName = newName
+                                                                                                     newName = newName,
+                                                                                                     ref_intensityCols = ref_intensityCols,
+                                                                                                     comp_intensityCols = comp_intensityCols
                                                                                                  )),
                                                                                         longArgs = list(object2 = MseekHash(object2),
                                                                                                         MSData = summary(MSData)))

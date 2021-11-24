@@ -50,9 +50,9 @@ MseekMinimalServer <- function(data = T, tables = T, diagnostics = T){
     BiocParallel::register(
         BiocParallel::bpstart(
             if(Sys.info()['sysname'] == "Windows"){
-                BiocParallel::SnowParam(.MseekOptions$enabledCores)
+                BiocParallel::SnowParam(.MseekOptions$enabledCores, progressbar = TRUE, tasks = .MseekOptions$enabledCores*4)
             }else{
-                BiocParallel::MulticoreParam(.MseekOptions$enabledCores)
+                BiocParallel::MulticoreParam(.MseekOptions$enabledCores, progressbar = TRUE, tasks = .MseekOptions$enabledCores*4)
             }
         )
     )

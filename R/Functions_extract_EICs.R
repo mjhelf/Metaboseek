@@ -653,7 +653,9 @@ exIntensities <- function (rawfile,
         
     }
     
-    return(sapply(summe, fx))}
+    res <- sapply(summe, fx)
+    message(1)
+    return(res)}
 
 #' .peakArea
 #' 
@@ -727,28 +729,41 @@ subsetEICs <- function(EIClist,
 #' @export
 fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
     
+    if(isRunning()){
+        try({
+            setProgress(value = 0, message = 'Preparing Peak Shape Analysis...')
+        })
+    }
     
-    
-    
-    ints <- as.data.frame(lapply(bplapply(rawdata, 
-                                          exIntensities, 
-                                          mz, ppm, rtw, 
-                                          baselineSubtract = F, 
-                                          SN = 10,
-                                          BPPARAM = SnowParam(workers = if(length(mz) > 10000){workers}else{1}
-                                          )),
-                                 unlist))
+    withCallingHandlers({
+        ints <- as.data.frame(lapply(bplapply(rawdata, 
+                                              exIntensities, 
+                                              mz, ppm, rtw, 
+                                              baselineSubtract = F, 
+                                              SN = 10,
+                                              BPPARAM = bpparam()# SnowParam(workers = if(length(mz) > 10000){workers}else{1})
+        ),
+        unlist))},
+        message = function(m){ if(isRunning()){incProgress(amount = sum(as.numeric(unlist(strsplit(as.character(m$message), split = "\n"))))/length(rawdata))} })
     
     maxind <- apply(ints,1,which.max)
+   
     
+     if(isRunning()){
+       try({
+            setProgress(value = 0, message = 'Running Peak Shape Analysis...')
+       })
+     }
     
+    withCallingHandlers({
     scorelist <- bplapply(seq(length(rawdata)), function(n){
+        
         
         selfeats <- which(maxind == n)
         
         if(length(selfeats) > 0){
             
-            unlist(multiEIC(rawdata= rawdata[n],
+          res <- unlist(multiEIC(rawdata= rawdata[n],
                                         mz = data.frame(mzmin = mz[selfeats]-ppm*1e-6*mz[selfeats], mzmax=mz[selfeats]+ppm*1e-6*mz[selfeats]),
                                         rt = rtw[selfeats,],
                                         rnames = NULL,
@@ -760,9 +775,17 @@ fastPeakShapes <- function(rawdata, mz, ppm, rtw, workers = 1){
                                         quickshapes = T,
                                         SN = 10,
                                         scoreBy = "intmean"))}
-        else{numeric(0)}},
+        else{ res <- numeric(0)}
         
-        BPPARAM = SnowParam(workers = if(length(mz) > 5000){workers}else{1}))
+                message(1)
+
+                return(res)
+        
+        },
+        
+        BPPARAM = bpparam()#SnowParam(workers = if(length(mz) > 5000){workers}else{1})
+        )},
+    message = function(m){ if(isRunning()){incProgress(amount = as.numeric(m$message)/length(rawdata))} })
     
     
     scores <- numeric(length(mz))

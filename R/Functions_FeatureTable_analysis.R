@@ -812,13 +812,29 @@ mzMatch <- function(df, db, ppm = 5, mzdiff = 0.001){
 #'
 .calculateM <- function(x, na.rm = FALSE, ...){
   
-  unlist(bplapply(seq_len(nrow(x)), function(i, m = x, rm.na = na.rm){ #assignment changes to avoid recursive default argument reference error in bplapply
+  if(isRunning()){
+    try({
+      setProgress(value = 0, message = 'Calculating M...')
+    })
+  }
+  
+  withCallingHandlers({
+  
+ 
+    res <- bplapply(seq_len(nrow(x)), function(i, m = x, rm.na = na.rm){ #assignment changes to avoid recursive default argument reference error in bplapply
     
     m <- t(t(m) - m[i,])
     rowVars <- rowSums((m - rowMeans(m, na.rm=rm.na))^2, na.rm=rm.na) / (ncol(m) - 1) #https://stackoverflow.com/questions/55327096/r-tidyverse-calculating-standard-deviation-across-rows/61891777#61891777
+    
+    if(!i%%1000){message(1000)}
+    
     sum(sqrt(rowVars))/ (nrow(m)-1)
     
-  }, ...))
+  }, ...)
+  },
+  message = function(m){if(isRunning()){incProgress(amount = sum(as.numeric(unlist(strsplit(as.character(m$message), split = "\n"))))/nrow(x))} })
+  
+  return(unlist(res))
 }
 
 

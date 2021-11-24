@@ -395,7 +395,7 @@ SelectProjectFolderModule <- function(input,output, session,
       if(length(internalValues$filegroups$File) > 0 ){
         #  print("loading MS data")
         
-        withProgress(message = 'Please wait!', detail = "Loading MS data", value = 0.8, {
+        withProgress(message = 'Please wait!', detail = "Loading MS data", value = 0, {
           newfiles <- internalValues$filegroups$File
           newfiles <- newfiles[which(!newfiles %in% values$MSData$filelist)]
           values$MSData$filelist <- unique(c(values$MSData$filelist, newfiles))
@@ -406,6 +406,7 @@ SelectProjectFolderModule <- function(input,output, session,
             if(is.null(values$MSData$MSnExp) || (!is.null(values$MSData$MSnExp) 
                                                  && any(!values$MSData$filelist %in% as.character(values$MSData$MSnExp@phenoData@data$sampleNames)))){
               
+              setProgress(value = 0.3, message = "Generating OnDiskMSnExp object...")
               #will be overwritten every time there is a change in the filelist
               values$MSData$MSnExp <- MSnbase::readMSData(values$MSData$filelist, pdata = NULL, verbose = F,
                                                    centroided. = T,
