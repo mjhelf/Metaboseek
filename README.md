@@ -16,7 +16,7 @@ Metaboseek is currently under development, and new features are constantly added
 
 ## Citation
 
-If you use Metaboseek for your research, please cite <a href = "https://doi.org/10.1101/2021.09.07.459292"> our manuscript</a>! 
+If you use Metaboseek for your research, please cite <a href = "https://doi.org/10.1038/s41467-022-28391-9"> our paper</a>! 
 
 ## Some background
 
