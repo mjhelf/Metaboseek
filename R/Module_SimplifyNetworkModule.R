@@ -237,7 +237,7 @@ SimplifyNetworkModule <- function(input,output, session,
           if(input$maxKcheck || input$cosThreshCheck){
             tempgraph <- simplify(tempgraph,
                                                                      rankBy = if(input$maxKcheck){input$maxKcol}else{NULL},
-                                                                     maxK = input$maxK,
+                                                                     maxK = if(input$maxKcheck){input$maxK}else{NULL},
                                                                      cosineThreshold = if(input$cosThreshCheck){input$cosThresh}else{NULL},
                                   layoutFunction = values$GlobalOpts$graph.layouts.selected
                                   )

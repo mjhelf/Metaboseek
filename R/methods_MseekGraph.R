@@ -297,7 +297,7 @@ setMethod("loadMseekGraph",
 #' using additional filters.
 #' 
 #' @param maxK if length > 0, will only allow at most this many edges from each node
-#' @param rankBy if length > 0, will use this edge attribute to rank keep only the top \code{maxK} edges
+#' @param rankBy will use this edge attribute to rank keep only the top \code{maxK} edges; if length == 0, will use edges with lowest node in from column
 #' @param cosineThreshold if length > 0, will remove all edges with a cosine value below this
 #' @param layoutFunction function to use for layout of the resulting graph
 #' @export
