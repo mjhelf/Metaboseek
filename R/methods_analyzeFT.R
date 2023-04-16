@@ -1312,9 +1312,13 @@ setMethod("FTPCA", c("MseekFT"),
                   
                   ## rotation, taking into account scaling and centering:
                   ## https://stackoverflow.com/questions/43811572/pca-in-r-how-to-determine-contribution-of-each-variable-to-a-pc-score
-                  contribs <- as.data.frame(prin_comp$rotation * (t(pcamemx) - summary(prin_comp)$center) / summary(prin_comp)$scale)
+                  contribs <- (prin_comp$rotation * (t(pcamemx) - summary(prin_comp)$center) / summary(prin_comp)$scale)
                   
-                  colnames(contribs) <- paste0("loadings_", colnames(contribs))
+                  contribs[contribs == 0] <- NA_real_
+                  
+                  contribs <- as.data.frame(log10(contribs))
+                  
+                  colnames(contribs) <- paste0("log10loadings_", colnames(contribs))
 
                   #keep up to 15 PCs
                   prin_comp <- as.data.frame(prin_comp$x[,1:min(ncol(prin_comp$x),15)])
