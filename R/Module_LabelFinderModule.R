@@ -19,7 +19,8 @@ LabelFinderModule <- function(input,output, session, values){
     selectizeInput(ns("ref_intensityCols"), "Unlabeled samples:", 
                    selected = basename(names(values$MSData$data))[sapply(names(values$MSData$data), function(x){any(grepl(basename(x),FeatureTable(values)$intensities))})],
                    choices = basename(names(values$MSData$data)),
-                   multiple = T)
+                   multiple = T,
+                   options = list(maxOptions = 10000))
     
   })
   
@@ -28,7 +29,8 @@ LabelFinderModule <- function(input,output, session, values){
       selectizeInput(ns("comp_intensityCols"), "Labeled samples:", 
                      selected = basename(names(values$MSData$data))[sapply(names(values$MSData$data), function(x){any(grepl(basename(x),FeatureTable(values, tableID = input$labtable)$intensities))})],
                      choices = basename(names(values$MSData$data)),
-                     multiple = T)
+                     multiple = T,
+                     options = list(maxOptions = 10000))
       
   })
   
@@ -53,7 +55,8 @@ LabelFinderModule <- function(input,output, session, values){
                                       selectizeInput(ns("labtable"), "Labeled sample Feature Table:", 
                                                                     selected = values$featureTables$active, 
                                                                     choices = values$featureTables$index,
-                                                                    multiple = FALSE)
+                                                                    multiple = FALSE,
+                                                     options = list(maxOptions = 10000))
                                ),
                                column(6,
                                       htmlOutput(ns("labSamples"))

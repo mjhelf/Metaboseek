@@ -19,7 +19,8 @@ PeakPickModule <- function(input,output, session, values){
     selectizeInput(ns("keepcolumns"), "Keep columns:", 
                    selected = "comments",
                    choices = colnames(values$featureTables$tables[[values$featureTables$active]]$df),
-                   multiple = T)
+                   multiple = T,
+                   options = list(maxOptions = 10000))
     
   })
   

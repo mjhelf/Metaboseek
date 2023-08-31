@@ -225,7 +225,8 @@ PlotBrowserModule <- function(input,output, session,
     selectizeInput(ns('xselect'), 'Select x axis value',
                    choices = internalValues$axisChoices,
                    selected = internalValues$x,
-                   multiple = F)
+                   multiple = F,
+                   options = list(maxOptions = 10000))
     
   })
   
@@ -238,7 +239,8 @@ PlotBrowserModule <- function(input,output, session,
     selectizeInput(ns('yselect'), 'Select y axis value',
                    choices = internalValues$axisChoices,
                    selected = internalValues$y,
-                   multiple = F)
+                   multiple = F,
+                   options = list(maxOptions = 10000))
     
   })
   
@@ -251,7 +253,8 @@ PlotBrowserModule <- function(input,output, session,
     selectizeInput(ns('color'), 'Color by',
                    choices = internalValues$colorChoices,
                    selected = internalValues$color,
-                   multiple = F)
+                   multiple = F,
+                   options = list(maxOptions = 10000))
     
   })
   
@@ -265,7 +268,8 @@ PlotBrowserModule <- function(input,output, session,
           selectizeInput(ns('text'), 'hover info',
                          choices = internalValues$textChoices,
                          selected = internalValues$text,
-                         multiple = T)
+                         multiple = T,
+                         options = list(maxOptions = 10000))
       
     )
   })

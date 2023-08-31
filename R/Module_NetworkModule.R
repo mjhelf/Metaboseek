@@ -75,7 +75,8 @@ NetworkModule <- function(input,output, session,
             selectizeInput(ns('activeNetwork'), 'Show Network', 
                            selected = input$activeNetwork, 
                            choices = names(values$Networks)[names(values$Networks) != "numNetworks"],
-                           multiple = FALSE)
+                           multiple = FALSE,
+                           options = list(maxOptions = 10000))
         }
     })  
     
@@ -207,20 +208,23 @@ NetworkModule <- function(input,output, session,
                        checkboxInput(ns('vlabelcheck'), "Show all node labels", value = internalValues$vlabelcheck),
                        selectizeInput(ns("vlabelsel"), "Node Labels",
                                       choices = names(vertex_attr(internalValues$activelayout$graph)),
-                                      selected = internalValues$vlabels)
+                                      selected = internalValues$vlabels,
+                                      options = list(maxOptions = 10000))
                 ),
                 
                 column(if(!static$noSelection){2}else{3},
                        checkboxInput(ns('elabelcheck'), "Show all edge labels", value = internalValues$elabelcheck),
                        selectizeInput(ns("elabelsel"), "Edge Labels",
                                       choices = names(edge_attr(internalValues$activelayout$graph)),
-                                      selected = internalValues$elabels)
+                                      selected = internalValues$elabels,
+                                      options = list(maxOptions = 10000))
                 ),
                 column(if(!static$noSelection){2}else{3},
                        checkboxInput(ns('vlabccheck'), "Color-code nodes", value = internalValues$vlabccheck),
                        selectizeInput(ns("vlabelcol"), "Node Colors",
                                       choices = c(NULL, names(vertex_attr(internalValues$activelayout$graph))),
-                                      selected = internalValues$vlabelc)
+                                      selected = internalValues$vlabelc,
+                                      options = list(maxOptions = 10000))
                 ),
                 column(if(!static$noSelection){2}else{3},
                        fluidRow(

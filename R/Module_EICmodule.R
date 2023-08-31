@@ -149,7 +149,8 @@ EICmodule <- function(input, output, session,
                    "select files", 
                    choices = internalValues$files$choices,
                    selected = internalValues$files$selected,
-                   multiple = TRUE)
+                   multiple = TRUE,
+                   options = list(maxOptions = 10000))
   })
   
   output$pdfButton <- downloadHandler(filename= function(){

@@ -72,7 +72,8 @@ SimplifyNetworkModule <- function(input,output, session,
         selectizeInput(ns('colsel1'), "Filter 1",
                        choices = internalValues$edgecolnames,
                        selected = if(is.null(internalValues$colSelected1) || !internalValues$colSelected1 %in% internalValues$edgecolnames){NULL}else{internalValues$colSelected1},
-                       multiple = F)
+                       multiple = F,
+                       options = list(maxOptions = 10000))
     )
     }
   }) 
@@ -102,7 +103,8 @@ SimplifyNetworkModule <- function(input,output, session,
         selectizeInput(ns('colsel2'), "Filter 2",
                        choices = internalValues$edgecolnames,
                        selected = if(is.null(internalValues$colSelected2) || !internalValues$colSelected2 %in% internalValues$edgecolnames){NULL}else{internalValues$colSelected2},
-                       multiple = F)
+                       multiple = F,
+                       options = list(maxOptions = 10000))
     )
     }
   }) 
@@ -181,7 +183,8 @@ SimplifyNetworkModule <- function(input,output, session,
                      selectizeInput(ns('maxKcol'), "Rank by",
                              choices = internalValues$edgecolnames,
                              selected = if(!"cosine" %in% internalValues$edgecolnames){NULL}else{"cosine"},
-                             multiple = F)
+                             multiple = F,
+                             options = list(maxOptions = 10000))
               ),
               column(3, div( title = "", 
                              numericInput(ns("maxK"), "Maximum number of edges per node (k)", value = 10)))

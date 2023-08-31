@@ -337,7 +337,8 @@ GroupedEICModule <- function(input,output, session,
            selectizeInput(ns("subtitleselect"), "Subtitle content", 
                           selected = internalValues$subtitleColumns, 
                           choices = colnames(values$featureTables$Maintable$liveView),
-                          multiple = TRUE)
+                          multiple = TRUE,
+                          options = list(maxOptions = 10000))
 )
   })
 
