@@ -255,7 +255,10 @@ MainTableModule <- function(input, output, session,
   
   output$sortByC <- renderUI({
     
-    selectizeInput(ns('sortBy'), "Sort by column", choices = colnames(values$featureTables$tables[[values$featureTables$active]]$df), selected = internalValues$sortBy)
+    selectizeInput(ns('sortBy'), "Sort by column",
+                   choices = colnames(values$featureTables$tables[[values$featureTables$active]]$df),
+                   selected = internalValues$sortBy,
+                   options = list(maxOptions = 10000))
     
   })
   

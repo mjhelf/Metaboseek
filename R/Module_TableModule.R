@@ -157,7 +157,8 @@ TableModule <- function(input,output, session,
                checkboxInput(ns('decreasingCheck'), 'decreasing', value = tableProperties$decreasing)),
         column(3,
                
-               selectizeInput(ns('sortBy'), "Sort by column", choices = colnames(tableProperties$set$df), selected = tableProperties$sortBy)
+               selectizeInput(ns('sortBy'), "Sort by column", choices = colnames(tableProperties$set$df), selected = tableProperties$sortBy,
+                              options = list(maxOptions = 10000))
         ),
         column(3,
                if(!is.null(set()$layout$perpage)){

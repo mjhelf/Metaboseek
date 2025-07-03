@@ -33,11 +33,13 @@ PeptideCalcModule <- function(input,output, session, values){
                                      selectizeInput(ns("seqsel"), "Column with peptide sequences:",
                                                     choices = colnames(FeatureTable(values)$df),
                                                     selected = grep("seq",colnames(FeatureTable(values)$df), value = T)[1],
-                                                    multiple = F),
+                                                    multiple = F,
+                                                    options = list(maxOptions = 10000)),
                                      selectizeInput(ns("chargesel"), "Column with peptide charges:",
                                                     choices = colnames(FeatureTable(values)$df),
                                                     selected = grep("charge",colnames(FeatureTable(values)$df), value = T)[1],
-                                                    multiple = F),
+                                                    multiple = F,
+                                                    options = list(maxOptions = 10000)),
                                      checkboxInput(ns("checkptms"),"Use modifications", value = T),
                                      
                                      actionButton(ns("abutton"), "Get peptide mass")

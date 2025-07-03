@@ -19,7 +19,8 @@ MZcalcModule <- function(input,output, session, values){
     selectizeInput(ns("formulacolumn"), "Molecular formula column:", 
                    selected = "formula",
                    choices = colnames(values$featureTables$tables[[values$featureTables$active]]$df),
-                   multiple = F)
+                   multiple = F,
+                   options = list(maxOptions = 10000))
     
     
   })
