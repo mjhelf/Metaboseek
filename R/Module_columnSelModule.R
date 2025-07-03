@@ -64,7 +64,8 @@ ColumnSelModule <- function(input, output, session,
                                choices = values$featureTables$tables[[values$featureTables$active]]$gNames,
                                selected = internalValues$selectedGroup,
                                multiple = F,
-                               width = '100%')
+                               width = '100%',
+                               options = list(maxOptions = 10000))
             ))
     })
     
@@ -72,7 +73,8 @@ ColumnSelModule <- function(input, output, session,
                                                      choices = values$featureTables$tables[[values$featureTables$active]]$gProps,
                                                      selected = internalValues$gPropsSelected,
                                                      multiple = T,
-                                                     width = '100%')
+                                                     width = '100%',
+                                                     options = list(maxOptions = 10000))
     })
     
     observeEvent(c(input$mainSelgProps),
@@ -95,7 +97,8 @@ ColumnSelModule <- function(input, output, session,
                                                      choices = values$featureTables$tables[[values$featureTables$active]]$sProps,
                                                      selected = internalValues$sPropsSelected,
                                                      multiple = T,
-                                                     width = '100%')})
+                                                     width = '100%',
+                       options = list(maxOptions = 10000))})
     
     observeEvent(c(input$mainSelsProps),
                  {internalValues$sPropsSelected <- input$mainSelsProps })
@@ -126,7 +129,8 @@ ColumnSelModule <- function(input, output, session,
                            #            "Normalized Intensities" = intNormShowAs),
                        selected = internalValues$intensitiesSelected,
                        multiple = T,
-                       width = '100%')})
+                       width = '100%',
+                       options = list(maxOptions = 10000))})
     
     observeEvent(c(input$mainSelIntensities),
                  {internalValues$intensitiesSelected <- input$mainSelIntensities })
@@ -144,7 +148,8 @@ ColumnSelModule <- function(input, output, session,
                                       "Others" = Others),
                        selected =  internalValues$othersSelected, 
                        multiple = T,
-                       width = '100%'
+                       width = '100%',
+                       options = list(maxOptions = 10000)
         )})
     
     

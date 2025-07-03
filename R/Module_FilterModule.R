@@ -87,7 +87,8 @@ FilterModule <- function(input,output, session,
     selectizeInput(ns('colsel'), static$lab,
                                             choices = values$MultiFilter$colnames,
                                             selected = if(is.null(internalValues$colSelected) || !internalValues$colSelected %in% values$MultiFilter$colnames){NULL}else{internalValues$colSelected},
-                                            multiple = F)
+                                            multiple = F,
+                   options = list(maxOptions = 10000))
     )
     }) 
   

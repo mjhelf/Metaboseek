@@ -181,7 +181,8 @@ TableModule2 <- function(input,output, session, values,
   output$sortByC <- renderUI({
     if(!is.null(internalValues$df) && (is.null(static$sort) || static$sort)){
 
-  selectizeInput(ns('sortBy'), "Sort by column", choices = colnames(internalValues$df), selected = internalValues$sortBy)
+  selectizeInput(ns('sortBy'), "Sort by column", choices = colnames(internalValues$df), selected = internalValues$sortBy,
+                 options = list(maxOptions = 10000))
     }
       })
 

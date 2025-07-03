@@ -48,7 +48,8 @@ output$mzUI <- renderUI({
                       selectizeInput(ns("selelements"), "Elements",
                                      choices = names(getOption("MassTools.elements")),
                                      multiple = T,
-                                     selected =   values$GlobalOpts$mzquery.elements#c("C","H","N","O","P","S")
+                                     selected =   values$GlobalOpts$mzquery.elements,
+                                     options = list(maxOptions = 10000)#c("C","H","N","O","P","S")
                                      )),
                column(2,
                       numericInput(ns("mzcharge"), "Charge", value = values$GlobalOpts$mzquery.mzcharge, step=1) 
